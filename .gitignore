@@ -1,0 +1,50 @@
+# ===== Reference projects =====
+# Local-only copies used for study and comparison; never committed.
+References/
+
+# ===== Build results =====
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+artifacts/
+publish/
+
+# ===== Visual Studio / Rider =====
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+*.VC.db
+*.VC.opendb
+
+# ===== Test results and coverage =====
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# ===== NuGet =====
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+
+# ===== OS / temporary files =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.log
