@@ -1,0 +1,32 @@
+# XML Editor Reloaded
+
+Desktop editor for Jagged Alliance 2 1.13 `TableData` XML files and STI item images.
+
+## Build
+
+```
+dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx
+```
+
+## Test
+
+```
+dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
+```
+
+Optional full-corpus round-trip tests (runs against a copy, never writes to the source):
+
+```
+XER_CORPUS_DIR="<GameDir>\Data-1.13\TableData" dotnet test
+```
+
+## Layout
+
+- `src/XmlEditorReloaded.Core` — domain primitives and abstractions (no I/O).
+- `src/XmlEditorReloaded.Xml` — XML table loading, round-trip saving, overlays.
+- `src/XmlEditorReloaded.Data` — SQLite metadata, table catalog, settings.
+- `src/XmlEditorReloaded.Imaging` — STI/ETRLE decoding to RGBA buffers.
+- `src/XmlEditorReloaded.App` — WPF application shell.
+- `tests/` — xUnit test projects.
+
+See `PLAN.md` in the repository root for the implementation plan and `PROJECT-STRUCTURE.md` for the architecture.
