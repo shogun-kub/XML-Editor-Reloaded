@@ -2,13 +2,17 @@
 
 This document is a catalogue of the projects under `References/`. They are **read-only** reference material: they are used for algorithms, UX decisions, DTO naming, and test data, and must never be modified during work sessions. `References/` is excluded from git via the root `.gitignore`.
 
-The trees below are complete for the reference projects. Version-control, IDE, and build-output folders (such as `.git/`, `.vs/`, `bin/`, and `obj/`) are omitted because they contain no source material; everything else, including third-party libraries shipped with a reference, is listed.
+The trees in sections 1–3 are complete. For the multi-gigabyte references (FreeImage, the engine source, and the two game installs) the trees are structural: directories, file counts, and editor-relevant folders are expanded, while bulk assets and bundled third-party code are summarized. A literal listing of 123,000+ files would be noise. Version-control, IDE, and build-output folders (`.git/`, `.vs/`, `bin/`, `obj/`) are omitted.
 
-| Project | Language / UI | Target framework | Files (source tree) | Size | Maturity |
-|---|---|---|---|---|---|
-| [`JA 2 1.13 Image viewer`](#1-ja-2-113-image-viewer) | C# / WinForms | `net10.0-windows7.0` | 412 | 22 MB | working utility |
-| [`xml-editor`](#2-xml-editor) | VB.NET / WinForms | `net9.0-windows7.0` | 122 | 3.3 MB | complete legacy editor |
-| [`JA_2_1.13_TableData_Editor`](#3-ja_2_113_tabledata_editor) | C# / WinForms | `net5.0-windows` | 50 | 12 MB | early prototype |
+| Project | Kind | Technology | Size | Role |
+|---|---|---|---|---|
+| [`JA 2 1.13 Image viewer`](#1-ja-2-113-image-viewer) | utility | C# / WinForms | 22 MB | STI decoding reference |
+| [`xml-editor`](#2-xml-editor) | legacy editor | VB.NET / WinForms | 3.3 MB | UX and feature reference |
+| [`JA_2_1.13_TableData_Editor`](#3-ja_2_113_tabledata_editor) | prototype | C# / WinForms | 12 MB | metadata schema and DTOs |
+| [`FreeImage`](#4-freeimage) | native library | C/C++ 3.18.0 | 42 MB | PNG and other raster formats |
+| [`Ja 2 1.13 source`](#5-ja-2-113-source) | engine source | C++ / CMake | 5.4 GB | last-resort field semantics (ask first) |
+| [`JA 2 1.13 v4`](#6-ja-2-113-v4) | game data | JA2 1.13 install | 3.7 GB | primary data set |
+| [`JA 2 1.13 v5`](#7-ja-2-113-v5) | game data | JA2 1.13 install | 3.6 GB | second data set |
 
 ---
 
@@ -931,7 +935,334 @@ The `xml_table` value maps to a file path by replacing dots with backslashes and
 
 ---
 
-## 4. Cross-project comparison
+## 4. FreeImage
+
+**Path:** `References/FreeImage/`
+
+A fork of The FreeImage Project, version **3.18.0**. It is a native image-decoding library used as a reference for reading PNG (the format used by JA2 1.13 alongside STI) and other raster formats. It does **not** support STI.
+
+### 4.1 Summary
+
+- **Type:** C/C++ native library with MSVC 2013/2017 solutions, CMake, and platform makefiles.
+- **Origin:** `https://github.com/jpvanoosten/FreeImage` — the README calls it "yet another fork"; 11 commits, latest 2022-06-13 (CMake support).
+- **Size:** 42 MB, 1,310 files; 30 MB of that is `Source/`.
+- **License:** FreeImage Public License / GPL; see `LICENSE`, `license-fi.txt`, `license-gplv2.txt`, `license-gplv3.txt`.
+- **Format plugins (32):** BMP, CUT, DDS, EXR, G3, GIF, HDR, ICO, IFF, J2K, JNG, JP2, JPEG, JXR, KOALA, MNG, PCD, PCX, PFM, PICT, PNG, PNM, PSD, RAS, RAW, SGI, TARGA, TIFF, WBMP, WebP, XBM, XPM.
+- **Bundled codecs:** LibPNG, ZLib, LibJPEG, LibTIFF4, LibWebP, OpenEXR, LibJXR, LibOpenJPEG, LibRawLite.
+- **Not related to the older `FreeImage` folder inside `JA 2 1.13 Image viewer`** — that one is a vendored binary distribution; this is a source fork.
+
+### 4.2 What to reuse
+
+- Native decoding for PNG, TIFF, JPEG, and other formats if the editor must read files beyond STI.
+- `Wrapper/FreeImage.NET/cs/Library` — C# P/Invoke wrapper (67 files) with `FreeImageBitmap`, `FreeImageEngine`, plugin management, and metadata classes.
+- `TestAPI` — format tests and sample images (`sample.png`, `exif.jpg`, `exif.jxr`).
+- **Caveat:** the .NET wrapper targets the old .NET Framework. For .NET 10, retarget it or write a minimal P/Invoke layer around the native DLL. WPF already decodes PNG through `BitmapDecoder`, so FreeImage is optional and should not be added to the backend without a concrete need.
+
+### 4.3 Structure
+
+```
+FreeImage/
+├── Source/                              (1,006 files, 30 MB)
+│   ├── FreeImage/                       (73: core API, plugin registry, format plugins)
+│   ├── FreeImageToolkit/                (14: bitmap tools, quantization, tone mapping)
+│   ├── FreeImageLib/                    (4: static library project)
+│   ├── Metadata/                        (9: EXIF/IPTC/XMP models)
+│   ├── LibPNG/                          (41)
+│   ├── ZLib/                            (40)
+│   ├── LibJPEG/                         (98)
+│   ├── LibTIFF4/                        (76)
+│   ├── LibWebP/                         (169)
+│   ├── OpenEXR/                         (318)
+│   ├── LibJXR/                          (49)
+│   ├── LibOpenJPEG/                     (66)
+│   ├── LibRawLite/                      (40)
+│   └── FreeImage.h, FreeImageIO.h, Plugin.h, CMakeLists.txt
+├── Wrapper/                             (228)
+│   ├── FreeImage.NET/                   (167: C# wrapper, C++/CLI IO plugin, samples)
+│   ├── FreeImagePlus/                   (35: C++ wrapper)
+│   ├── Delphi/                          (24)
+│   └── VB6/                             (2)
+├── TestAPI/                             (22: tests, sample.png, exif images)
+├── Examples/                            (20)
+├── FreeImage.2013.sln / .vcxproj
+├── FreeImage.2017.sln / .vcxproj
+├── CMakeLists.txt, Makefile*, clean scripts
+└── README.md, LICENSE, license-*.txt, Whatsnew.txt
+```
+
+---
+
+## 5. Ja 2 1.13 source
+
+**Path:** `References/Ja 2 1.13 source/`
+
+The C++ source of the JA2 1.13 engine, together with the current game data shipped in the same repository. It is the ultimate authority on how every table field is consumed, but it is huge and expensive to search.
+
+> **Exploration policy:** always ask the user for permission before searching, reading, or analyzing this project. Permission is granted per task and does not carry over to later tasks. The description below was prepared with a one-time permission and does not imply ongoing access.
+
+### 5.1 Summary
+
+- **Type:** C++ engine, CMake build (`CMakeLists.txt`, `CMakePresets.json`), MSVC-oriented. XML is parsed with Expat.
+- **Size:** 5.4 GB, 123,377 files; the vast majority is bundled game data, not source code.
+- **Code volume:** roughly 560 `.cpp`/`.c` files and 620 headers across the engine modules.
+- **Git:** latest commit 2026-10-18 (`Cache lua scripts' evaluation`).
+- **XML loading:** 100 `XML_*` files. `Tactical/XML.h` defines `TABLEDATA_DIRECTORY "TableData\"` (line 58) and the element taxonomy; loaders live in `Tactical/XML_*.cpp`, `Strategic/XML_*.cpp`, `Laptop/XML_*.cpp`, `Ja2/XML_*.cpp`, and `TileEngine/XML_*.cpp`.
+- **Core data code:** `Tactical/Items.cpp` (16,215 lines), `Tactical/Weapons.cpp` (12,221), `Tactical/EnemyItemDrops.cpp`, `Laptop/BaseTable.cpp` (948).
+- **Bundled data:** `gamedir/Base/TableData` (277 XML files) is the data bundled with the engine source; `gamedir-languages` contains 622 localized XML files for seven languages. The repository also bundles `XML Editor.exe` and `XMLEditorInit.xml`, the legacy editor this project replaces.
+
+### 5.2 What to consult
+
+- Exact meaning, range, and default behavior of a field that is not documented anywhere else.
+- How the engine treats a missing element versus an element with a default value.
+- Which fields are read by which system (items, weapons, strategic map, laptop screens, etc.).
+- How the newest schema differs from v4/v5 when implementing version-independent handling.
+
+Do not use this project as a source of DTOs or UI ideas; it is a last resort for semantics only.
+
+### 5.3 Structure
+
+```
+Ja 2 1.13 source/
+├── Tactical/              (261 files; items, weapons, soldiers, XML_* table loaders)
+├── Laptop/                (190; laptop UI, BaseTable, XML_* loaders)
+├── Strategic/             (119; campaign, XML_* loaders)
+├── Multiplayer/           (138)
+├── Ja2/                   (77; init, screens, XML_* loaders)
+├── Utils/                 (76; XMLAccess, XMLProperties, XMLWriter, XML_Parser.h)
+├── TileEngine/            (79; tilesets, explosion data, XML_* loaders)
+├── sgp/                   (88; engine core, FileMan, compression)
+├── Editor/                (53; map editor, XML_ActionItems.cpp)
+├── i18n/                  (37)
+├── ModularizedTacticalAI/ (27)
+├── TacticalAI/            (21)
+├── lua/                   (16)
+├── export/                (29; standalone XML writer)
+├── ext/                   (336; bundled Expat, Lua 5.1.5, other third-party code)
+├── gamedir/               (92,913; full game directory; Base/TableData has 277 XML)
+├── gamedir-languages/     (28,884; 622 localized XML across seven languages)
+├── cmake/ (6), crash-telemetry/ (7), tools/ (2), wine/ (3)
+└── CMakeLists.txt, CMakePresets.json, README.md, .editorconfig
+```
+
+---
+
+## 6. JA 2 1.13 v4
+
+**Path:** `References/JA 2 1.13 v4/`
+
+A complete GOG-based Jagged Alliance 2 installation with the 1.13 mod, Russian-localized. This is the primary test data set for the editor.
+
+### 6.1 Summary
+
+- **Size:** 3.7 GB. The game root contains `ja2.exe`, `INI Editor.exe`, `BackEnd.dll`, `Data`, `Data-1.13`, `Data-UB`, `Docs`, `Profiles`, graphics wrappers, and configuration files.
+- **Editor target:** `Data-1.13/TableData` — 264 files (263 XML + one readme), 12 MB.
+- **Lookup tables:** 23, the same set as v5.
+- **Localization:** Russian build — 25 `Russian.*` overlay files. v5 is the English base build with no overlays; this is intentional.
+- **Images:** `Data-1.13/BigItems` (1,568 STI), `Data-1.13/Interface` (25 files), `Data-1.13/tilesets/0` (4 STI).
+- **XML encoding:** 162 of 263 files carry a UTF-8 BOM; 91 files use CRLF and 172 use LF-only line endings.
+
+### 6.2 TableData layout
+
+| Location | Files | Contents |
+|---|---:|---|
+| `TableData/` (root) | 37 XML | availability, backgrounds, difficulty, disease, names, ranks, profiles, vehicles, spread patterns, etc. |
+| `Army/` | 4 | army composition, garrison groups, patrol groups, uniform colors |
+| `BriefingRoom/` | 1 | briefing room data |
+| `Email/` | 4 | 2 base + 2 Russian email tables |
+| `Inventory/` | 28 | 21 active tables, 6 backups under `Backup original Gun Choices/`, 1 Russian |
+| `Items/` | 33 | 28 base + 5 Russian |
+| `Layout/` | 1 | main menu layout |
+| `Lookup/` | 23 | ID → name lookup tables |
+| `Map/` | 42 | 36 XML (16 root + 20 `ExtraItems/`) + 5 Russian + 1 readme |
+| `MapAction/` | 1 | map action definitions |
+| `Multiplayer/` | 1 | multiplayer table |
+| `NPCInventory/` | 81 | 60 `AdditionalDealer_*`, 20 named dealer inventories, `Merchants.xml` |
+| `Profiles/` | 6 | merc profile tables |
+| `Sounds/` | 2 | `Sounds.xml`, `BurstSounds.xml` |
+| **Total** | **264** | 263 XML + 1 readme |
+
+Root XML files (v4 also has a `Russian.*` counterpart for 12 of them):
+
+```
+AIMAvailability.xml, Backgrounds.xml, CampaignStatsEvents.xml, CivGroupNames.xml,
+DifficultySettings.xml, Disease.xml, EnemyNames.xml, EnemyRank.xml, FaceGear.xml,
+HiddenNames.xml, History.xml, IMPPortraits.xml, IMPVoices.xml, LoadScreenHints.xml,
+MercAvailability.xml, MercOpinions.xml, MercProfiles.xml, MercQuote.xml,
+MilitiaIndividual.xml, OldAIMArchive.xml, RPCFacesSmall.xml, RandomStats.xml,
+SpreadPatterns.xml, SquadNames.xml, Vehicles.xml
+```
+
+`Items/` (28 base files; v4 adds `Russian.AmmoStrings.xml`, `Russian.AttachmentSlots.xml`, `Russian.Items.xml`, `Russian.PocketPopups.xml`, `Russian.Pockets.xml`):
+
+```
+AmmoStrings.xml, AmmoTypes.xml, Armours.xml, AttachmentComboMerges.xml,
+AttachmentInfo.xml, AttachmentSlots.xml, Attachments.xml, Clothes.xml,
+CompatibleFaceItems.xml, Drugs.xml, ExplosionData.xml, Explosives.xml, Food.xml,
+FoodOpinion.xml, IncompatibleAttachments.xml, Item_Transformations.xml, Items.xml,
+Launchables.xml, LoadBearingEquipment.xml, Magazines.xml, Merges.xml,
+PocketPopups.xml, Pockets.xml, RandomItem.xml, StructureConstruct.xml,
+StructureDeconstruct.xml, StructureMove.xml, Weapons.xml
+```
+
+`Lookup/` (23 files, identical set in v5):
+
+```
+AmmoChoices.xml, AmmoFlag.xml, ArmourClass.xml, AttachmentClass.xml,
+AttachmentPoint.xml, AttachmentSystem.xml, Cursor.xml, DrugType.xml,
+ExplosionSize.xml, ExplosionType.xml, ItemClass.xml, ItemFlag.xml, LBEClass.xml,
+MagazineType.xml, MergeType.xml, NasAttachmentClass.xml, NasLayoutClass.xml,
+PocketSize.xml, Separability.xml, Silhouette.xml, SkillCheckType.xml,
+WeaponClass.xml, WeaponType.xml
+```
+
+### 6.3 Images
+
+| Folder | Files | Notes |
+|---|---:|---|
+| `BigItems/` | 1,568 STI | `GUN###.sti` and `p#item###.sti` sprites. Case and index width are inconsistent (`GUN00.STI`, `Gun375.sti`, `P1ITEM100.STI`), so lookup must be case-insensitive and support 1–3 digit indices. |
+| `Interface/` | 25 | 4 uppercase STI, 8 lowercase STI, 13 PNG. Includes `MDGUNS.sti` and `MDP1ITEMS`–`MDP3ITEMS`; the PNGs are UI backgrounds and posters. |
+| `tilesets/0/` | 4 STI | `smguns.sti`, `SMP1ITEMS.STI`–`SMP3ITEMS.STI` — small item images. |
+| `tilesets/` (all) | 1,204 | Map tilesets; only `tilesets/0` is used for item images. |
+
+### 6.4 XML shape
+
+- `Items/Items.xml`: 1,776 records, 233 child elements in the first record, 224 distinct tag names, and 640 distinct field sets across records. **Records are sparse** — most rows contain only a small subset of the union of fields.
+- `Items/Weapons.xml`: 389 records, 48 distinct tags in the union, 70 distinct field sets.
+- `Items/Attachments.xml`: 6,079 records; 6,077 have 3 fields and 2 have 4 fields.
+- Floating-point values are stored as text (`1.3`, `17.5`, `27.4`, `-0.2`, `16.56`), and some leaf elements are empty. Both forms must round-trip unchanged.
+
+### 6.5 Localization files
+
+v4 is the **Russian** build and v5 is the **English base** build. The absence of `Russian.*` files in v5 is intentional, not missing data.
+
+Localized data is stored as overlay files named `<Language>.<BaseFile>.xml` next to the base file. The legacy editor detects them by the language prefix in `BackEnd/Localization.vb` (German, Russian, Polish, Italian, French, Chinese, Taiwanese, Dutch); the reference data uses only `Russian.`.
+
+The 25 overlays in v4:
+
+```
+Root:       Russian.Backgrounds.xml, Russian.CampaignStatsEvents.xml,
+            Russian.CivGroupNames.xml, Russian.DifficultySettings.xml,
+            Russian.Disease.xml, Russian.EnemyNames.xml, Russian.EnemyRank.xml,
+            Russian.History.xml, Russian.LoadScreenHints.xml,
+            Russian.MercProfiles.xml, Russian.OldAIMArchive.xml, Russian.Vehicles.xml
+Email/:     Russian.EmailMercAvailable.xml, Russian.EmailMercLevelUp.xml
+Inventory/: Russian.MercStartingGear.xml
+Items/:     Russian.AmmoStrings.xml, Russian.AttachmentSlots.xml,
+            Russian.Items.xml, Russian.PocketPopups.xml, Russian.Pockets.xml
+Map/:       Russian.Cities.xml, Russian.FacilityTypes.xml, Russian.Minerals.xml,
+            Russian.SectorNames.xml, Russian.ShippingDestinations.xml
+```
+
+An overlay is not a full table: it contains the record key and the fields it overrides.
+
+| Overlay | Key | Fields in the overlay | Coverage vs base |
+|---|---|---|---|
+| `Items/Russian.Items.xml` | `uiIndex` | `szItemName`, `szLongItemName`, `szItemDesc`, `szBRName`, `szBRDesc` | 1,742 / 1,776 (IDs 0–1741) |
+| `Items/Russian.AmmoStrings.xml` | `uiIndex` | `AmmoCaliber`, `BRCaliber` | 50 / 51 |
+| `Items/Russian.AttachmentSlots.xml` | `uiSlotIndex` | `szSlotName` | 62 / 63 |
+| `Items/Russian.Pockets.xml` | `pIndex` | `pName` | 61 / 62 |
+| `Items/Russian.PocketPopups.xml` | `pIndex` | `pName`; also `popup`/`generator` structural nodes | 20 / 20 |
+| `Inventory/Russian.MercStartingGear.xml` | `mIndex` | `mName`, `GEARKIT/mGearKitName` | 255 / 255 |
+| `Russian.Backgrounds.xml` | `uiIndex` | `szName`, `szShortName`, `szDescription` | 316 / 357 (IDs 0–315) |
+| `Russian.Disease.xml` | `uiIndex` | `szName`, `szFatName`, `szDescription` | 18 / 20 |
+| `Russian.EnemyRank.xml` | `uiIndex` | `szRank` | 9 / 10 |
+| `Russian.History.xml` | `uiIndex` | `sHistory` | 80 / 81 |
+| `Russian.LoadScreenHints.xml` | `uiIndex` | `szName`, `lore` | 133 / 159 |
+| `Russian.OldAIMArchive.xml` | `uiIndex` | `NickName`, `Name`, `Bio` | 25 / 28 |
+| `Map/Russian.FacilityTypes.xml` | `ubIndex` | `szFacilityName`, `szFacilityShortName`, `ASSIGNMENT` | 22 / 25 |
+| `Map/Russian.Cities.xml` | `COUNTRY`; `CITYLIST/CITY` by `uiIndex` | `countryName`, `countryNoun`, `townName` | nested |
+| `Map/Russian.SectorNames.xml` | `SectorGrid` | `szUnexploredName`, `szDetailedUnexploredName`, `szExploredName`, `szDetailedExploredName` | 256 / 256 |
+| `Map/Russian.Minerals.xml` | `uiIndex` | `sNameType`, `sMineral` | 2 / 2 |
+| `Map/Russian.ShippingDestinations.xml` | `uiIndex` | `name` | 17 / 17 |
+| `Email/Russian.EmailMercAvailable.xml` | `uiIndex` | `Subject`, `Message` | 255 / 255 |
+| `Email/Russian.EmailMercLevelUp.xml` | `uiIndex` | `Subject`, `Message` | 255 / 255 |
+| `Russian.CampaignStatsEvents.xml` | `uiIndex` | `szText0`–`szText9` | 16 / 16 |
+| `Russian.CivGroupNames.xml` | `uiIndex` | `szGroup` | 255 / 255 |
+| `Russian.DifficultySettings.xml` | `uiIndex` | `Name`, `ConfirmText` | 5 / 5 |
+| `Russian.EnemyNames.xml` | `uiIndex` | `szGroup` (one record also carries `Enabled` and `Sector`) | 256 / 256 |
+| `Russian.MercProfiles.xml` | `uiIndex` | `zName`, `zNickname` | 255 / 255 |
+| `Russian.Vehicles.xml` | `uiIndex` | `Name`, `LongName`, `ShortName` | 255 / 255 |
+
+Nested structures need their own merge keys:
+
+- `CITY_INFO/COUNTRY` is a singleton; `CITY_INFO/CITYLIST/CITY` is keyed by `uiIndex`, translated field `townName`.
+- `FACILITYTYPES/FACILITYTYPE` is keyed by `ubIndex`; its `ASSIGNMENT` children are keyed by `ubAssignmentType`, translated field `szTooltipText`.
+- `MERCGEARLIST/MERCGEAR` is keyed by `mIndex`; `GEARKIT` entries are aligned by position (usually five kits, but some overlays contain four); only `mGearKitName` is in the overlay.
+
+Notes:
+
+- Overlays may contain non-text structural fields (`Enabled`, `Sector`, `popup`, `generator`); they must be preserved.
+- Coverage is incomplete: 34 items, 41 backgrounds, 26 load-screen hints, and several other records have no translation. The editor must fall back to the base value and mark them as untranslated.
+- Overlay encoding is mixed: 4 of 25 files have a BOM, 16 use CRLF and 9 use LF.
+- v5 has no language overlays. `Email/EmailSenderNameList.xml` is a regular base table, not a localization file.
+
+---
+
+## 7. JA 2 1.13 v5
+
+**Path:** `References/JA 2 1.13 v5/`
+
+Another complete Jagged Alliance 2 1.13 installation with a different data set. The file layout matches v4; the data and formatting do not.
+
+### 7.1 Summary
+
+- **Size:** 3.6 GB, same top-level game layout as v4.
+- **Editor target:** `Data-1.13/TableData` — 240 files (239 XML + one readme), 10 MB.
+- **Lookup tables:** 23, identical names to v4.
+- **Localization:** English base build — no language overlays. This is intentional; `Email/EmailSenderNameList.xml` is a normal base table, not a localization file.
+- **Images:** `BigItems` 1,567 STI (v4 additionally has `GUN375.sti`), `Interface` 25 identical files, `tilesets/0` 4 identical STI.
+- **XML encoding:** 159 of 239 files carry a UTF-8 BOM; all 239 files use CRLF.
+
+### 7.2 TableData layout
+
+| Location | Files | Difference from v4 |
+|---|---:|---|
+| `TableData/` (root) | 25 XML | v4 has 12 additional `Russian.*` files |
+| `Army/` | 4 | identical set |
+| `BriefingRoom/` | 1 | identical |
+| `Email/` | 3 | v4 has 4 (2 base + 2 Russian); v5 adds `EmailSenderNameList.xml` |
+| `Inventory/` | 27 | v4 adds `Russian.MercStartingGear.xml` |
+| `Items/` | 28 | v4 adds 5 `Russian.*` files |
+| `Layout/` | 1 | identical |
+| `Lookup/` | 23 | identical names |
+| `Map/` | 37 | v4 adds 5 `Russian.*` files |
+| `MapAction/` | 1 | identical |
+| `Multiplayer/` | 1 | identical |
+| `NPCInventory/` | 81 | identical names |
+| `Profiles/` | 6 | identical |
+| `Sounds/` | 2 | identical |
+| **Total** | **240** | 239 XML + 1 readme |
+
+### 7.3 Comparison with v4
+
+Of the 239 XML files present in both versions:
+
+- **71 are byte-identical, 168 differ.**
+- **All 239 have identical tag sets** — the column schema is the same.
+- Record-count differences are limited to:
+  - `Items/Items.xml`: 1,776 → 1,775
+  - `Items/Weapons.xml`: 389 → 388
+  - `Items/Attachments.xml`: 6,079 → 6,023
+- Formatting differs: v5 normalizes all files to CRLF; v4 mixes CRLF and LF.
+- **v5 `Lookup/AttachmentPoint.xml` is malformed**: it contains an extra `</AttachmentPoint>` at line 31. A strict parser rejects the file; v4's copy is valid. The editor must report this without silently rewriting the file.
+
+### 7.4 Schema differences in the engine source data
+
+The data bundled with `References/Ja 2 1.13 source` is a third data set: 277 XML files in `gamedir/Base/TableData`, 213 shared with v5. Of those shared files, **17 have different tag sets** (compared with v5), for example:
+
+- `Items/Weapons.xml`: v5 has `szNWSSSound`, source does not.
+- `Items/LoadBearingEquipment.xml`: v5 has `lbeCombo`, `lbeAvailableVolume`, and related fields.
+- `Items/Pockets.xml`: v5 has numbered `ItemCapacityPerSize*` fields.
+- `Items/Items.xml`: source has `Detonator` and `RemoteDetonator`, v5 does not.
+- `MercProfiles.xml`: source has `bEvolution`; v5 has `GrowthModifier*` fields instead.
+
+The source `Items.xml` has only 347 records (base data), while the modded v4/v5 have about 1,775 — the game installs are heavily modded, and the three data sets disagree on field sets. Field semantics and default values must come from the engine, not from record counts or from any single data set.
+
+---
+
+## 8. Cross-project comparison
+
+### 8.1 Editor implementations
 
 | Concern | `xml-editor` | `JA 2 1.13 Image viewer` | `JA_2_1.13_TableData_Editor` | Target (XML Editor Reloaded) |
 |---|---|---|---|---|
@@ -943,13 +1274,29 @@ The `xml_table` value maps to a file path by replacing dots with backslashes and
 | Item images | Big/medium/small catalogs | Single-file viewer | — | Same catalogs, cached, async |
 | Maturity | Complete legacy editor | Working utility | Early prototype | Planned |
 
+### 8.2 Data sets
+
+| Property | v4 | v5 | Engine source `gamedir/Base/TableData` |
+|---|---|---|---|
+| TableData files | 264 (263 XML) | 240 (239 XML) | 277 XML |
+| Items records | 1,776 | 1,775 | 347 |
+| Lookup tables | 23 | 23 | 23 |
+| Localized XML | 25 Russian overlay files | none (English base) | 622 files across 7 language dirs |
+| BOM / line endings | 162 BOM; 91 CRLF, 172 LF | 159 BOM; all CRLF | not measured |
+| Schema vs v5 | identical tag sets | — | 17 shared files differ |
+| Notable issue | — | malformed `Lookup/AttachmentPoint.xml` | newest fields; base item set |
+
+The key conclusion for the editor: **v4 and v5 differ in data and formatting, not in column schema**, but the engine source data uses a different field set. The editor must preserve whatever fields a file contains and must never assume a fixed column list. Localization is a per-file overlay, not a separate data set: v4 is the English base plus 25 Russian overlays, v5 is the English base alone. The editor must merge overlays by key and write translations back to the overlay only.
+
 ---
 
-## 5. Notes for future reference projects
+## 9. Notes for future reference projects
 
 When adding a new reference project:
 
 1. Place it under `References/<Project Name>/` without modifying its contents.
-2. Add a section to this document with: purpose, type/framework, dependencies, what to reuse, caveats, and the complete tree.
-3. Add the project to the summary table and to the comparison matrix if it covers a new concern.
-4. Never add references to `References/` from projects under `xml-editor-reloaded/`; copy the needed algorithms or sample data instead.
+2. Add a section with: purpose, type/framework, dependencies, what to reuse, caveats, and a tree. For multi-gigabyte references, summarize bulk assets and expand only the editor-relevant folders.
+3. Add the project to the summary table and to the comparison tables if it covers a new concern.
+4. If it contains a huge or resource-heavy source tree, state the permission rule explicitly (as done for `Ja 2 1.13 source`).
+5. If it contains game data, record the version, file counts, record counts, XML tag-set differences, BOM/line-ending characteristics, and any malformed files.
+6. Never add references to `References/` from projects under `xml-editor-reloaded/`; copy the needed algorithms, metadata, or sample data instead.
