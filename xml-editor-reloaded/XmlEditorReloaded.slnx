@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/XmlEditorReloaded.Core/XmlEditorReloaded.Core.csproj" />
+    <Project Path="src/XmlEditorReloaded.Data/XmlEditorReloaded.Data.csproj" />
+    <Project Path="src/XmlEditorReloaded.Imaging/XmlEditorReloaded.Imaging.csproj" />
+    <Project Path="src/XmlEditorReloaded.Xml/XmlEditorReloaded.Xml.csproj" />
+    <Project Path="src/XmlEditorReloaded.App/XmlEditorReloaded.App.csproj" />
+  </Folder>
+</Solution>
