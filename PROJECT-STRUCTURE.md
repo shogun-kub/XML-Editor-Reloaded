@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** design stage. The `xml-editor-reloaded/` folder is currently empty; this document defines the intended solution layout and the scope of the application. It must be updated when the solution is scaffolded or its structure changes.
+> **Status:** scaffolded. The `xml-editor-reloaded/` solution (`XmlEditorReloaded.slnx`) contains empty backend libraries and a WPF shell stub; tests are not created yet. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -45,7 +45,7 @@ Rules:
 
 ```
 xml-editor-reloaded/
-├── XmlEditorReloaded.sln
+├── XmlEditorReloaded.slnx             # Solution (XML-based .slnx format)
 ├── Directory.Build.props             # Shared build settings (nullable, warnings, version)
 ├── .editorconfig                     # C# formatting and analyzer rules
 ├── README.md                         # Short project overview and build instructions
@@ -376,7 +376,7 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 - **Language:** source code, identifiers, and XML documentation in English. UI strings may be localized later; Russian is the primary communication language for the team.
 - **Encoding:** UTF-8 without BOM for all source and documentation files.
 - **Documentation:** public APIs carry XML documentation; complex algorithms (STI, ETRLE, metadata mapping) carry explanatory comments.
-- **Build:** `dotnet build xml-editor-reloaded/XmlEditorReloaded.sln` must succeed before a task is considered complete.
+- **Build:** `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx` must succeed before a task is considered complete.
 - **Git:** `References/`, `bin/`, `obj/`, and IDE caches are ignored. Commits and pushes only on explicit request.
 
 ## 10. Roadmap
