@@ -20,6 +20,29 @@ public partial class App : Application
 {
     private ServiceProvider? _serviceProvider;
 
+    /// <summary>
+    /// Registers the application services, view models, and shell window.
+    /// </summary>
+    /// <param name="services">Service collection to configure.</param>
+    /// <param name="databasePath">Absolute path of the metadata SQLite database.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="databasePath"/> is empty.</exception>
+    public static void ConfigureServices(IServiceCollection services, string databasePath)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
+
+        services.AddXmlEditorCore();
+        services.AddXmlEditorData(databasePath);
+        services.AddXmlEditorXml();
+        services.AddSingleton<IDialogService, WpfDialogService>();
+        services.AddSingleton<IItemImageService, WpfItemImageService>();
+        services.AddSingleton<IImageViewerService, WpfImageViewerService>();
+        services.AddSingleton<ImageViewerViewModel>();
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<MainWindow>();
+    }
+
     /// <inheritdoc />
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -33,12 +56,7 @@ public partial class App : Application
             var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
 
             var services = new ServiceCollection();
-            services.AddXmlEditorCore();
-            services.AddXmlEditorData(databasePath);
-            services.AddXmlEditorXml();
-            services.AddSingleton<IDialogService, WpfDialogService>();
-            services.AddSingleton<MainViewModel>();
-            services.AddSingleton<MainWindow>();
+            ConfigureServices(services, databasePath);
             _serviceProvider = services.BuildServiceProvider();
 
             var migration = await _serviceProvider

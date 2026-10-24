@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0–M10 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. M10 добавил perf-гейты, контракт отмены, culture-тесты и устойчивость shell. Дальше — M11 (schema discovery, table workspace, lossless structural patcher), M12 (grid UI), M13 (item form + STI), M14 (локализация), M15 (lookup/flag/bulk).
+**Текущее состояние:** M0–M10 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. M10 добавил perf-гейты, контракт отмены, culture-тесты и устойчивость shell. Дополнительно сделан read-only STI-браузер (big/medium/small по предмету или графическому типу/индексу). Дальше — M11 (schema discovery, table workspace, lossless structural patcher), M12 (grid UI), M13 (item form + STI), M14 (локализация), M15 (lookup/flag/bulk).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -98,6 +98,10 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 - UI: generation-счётчик не даёт старой отменённой операции сбросить `IsBusy`/`StatusText` новой; неожиданные исключения каталога/загрузки выводятся в статус. Добавлены тесты на неверный каталог, unmapped-таблицу и падающий каталог.
 - Build 0 warnings (`-warnaserror`), 135 тестов зелёные, корпуса v4 (263 файла) и v5 (239 + 1 malformed) без перезаписи.
 - Ограничение: `Columns` в метабазе по-прежнему пуста; типизированные редакторы появятся с discovery в M11.
+- Quick win: STI-браузер (см. ниже), после него в решении 148 тестов.
+
+### Quick win — STI-браузер — **выполнен** (после M10)
+Отдельное окно «Изображения предметов»: список `Items.Items` (`uiIndex`, `szItemName`), автовыбор первого предмета с `ubGraphicNum`, ручной ввод `ubGraphicType`/`ubGraphicNum`, три панели big/medium/small с шахматным фоном, масштаб 1–8× и пиксельным фильтром, previous/next, per-panel размеры или код ошибки. Слой App: `DataSetPaths` (TableData/Data-1.13), `WpfItemImageService` (кэш `ItemImageCatalog` по каталогу + RGBA→BGRA `BitmapSource`), `ImageViewerViewModel`/`ImageViewerWindow`, кнопка в главном окне, RESX en/ru. Композиция вынесена в `App.ConfigureServices` и покрыта тестом. Env-gated тест на реальном наборе проверяет список предметов и декодирование `P2ITEM35.STI`.
 
 ### M11 — Schema discovery, table workspace, lossless structural patcher (~2–3 дн)
 - `TableSchema`/`TableSchemaBuilder`: объединение полей всех записей в порядке первого появления, presence count, вывод типа по значениям (Integer/Decimal/Boolean/String), признаки key/list/dict/translatable; курируемые overrides из `Columns` применяются поверх.
@@ -154,5 +158,5 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 2. `dotnet test` — все юнит-тесты зелёные.
 3. M3/M10/M11+: `XER_CORPUS_DIR="…/References/JA 2 1.13 v4/Data-1.13/TableData" dotnet test` (и v5) — corpus harness проходит на копии; в `References/` нет изменений (проверять отсутствием новых `bin/`/`obj/`).
 4. M10+: perf-гейты — `XER_CORPUS_DIR="…v5/Data-1.13/TableData" dotnet test --filter "Category=Performance"`; порог 2 с, фактические значения фиксируются в этом файле.
-5. M9: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Items.Items` → 1775 записей; правка поля в тестовой копии → сохранение меняет только это поле.
+5. M9/M10: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Items.Items` → 1775 записей; правка поля в тестовой копии → сохранение меняет только это поле. «Изображения предметов» → предмет 311 (String) или тип 2 / индекс 35 → три панели; отсутствующие размеры показывают код ошибки.
 6. `find References -type d \( -name bin -o -name obj \)` — пусто.

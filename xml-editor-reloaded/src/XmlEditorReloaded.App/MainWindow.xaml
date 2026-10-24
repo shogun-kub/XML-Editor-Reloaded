@@ -27,6 +27,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
                        VerticalAlignment="Center"
@@ -46,6 +47,11 @@
                     Padding="12,4"
                     Content="{Binding RefreshText}"
                     Command="{Binding RefreshCommand}" />
+            <Button Grid.Column="4"
+                    Margin="8,0,0,0"
+                    Padding="12,4"
+                    Content="{Binding ImagesText}"
+                    Command="{Binding OpenImageViewerCommand}" />
         </Grid>
 
         <Grid Grid.Row="1">

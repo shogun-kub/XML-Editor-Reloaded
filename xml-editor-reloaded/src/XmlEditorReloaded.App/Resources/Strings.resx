@@ -87,4 +87,64 @@
   <data name="TableSelected" xml:space="preserve">
     <value>Table: {0}</value>
   </data>
+  <data name="ImageViewerTitle" xml:space="preserve">
+    <value>Item images</value>
+  </data>
+  <data name="ImageViewerButton" xml:space="preserve">
+    <value>Item images...</value>
+  </data>
+  <data name="ImageItemLabel" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="ImageTypeLabel" xml:space="preserve">
+    <value>Graphic type</value>
+  </data>
+  <data name="ImageIndexLabel" xml:space="preserve">
+    <value>Graphic index</value>
+  </data>
+  <data name="ImageRefreshText" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="ImagePreviousText" xml:space="preserve">
+    <value>◀</value>
+  </data>
+  <data name="ImageNextText" xml:space="preserve">
+    <value>▶</value>
+  </data>
+  <data name="ImageBigLabel" xml:space="preserve">
+    <value>Big</value>
+  </data>
+  <data name="ImageMediumLabel" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="ImageSmallLabel" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="ImageZoomLabel" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="ImageNoDataDirectory" xml:space="preserve">
+    <value>Choose a data directory in the main window first.</value>
+  </data>
+  <data name="ImageItemsUnavailable" xml:space="preserve">
+    <value>Items.Items is not available in the selected data set.</value>
+  </data>
+  <data name="ImageItemWithoutGraphic" xml:space="preserve">
+    <value>The selected item has no ubGraphicNum.</value>
+  </data>
+  <data name="ImageLoadingItems" xml:space="preserve">
+    <value>Loading the item list...</value>
+  </data>
+  <data name="ImageLoading" xml:space="preserve">
+    <value>Loading images...</value>
+  </data>
+  <data name="ImageLoaded" xml:space="preserve">
+    <value>Type {0}, index {1}.</value>
+  </data>
+  <data name="ImageNoSelection" xml:space="preserve">
+    <value>Select an item or enter a graphic type and index.</value>
+  </data>
+  <data name="ImageNotAvailableFormat" xml:space="preserve">
+    <value>not available ({0})</value>
+  </data>
 </root>

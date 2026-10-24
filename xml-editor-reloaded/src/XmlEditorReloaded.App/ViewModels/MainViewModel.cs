@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
@@ -20,6 +19,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ITableRepository _repository;
     private readonly ISettingsStore _settingsStore;
     private readonly IDialogService _dialogService;
+    private readonly IImageViewerService _imageViewer;
     private AppSettings _settings = AppSettings.Default;
     private CancellationTokenSource? _operationCts;
     private int _operationGeneration;
@@ -49,25 +49,30 @@ public partial class MainViewModel : ObservableObject
     /// <param name="repository">Table repository.</param>
     /// <param name="settingsStore">Settings store.</param>
     /// <param name="dialogService">Dialog service.</param>
+    /// <param name="imageViewer">Item image viewer service.</param>
     public MainViewModel(
         ITableCatalog catalog,
         ITableRepository repository,
         ISettingsStore settingsStore,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IImageViewerService imageViewer)
     {
         ArgumentNullException.ThrowIfNull(catalog);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(settingsStore);
         ArgumentNullException.ThrowIfNull(dialogService);
+        ArgumentNullException.ThrowIfNull(imageViewer);
 
         _catalog = catalog;
         _repository = repository;
         _settingsStore = settingsStore;
         _dialogService = dialogService;
+        _imageViewer = imageViewer;
 
         Title = Strings.Get("AppTitle");
         BrowseText = Strings.Get("BrowseText");
         RefreshText = Strings.Get("RefreshText");
+        ImagesText = Strings.Get("ImageViewerButton");
         DataDirectoryLabel = Strings.Get("DataDirectoryLabel");
         TablesLabel = Strings.Get("TablesLabel");
         DetailsLabel = Strings.Get("DetailsLabel");
@@ -93,6 +98,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the refresh button text.
     /// </summary>
     public string RefreshText { get; }
+
+    /// <summary>
+    /// Gets the item image viewer button text.
+    /// </summary>
+    public string ImagesText { get; }
 
     /// <summary>
     /// Gets the data directory label.
@@ -183,9 +193,12 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenImageViewer() => _imageViewer.Show(DataDirectory);
+
+    [RelayCommand]
     private async Task RefreshAsync()
     {
-        var tableDataDirectory = ResolveTableDataDirectory(DataDirectory);
+        var tableDataDirectory = DataSetPaths.ResolveTableDataDirectory(DataDirectory);
         if (tableDataDirectory is null)
         {
             Tables.Clear();
@@ -350,28 +363,5 @@ public partial class MainViewModel : ObservableObject
         _operationCts?.Cancel();
         _operationCts?.Dispose();
         _operationCts = null;
-    }
-
-    private static string? ResolveTableDataDirectory(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            return null;
-        }
-
-        if (string.Equals(Path.GetFileName(path), "TableData", StringComparison.OrdinalIgnoreCase)
-            && Directory.Exists(path))
-        {
-            return path;
-        }
-
-        var direct = Path.Combine(path, "TableData");
-        if (Directory.Exists(direct))
-        {
-            return direct;
-        }
-
-        var nested = Path.Combine(path, "Data-1.13", "TableData");
-        return Directory.Exists(nested) ? nested : null;
     }
 }

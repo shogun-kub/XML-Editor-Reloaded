@@ -87,4 +87,64 @@
   <data name="TableSelected" xml:space="preserve">
     <value>Таблица: {0}</value>
   </data>
+  <data name="ImageViewerTitle" xml:space="preserve">
+    <value>Изображения предметов</value>
+  </data>
+  <data name="ImageViewerButton" xml:space="preserve">
+    <value>Изображения предметов...</value>
+  </data>
+  <data name="ImageItemLabel" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="ImageTypeLabel" xml:space="preserve">
+    <value>Тип графики</value>
+  </data>
+  <data name="ImageIndexLabel" xml:space="preserve">
+    <value>Индекс графики</value>
+  </data>
+  <data name="ImageRefreshText" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="ImagePreviousText" xml:space="preserve">
+    <value>◀</value>
+  </data>
+  <data name="ImageNextText" xml:space="preserve">
+    <value>▶</value>
+  </data>
+  <data name="ImageBigLabel" xml:space="preserve">
+    <value>Большое</value>
+  </data>
+  <data name="ImageMediumLabel" xml:space="preserve">
+    <value>Среднее</value>
+  </data>
+  <data name="ImageSmallLabel" xml:space="preserve">
+    <value>Маленькое</value>
+  </data>
+  <data name="ImageZoomLabel" xml:space="preserve">
+    <value>Масштаб</value>
+  </data>
+  <data name="ImageNoDataDirectory" xml:space="preserve">
+    <value>Сначала выберите каталог данных в главном окне.</value>
+  </data>
+  <data name="ImageItemsUnavailable" xml:space="preserve">
+    <value>Таблица Items.Items недоступна в выбранном наборе данных.</value>
+  </data>
+  <data name="ImageItemWithoutGraphic" xml:space="preserve">
+    <value>У выбранного предмета нет ubGraphicNum.</value>
+  </data>
+  <data name="ImageLoadingItems" xml:space="preserve">
+    <value>Загрузка списка предметов...</value>
+  </data>
+  <data name="ImageLoading" xml:space="preserve">
+    <value>Загрузка изображений...</value>
+  </data>
+  <data name="ImageLoaded" xml:space="preserve">
+    <value>Тип {0}, индекс {1}.</value>
+  </data>
+  <data name="ImageNoSelection" xml:space="preserve">
+    <value>Выберите предмет или введите тип и индекс графики.</value>
+  </data>
+  <data name="ImageNotAvailableFormat" xml:space="preserve">
+    <value>недоступно ({0})</value>
+  </data>
 </root>

@@ -48,7 +48,12 @@ public class MainViewModelTests
             new[] { data13 });
         Assert.True((await settingsStore.SaveAsync(settings)).IsSuccess);
 
-        var viewModel = new MainViewModel(catalog, repository, settingsStore, new FakeDialogService());
+        var viewModel = new MainViewModel(
+            catalog,
+            repository,
+            settingsStore,
+            new FakeDialogService(),
+            new FakeImageViewerService());
 
         await viewModel.InitializeAsync();
 
@@ -83,7 +88,8 @@ public class MainViewModelTests
             new FileSystemTableCatalog(),
             new TableRepository(),
             settingsStore,
-            new FakeDialogService());
+            new FakeDialogService(),
+            new FakeImageViewerService());
 
         await viewModel.InitializeAsync();
 
@@ -119,7 +125,8 @@ public class MainViewModelTests
             new FileSystemTableCatalog(),
             new TableRepository(),
             settingsStore,
-            new FakeDialogService());
+            new FakeDialogService(),
+            new FakeImageViewerService());
 
         await viewModel.InitializeAsync();
         var table = Assert.Single(viewModel.Tables);
@@ -147,7 +154,8 @@ public class MainViewModelTests
             new ThrowingCatalog(),
             new TableRepository(),
             new JsonSettingsStore(workspace.PathOf("settings.json")),
-            new FakeDialogService())
+            new FakeDialogService(),
+            new FakeImageViewerService())
         {
             DataDirectory = data13,
         };
@@ -176,6 +184,13 @@ public class MainViewModelTests
     private sealed class FakeDialogService : IDialogService
     {
         public string? PickFolder(string title, string? initialDirectory = null) => null;
+    }
+
+    private sealed class FakeImageViewerService : IImageViewerService
+    {
+        public string? LastDataDirectory { get; private set; }
+
+        public void Show(string? dataDirectory) => LastDataDirectory = dataDirectory;
     }
 
     private sealed class ThrowingCatalog : ITableCatalog
