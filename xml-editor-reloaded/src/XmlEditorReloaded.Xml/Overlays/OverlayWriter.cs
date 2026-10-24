@@ -102,7 +102,13 @@ public sealed class OverlayWriter
             }
         }
 
-        return SetLeaf(overlay, record, remainingPath, rawText, key.PrimaryKey);
+        var result = SetLeaf(overlay, record, remainingPath, rawText, key.PrimaryKey);
+        if (result.IsSuccess)
+        {
+            overlay.Document.SynchronizeRecords();
+        }
+
+        return result;
     }
 
     /// <summary>

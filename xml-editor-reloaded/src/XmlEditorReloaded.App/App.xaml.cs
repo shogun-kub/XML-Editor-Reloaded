@@ -36,6 +36,7 @@ public partial class App : Application
         services.AddXmlEditorData(databasePath);
         services.AddXmlEditorXml();
         services.AddSingleton<IDialogService, WpfDialogService>();
+        services.AddSingleton<IDataSetSessionFactory, DataSetSessionFactory>();
         services.AddSingleton<IItemImageService, WpfItemImageService>();
         services.AddSingleton<IImageViewerService, WpfImageViewerService>();
         services.AddSingleton<ImageViewerViewModel>();

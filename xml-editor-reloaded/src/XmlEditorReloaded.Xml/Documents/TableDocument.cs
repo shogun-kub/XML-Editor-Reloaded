@@ -157,6 +157,25 @@ public sealed class TableDocument
     }
 
     /// <summary>
+    /// Rebuilds the record list after the document tree was changed outside the record operations,
+    /// for example by an overlay writer that created a translation record.
+    /// </summary>
+    internal void SynchronizeRecords()
+    {
+        _records.Clear();
+        if (_document.Root is null)
+        {
+            return;
+        }
+
+        foreach (var element in _document.Root.Elements().Where(element =>
+                     string.Equals(element.Name.LocalName, RecordElementName, StringComparison.Ordinal)))
+        {
+            _records.Add(new TableRecord(this, element));
+        }
+    }
+
+    /// <summary>
     /// Appends a new record with the next integer primary key.
     /// </summary>
     /// <returns>

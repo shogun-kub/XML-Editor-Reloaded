@@ -5,6 +5,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Loading;
 using XmlEditorReloaded.Xml.Saving;
+using XmlEditorReloaded.Xml.Workspace;
 using Xunit.Abstractions;
 
 namespace XmlEditorReloaded.Xml.Tests;
@@ -90,6 +91,40 @@ public class PerformanceTests
         Assert.True(
             elapsed < GateMilliseconds,
             $"Load + edit + save of Items/Items.xml took {elapsed} ms, exceeding the {GateMilliseconds} ms gate.");
+    }
+
+    /// <summary>
+    /// Opening the largest table through the workspace, including schema discovery, stays within the gate.
+    /// </summary>
+    [Fact]
+    public async Task Workspace_ItemsXml_LoadsWithinGate()
+    {
+        var corpusPath = FindCorpusFile("Items/Items.xml");
+        if (corpusPath is null)
+        {
+            return;
+        }
+
+        var metadata = CreateMetadata("Items.Items", "ITEMLIST", "ITEM", "uiIndex");
+        var descriptor = new TableDescriptor(
+            TableName.Parse("Items.Items"),
+            corpusPath,
+            "Items/Items.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+
+        var stopwatch = Stopwatch.StartNew();
+        var workspace = await TableWorkspace.LoadAsync(descriptor, metadata);
+        stopwatch.Stop();
+
+        Assert.True(workspace.IsSuccess, workspace.ErrorText);
+        var table = workspace.Data!;
+        var elapsed = stopwatch.ElapsedMilliseconds;
+        _output.WriteLine(
+            $"Workspace opened {table.GetRows().Count} rows and {table.Schema.Columns.Count} columns in {elapsed} ms.");
+        Assert.True(
+            elapsed < GateMilliseconds,
+            $"Opening Items/Items.xml took {elapsed} ms, exceeding the {GateMilliseconds} ms gate.");
     }
 
     private async Task MeasureLoadAsync(

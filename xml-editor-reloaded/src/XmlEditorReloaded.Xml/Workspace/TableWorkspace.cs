@@ -1,0 +1,421 @@
+using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Localization;
+using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Core.Validation;
+using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Loading;
+using XmlEditorReloaded.Xml.Overlays;
+using XmlEditorReloaded.Xml.Schema;
+using XmlEditorReloaded.Xml.Saving;
+using XmlEditorReloaded.Xml.Validation;
+
+namespace XmlEditorReloaded.Xml.Workspace;
+
+/// <summary>
+/// A loaded table ready for editing: the base document, an optional language overlay, the discovered
+/// schema, and the operations that route edits, row changes, saving, validation, and translation reports.
+/// </summary>
+public sealed class TableWorkspace
+{
+    private readonly TableFileSaver _saver;
+
+    private TableWorkspace(
+        TableDescriptor descriptor,
+        TableDocument baseDocument,
+        TableMetadata? metadata,
+        OverlayDocument? overlay,
+        TableFileSaver saver)
+    {
+        Descriptor = descriptor;
+        BaseDocument = baseDocument;
+        Metadata = metadata;
+        Overlay = overlay;
+        Schema = new TableSchemaBuilder().Build(baseDocument);
+        Session = metadata is null ? null : new TableEditSession(baseDocument, metadata, overlay);
+        _saver = saver;
+    }
+
+    /// <summary>
+    /// Gets the descriptor of the base table, including all discovered overlays.
+    /// </summary>
+    public TableDescriptor Descriptor { get; }
+
+    /// <summary>
+    /// Gets the loaded base document.
+    /// </summary>
+    public TableDocument BaseDocument { get; }
+
+    /// <summary>
+    /// Gets the table metadata, or <see langword="null"/> for document-driven tables.
+    /// </summary>
+    public TableMetadata? Metadata { get; }
+
+    /// <summary>
+    /// Gets the loaded language overlay, or <see langword="null"/> when editing base values only.
+    /// </summary>
+    public OverlayDocument? Overlay { get; }
+
+    /// <summary>
+    /// Gets the language of the selected overlay, or <see langword="null"/>.
+    /// </summary>
+    public LanguageDescriptor? Language => Overlay?.Descriptor.Language;
+
+    /// <summary>
+    /// Gets the edit session that routes translatable fields to the overlay, or <see langword="null"/>
+    /// for document-driven tables without metadata.
+    /// </summary>
+    public TableEditSession? Session { get; }
+
+    /// <summary>
+    /// Gets the discovered schema of the table.
+    /// </summary>
+    public TableSchema Schema { get; }
+
+    /// <summary>
+    /// Gets the load status of the base document.
+    /// </summary>
+    public TableDocumentStatus Status => BaseDocument.Status;
+
+    /// <summary>
+    /// Gets the load diagnostics of the base document.
+    /// </summary>
+    public IReadOnlyList<LoadDiagnostic> Diagnostics => BaseDocument.Diagnostics;
+
+    /// <summary>
+    /// Gets a value indicating whether the base and overlay documents have unsaved changes.
+    /// </summary>
+    public bool IsDirty => BaseDocument.IsDirty || Overlay?.IsDirty == true;
+
+    /// <summary>
+    /// Gets a value indicating whether the table accepts edits. Read-only and malformed documents do not.
+    /// </summary>
+    public bool CanEdit => BaseDocument.Status == TableDocumentStatus.Loaded;
+
+    /// <summary>
+    /// Loads a table and, when a language is supplied, its overlay.
+    /// </summary>
+    /// <param name="descriptor">Base table descriptor with discovered overlays.</param>
+    /// <param name="metadata">Table metadata, or <see langword="null"/> for document-driven tables.</param>
+    /// <param name="language">Language whose overlay should be loaded, or <see langword="null"/> for base-only editing.</param>
+    /// <param name="loader">Optional table loader.</param>
+    /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the workspace.
+    /// On failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>,
+    /// <c>metadata.not_found</c>, or <c>overlay.not_found</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    public static async Task<OperationResult<TableWorkspace>> LoadAsync(
+        TableDescriptor descriptor,
+        TableMetadata? metadata,
+        LanguageDescriptor? language = null,
+        TableFileLoader? loader = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        var effectiveLoader = loader ?? new TableFileLoader();
+        var load = await effectiveLoader
+            .LoadAsync(descriptor, metadata, cancellationToken)
+            .ConfigureAwait(false);
+        if (!load.IsSuccess)
+        {
+            return OperationResult<TableWorkspace>.Failure(load);
+        }
+
+        var loadResult = load.Data!;
+        if (loadResult.Status == TableDocumentStatus.Malformed)
+        {
+            var message = loadResult.Diagnostics.FirstOrDefault()?.Message ?? "The table file is malformed.";
+            return OperationResult<TableWorkspace>.Failure(ErrorCodes.XmlParseError, message);
+        }
+
+        var baseDocument = loadResult.GetDocument<TableDocument>();
+        if (baseDocument is null)
+        {
+            return OperationResult<TableWorkspace>.Failure(
+                ErrorCodes.XmlParseError,
+                "The table file did not produce a document.");
+        }
+
+        OverlayDocument? overlay = null;
+        if (language is not null)
+        {
+            if (metadata is null)
+            {
+                return OperationResult<TableWorkspace>.Failure(
+                    ErrorCodes.MetadataNotFound,
+                    "A language overlay requires table metadata.");
+            }
+
+            var overlayDescriptor = descriptor.Overlays.FirstOrDefault(candidate =>
+                string.Equals(candidate.Language.Code, language.Code, StringComparison.OrdinalIgnoreCase));
+            if (overlayDescriptor is null)
+            {
+                return OperationResult<TableWorkspace>.Failure(
+                    ErrorCodes.OverlayNotFound,
+                    $"Table '{descriptor.TableName}' has no overlay for language '{language.Code}'.");
+            }
+
+            var overlayLoad = await OverlayDocument
+                .LoadAsync(overlayDescriptor, metadata, effectiveLoader, cancellationToken)
+                .ConfigureAwait(false);
+            if (!overlayLoad.IsSuccess)
+            {
+                return OperationResult<TableWorkspace>.Failure(overlayLoad);
+            }
+
+            overlay = overlayLoad.Data;
+        }
+
+        return OperationResult<TableWorkspace>.Success(
+            new TableWorkspace(descriptor, baseDocument, metadata, overlay, new TableFileSaver()));
+    }
+
+    /// <summary>
+    /// Builds the rows the editor should display, in base-document order.
+    /// </summary>
+    /// <returns>
+    /// One row per base record with merged translation cells, or one row per merged nested record when
+    /// the base records are nested and therefore not exposed by <see cref="TableDocument.Records"/>.
+    /// </returns>
+    public IReadOnlyList<WorkspaceRow> GetRows()
+    {
+        if (Metadata is null)
+        {
+            return BaseDocument.Records
+                .Select(static record => new WorkspaceRow(record.GetKey(), record, null))
+                .ToArray();
+        }
+
+        var merged = new OverlayMerger(Metadata).Merge(BaseDocument, Overlay?.Document);
+        if (BaseDocument.Records.Count == 0)
+        {
+            return merged.Records
+                .Select(static record => new WorkspaceRow(record.Key, null, record))
+                .ToArray();
+        }
+
+        var mergedByKey = merged.Records
+            .Where(static record => record.Key is not null)
+            .GroupBy(static record => record.Key!, StringComparer.Ordinal)
+            .ToDictionary(static group => group.Key, static group => group.First(), StringComparer.Ordinal);
+
+        return BaseDocument.Records
+            .Select(record =>
+            {
+                var key = record.GetKey();
+                var mergedRecord = key is not null && mergedByKey.TryGetValue(key, out var found)
+                    ? found
+                    : null;
+                return new WorkspaceRow(key, record, mergedRecord);
+            })
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Builds the root-level singleton cells for tables such as <c>Map.Cities</c>, where a country
+    /// block is translated outside the repeated city list.
+    /// </summary>
+    /// <returns>
+    /// Merged root cells, or an empty list when no overlay is selected. The cell paths use the
+    /// slash-separated form, for example <c>COUNTRY/countryName</c>.
+    /// </returns>
+    public IReadOnlyList<MergedCell> GetRootCells()
+    {
+        if (Metadata is null || Overlay is null)
+        {
+            return Array.Empty<MergedCell>();
+        }
+
+        return new OverlayMerger(Metadata).Merge(BaseDocument, Overlay.Document).RootCells;
+    }
+
+    /// <summary>
+    /// Sets a field value, routing translatable fields to the overlay when one is selected.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="path">Field path relative to the record.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base field is appended to the record.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>,
+    /// <c>overlay.unresolvable_key</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    public OperationResult SetValue(
+        string recordKey,
+        FieldPath path,
+        string rawText,
+        bool addIfMissing = false)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(rawText);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        if (Session is not null)
+        {
+            return Session.SetValue(recordKey, path, rawText, addIfMissing);
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        return record is null
+            ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.")
+            : record.SetFieldValue(path, rawText, addIfMissing);
+    }
+
+    /// <summary>
+    /// Sets a field value using a slash-separated field path.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="fieldPath">Slash-separated field path relative to the record.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base field is appended to the record.</param>
+    /// <returns>The result of <see cref="SetValue(string, FieldPath, string, bool)"/>.</returns>
+    public OperationResult SetValue(
+        string recordKey,
+        string fieldPath,
+        string rawText,
+        bool addIfMissing = false) =>
+        SetValue(recordKey, FieldPath.Parse(fieldPath), rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets a nested translated field in the overlay, for example a gear-kit name.
+    /// </summary>
+    /// <param name="key">Primary and nested record keys.</param>
+    /// <param name="path">Field path relative to the resolved nested record.</param>
+    /// <param name="rawText">Translation text to store exactly.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c> or <c>overlay.unresolvable_key</c>.
+    /// </returns>
+    public OperationResult SetNestedValue(OverlayRecordKey key, FieldPath path, string rawText)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(rawText);
+
+        return Session?.SetNestedValue(key, path, rawText)
+            ?? OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+    }
+
+    /// <summary>
+    /// Sets a root-level translated field, for example <c>COUNTRY/countryName</c>.
+    /// </summary>
+    /// <param name="path">Path from the document root.</param>
+    /// <param name="rawText">Translation text to store exactly.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetRootValue(FieldPath path, string rawText)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(rawText);
+
+        return Session?.SetRootValue(path, rawText)
+            ?? OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+    }
+
+    /// <summary>
+    /// Appends a record with the next primary key.
+    /// </summary>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult<TableRecord> AddRecord() => CanEdit
+        ? BaseDocument.AddRecord()
+        : OperationResult<TableRecord>.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+
+    /// <summary>
+    /// Duplicates a record directly after its source and assigns the next primary key.
+    /// </summary>
+    /// <param name="key">Primary key of the record to duplicate.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the copy.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult<TableRecord> DuplicateRecord(string key) => CanEdit
+        ? BaseDocument.DuplicateRecord(key)
+        : OperationResult<TableRecord>.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+
+    /// <summary>
+    /// Deletes a record and, when present, its translation record in the overlay.
+    /// </summary>
+    /// <param name="key">Primary key of the record to delete.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult DeleteRecord(string key)
+    {
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        var deleted = BaseDocument.DeleteRecord(key);
+        if (!deleted.IsSuccess || Overlay is null || Metadata is null)
+        {
+            return deleted;
+        }
+
+        var overlayRecord = new OverlayKeyResolver(Metadata).FindPrimary(Overlay.Xml, key);
+        if (overlayRecord is not null)
+        {
+            overlayRecord.Remove();
+            Overlay.MarkDirty();
+            Overlay.Document.SynchronizeRecords();
+        }
+
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Saves the base document and the overlay independently. Clean documents are not rewritten.
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the save.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, the error from the base or overlay saver is returned.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the current file is left unchanged.</exception>
+    public Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default) =>
+        Session is not null
+            ? Session.SaveAsync(cancellationToken)
+            : _saver.SaveAsync(BaseDocument, cancellationToken);
+
+    /// <summary>
+    /// Validates the base document without mutating it.
+    /// </summary>
+    /// <param name="lookupRepository">Optional lookup repository used to validate lookup references.</param>
+    /// <param name="languageCode">Optional language code for lookup overlays.</param>
+    /// <param name="cancellationToken">Token to cancel validation.</param>
+    /// <returns>The validation report.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    public Task<ValidationReport> ValidateAsync(
+        ILookupRepository? lookupRepository = null,
+        string? languageCode = null,
+        CancellationToken cancellationToken = default) =>
+        new TableValidator().ValidateAsync(BaseDocument, lookupRepository, languageCode, cancellationToken);
+
+    /// <summary>
+    /// Analyzes missing, orphaned, duplicate, and empty translations.
+    /// </summary>
+    /// <returns>
+    /// The translation report, or <see langword="null"/> when no overlay is selected or the table has no metadata.
+    /// </returns>
+    public TranslationReport? AnalyzeTranslations() =>
+        Metadata is not null && Overlay is not null
+            ? new TranslationAnalyzer().Analyze(BaseDocument, Overlay.Document)
+            : null;
+}

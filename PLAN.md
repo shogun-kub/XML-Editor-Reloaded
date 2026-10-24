@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0–M10 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. M10 добавил perf-гейты, контракт отмены, culture-тесты и устойчивость shell. Дополнительно сделан read-only STI-браузер (big/medium/small по предмету или графическому типу/индексу). Дальше — M11 (schema discovery, table workspace, lossless structural patcher), M12 (grid UI), M13 (item form + STI), M14 (локализация), M15 (lookup/flag/bulk).
+**Текущее состояние:** M0–M11 завершены. Backend, WPF-оболочка и фундамент редактора работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки, RESX-локализация, STI-браузер, discovery-схема, `TableWorkspace` (base+overlay, правки, add/dup/delete, save/validate/report), runtime-сессия датасета и lossless-патчер структурных правок. Дальше — M12 (grid UI), M13 (item form + STI), M14 (локализация), M15 (lookup/flag/bulk).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -103,11 +103,13 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 ### Quick win — STI-браузер — **выполнен** (после M10)
 Отдельное окно «Изображения предметов»: список `Items.Items` (`uiIndex`, `szItemName`), автовыбор первого предмета с `ubGraphicNum`, ручной ввод `ubGraphicType`/`ubGraphicNum`, три панели big/medium/small с шахматным фоном, масштаб 1–8× и пиксельным фильтром, previous/next, per-panel размеры или код ошибки. Слой App: `DataSetPaths` (TableData/Data-1.13), `WpfItemImageService` (кэш `ItemImageCatalog` по каталогу + RGBA→BGRA `BitmapSource`), `ImageViewerViewModel`/`ImageViewerWindow`, кнопка в главном окне, RESX en/ru. Композиция вынесена в `App.ConfigureServices` и покрыта тестом. Env-gated тест на реальном наборе проверяет список предметов и декодирование `P2ITEM35.STI`.
 
-### M11 — Schema discovery, table workspace, lossless structural patcher (~2–3 дн)
-- `TableSchema`/`TableSchemaBuilder`: объединение полей всех записей в порядке первого появления, presence count, вывод типа по значениям (Integer/Decimal/Boolean/String), признаки key/list/dict/translatable; курируемые overrides из `Columns` применяются поверх.
-- `TableWorkspace`: base + optional overlay, merged rows, маршрутизация правок (`TableEditSession`), add/duplicate/delete, unified save (base + overlay), validation, translation report, reload.
-- Runtime-биндинг датасета в App: lookup/translation/imaging создаются под выбранный каталог (сейчас они либо не регистрируются, либо прибиты на старте).
-- `LosslessDocumentPatcher`: вставка/удаление записи байтовым splice с имитацией отступов соседей; fallback на serializer только при невозможности.
+### M11 — Schema discovery, table workspace, lossless structural patcher — **выполнен**
+- `TableSchema`/`TableSchemaBuilder`: объединение полей всех записей в порядке первого появления, presence count, max occurrences, вывод типа по значениям (Boolean/Integer/Decimal/String; ключ никогда не Boolean), признаки key/list/dict/translatable, overrides из `Columns` (тип, editor kind, ширина, lookup, tooltip, flags), declared-поля, отсутствующие в документе.
+- `TableWorkspace` + `WorkspaceRow`: загрузка base + опциональный overlay по `LanguageDescriptor`, discovery-схема, merged rows (`GetValue`/`GetValues`/`IsTranslated`), root singleton cells, маршрутизация правок (`TableEditSession`), add/duplicate/delete с удалением перевода из оверлея, единое сохранение, валидация, `TranslationAnalyzer`.
+- Runtime-биндинг: `IDataSetSessionFactory`/`DataSetSession` в App создают lookup и translation catalog под выбранный `TableData` (кэш сессий по каталогу) и открывают таблицу через workspace. DI-граф обновлён.
+- R1: `LosslessDocumentPatcher` теперь применяет скалярные правки, вставки и удаления элементов байтовым splice, имитируя отступы соседей; новые записи pretty-print'ятся с сохранением стиля файла; после патча дерево сверяется с текущей моделью, при неоднозначности — fallback на serializer.
+- `TableDocument.SynchronizeRecords` синхронизирует список записей после создания/удаления оверлейной записи.
+**Фактический результат:** 175 тестов; workspace открывает `Items.xml` (1775 записей, 224 колонки) за 86 мс; add+delete записи на реальном `Items.xml` возвращает файл байт-в-байт; корпуса v4/v5 зелёные; build 0 warnings (`-warnaserror`). Ограничение: schema — снимок на момент загрузки (для новых полей нужен новый workspace); структурная замена блока (несколько удалений и вставок в одном родителе) уходит в serializer.
 
 ### M12 — Grid editor UI (~3–4 дн)
 Виртуализированная сетка, динамические колонки (default subset + column chooser), sparse-ячейки (ввод в пустую ячейку добавляет поле при commit), add/dup/delete, поиск/фильтр/сортировка, dirty-индикатор, Ctrl+S/save all, validation panel, вкладки таблиц, RESX en/ru.
@@ -121,7 +123,7 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 ### M15 — Lookup/flag editors, bulk operations, cross-version compare (~2–3 дн)
 Редакторы lookup-таблиц, массовые операции над колонкой, сравнение наборов полей между версиями.
 
-**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 (→ M15). Corpus harness запускается на каждом milestone; perf-гейты — на M10 и перед релизом.
+**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 (→ M15). Corpus harness запускается на каждом milestone; perf-гейты — на M10, M11 и перед релизом.
 
 ---
 
@@ -140,7 +142,7 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 
 ## Основные риски
 
-- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher`; тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — форматирование нормализуется; lossless structural patcher входит в M11.
+- **R1 writer quirks → byte-identity на edited-файлах**: скалярные правки, вставка/дублирование/удаление записи и добавление поля сохраняют байты вне изменённого участка (проверено фикстурами и реальным `Items.xml`). Неоднозначная структурная замена (несколько вставок и удалений в одном родителе) уходит в serializer и нормализует форматирование.
 - **R2 большие файлы**: закрыт perf-гейтами M10 (`Items.xml` 75 мс, `Attachments.xml` 27 мс, load+edit+save 380 мс); порог 2 с с запасом.
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.
@@ -157,6 +159,6 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 1. На каждом milestone: `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx` — 0 ошибок (на M10 дополнительно `-warnaserror` — 0 предупреждений).
 2. `dotnet test` — все юнит-тесты зелёные.
 3. M3/M10/M11+: `XER_CORPUS_DIR="…/References/JA 2 1.13 v4/Data-1.13/TableData" dotnet test` (и v5) — corpus harness проходит на копии; в `References/` нет изменений (проверять отсутствием новых `bin/`/`obj/`).
-4. M10+: perf-гейты — `XER_CORPUS_DIR="…v5/Data-1.13/TableData" dotnet test --filter "Category=Performance"`; порог 2 с, фактические значения фиксируются в этом файле.
+4. M10+: perf-гейты — `XER_CORPUS_DIR="…v5/Data-1.13/TableData" dotnet test --filter "Category=Performance"`; порог 2 с, фактические значения фиксируются в этом файле. M11: workspace открывает `Items.xml` за 86 мс.
 5. M9/M10: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Items.Items` → 1775 записей; правка поля в тестовой копии → сохранение меняет только это поле. «Изображения предметов» → предмет 311 (String) или тип 2 / индекс 35 → три панели; отсутствующие размеры показывают код ошибки.
 6. `find References -type d \( -name bin -o -name obj \)` — пусто.

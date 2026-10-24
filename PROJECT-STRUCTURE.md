@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0–M10 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI, and the minimal WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, and persist settings. M10 added environment-gated performance gates (Items.xml loads in ~75 ms, Attachments.xml in ~27 ms, load+edit+save in ~380 ms), cancellation checks across all I/O services, culture-independent numeric editing, and shell robustness (operation generation and error surfacing). A standalone read-only STI viewer (big/medium/small previews, item picker, manual graphic type/index, zoom) is available from the shell. Editing grids/forms, item detail forms, localization UI, and the lossless structural patcher remain future work (M11–M15). This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M11 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, persist settings, and open a standalone STI image viewer. M10 added environment-gated performance gates, cancellation checks across all I/O services, culture-independent numeric editing, and shell robustness. M11 added document-driven schema discovery (`TableSchemaBuilder`), the editable `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), a runtime `DataSetSession` with per-directory lookup and translation services, and lossless structural patches (insert/delete/duplicate preserve surrounding bytes). The grid editor (M12), item detail form (M13), localization UI (M14), and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -88,6 +88,9 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - Handling of repeated fields (lists) and indexed fields (dictionaries), as used by tables such as `Items.Items`, `Items.Drugs`, and `Items.Pockets`.
 - Serialization of nested elements (e.g. weapon position modifiers) and unknown elements (kept for round-tripping).
 - Localized overlay support: reading `<Language>.<BaseFile>.xml` files, merging them with the base table by record key, and writing only the edited translation fields back to the overlay.
+- Schema discovery (`TableSchemaBuilder`): the union of sparse record fields in first-appearance order, inferred types, presence counts, key/list/dict/translatable flags, and curated column overrides.
+- `TableWorkspace`: a loaded base document plus optional overlay, merged rows, routed edits, add/duplicate/delete, unified saving, validation, and translation reports.
+- Lossless structural patching: scalar edits, element insertions, and deletions are applied to the original bytes with neighbor indentation; ambiguous blocks fall back to the serializer.
 - Validation against metadata and referral integrity rules.
 - Depends on `Core`.
 
@@ -123,6 +126,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - Translation workflow: language selector, merged base/translation display, untranslated markers, and a missing-translation report.
 - Conversion of backend pixel buffers to `BitmapSource` and image display.
 - Dependency injection composition root and application configuration.
+- Runtime data-set session (`IDataSetSessionFactory`/`DataSetSession`) that binds lookup and translation services to the selected data directory and opens tables through `TableWorkspace`.
 - Async loading with progress reporting and cancellation.
 - Depends on all backend libraries.
 
@@ -390,7 +394,7 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 5. Implement `Xml` table loading and round-trip saving with metadata validation; add byte-level round-trip tests against copies of v4/v5 `TableData`. **Done (M3–M6).**
 6. Build the WPF shell: settings, data directory selection, table list. **Done (M9).**
 7. Harden the backend: performance gates, cancellation contract, culture-independent numerics, documentation audit. **Done (M10).**
-8. Add schema discovery, the table workspace (base + overlay, unified save), runtime data-set binding, and the lossless structural patcher (M11).
+8. Add schema discovery, the table workspace (base + overlay, unified save), runtime data-set binding, and the lossless structural patcher. **Done (M11).**
 9. Add grid editing (sorting, filtering, row operations, column selection) (M12).
 10. Add the item detail form with STI images and flag editors (M13).
 11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization (M14).

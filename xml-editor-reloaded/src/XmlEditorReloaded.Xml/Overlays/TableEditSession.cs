@@ -54,12 +54,16 @@ public sealed class TableEditSession
     /// <param name="recordKey">Primary record key.</param>
     /// <param name="path">Field path relative to the record.</param>
     /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">
+    /// When <see langword="true"/>, a missing direct field is appended to the base record instead of
+    /// failing. Has no effect on overlay writes, which create missing translated fields on demand.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>,
     /// <c>overlay.unresolvable_key</c>, or <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult SetValue(string recordKey, FieldPath path, string rawText)
+    public OperationResult SetValue(string recordKey, FieldPath path, string rawText, bool addIfMissing = false)
     {
         ArgumentNullException.ThrowIfNull(recordKey);
         ArgumentNullException.ThrowIfNull(path);
@@ -73,7 +77,7 @@ public sealed class TableEditSession
         var record = BaseDocument.FindRecord(recordKey);
         return record is null
             ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.")
-            : record.SetFieldValue(path, rawText);
+            : record.SetFieldValue(path, rawText, addIfMissing);
     }
 
     /// <summary>

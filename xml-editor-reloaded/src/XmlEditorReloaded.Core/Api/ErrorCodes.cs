@@ -70,4 +70,7 @@ public static class ErrorCodes
 
     /// <summary>The overlay record key could not be resolved from metadata.</summary>
     public const string OverlayUnresolvableKey = "overlay.unresolvable_key";
+
+    /// <summary>The requested language overlay does not exist for the table.</summary>
+    public const string OverlayNotFound = "overlay.not_found";
 }
