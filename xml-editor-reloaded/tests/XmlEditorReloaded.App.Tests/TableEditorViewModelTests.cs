@@ -486,6 +486,63 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// With <c>XER_CORPUS_DIR</c> set, real explosive and weapon tables show main-table picker names
+    /// from AmmoTypes and AmmoStrings without marking the loaded documents dirty.
+    /// </summary>
+    [Fact]
+    public async Task Editor_RealItemTables_ShowRelationPickers()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var tableData = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(tableData) || !Directory.Exists(tableData))
+        {
+            return;
+        }
+
+        var data13 = Directory.GetParent(tableData)?.FullName;
+        Assert.NotNull(data13);
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, new TableRepository(provider))
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var explosives = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Explosives");
+        var explosivesEditor = new TableEditorViewModel(
+            session,
+            explosives,
+            null,
+            new FakeDialogService(),
+            new TestItemImageService());
+
+        await explosivesEditor.InitializeAsync();
+
+        var fragment = Assert.Single(explosivesEditor.Columns, column => column.Name == "ubFragType");
+        Assert.True(fragment.HasRelationPicker, fragment.Relation?.ErrorText);
+        Assert.Equal("Items.AmmoTypes", fragment.Relation!.TargetTable.Value);
+        Assert.Equal("Ball", fragment.Relation.Display("0"));
+        Assert.NotEmpty(fragment.Relation.Options);
+        Assert.False(explosivesEditor.IsDirty);
+
+        var weapons = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Weapons");
+        var weaponsEditor = new TableEditorViewModel(
+            session,
+            weapons,
+            null,
+            new FakeDialogService(),
+            new TestItemImageService());
+        await weaponsEditor.InitializeAsync();
+
+        var caliber = Assert.Single(weaponsEditor.Columns, column => column.Name == "ubCalibre");
+        Assert.True(caliber.HasRelationPicker, caliber.Relation?.ErrorText);
+        Assert.Equal("Items.AmmoStrings", caliber.Relation!.TargetTable.Value);
+        Assert.Equal("9x19mm", caliber.Relation.Display("2"));
+        Assert.False(weaponsEditor.IsDirty);
+    }
+
+    /// <summary>
     /// With <c>XER_CORPUS_DIR</c> pointing at v4, the Russian overlay is merged into the real Items table.
     /// </summary>
     [Fact]
@@ -719,6 +776,120 @@ public class TableEditorViewModelTests
         Assert.True(inseparableField.HasLookupError);
         Assert.True(inseparableField.IsPlainText);
         Assert.Contains("Lookup unavailable", inseparableField.FieldTooltip, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Relation columns show target names, keep unknown identifiers raw, fall back to plain text when
+    /// the target cannot be loaded, and allow navigation to the referenced record.
+    /// </summary>
+    [Fact]
+    public async Task Relations_ResolveNamesUnknownValuesAndNavigation()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeRelations: true);
+
+        var column = Assert.Single(editor.Columns, candidate => candidate.Name == "DiscardedLauncherItem");
+        Assert.True(column.HasRelationPicker, column.Relation?.ErrorText);
+        Assert.False(column.HasRelationError);
+        Assert.Equal("Glock 17", column.Relation!.Display("1"));
+        Assert.Equal("99 (unknown)", column.Relation.Display("99"));
+        Assert.Contains(column.Relation.Options, option => option.Value == "1" && !option.IsUnknown);
+        Assert.Contains(column.Relation.Options, option => option.Value == "99" && option.IsUnknown);
+        Assert.DoesNotContain(column.Relation.Options, option => option.Value == "0");
+        Assert.Equal("Knife", column.Relation.Display("2"));
+
+        var missingTarget = Assert.Single(editor.Columns, candidate => candidate.Name == "FoodType");
+        Assert.True(missingTarget.HasRelationError);
+        Assert.False(missingTarget.HasRelationPicker);
+        Assert.Contains(
+            "Relation target unavailable",
+            missingTarget.HeaderTooltip,
+            StringComparison.Ordinal);
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        var field = Assert.Single(FlattenDetailFields(editor), candidate => candidate.Name == "DiscardedLauncherItem");
+        Assert.True(field.IsRelation);
+        Assert.True(field.CanGoToTarget);
+        Assert.Equal("Glock 17", field.Relation!.Display(field.Value));
+
+        field.Value = "2";
+        Assert.Equal("2", editor.Workspace!.BaseDocument.Records[1].GetRawValue("DiscardedLauncherItem"));
+        Assert.True(editor.IsDirty);
+
+        field.GoToTargetCommand.Execute(null);
+        Assert.Equal("2", editor.SelectedRow!.Key);
+
+        var unknownRow = Assert.Single(editor.Rows, row => row.Key == "2");
+        editor.SelectedRow = unknownRow;
+        var unknownField = Assert.Single(
+            FlattenDetailFields(editor),
+            candidate => candidate.Name == "DiscardedLauncherItem");
+        Assert.Equal("99", unknownField.Value);
+        Assert.False(unknownField.CanGoToTarget);
+    }
+
+    /// <summary>
+    /// Relation validation reports source values that are absent from the resolved target table.
+    /// </summary>
+    [Fact]
+    public async Task Validate_ReportsUnknownRelationValues()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeRelations: true);
+
+        await editor.ValidateCommand.ExecuteAsync(null);
+
+        var issue = Assert.Single(
+            editor.ValidationIssues,
+            candidate => candidate.Code == "validation.lookup_missing"
+                && candidate.Text.Contains("DiscardedLauncherItem", StringComparison.Ordinal));
+        Assert.Contains("99", issue.Text, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The grid builds a relation picker template and keeps a plain-text fallback with a warning when
+    /// the target table is missing.
+    /// </summary>
+    [Fact]
+    public async Task View_BuildsRelationPickerAndFallback()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeRelations: true);
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var view = new TableView { DataContext = editor };
+                var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
+
+                var relation = Assert.Single(
+                    grid.Columns,
+                    column => column.SortMemberPath == "DiscardedLauncherItem");
+                var template = Assert.IsType<DataGridTemplateColumn>(relation);
+                Assert.NotNull(template.CellEditingTemplate);
+
+                var fallback = Assert.Single(
+                    grid.Columns,
+                    column => column.SortMemberPath == "FoodType");
+                Assert.IsType<DataGridTextColumn>(fallback);
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The relation grid test did not finish in time.");
+        Assert.Null(failure);
     }
 
     /// <summary>
@@ -1060,7 +1231,8 @@ public class TableEditorViewModelTests
         bool includeNested = false,
         bool includeOverlay = true,
         bool includeLookups = false,
-        bool includeBooleans = false)
+        bool includeBooleans = false,
+        bool includeRelations = false)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -1078,15 +1250,26 @@ public class TableEditorViewModelTests
             : string.Empty;
         var boolean = includeBooleans ? "<AllowClimbing>1</AllowClimbing>" : string.Empty;
         var unknownLookup = includeLookups ? "<ubCursor>99</ubCursor>" : string.Empty;
+        var relation = includeRelations ? "<usItemClass>2</usItemClass><DiscardedLauncherItem>1</DiscardedLauncherItem>" : string.Empty;
+        var missingRelationTarget = includeRelations ? "<FoodType>1</FoodType>" : string.Empty;
+        var unknownRelation = includeRelations ? "<DiscardedLauncherItem>99</DiscardedLauncherItem>" : string.Empty;
+        // Relation pickers display szLongItemName; it is added only for relation tests so the other
+        // fixtures keep their established column counts.
+        var longNames = includeRelations
+            ? "<szLongItemName>Nothing</szLongItemName>"
+            : string.Empty;
         await File.WriteAllTextAsync(
             Path.Combine(itemsDirectory, "Items.xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName><ubWeight>0</ubWeight>"
-            + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + "</ITEM>"
-            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>10</ubWeight>"
-            + graphics + nested + unknownLookup + "</ITEM>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + longNames + "<ubWeight>0</ubWeight>"
+            + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + missingRelationTarget + "</ITEM>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName>"
+            + (includeRelations ? "<szLongItemName>Glock 17</szLongItemName>" : string.Empty)
+            + "<ubWeight>10</ubWeight>"
+            + graphics + nested + unknownLookup + relation + "</ITEM>"
             + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
-            + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass></ITEM>"
+            + (includeRelations ? "<szLongItemName>Knife</szLongItemName>" : string.Empty)
+            + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass>" + unknownRelation + "</ITEM>"
             + "</ITEMLIST>");
         if (includeOverlay)
         {

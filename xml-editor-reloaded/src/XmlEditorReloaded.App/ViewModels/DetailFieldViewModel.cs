@@ -17,7 +17,8 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         TableEditorViewModel editor,
         TableRowViewModel row,
         TableSchemaColumn column,
-        LookupColumnData? lookup = null)
+        LookupColumnData? lookup = null,
+        RelationColumnData? relation = null)
     {
         ArgumentNullException.ThrowIfNull(editor);
         ArgumentNullException.ThrowIfNull(row);
@@ -27,6 +28,7 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         Row = row;
         Column = column;
         Lookup = lookup;
+        Relation = relation;
         Name = column.XmlFieldName;
         TypeText = column.DataType.ToString();
         IsReadOnly = column.IsKey
@@ -40,7 +42,9 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         IsLookup = column.EditorKind == ColumnEditorKind.LookupCombo
             && lookup is { IsAvailable: true };
         HasLookupError = lookup is { IsAvailable: false };
-        IsPlainText = !IsBoolean && !IsLookup;
+        IsRelation = relation is { IsAvailable: true };
+        HasRelationError = relation is { IsAvailable: false };
+        IsPlainText = !IsBoolean && !IsLookup && !IsRelation;
         CanEditBits = !IsReadOnly
             && (column.DataType == ColumnDataType.Flags
                 || column.EditorKind == ColumnEditorKind.FlagEditor);
@@ -60,6 +64,12 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     /// Gets the loaded lookup data of the field, or <see langword="null"/> when the field has no lookup.
     /// </summary>
     internal LookupColumnData? Lookup { get; }
+
+    /// <summary>
+    /// Gets the resolved relation data of the field, or <see langword="null"/> when the field is not
+    /// a relation.
+    /// </summary>
+    public RelationColumnData? Relation { get; }
 
     /// <summary>
     /// Gets the XML field name.
@@ -113,6 +123,22 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     public bool HasLookupError { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the field uses a searchable relation picker.
+    /// </summary>
+    public bool IsRelation { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether a configured relation target could not be loaded.
+    /// </summary>
+    public bool HasRelationError { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether a lookup or relation source configured for the field could not
+    /// be loaded.
+    /// </summary>
+    public bool HasSourceError => HasLookupError || HasRelationError;
+
+    /// <summary>
     /// Gets the lookup load error text, or an empty string when the lookup is available.
     /// </summary>
     public string LookupErrorText => HasLookupError && Lookup?.ErrorText is { } error
@@ -120,9 +146,25 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         : string.Empty;
 
     /// <summary>
-    /// Gets the tooltip shown on the field name, including lookup and type information.
+    /// Gets the relation load error text, or an empty string when the target is available.
     /// </summary>
-    public string FieldTooltip => HasLookupError ? LookupErrorText : TypeText;
+    public string RelationErrorText => HasRelationError && Relation?.ErrorText is { } error
+        ? Strings.Format("RelationUnavailableFormat", error)
+        : string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether the referenced record can be opened.
+    /// </summary>
+    public bool CanGoToTarget =>
+        IsRelation && Relation!.TryGetTargetValue(Row[Name], out _);
+
+    /// <summary>
+    /// Gets the tooltip shown on the field name, including relation, lookup, and type information.
+    /// </summary>
+    public string FieldTooltip =>
+        HasLookupError ? LookupErrorText
+        : HasRelationError ? RelationErrorText
+        : TypeText;
 
     /// <summary>
     /// Gets the selectable lookup options, or an empty list when the field has no lookup.
@@ -154,6 +196,8 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             OnPropertyChanged(nameof(IsUntranslated));
             OnPropertyChanged(nameof(BooleanValue));
             OnPropertyChanged(nameof(BooleanTooltip));
+            OnPropertyChanged(nameof(CanGoToTarget));
+            GoToTargetCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -213,8 +257,13 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         OnPropertyChanged(nameof(IsUntranslated));
         OnPropertyChanged(nameof(BooleanValue));
         OnPropertyChanged(nameof(BooleanTooltip));
+        OnPropertyChanged(nameof(CanGoToTarget));
+        GoToTargetCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
     private void EditBits() => _editor.EditBits(this);
+
+    [RelayCommand(CanExecute = nameof(CanGoToTarget))]
+    private void GoToTarget() => _editor.NavigateToRelation(this);
 }

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
+using Microsoft.Data.Sqlite;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
@@ -183,6 +184,80 @@ public class MainViewModelTests
         viewModel.CloseEditorCommand.Execute(editor);
         Assert.Empty(viewModel.Editors);
         Assert.False(viewModel.HasEditors);
+    }
+
+    /// <summary>
+    /// Following a relation from the detail panel opens the target table tab and selects the
+    /// referenced record.
+    /// </summary>
+    [Fact]
+    public async Task FollowRelation_OpensTargetTableAndSelectsRecord()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(data13, "TableData");
+        var itemsDirectory = Path.Combine(tableData, "Items");
+        Directory.CreateDirectory(itemsDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(itemsDirectory, "Items.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName></ITEM>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName>"
+            + "<TestAttachment>7</TestAttachment></ITEM>"
+            + "</ITEMLIST>");
+        await File.WriteAllTextAsync(
+            Path.Combine(itemsDirectory, "Attachments.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ATTACHMENTLIST>"
+            + "<ATTACHMENT><attachmentIndex>7</attachmentIndex><itemIndex>1</itemIndex>"
+            + "<APCost>20</APCost></ATTACHMENT>"
+            + "</ATTACHMENTLIST>");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        await using (var connection = new SqliteConnection(
+                         $"Data Source={workspace.PathOf("metadata.sqlite")}"))
+        {
+            await connection.OpenAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                """
+                INSERT INTO TableRelations
+                    (SourceTableId, SourceField, TargetTableId, TargetValueField, TargetDisplayField,
+                     Kind, RemapByText, Ordinal)
+                SELECT s.Id, 'TestAttachment', t.Id, 'attachmentIndex', 'itemIndex',
+                       'Reference', 0, 0
+                FROM Tables s, Tables t
+                WHERE s.XmlTable = 'Items.Items' AND t.XmlTable = 'Items.Attachments';
+                """;
+            Assert.Equal(1, await command.ExecuteNonQueryAsync());
+        }
+
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables, item => item.TableName == "Items.Items");
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var itemsEditor = Assert.Single(viewModel.Editors);
+        itemsEditor.SelectedRow = Assert.Single(itemsEditor.Rows, row => row.Key == "1");
+        var field = itemsEditor.DetailGroups
+            .SelectMany(group => group.Fields)
+            .Single(candidate => candidate.Name == "TestAttachment");
+        Assert.True(field.IsRelation, $"{field.FieldTooltip} / {itemsEditor.StatusText}");
+        Assert.Equal("7", field.Value);
+        Assert.True(
+            field.Relation!.TryGetTargetValue("7", out var targetValue),
+            $"target={field.Relation.Relation.TargetTable} options={field.Relation.Options.Count} "
+            + $"error={field.Relation.ErrorText}");
+        Assert.Equal("7", targetValue);
+        Assert.True(field.CanGoToTarget, field.FieldTooltip);
+
+        field.GoToTargetCommand.Execute(null);
+
+        await WaitUntilAsync(() => viewModel.Editors.Count == 2);
+        var target = Assert.Single(
+            viewModel.Editors,
+            editor => editor.Descriptor.TableName.Value == "Items.Attachments");
+        await WaitUntilAsync(() => target.SelectedRow?.Key == "7");
+        Assert.Same(target, viewModel.SelectedEditor);
     }
 
     /// <summary>

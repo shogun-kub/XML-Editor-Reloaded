@@ -258,15 +258,33 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
+        await OpenEditorByNameAsync(SelectedTable.Descriptor.TableName).ConfigureAwait(true);
+    }
+
+    private async Task<TableEditorViewModel?> OpenEditorByNameAsync(TableName tableName)
+    {
+        if (_dataSet is null)
+        {
+            return null;
+        }
+
         var existing = Editors.FirstOrDefault(editor =>
-            editor.Descriptor.TableName == SelectedTable.Descriptor.TableName);
+            editor.Descriptor.TableName == tableName);
         if (existing is not null)
         {
             SelectedEditor = existing;
-            return;
+            return existing;
         }
 
-        var descriptor = SelectedTable.Descriptor;
+        var descriptor = Tables
+            .FirstOrDefault(item => item.Descriptor.TableName == tableName)
+            ?.Descriptor;
+        if (descriptor is null)
+        {
+            StatusText = Strings.Format("EditorTableNotFound", tableName.Value);
+            return null;
+        }
+
         var tables = await _dataSet.Catalog
             .GetTablesAsync(_dataSet.TableDataDirectory)
             .ConfigureAwait(true);
@@ -284,6 +302,7 @@ public partial class MainViewModel : ObservableObject
         Editors.Add(editor);
         SelectedEditor = editor;
         await editor.InitializeAsync().ConfigureAwait(true);
+        return editor;
     }
 
     [RelayCommand]
@@ -527,11 +546,30 @@ public partial class MainViewModel : ObservableObject
         return true;
     }
 
-    private void AttachEditor(TableEditorViewModel editor) =>
+    private void AttachEditor(TableEditorViewModel editor)
+    {
         editor.LanguageChanged += OnEditorLanguageChanged;
+        editor.TableNavigationRequested += OnTableNavigationRequested;
+    }
 
-    private void DetachEditor(TableEditorViewModel editor) =>
+    private void DetachEditor(TableEditorViewModel editor)
+    {
         editor.LanguageChanged -= OnEditorLanguageChanged;
+        editor.TableNavigationRequested -= OnTableNavigationRequested;
+    }
+
+    private async void OnTableNavigationRequested(object? sender, TableNavigationRequest request)
+    {
+        try
+        {
+            var editor = await OpenEditorByNameAsync(request.TableName).ConfigureAwait(true);
+            editor?.SelectRecord(request.RecordKey);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+    }
 
     private void OnEditorLanguageChanged(object? sender, string? languageCode)
     {

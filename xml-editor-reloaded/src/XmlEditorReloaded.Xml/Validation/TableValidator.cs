@@ -25,6 +25,11 @@ public sealed class TableValidator
     /// <param name="lookupRepository">Optional lookup repository used to validate lookup references.</param>
     /// <param name="languageCode">Optional language code for lookup overlays.</param>
     /// <param name="cancellationToken">Token to cancel validation.</param>
+    /// <param name="relationTargetValues">
+    /// Optional map from a relation source field to the keys of its resolved target table. Values are
+    /// validated against the complete target, not against the relation filter, because filters only
+    /// narrow picker options.
+    /// </param>
     /// <returns>
     /// A validation report. Unknown fields are informational; type, lookup, key, and mask issues are warnings.
     /// </returns>
@@ -34,7 +39,8 @@ public sealed class TableValidator
         TableDocument document,
         ILookupRepository? lookupRepository = null,
         string? languageCode = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues = null)
     {
         ArgumentNullException.ThrowIfNull(document);
 
@@ -92,6 +98,7 @@ public sealed class TableValidator
                     lookupRepository,
                     languageCode,
                     lookupCache,
+                    relationTargetValues,
                     issues,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -158,6 +165,7 @@ public sealed class TableValidator
         ILookupRepository? lookupRepository,
         string? languageCode,
         Dictionary<string, IReadOnlyList<LookupEntry>> lookupCache,
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues,
         List<ValidationIssue> issues,
         CancellationToken cancellationToken)
     {
@@ -176,6 +184,7 @@ public sealed class TableValidator
                         lookupRepository,
                         languageCode,
                         lookupCache,
+                        relationTargetValues,
                         issues,
                         cancellationToken)
                     .ConfigureAwait(false);
@@ -191,6 +200,7 @@ public sealed class TableValidator
                     lookupRepository,
                     languageCode,
                     lookupCache,
+                    relationTargetValues,
                     issues,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -206,6 +216,7 @@ public sealed class TableValidator
         ILookupRepository? lookupRepository,
         string? languageCode,
         Dictionary<string, IReadOnlyList<LookupEntry>> lookupCache,
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues,
         List<ValidationIssue> issues,
         CancellationToken cancellationToken)
     {
@@ -280,6 +291,20 @@ public sealed class TableValidator
                     recordKey,
                     path));
             }
+        }
+
+        if (relationTargetValues is not null
+            && string.Equals(path, fieldName, StringComparison.Ordinal)
+            && relationTargetValues.TryGetValue(fieldName, out var targetValues)
+            && !targetValues.Contains(leaf.Value.Trim()))
+        {
+            issues.Add(new ValidationIssue(
+                ValidationSeverity.Warning,
+                ValidationCodes.LookupMissing,
+                $"Value '{leaf.Value}' is not present in the target table of relation field '{fieldName}'.",
+                tableName,
+                recordKey,
+                path));
         }
     }
 

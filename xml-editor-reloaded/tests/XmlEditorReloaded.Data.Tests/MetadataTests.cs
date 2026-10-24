@@ -23,7 +23,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(6, migration.Data);
+        Assert.Equal(7, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();

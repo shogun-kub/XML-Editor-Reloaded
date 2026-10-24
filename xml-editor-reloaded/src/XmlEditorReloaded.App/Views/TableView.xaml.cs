@@ -74,7 +74,7 @@ public partial class TableView : UserControl
             var headerText = isTranslationColumn
                 ? column.Name + _viewModel.TranslatableColumnSuffix
                 : column.Name;
-            if (column.HasLookupError)
+            if (column.HasLookupError || column.HasRelationError)
             {
                 headerText += " ⚠";
             }
@@ -98,6 +98,18 @@ public partial class TableView : UserControl
                         UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
                         Converter = BooleanValueConverter.Instance,
                     },
+                    IsReadOnly = column.IsReadOnly,
+                    Width = new DataGridLength(column.Width),
+                    SortMemberPath = column.Name,
+                };
+            }
+            else if (column.HasRelationPicker && column.Relation is { } relation)
+            {
+                gridColumn = new DataGridTemplateColumn
+                {
+                    Header = header,
+                    CellTemplate = BuildRelationCellTemplate(column.Name, relation),
+                    CellEditingTemplate = BuildRelationEditingTemplate(column.Name, relation),
                     IsReadOnly = column.IsReadOnly,
                     Width = new DataGridLength(column.Width),
                     SortMemberPath = column.Name,
@@ -157,6 +169,39 @@ public partial class TableView : UserControl
                 column.SortDirection = _viewModel.SortDirection;
             }
         }
+    }
+
+    private static DataTemplate BuildRelationCellTemplate(string fieldName, RelationColumnData relation)
+    {
+        var text = new FrameworkElementFactory(typeof(TextBlock));
+        text.SetBinding(TextBlock.TextProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.OneWay,
+            Converter = new RelationDisplayConverter(relation),
+        });
+        text.SetBinding(TextBlock.ToolTipProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.OneWay,
+            Converter = new RelationTooltipConverter(relation),
+        });
+        text.SetValue(TextBlock.MarginProperty, new Thickness(4, 0, 4, 0));
+        text.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+        text.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+        return new DataTemplate { VisualTree = text };
+    }
+
+    private static DataTemplate BuildRelationEditingTemplate(string fieldName, RelationColumnData relation)
+    {
+        var picker = new FrameworkElementFactory(typeof(RelationPicker));
+        picker.SetValue(RelationPicker.RelationDataProperty, relation);
+        picker.SetBinding(RelationPicker.SelectedValueProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.TwoWay,
+            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+        });
+        picker.SetValue(FrameworkElement.MarginProperty, new Thickness(1, 0, 1, 0));
+        picker.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        return new DataTemplate { VisualTree = picker };
     }
 
     private static DataTemplate BuildLookupCellTemplate(string fieldName, LookupColumnData lookup)

@@ -16,12 +16,14 @@ public sealed class TableColumnViewModel : ObservableObject
     internal TableColumnViewModel(
         TableSchemaColumn column,
         Action<TableColumnViewModel, bool>? visibilityChanged = null,
-        LookupColumnData? lookup = null)
+        LookupColumnData? lookup = null,
+        RelationColumnData? relation = null)
     {
         ArgumentNullException.ThrowIfNull(column);
         Column = column;
         _visibilityChanged = visibilityChanged;
         Lookup = lookup;
+        Relation = relation;
     }
 
     /// <summary>
@@ -34,6 +36,12 @@ public sealed class TableColumnViewModel : ObservableObject
     /// lookup source.
     /// </summary>
     public LookupColumnData? Lookup { get; }
+
+    /// <summary>
+    /// Gets the resolved relation data of the column, or <see langword="null"/> when the field is not
+    /// a relation.
+    /// </summary>
+    public RelationColumnData? Relation { get; }
 
     /// <summary>
     /// Gets the XML field name used as the column header and binding path.
@@ -110,6 +118,18 @@ public sealed class TableColumnViewModel : ObservableObject
     public bool HasLookupError => Lookup is { IsAvailable: false };
 
     /// <summary>
+    /// Gets a value indicating whether the grid can show a searchable relation picker for this column.
+    /// </summary>
+    public bool HasRelationPicker =>
+        Relation is { IsAvailable: true } && !IsReadOnly;
+
+    /// <summary>
+    /// Gets a value indicating whether a relation target was configured but could not be loaded. Such
+    /// a column falls back to plain text editing and shows a warning in its header.
+    /// </summary>
+    public bool HasRelationError => Relation is { IsAvailable: false };
+
+    /// <summary>
     /// Gets a value indicating whether the grid uses a checkbox editor for this column.
     /// </summary>
     public bool IsBoolean => Column.DataType == ColumnDataType.Boolean;
@@ -121,11 +141,22 @@ public sealed class TableColumnViewModel : ObservableObject
         Lookup?.Options ?? Array.Empty<LookupOption>();
 
     /// <summary>
-    /// Gets the column header tooltip, including a lookup load error when one occurred.
+    /// Gets the column header tooltip, including a lookup or relation load error when one occurred.
     /// </summary>
-    public string HeaderTooltip => HasLookupError
-        ? $"{Tooltip}{Environment.NewLine}{Strings.Format("LookupUnavailableFormat", Lookup!.ErrorText ?? string.Empty)}"
-        : Tooltip;
+    public string HeaderTooltip
+    {
+        get
+        {
+            if (HasLookupError)
+            {
+                return $"{Tooltip}{Environment.NewLine}{Strings.Format("LookupUnavailableFormat", Lookup!.ErrorText ?? string.Empty)}";
+            }
+
+            return HasRelationError
+                ? $"{Tooltip}{Environment.NewLine}{Strings.Format("RelationUnavailableFormat", Relation!.ErrorText ?? string.Empty)}"
+                : Tooltip;
+        }
+    }
 
     /// <summary>
     /// Gets the preferred grid width.
@@ -168,6 +199,11 @@ public sealed class TableColumnViewModel : ObservableObject
             if (IsTranslatable)
             {
                 parts.Add("translatable");
+            }
+
+            if (Relation is not null)
+            {
+                parts.Add("reference");
             }
 
             return string.Join(", ", parts);

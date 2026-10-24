@@ -544,13 +544,22 @@ public sealed partial class TableWorkspace
     /// <param name="lookupRepository">Optional lookup repository used to validate lookup references.</param>
     /// <param name="languageCode">Optional language code for lookup overlays.</param>
     /// <param name="cancellationToken">Token to cancel validation.</param>
+    /// <param name="relationTargetValues">
+    /// Optional map from a relation source field to the keys of its resolved target table.
+    /// </param>
     /// <returns>The validation report.</returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public Task<ValidationReport> ValidateAsync(
         ILookupRepository? lookupRepository = null,
         string? languageCode = null,
-        CancellationToken cancellationToken = default) =>
-        new TableValidator().ValidateAsync(BaseDocument, lookupRepository, languageCode, cancellationToken);
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues = null) =>
+        new TableValidator().ValidateAsync(
+            BaseDocument,
+            lookupRepository,
+            languageCode,
+            cancellationToken,
+            relationTargetValues);
 
     /// <summary>
     /// Analyzes missing, orphaned, duplicate, and empty translations.

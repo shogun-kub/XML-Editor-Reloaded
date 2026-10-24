@@ -31,7 +31,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     private readonly List<TableColumnViewModel> _allColumns = new();
     private readonly List<DetailFieldViewModel> _allDetailFields = new();
     private readonly Dictionary<string, LookupColumnData> _lookupByField = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, RelationColumnData> _relationByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
+    private Dictionary<string, IReadOnlySet<string>>? _relationTargetValues;
     private CancellationTokenSource? _imageCts;
     private bool _suppressLanguageChange;
     private bool _isChangingLanguage;
@@ -162,6 +164,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         DetailLabel = Strings.Get("DetailLabel");
         DetailFilterLabel = Strings.Get("DetailFilterLabel");
         DetailBitsText = Strings.Get("DetailBitsText");
+        GoToTargetText = Strings.Get("EditorGoToTargetText");
         DetailUntranslatedText = Strings.Get("EditorUntranslated");
         LanguageLabel = Strings.Get("EditorLanguageLabel");
         TranslationReportText = Strings.Get("EditorTranslationReportText");
@@ -178,6 +181,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     /// Occurs after the editor successfully switches to another language or the base table.
     /// </summary>
     public event EventHandler<string?>? LanguageChanged;
+
+    /// <summary>
+    /// Occurs when the user asks to open a record referenced by a relation field.
+    /// </summary>
+    public event EventHandler<TableNavigationRequest>? TableNavigationRequested;
 
     /// <summary>
     /// Gets the table descriptor. It is replaced when a new language overlay is created.
@@ -273,6 +281,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     /// Gets the bit editor button text.
     /// </summary>
     public string DetailBitsText { get; }
+
+    /// <summary>
+    /// Gets the tooltip of the button that opens the record referenced by a relation field.
+    /// </summary>
+    public string GoToTargetText { get; }
 
     /// <summary>
     /// Gets the tooltip shown for a translatable field that still uses its base value.
@@ -403,6 +416,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             BuildLanguageOptions(configuredLanguages);
             IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
             await LoadLookupsAsync(cancellationToken).ConfigureAwait(true);
+            await LoadRelationsAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
             RebuildRows(null);
@@ -454,6 +468,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             if (result.IsSuccess)
             {
                 IsDirty = false;
+                // Picker display text in other editors is cached per target table; the saved values
+                // must be visible the next time a target is resolved.
+                _session.RelationResolver.Invalidate(Descriptor.TableName);
                 StatusText = Strings.Get("EditorSaved");
             }
             else
@@ -663,7 +680,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         try
         {
             var report = await Workspace
-                .ValidateAsync(_session.Lookups, Workspace.Language?.Code)
+                .ValidateAsync(
+                    _session.Lookups,
+                    Workspace.Language?.Code,
+                    cancellationToken: default,
+                    relationTargetValues: _relationTargetValues)
                 .ConfigureAwait(true);
             ValidationIssues.Clear();
             foreach (var issue in report.Issues)
@@ -1140,6 +1161,88 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
     }
 
+    private async Task LoadRelationsAsync(CancellationToken cancellationToken)
+    {
+        _relationByField.Clear();
+        _relationTargetValues = null;
+        if (Workspace is null)
+        {
+            return;
+        }
+
+        OperationResult<IReadOnlyList<TableRelation>> relations;
+        try
+        {
+            relations = await _session
+                .GetRelationsAsync(Descriptor.TableName, cancellationToken)
+                .ConfigureAwait(true);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            // Relation metadata must never prevent the table from opening.
+            return;
+        }
+
+        if (!relations.IsSuccess)
+        {
+            return;
+        }
+
+        var references = relations.Data!
+            .Where(static relation => relation.Kind == TableRelationKind.Reference)
+            .GroupBy(static relation => relation.SourceField, StringComparer.Ordinal)
+            .Select(static group => group.First())
+            .ToArray();
+        if (references.Length == 0)
+        {
+            return;
+        }
+
+        var valuesByField = references.ToDictionary(
+            static relation => relation.SourceField,
+            static _ => new List<string?>(),
+            StringComparer.Ordinal);
+        foreach (var row in Workspace.GetRows())
+        {
+            foreach (var relation in references)
+            {
+                valuesByField[relation.SourceField].Add(row.GetValue(relation.SourceField));
+            }
+        }
+
+        var targetValues = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal);
+        foreach (var relation in references)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var target = await _session.RelationResolver
+                .ResolveAsync(relation, Workspace.Language?.Code, cancellationToken)
+                .ConfigureAwait(true);
+            if (target.IsSuccess)
+            {
+                _relationByField[relation.SourceField] = RelationColumnData.Create(
+                    relation,
+                    target.Data!,
+                    valuesByField[relation.SourceField]);
+                targetValues[relation.SourceField] = target.Data!.Entries
+                    .Select(static entry => entry.Value)
+                    .ToHashSet(StringComparer.Ordinal);
+            }
+            else
+            {
+                _relationByField[relation.SourceField] = RelationColumnData.Failed(
+                    relation,
+                    target.ErrorCode ?? ErrorCodes.XmlInvalidLookupEntry,
+                    target.ErrorText ?? $"Relation target '{relation.TargetTable}' could not be loaded.");
+            }
+        }
+
+        _relationTargetValues = targetValues.Count == 0 ? null : targetValues;
+    }
+
     private void BuildColumns()
     {
         _allColumns.Clear();
@@ -1149,7 +1252,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             foreach (var column in Workspace.Schema.Columns)
             {
                 _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
-                _allColumns.Add(new TableColumnViewModel(column, OnColumnVisibilityChanged, lookup));
+                _relationByField.TryGetValue(column.XmlFieldName, out var relation);
+                _allColumns.Add(new TableColumnViewModel(column, OnColumnVisibilityChanged, lookup, relation));
             }
         }
 
@@ -1289,6 +1393,57 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         SetCellValue(field.Row, field.Name, value);
     }
 
+    internal void NavigateToRelation(DetailFieldViewModel field)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        if (field.Relation is not { IsAvailable: true } relation
+            || !relation.TryGetTargetValue(field.Value, out var value))
+        {
+            StatusText = Strings.Get("EditorRelationTargetMissing");
+            return;
+        }
+
+        if (relation.Relation.TargetTable == Descriptor.TableName)
+        {
+            SelectRecord(value);
+            return;
+        }
+
+        TableNavigationRequested?.Invoke(
+            this,
+            new TableNavigationRequest(relation.Relation.TargetTable, value));
+    }
+
+    /// <summary>
+    /// Selects the record with the supplied key, clearing the search filter when the record is hidden.
+    /// </summary>
+    /// <param name="key">Primary record key.</param>
+    public void SelectRecord(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return;
+        }
+
+        var row = _allRows.FirstOrDefault(candidate =>
+            string.Equals(candidate.Key, key.Trim(), StringComparison.Ordinal));
+        if (row is null)
+        {
+            StatusText = Strings.Format("EditorRecordNotFound", key);
+            return;
+        }
+
+        if (!Rows.Contains(row))
+        {
+            SearchText = string.Empty;
+            ApplyRowView(row.Key);
+        }
+        else
+        {
+            SelectedRow = row;
+        }
+    }
+
     internal void EditBits(DetailFieldViewModel field)
     {
         ArgumentNullException.ThrowIfNull(field);
@@ -1362,7 +1517,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         foreach (var column in Workspace.Schema.Columns)
         {
             _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
-            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column, lookup));
+            _relationByField.TryGetValue(column.XmlFieldName, out var relation);
+            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column, lookup, relation));
         }
 
         ApplyDetailFilter();

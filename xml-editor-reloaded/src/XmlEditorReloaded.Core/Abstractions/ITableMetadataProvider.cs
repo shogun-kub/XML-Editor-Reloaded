@@ -42,4 +42,20 @@ public interface ITableMetadataProvider
     /// </returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns the relations declared by one source table, ordered by <see cref="TableRelation.Ordinal"/>
+    /// and then by source field.
+    /// </summary>
+    /// <param name="sourceTable">Dotted table name that declares the relations.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the relations;
+    /// a table without relations yields an empty list. On failure, <c>error_code</c> is
+    /// <c>io.error</c> and <c>error_text</c> describes the problem.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+        TableName sourceTable,
+        CancellationToken cancellationToken = default);
 }

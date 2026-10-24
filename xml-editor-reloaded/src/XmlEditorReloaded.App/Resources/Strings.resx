@@ -798,4 +798,25 @@
   <data name="CompareSideRight" xml:space="preserve">
     <value>Right</value>
   </data>
+  <data name="RelationUnavailableFormat" xml:space="preserve">
+    <value>Relation target unavailable: {0}</value>
+  </data>
+  <data name="RelationUnknownTooltipFormat" xml:space="preserve">
+    <value>Unknown reference value: {0}</value>
+  </data>
+  <data name="RelationValueTooltipFormat" xml:space="preserve">
+    <value>{0} (ID {1})</value>
+  </data>
+  <data name="EditorGoToTargetText" xml:space="preserve">
+    <value>Open the referenced record</value>
+  </data>
+  <data name="EditorRelationTargetMissing" xml:space="preserve">
+    <value>The referenced record is not available.</value>
+  </data>
+  <data name="EditorRecordNotFound" xml:space="preserve">
+    <value>Record '{0}' was not found.</value>
+  </data>
+  <data name="EditorTableNotFound" xml:space="preserve">
+    <value>Table '{0}' is not available in this data set.</value>
+  </data>
 </root>

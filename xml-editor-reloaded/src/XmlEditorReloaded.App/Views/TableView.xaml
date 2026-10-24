@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="900">
@@ -317,6 +318,7 @@
                                                                 <ColumnDefinition Width="105" />
                                                                 <ColumnDefinition Width="*" />
                                                                 <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0"
                                                                        VerticalAlignment="Center"
@@ -339,7 +341,7 @@
                                                                            VerticalAlignment="Center"
                                                                            Foreground="#FFB8860B"
                                                                            Text="⚠"
-                                                                           Visibility="{Binding HasLookupError, Converter={StaticResource BoolToVisibility}}" />
+                                                                           Visibility="{Binding HasSourceError, Converter={StaticResource BoolToVisibility}}" />
                                                             </Grid>
                                                             <CheckBox Grid.Column="2"
                                                                       Margin="4,0,0,0"
@@ -362,7 +364,21 @@
                                                                      Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                                                      IsReadOnly="{Binding IsReadOnly}"
                                                                      Visibility="{Binding IsPlainText, Converter={StaticResource BoolToVisibility}}" />
+                                                            <views:RelationPicker Grid.Column="2"
+                                                                                  Margin="4,0,0,0"
+                                                                                  VerticalAlignment="Center"
+                                                                                  RelationData="{Binding Relation}"
+                                                                                  SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                                  IsReadOnly="{Binding IsReadOnly}"
+                                                                                  Visibility="{Binding IsRelation, Converter={StaticResource BoolToVisibility}}" />
                                                             <Button Grid.Column="3"
+                                                                    Margin="4,0,0,0"
+                                                                    Padding="5,0"
+                                                                    Content="→"
+                                                                    Command="{Binding GoToTargetCommand}"
+                                                                    ToolTip="{Binding DataContext.GoToTargetText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                    Visibility="{Binding CanGoToTarget, Converter={StaticResource BoolToVisibility}}" />
+                                                            <Button Grid.Column="4"
                                                                     Margin="4,0,0,0"
                                                                     Padding="5,0"
                                                                     Content="{Binding DataContext.DetailBitsText, RelativeSource={RelativeSource AncestorType=UserControl}}"

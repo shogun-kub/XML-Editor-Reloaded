@@ -508,5 +508,11 @@ public class TableDataComparerTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult(OperationResult<IReadOnlyList<LanguageDescriptor>>.Success(
                 Array.Empty<LanguageDescriptor>()));
+
+        public Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+            TableName sourceTable,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<TableRelation>>.Success(
+                Array.Empty<TableRelation>()));
     }
 }

@@ -223,6 +223,49 @@ public class TableValidatorTests
     }
 
     /// <summary>
+    /// A relation value absent from the resolved target table is reported with the source field, while
+    /// known values stay silent.
+    /// </summary>
+    [Fact]
+    public async Task Validate_RelationValue_UsesTargetMembership()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>10</ubWeight><DefaultAttachment>99</DefaultAttachment>",
+                StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("DefaultAttachment") { DataType = ColumnDataType.Integer }));
+        var targets = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+        {
+            ["DefaultAttachment"] = new HashSet<string>(new[] { "1", "2" }, StringComparer.Ordinal),
+        };
+
+        var report = await new TableValidator().ValidateAsync(
+            document,
+            relationTargetValues: targets);
+
+        var issue = Assert.Single(
+            report.Issues,
+            item => item.Code == ValidationCodes.LookupMissing && item.FieldPath == "DefaultAttachment");
+        Assert.Equal(ValidationSeverity.Warning, issue.Severity);
+        Assert.Equal("1", issue.RecordKey);
+        Assert.Contains("target table", issue.Message, StringComparison.Ordinal);
+
+        var known = await new TableValidator().ValidateAsync(
+            document,
+            relationTargetValues: new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+            {
+                ["DefaultAttachment"] = new HashSet<string>(new[] { "99" }, StringComparer.Ordinal),
+            });
+        Assert.DoesNotContain(known.Issues, item => item.Code == ValidationCodes.LookupMissing);
+    }
+
+    /// <summary>
     /// Validation is read-only: it does not mark the document dirty or change the file.
     /// </summary>
     [Fact]

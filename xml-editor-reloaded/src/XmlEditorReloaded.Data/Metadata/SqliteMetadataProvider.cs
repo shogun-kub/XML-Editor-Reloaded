@@ -140,6 +140,88 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         }
     }
 
+    /// <inheritdoc />
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    public async Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+        TableName sourceTable,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+            var relations = new List<TableRelation>();
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT s.XmlTable, r.SourceField, t.XmlTable, r.TargetValueField, r.TargetDisplayField,
+                       r.Kind, r.FilterField, r.FilterOperator, r.FilterValue, r.LabelKey,
+                       r.RemapByText, r.Ordinal
+                FROM TableRelations r
+                INNER JOIN Tables s ON s.Id = r.SourceTableId
+                INNER JOIN Tables t ON t.Id = r.TargetTableId
+                WHERE s.XmlTable = $name
+                ORDER BY r.Ordinal, r.SourceField, r.Id;
+                """;
+            command.Parameters.AddWithValue("$name", sourceTable.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (!Enum.TryParse<TableRelationKind>(reader.GetString(5), ignoreCase: true, out var kind))
+                {
+                    continue;
+                }
+
+                RelationFilter? filter = null;
+                if (!reader.IsDBNull(6)
+                    && !reader.IsDBNull(7)
+                    && !reader.IsDBNull(8)
+                    && Enum.TryParse<RelationFilterOperator>(reader.GetString(7), ignoreCase: true, out var filterOperator))
+                {
+                    filter = new RelationFilter(reader.GetString(6), filterOperator, reader.GetString(8));
+                }
+
+                TableName sourceName;
+                TableName targetName;
+                try
+                {
+                    sourceName = TableName.Parse(reader.GetString(0));
+                    targetName = TableName.Parse(reader.GetString(2));
+                }
+                catch (ArgumentException)
+                {
+                    // A relation row with an unusable table name is metadata corruption; skip the row
+                    // rather than failing the whole table.
+                    continue;
+                }
+
+                relations.Add(new TableRelation(
+                    sourceName,
+                    reader.GetString(1),
+                    targetName,
+                    kind,
+                    reader.GetString(3),
+                    reader.IsDBNull(4) ? null : reader.GetString(4),
+                    filter)
+                {
+                    LabelKey = reader.IsDBNull(9) ? null : reader.GetString(9),
+                    RemapByText = reader.GetInt32(10) != 0,
+                    Ordinal = reader.GetInt32(11),
+                });
+            }
+
+            return OperationResult<IReadOnlyList<TableRelation>>.Success(relations);
+        }
+        catch (SqliteException exception)
+        {
+            return OperationResult<IReadOnlyList<TableRelation>>.Failure(
+                ErrorCodes.IoError,
+                $"Relations for table '{sourceTable}' could not be read: {exception.Message}");
+        }
+    }
+
     private static async Task<TableMetadata?> ReadTableAsync(
         SqliteConnection connection,
         TableName tableName,

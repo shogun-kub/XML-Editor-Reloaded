@@ -58,6 +58,59 @@ internal sealed class LookupTooltipConverter : IValueConverter
 }
 
 /// <summary>
+/// Converts a raw relation key to the target display name, marking values that are absent from the
+/// target table. The converter is created per grid column and carries that column's relation data.
+/// </summary>
+internal sealed class RelationDisplayConverter : IValueConverter
+{
+    private readonly RelationColumnData _relation;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelationDisplayConverter"/> class.
+    /// </summary>
+    /// <param name="relation">Resolved relation data of the column.</param>
+    public RelationDisplayConverter(RelationColumnData relation)
+    {
+        ArgumentNullException.ThrowIfNull(relation);
+        _relation = relation;
+    }
+
+    /// <inheritdoc />
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        _relation.Display(value as string);
+
+    /// <inheritdoc />
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        value as string ?? string.Empty;
+}
+
+/// <summary>
+/// Converts a raw relation key to a tooltip that shows the key and unknown state.
+/// </summary>
+internal sealed class RelationTooltipConverter : IValueConverter
+{
+    private readonly RelationColumnData _relation;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelationTooltipConverter"/> class.
+    /// </summary>
+    /// <param name="relation">Resolved relation data of the column.</param>
+    public RelationTooltipConverter(RelationColumnData relation)
+    {
+        ArgumentNullException.ThrowIfNull(relation);
+        _relation = relation;
+    }
+
+    /// <inheritdoc />
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        _relation.GetTooltip(value as string);
+
+    /// <inheritdoc />
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        value as string ?? string.Empty;
+}
+
+/// <summary>
 /// Converts the sparse <c>0</c>/<c>1</c> lexical representation of a Boolean field to and from a
 /// checkbox state.
 /// </summary>

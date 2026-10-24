@@ -798,4 +798,25 @@
   <data name="CompareSideRight" xml:space="preserve">
     <value>Справа</value>
   </data>
+  <data name="RelationUnavailableFormat" xml:space="preserve">
+    <value>Целевая таблица связи недоступна: {0}</value>
+  </data>
+  <data name="RelationUnknownTooltipFormat" xml:space="preserve">
+    <value>Ссылка не найдена: {0}</value>
+  </data>
+  <data name="RelationValueTooltipFormat" xml:space="preserve">
+    <value>{0} (ID {1})</value>
+  </data>
+  <data name="EditorGoToTargetText" xml:space="preserve">
+    <value>Открыть связанную запись</value>
+  </data>
+  <data name="EditorRelationTargetMissing" xml:space="preserve">
+    <value>Связанная запись недоступна.</value>
+  </data>
+  <data name="EditorRecordNotFound" xml:space="preserve">
+    <value>Запись '{0}' не найдена.</value>
+  </data>
+  <data name="EditorTableNotFound" xml:space="preserve">
+    <value>Таблица '{0}' отсутствует в этом наборе данных.</value>
+  </data>
 </root>

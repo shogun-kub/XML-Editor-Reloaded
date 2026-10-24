@@ -7,6 +7,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Localization;
 using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Overlays;
+using XmlEditorReloaded.Xml.Relations;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Services;
@@ -45,6 +46,11 @@ public sealed class DataSetSession : IDataSetSession
         Repository = repository;
         Lookups = new XmlFileLookupRepository(tableDataDirectory, metadataProvider: metadataProvider);
         Translations = new TranslationCatalog(metadataProvider, catalog, tableDataDirectory);
+        RelationResolver = new TableRelationResolver(
+            catalog,
+            repository,
+            tableDataDirectory,
+            metadataProvider);
     }
 
     /// <inheritdoc />
@@ -64,6 +70,9 @@ public sealed class DataSetSession : IDataSetSession
 
     /// <inheritdoc />
     public ITranslationCatalog Translations { get; }
+
+    /// <inheritdoc />
+    public ITableRelationResolver RelationResolver { get; }
 
     /// <inheritdoc />
     public async Task<OperationResult<TableWorkspace>> OpenTableAsync(
@@ -125,6 +134,12 @@ public sealed class DataSetSession : IDataSetSession
     public async Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(
         CancellationToken cancellationToken = default) =>
         await _metadataProvider.GetLanguagesAsync(cancellationToken).ConfigureAwait(false);
+
+    /// <inheritdoc />
+    public async Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+        TableName sourceTable,
+        CancellationToken cancellationToken = default) =>
+        await _metadataProvider.GetRelationsAsync(sourceTable, cancellationToken).ConfigureAwait(false);
 
     /// <inheritdoc />
     public async Task<OperationResult<TableDescriptor>> EnsureOverlayAsync(

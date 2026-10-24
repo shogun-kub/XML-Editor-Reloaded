@@ -43,6 +43,26 @@ public interface IDataSetSession
     ITranslationCatalog Translations { get; }
 
     /// <summary>
+    /// Gets the resolver that loads relation target tables for pickers and navigation.
+    /// </summary>
+    ITableRelationResolver RelationResolver { get; }
+
+    /// <summary>
+    /// Returns the relations declared by one source table.
+    /// </summary>
+    /// <param name="sourceTable">Dotted source table name.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the relations;
+    /// a table without relations yields an empty list. On failure, <c>error_code</c> is
+    /// <c>io.error</c> and <c>error_text</c> describes the problem.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+        TableName sourceTable,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Opens a table for editing, optionally with a language overlay.
     /// </summary>
     /// <param name="descriptor">Base table descriptor discovered by <see cref="Catalog"/>.</param>
