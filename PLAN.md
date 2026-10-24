@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4/M5/M7/M8 завершены. Backend полностью собран: Core, SQLite-метаданные, каталог, настройки, XML load/edit/overlays/save, DI-wiring и STI/ETRLE imaging. `App` — шаблонная WPF-заглушка. Следующий шаг — M9 (минимальная WPF-оболочка); опционально M6 (валидация) или R1 (lossless structural patcher).
+**Текущее состояние:** M0/M1/M2/M3/M4/M5/M6/M7/M8 завершены. Backend полностью собран: Core, SQLite-метаданные, каталог, настройки, XML load/edit/overlays/save/validation, DI-wiring и STI/ETRLE imaging. `App` — шаблонная WPF-заглушка. Следующий шаг — M9 (минимальная WPF-оболочка); опционально R1 (lossless structural patcher) или наполнение `Columns`.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -74,8 +74,10 @@
 **Фактический результат:** реализованы загрузка оверлеев (`LoadOverlayAsync` + `OverlayDocument`), резолвер ключей (scalar/positional/singleton), merge с base-fallback и признаком перевода, запись переводов только в оверлей (новая запись — ключ + поле), маршрутизация `TableEditSession`, анализ переводов. Nested-кейсы: `GEARKIT` по позиции, `ASSIGNMENT` по `ubAssignmentType`, `CITYLIST/CITY` + `COUNTRY` singleton. Base-файл при translation-only save побайтово не изменяется.
 **Готово:** 8 overlay-тестов, всего 49 XML-тестов и 86 тестов в решении; сценарии Items, PocketPopups, MercStartingGear, Cities проходят.
 
-### M6 — Xml: валидация (~1 дн; параллельно с M5)
+### M6 — Xml: валидация (~1 дн; параллельно с M5) — **выполнен**
 `TableValidator`: unknown-field = info (не error), bad type = warning с ключом+путём, lookup-ref, дубликаты ключей, форма dict-масок. Только чтение.
+**Фактический результат:** `TableValidator.ValidateAsync` валидирует mapped-таблицы: unknown fields — Info, неверный тип/отсутствующий lookup/дубликат или отсутствие ключа/некорректная dict-маска — Warning. Для document-driven таблиц возвращается один Info `validation.unmapped`. Валидатор использует `ColumnMetadata` и `ILookupRepository`, не мутирует документ. Добавлены коды `ValidationCodes`.
+**Готово:** 8 M6-тестов, всего 57 XML-тестов и 118 тестов в решении. Ограничение: seed пока не содержит `Columns`, поэтому на реальных данных проверки типов/lookup включатся после заполнения колоночных метаданных; unknown-field проверка выполняется только при наличии Columns.
 
 ### M8 — Wiring (~1–1.5 дн) — **выполнен**
 `TableRepository` (реализация `ITableRepository`), `ServiceCollectionExtensions` в каждом backend-проекте; join правило: нет метаданных → document-driven, статус «unmapped». Интеграционные тесты (end-to-end load-edit-save, malformed fail-soft, lookup overlay, translation cycle через `TableEditSession`).
