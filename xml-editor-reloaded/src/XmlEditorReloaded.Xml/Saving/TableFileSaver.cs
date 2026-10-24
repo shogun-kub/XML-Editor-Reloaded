@@ -13,6 +13,7 @@ namespace XmlEditorReloaded.Xml.Saving;
 public sealed class TableFileSaver
 {
     private readonly DocumentSerializer _serializer;
+    private readonly LosslessDocumentPatcher _patcher = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableFileSaver"/> class.
@@ -60,7 +61,10 @@ public sealed class TableFileSaver
         byte[] bytes;
         try
         {
-            bytes = _serializer.Serialize(document);
+            if (!_patcher.TryPatch(document, out bytes))
+            {
+                bytes = _serializer.Serialize(document);
+            }
         }
         catch (Exception exception) when (exception is InvalidOperationException or XmlException)
         {
@@ -128,7 +132,7 @@ public sealed class TableFileSaver
             }
         }
 
-        document.AcceptSaved(bytes.LongLength, File.GetLastWriteTimeUtc(path), hash);
+        document.AcceptSaved(bytes, File.GetLastWriteTimeUtc(path), hash);
         return OperationResult.Success();
     }
 

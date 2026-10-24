@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0 и M1 завершены (коммит `27bcafe`), M3 реализован в объёме core: loader, document model, save gate, lookup repository, фикстуры и corpus no-rewrite тесты зелёные на v4/v5. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. R1 (побайтовая идентичность отредактированных файлов) остаётся открытым и требует `ValueSpanPatcher`; следующий milestone — M4 (редактирование строк), R1 можно закрывать параллельно.
+**Текущее состояние:** M0 и M1 завершены (коммит `27bcafe`), M3 реализован: loader, document model, save gate, lookup repository, corpus no-rewrite на v4/v5 и `LosslessDocumentPatcher` для скалярных правок. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M4 (редактирование строк); для структурных изменений (add/delete/duplicate) пока используется обычный serializer.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -55,12 +55,12 @@
 `StciHeader`/`StciFlags`/`SubImageDescriptor`/`StciImage`/`StciParser` (ошибки `sti.bad_magic/truncated/unsupported_flags`); `EtrleDecoder` (control-byte семантика, overrun = diagnostic); `ItemImageCatalog` (Big: `BigItems/gun{NN}.sti`/`p{t}item{NN}.sti`, паддинг до 2 цифр только для <10, case-insensitive; Medium: `Interface/mdguns.sti`/`mdp{t}items.sti` frame=index; Small: `tilesets/0/smguns.sti`/`smp{t}items.sti`; прозрачность: индекс 0 везде, зелёный 0,255,0 — medium/small); `DecodedFrameCache` (LRU ~64–128 МБ, invalidation по mtime). Фикстуры: 2–3 маленьких реальных STI, скопированных в тест-проект.
 **Готово:** все edge-кейсы покрыты, zero WPF-ссылок.
 
-### M3 — Xml: загрузка, round-trip, диагностика (~4–6 дн; самое сложное) — **выполнен (core), R1 открыт**
+### M3 — Xml: загрузка, round-trip, диагностика (~4–6 дн; самое сложное) — **выполнен**
 `FileFormatInfo`, `TableFileLoader` (`XmlReaderSettings` + `PreserveWhitespace`, `XmlException` → `xml.parse_error` + line/position), `DocumentSerializer`, `TableFileSaver`, `TableDocument`, `TableRecord`, `LexicalValue`, `TableLoadResult` (`Loaded|LoadedReadOnly|Malformed`), `XmlFileLookupRepository`.
 **Алгоритм сохранения:** dirty? → serialize → re-parse verify → сравнить с оригиналом → если идентично, не писать → атомарная запись → проверка (length, mtime).
 **Тесты:** байтовая идентичность неотредактированной фикстуры; «не перезаписан вообще» (mtime); sparse-набор полей; `1.0`/пустые/повторяющиеся/неизвестные поля; порядок и регистр; v5 AttachmentPoint → ошибка без записи; `EditSingleValue_Save_ChangesOnlyThatValue`; BOM/newline; внешняя модификация. **Corpus harness** (`XER_CORPUS_DIR`, копия во temp): v4 — 263 файла, v5 — 239 файлов + 1 malformed; проверяется отсутствие перезаписи неизменённых файлов.
-**Фактический результат:** загрузка, диагностика, редактирование одного значения, save-gate и corpus no-rewrite зелёные на v4 и v5. Побайтовая идентичность после редактирования не достигнута: стандартный `XmlWriter` нормализует регистр encoding в declaration, пробелы вокруг `=`, `&gt;`, `&#10;`, пробел в self-closing тегах и форматирование атрибутов. Это R1; `ValueSpanPatcher` остаётся отдельным follow-up. `PrimaryKeyAllocator` реализован как `TableDocument.GetNextPrimaryKey`; `RowFactory` перенесён в M4.
-**Готово (фактически):** corpus no-rewrite; повреждённый файл недеструктивен; load/edit/save сохраняет поля и значения, но может нормализовать форматирование отредактированного файла.
+**Фактический результат:** загрузка, диагностика, редактирование одного значения, save-gate и corpus no-rewrite зелёные на v4 и v5. Добавлен `LosslessDocumentPatcher`: скалярные правки применяются к исходным байтам, поэтому declaration casing, пробелы в атрибутах, `&gt;`, `&#10;`, self-closing теги и остальное форматирование сохраняются. Для структурных изменений (add/delete/duplicate) используется `DocumentSerializer`, который нормализует форматирование; это закрывается в M4. `PrimaryKeyAllocator` реализован как `TableDocument.GetNextPrimaryKey`; `RowFactory` перенесён в M4.
+**Готово (фактически):** corpus no-rewrite; повреждённый файл недеструктивен; скалярная правка меняет только своё значение, форматирование файла сохраняется.
 
 ### M4 — Xml: редактирование и строки (~1–1.5 дн)
 `SetFieldValue` (меняет только текст; отсутствующее поле не добавляется без явного `addFieldIfMissing`), `SetListField`, `SetDictField` (маска+индекс), `RecordOps` (Add max+1 / Duplicate deep-clone / Delete), `DocumentChangeTracker` (журнал для будущего undo), отклонение невалидных чисел (`xml.invalid_number`) без мутации документа.
@@ -102,7 +102,7 @@ Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк)
 
 ## Основные риски
 
-- **R1 writer quirks → byte-identity на edited-файлах**: подтверждено на корпусе. `XmlWriter` меняет declaration encoding case, пробелы в атрибутах, `&gt;`, `&#10;`, self-closing `/>`; 15 из 263 файлов v4 расходятся уже без правок. Неизменённые файлы не перезаписываются, поэтому это не риск потери данных. Для byte-identity edited-файлов нужен `ValueSpanPatcher` (патчинг исходных байтовых диапазонов) — отдельный follow-up до M4/M10.
+- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher` (патчинг исходных байтовых диапазонов); тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — закрыть в M4 вместе с `RowFactory`.
 - **R2 большие файлы**: lazy-парсинг значений, key-index, async; perf-гейт M10.
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.

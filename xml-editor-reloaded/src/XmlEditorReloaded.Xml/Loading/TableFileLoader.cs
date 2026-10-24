@@ -127,7 +127,8 @@ public sealed class TableFileLoader
             recordElementName,
             bytes.LongLength,
             lastWriteTimeUtc,
-            sha256);
+            sha256,
+            bytes);
 
         return OperationResult<TableLoadResult>.Success(
             new TableLoadResult(descriptor, status, tableDocument, diagnostics));

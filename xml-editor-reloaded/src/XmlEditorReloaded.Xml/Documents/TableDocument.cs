@@ -24,11 +24,14 @@ public sealed class TableDocument
         string recordElementName,
         long originalLength,
         DateTime originalLastWriteTimeUtc,
-        string originalSha256)
+        string originalSha256,
+        byte[] originalBytes)
     {
         Descriptor = descriptor;
         Metadata = metadata;
         _document = document;
+        OriginalXml = new XDocument(document);
+        OriginalBytes = originalBytes;
         Format = format;
         Status = status;
         Diagnostics = diagnostics;
@@ -100,6 +103,10 @@ public sealed class TableDocument
     /// </summary>
     public string OriginalSha256 { get; private set; }
 
+    internal XDocument OriginalXml { get; private set; }
+
+    internal byte[] OriginalBytes { get; private set; }
+
     internal XDocument Xml => _document;
 
     /// <summary>
@@ -144,9 +151,11 @@ public sealed class TableDocument
 
     internal void MarkClean() => IsDirty = false;
 
-    internal void AcceptSaved(long length, DateTime lastWriteTimeUtc, string sha256)
+    internal void AcceptSaved(byte[] bytes, DateTime lastWriteTimeUtc, string sha256)
     {
-        OriginalLength = length;
+        OriginalBytes = bytes;
+        OriginalXml = new XDocument(_document);
+        OriginalLength = bytes.LongLength;
         OriginalLastWriteTimeUtc = lastWriteTimeUtc;
         OriginalSha256 = sha256;
         IsDirty = false;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ITEMLIST>
+	<ITEM id = "2">
+		<uiIndex>0</uiIndex>
+		<szItemName>Old</szItemName>
+		<Desc>a &gt; b &amp; c</Desc>
+		<Note>line1&#10;line2</Note>
+		<Empty/>
+		<SelfClosing attr = "x"/>
+		<Bare>></Bare>
+	</ITEM>
+</ITEMLIST>
