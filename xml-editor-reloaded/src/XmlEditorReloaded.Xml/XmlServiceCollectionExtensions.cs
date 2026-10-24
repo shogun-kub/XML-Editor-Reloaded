@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Xml.Copy;
 using XmlEditorReloaded.Xml.Loading;
 using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Repository;
@@ -33,6 +34,9 @@ public static class XmlServiceCollectionExtensions
             provider.GetService<ITableMetadataProvider>(),
             provider.GetRequiredService<TableFileLoader>(),
             provider.GetRequiredService<TableFileSaver>()));
+        services.TryAddSingleton<ITableCopyService>(provider => new TableCopyService(
+            provider.GetRequiredService<ITableCatalog>(),
+            provider.GetRequiredService<ITableMetadataProvider>()));
 
         if (!string.IsNullOrWhiteSpace(tableDataDirectory))
         {

@@ -62,10 +62,12 @@ XML-table engine:
 - base table plus language overlays, merged display values, and overlay-only translation writes;
 - table workspaces with editing, bulk operations, undo/redo, validation, relation pickers, and
   multi-file sets with a shared history and atomic per-file saving;
+- cross-data-set copy and merge with preview, conflict policies, key allocation, display-text remapping,
+  optional related rows, and rollback of already replaced files on failure;
 - cross-version comparison and report formatting.
 
-Folders: `Comparison`, `Documents`, `IO`, `Loading`, `Lookups`, `Overlays`, `Relations`, `Repository`,
-`Saving`, `Schema`, `Validation`, `Values`, `Workspace`.
+Folders: `Comparison`, `Copy`, `Documents`, `IO`, `Loading`, `Lookups`, `Overlays`, `Relations`,
+`Repository`, `Saving`, `Schema`, `Validation`, `Values`, `Workspace`.
 
 ### XmlEditorReloaded.Data (`net10.0`)
 
@@ -83,9 +85,10 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 
 ### XmlEditorReloaded.App (`net10.0-windows`)
 
-WPF shell and MVVM layer: table browser and tabs, generic grid editor, item workspace, mercenary gear
-workspace, detail panel, STI image viewer, cross-version comparison window, dialogs, settings, and
-RESX localization (English and Russian).
+WPF shell and MVVM layer: data-directory selector across several data sets, table browser and tabs keyed
+by data set and table, generic grid editor, item workspace, mercenary gear workspace, detail panel, STI
+image viewer, cross-version comparison window, cross-data-set copy dialog, dialogs, settings, and RESX
+localization (English and Russian).
 
 Folders: `Imaging`, `Resources`, `Services`, `ViewModels`, `Views`. All UI strings come from RESX;
 views contain no business logic.
@@ -93,7 +96,7 @@ views contain no business logic.
 ### Test projects
 
 Five xUnit projects mirror the source projects. `Xml.Tests` and `Imaging.Tests` contain small real
-fixtures; corpus, comparison and performance tests are environment-gated and never write to the
+fixtures; corpus, comparison, copy and performance tests are environment-gated and never write to the
 reference data (corpus tests work on temporary copies).
 
 ## Dependency rules
@@ -154,6 +157,10 @@ XER_CORPUS_DIR="<path>/Data-1.13/TableData" dotnet test xml-editor-reloaded/XmlE
 # v4 <-> v5 comparison test
 XER_COMPARE_LEFT_DIR=<v4 TableData> XER_COMPARE_RIGHT_DIR=<v5 TableData> \
   dotnet test xml-editor-reloaded/tests/XmlEditorReloaded.Data.Tests --filter RealDataComparisonTests
+
+# v4 -> v5 copy test (source stays read-only)
+XER_COPY_SOURCE_DIR=<v4 TableData> XER_COPY_TARGET_DIR=<v5 TableData> \
+  dotnet test xml-editor-reloaded/tests/XmlEditorReloaded.Data.Tests --filter CorpusCopyTests
 
 # Performance gates
 XER_CORPUS_DIR=<TableData> dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx \

@@ -68,7 +68,7 @@ public sealed class TableDocument
     /// <summary>
     /// Gets the lifecycle status of the document.
     /// </summary>
-    public TableDocumentStatus Status { get; }
+    public TableDocumentStatus Status { get; private set; }
 
     /// <summary>
     /// Gets diagnostics collected while loading the document.
@@ -302,6 +302,74 @@ public sealed class TableDocument
         ChangeTracker.Record(new RecordDeleted(key, snapshot));
 
         return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Allows a structurally valid table with no records to accept new records. The loader marks such
+    /// a table read-only because a missing record element is usually a diagnostic view; a copy target
+    /// may legitimately start empty, so the restriction is lifted only when that is the sole problem.
+    /// </summary>
+    /// <returns><see langword="true"/> when the document is editable.</returns>
+    internal bool TryEnableEditing()
+    {
+        if (Status == TableDocumentStatus.Loaded)
+        {
+            return true;
+        }
+
+        if (Status != TableDocumentStatus.LoadedReadOnly
+            || Diagnostics.Any(static diagnostic => !string.Equals(
+                diagnostic.Code,
+                ErrorCodes.XmlRecordElementMissing,
+                StringComparison.Ordinal)))
+        {
+            return false;
+        }
+
+        Status = TableDocumentStatus.Loaded;
+        return true;
+    }
+
+    /// <summary>
+    /// Appends a record cloned from another document, assigning the supplied key when a key field is
+    /// known. The clone keeps every element, attribute, and lexical value of the source record.
+    /// </summary>
+    /// <param name="sourceElement">Record element owned by another document.</param>
+    /// <param name="keyField">XML field that stores the record key, or <see langword="null"/>.</param>
+    /// <param name="keyValue">Key to write into the clone, or <see langword="null"/> to keep the source key.</param>
+    /// <returns>The inserted record facade.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="sourceElement"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the document is not saveable.</exception>
+    internal TableRecord InsertRecord(XElement sourceElement, string? keyField, string? keyValue)
+    {
+        ArgumentNullException.ThrowIfNull(sourceElement);
+
+        if (Status != TableDocumentStatus.Loaded || _document.Root is null)
+        {
+            throw new InvalidOperationException("Records can only be inserted into a successfully loaded document.");
+        }
+
+        var clone = new XElement(sourceElement);
+        if (!string.IsNullOrEmpty(keyField) && keyValue is not null)
+        {
+            var keyElement = clone.Elements().FirstOrDefault(element =>
+                string.Equals(element.Name.LocalName, keyField, StringComparison.Ordinal));
+            if (keyElement is null)
+            {
+                clone.AddFirst(new XElement(XName.Get(keyField), keyValue));
+            }
+            else
+            {
+                keyElement.Value = keyValue;
+            }
+        }
+
+        _document.Root.Add(clone);
+        var record = new TableRecord(this, clone);
+        _records.Add(record);
+        MarkDirty();
+        ChangeTracker.Record(new RecordAdded(keyValue));
+        return record;
     }
 
     internal void MarkDirty() => IsDirty = true;

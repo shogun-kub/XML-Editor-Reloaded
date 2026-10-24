@@ -46,6 +46,7 @@ public partial class App : Application
             provider.GetRequiredService<ITableMetadataProvider>()));
         services.AddSingleton<CompareViewModel>();
         services.AddSingleton<IVersionCompareService, WpfVersionCompareService>();
+        services.AddSingleton<ITableCopyDialogService, WpfTableCopyDialogService>();
         services.AddSingleton<ImageViewerViewModel>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();

@@ -195,6 +195,15 @@ public sealed partial class ItemWorkspaceViewModel :
     public TableName TableName => _descriptor.TableName;
 
     /// <inheritdoc />
+    public string TableDataDirectory => _session.TableDataDirectory;
+
+    /// <inheritdoc />
+    public string DatasetLabel => DatasetNames.LabelFor(_session);
+
+    /// <inheritdoc />
+    public string? SelectedRecordKey => SelectedItem?.Key;
+
+    /// <inheritdoc />
     public string Title { get; }
 
     /// <inheritdoc />
@@ -936,7 +945,9 @@ public sealed partial class ItemWorkspaceViewModel :
             return;
         }
 
-        TableNavigationRequested?.Invoke(this, new TableNavigationRequest(relation.Relation.TargetTable, value));
+        TableNavigationRequested?.Invoke(
+            this,
+            new TableNavigationRequest(relation.Relation.TargetTable, value, TableDataDirectory));
     }
 
     /// <inheritdoc />

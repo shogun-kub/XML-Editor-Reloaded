@@ -197,6 +197,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// <inheritdoc />
     public TableName TableName => Descriptor.TableName;
 
+    /// <inheritdoc />
+    public string TableDataDirectory => _session.TableDataDirectory;
+
+    /// <inheritdoc />
+    public string DatasetLabel => DatasetNames.LabelFor(_session);
+
+    /// <inheritdoc />
+    public string? SelectedRecordKey => SelectedRow?.Key;
+
     /// <summary>
     /// Gets the table title.
     /// </summary>
@@ -1427,7 +1436,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         TableNavigationRequested?.Invoke(
             this,
-            new TableNavigationRequest(relation.Relation.TargetTable, value));
+            new TableNavigationRequest(relation.Relation.TargetTable, value, TableDataDirectory));
     }
 
     /// <summary>

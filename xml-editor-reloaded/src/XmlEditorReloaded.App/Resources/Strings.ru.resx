@@ -1077,4 +1077,145 @@
   <data name="MercGearSlot.SmallFormat" xml:space="preserve">
     <value>Малый слот {0}</value>
   </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Копировать данные…</value>
+  </data>
+  <data name="CopyResultSummary" xml:space="preserve">
+    <value>Скопировано: добавлено {0}, обновлено {1}, пропущено {2}.</value>
+  </data>
+  <data name="CopyTabsNotReloaded" xml:space="preserve">
+    <value>Вкладок с несохранёнными изменениями не перезагружено: {0}.</value>
+  </data>
+  <data name="DataDirectoryMissing" xml:space="preserve">
+    <value>недоступен</value>
+  </data>
+  <data name="CopyTitle" xml:space="preserve">
+    <value>Копирование записей между наборами данных</value>
+  </data>
+  <data name="CopySourceLabel" xml:space="preserve">
+    <value>Источник (только чтение)</value>
+  </data>
+  <data name="CopyTargetLabel" xml:space="preserve">
+    <value>Назначение</value>
+  </data>
+  <data name="CopyBrowseText" xml:space="preserve">
+    <value>Обзор…</value>
+  </data>
+  <data name="CopyTableLabel" xml:space="preserve">
+    <value>Таблица</value>
+  </data>
+  <data name="CopyRecordsLabel" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="CopyRecordsHint" xml:space="preserve">
+    <value>Оставьте пустым для копирования всех записей; иначе укажите ключи через запятую.</value>
+  </data>
+  <data name="CopyConflictLabel" xml:space="preserve">
+    <value>При совпадении</value>
+  </data>
+  <data name="CopyKeyModeLabel" xml:space="preserve">
+    <value>Ключи</value>
+  </data>
+  <data name="CopyRelatedLabel" xml:space="preserve">
+    <value>Копировать связанные строки (подтаблицы)</value>
+  </data>
+  <data name="CopyPreviewButton" xml:space="preserve">
+    <value>Предпросмотр</value>
+  </data>
+  <data name="CopyApplyButton" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
+  <data name="CopyCloseButton" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="CopyPreviewHeader" xml:space="preserve">
+    <value>Предпросмотр</value>
+  </data>
+  <data name="CopyWarningsHeader" xml:space="preserve">
+    <value>Предупреждения</value>
+  </data>
+  <data name="CopySourceKeyColumn" xml:space="preserve">
+    <value>Ключ источника</value>
+  </data>
+  <data name="CopySourceDisplayColumn" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="CopyTargetKeyColumn" xml:space="preserve">
+    <value>Ключ назначения</value>
+  </data>
+  <data name="CopyActionColumn" xml:space="preserve">
+    <value>Действие</value>
+  </data>
+  <data name="CopyReferencesColumn" xml:space="preserve">
+    <value>Ссылки</value>
+  </data>
+  <data name="CopyRelatedColumn" xml:space="preserve">
+    <value>Связанные строки</value>
+  </data>
+  <data name="CopyWarningsColumn" xml:space="preserve">
+    <value>Предупреждения</value>
+  </data>
+  <data name="CopyReady" xml:space="preserve">
+    <value>Выберите источник и назначение, затем выполните предпросмотр.</value>
+  </data>
+  <data name="CopyLoadingTables" xml:space="preserve">
+    <value>Загрузка таблиц…</value>
+  </data>
+  <data name="CopyTablesLoaded" xml:space="preserve">
+    <value>Общих таблиц: {0}.</value>
+  </data>
+  <data name="CopyNoCommonTables" xml:space="preserve">
+    <value>В выбранных наборах данных нет общих таблиц.</value>
+  </data>
+  <data name="CopyNoTable" xml:space="preserve">
+    <value>Выберите таблицу для копирования.</value>
+  </data>
+  <data name="CopyPreviewing" xml:space="preserve">
+    <value>Построение плана копирования…</value>
+  </data>
+  <data name="CopyApplying" xml:space="preserve">
+    <value>Запись файлов назначения…</value>
+  </data>
+  <data name="CopyPreviewSummary" xml:space="preserve">
+    <value>Добавить: {0}, перезаписать: {1}, дополнить: {2}, пропустить: {3}; связанных строк: {4}.</value>
+  </data>
+  <data name="CopyPolicySkip" xml:space="preserve">
+    <value>Пропускать существующие</value>
+  </data>
+  <data name="CopyPolicyOverwrite" xml:space="preserve">
+    <value>Перезаписывать существующие</value>
+  </data>
+  <data name="CopyPolicyMerge" xml:space="preserve">
+    <value>Дополнять отсутствующие поля</value>
+  </data>
+  <data name="CopyKeyPreserve" xml:space="preserve">
+    <value>Сохранять ключи источника</value>
+  </data>
+  <data name="CopyKeyAllocate" xml:space="preserve">
+    <value>Выделять новые ключи</value>
+  </data>
+  <data name="CopyActionAdd" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="CopyActionOverwrite" xml:space="preserve">
+    <value>Перезаписать</value>
+  </data>
+  <data name="CopyActionMerge" xml:space="preserve">
+    <value>Дополнить</value>
+  </data>
+  <data name="CopyActionSkip" xml:space="preserve">
+    <value>Пропустить</value>
+  </data>
+  <data name="CopyRemapAmbiguous" xml:space="preserve">
+    <value>неоднозначно</value>
+  </data>
+  <data name="CopyRemapNotFound" xml:space="preserve">
+    <value>не найдено</value>
+  </data>
+  <data name="CopyChooseSource" xml:space="preserve">
+    <value>Выберите каталог данных-источника</value>
+  </data>
+  <data name="CopyChooseTarget" xml:space="preserve">
+    <value>Выберите каталог данных-назначения</value>
+  </data>
 </root>

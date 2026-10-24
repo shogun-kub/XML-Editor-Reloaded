@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Xml.Copy;
 
 namespace XmlEditorReloaded.App.Tests;
 
@@ -26,6 +28,7 @@ public class CompositionTests
         Assert.NotNull(provider.GetRequiredService<IImageViewerService>());
         Assert.NotNull(provider.GetRequiredService<CompareViewModel>());
         Assert.NotNull(provider.GetRequiredService<IVersionCompareService>());
+        Assert.NotNull(provider.GetRequiredService<ITableCopyDialogService>());
     }
 
     /// <summary>
@@ -53,6 +56,15 @@ public class CompositionTests
                     provider.GetRequiredService<CompareViewModel>());
                 Assert.IsType<CompareViewModel>(compareWindow.DataContext);
                 compareWindow.Close();
+
+                var copyViewModel = new TableCopyViewModel(
+                    provider.GetRequiredService<ITableCopyService>(),
+                    provider.GetRequiredService<ITableCatalog>(),
+                    provider.GetRequiredService<IDialogService>(),
+                    new TableCopyDialogRequest(Array.Empty<string>(), string.Empty));
+                var copyWindow = new global::XmlEditorReloaded.App.Views.TableCopyWindow(copyViewModel);
+                Assert.IsType<TableCopyViewModel>(copyWindow.DataContext);
+                copyWindow.Close();
             }
             catch (Exception exception)
             {

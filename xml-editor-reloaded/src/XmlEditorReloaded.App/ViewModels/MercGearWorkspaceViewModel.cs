@@ -132,6 +132,15 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
     public TableName TableName => _descriptor.TableName;
 
     /// <inheritdoc />
+    public string TableDataDirectory => _session.TableDataDirectory;
+
+    /// <inheritdoc />
+    public string DatasetLabel => DatasetNames.LabelFor(_session);
+
+    /// <inheritdoc />
+    public string? SelectedRecordKey => SelectedMerc?.Key;
+
+    /// <inheritdoc />
     public string Title { get; }
 
     /// <inheritdoc />

@@ -11,6 +11,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
+using XmlEditorReloaded.Xml.Copy;
 using XmlEditorReloaded.Xml.Repository;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -71,7 +72,8 @@ public class MainViewModelTests
             settingsStore,
             dialog,
             new FakeImageViewerService(),
-            new FakeVersionCompareService());
+            new FakeVersionCompareService(),
+            new FakeTableCopyDialogService());
 
         await viewModel.InitializeAsync();
 
@@ -129,7 +131,8 @@ public class MainViewModelTests
             new JsonSettingsStore(workspace.PathOf("settings.json")),
             dialog,
             new FakeImageViewerService(),
-            new FakeVersionCompareService())
+            new FakeVersionCompareService(),
+            new FakeTableCopyDialogService())
         {
             DataDirectory = data13,
         };
@@ -378,30 +381,173 @@ public class MainViewModelTests
         Assert.Equal(data13, compare.LastDataDirectory);
     }
 
+    /// <summary>
+    /// Switching the data-directory selector reloads the table list but keeps open tabs from both data
+    /// sets, and each tab reports its own label.
+    /// </summary>
+    [Fact]
+    public async Task SwitchDataDirectory_KeepsTabsAcrossDataSets()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, "v4", "First");
+        var second = CreateNotesData(workspace, "v5", "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, first, second);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var firstEditor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        Assert.Equal("First", firstEditor.Rows[0]["text"]);
+        Assert.Equal("v4", firstEditor.DatasetLabel);
+
+        var secondItem = Assert.Single(
+            viewModel.DataDirectories,
+            item => string.Equals(item.Path, second, StringComparison.OrdinalIgnoreCase));
+        viewModel.SelectedDataDirectory = secondItem;
+        await WaitUntilAsync(() =>
+            string.Equals(viewModel.DataDirectory, second, StringComparison.OrdinalIgnoreCase)
+            && !viewModel.IsBusy);
+
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var secondEditor = Assert.Single(
+            viewModel.Editors.OfType<TableEditorViewModel>(),
+            editor => string.Equals(
+                editor.TableDataDirectory,
+                Path.Combine(second, "TableData"),
+                StringComparison.OrdinalIgnoreCase));
+        Assert.Equal("Second", secondEditor.Rows[0]["text"]);
+        Assert.Equal("v5", secondEditor.DatasetLabel);
+        Assert.Equal(2, viewModel.Editors.Count);
+        Assert.Same(secondEditor, viewModel.SelectedEditor);
+    }
+
+    /// <summary>
+    /// The copy command passes the selected tab's data set, table, and record key to the dialog.
+    /// </summary>
+    [Fact]
+    public async Task CopyData_PrefillsSelectedEditorTableAndKey()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateItemsData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var copyDialog = new FakeTableCopyDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog, copyDialog: copyDialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
+        editor.SelectRecord("0");
+
+        await viewModel.CopyDataCommand.ExecuteAsync(null);
+
+        var request = Assert.IsType<TableCopyDialogRequest>(copyDialog.LastRequest);
+        Assert.Equal(Path.Combine(data13, "TableData"), request.InitialSourceDirectory);
+        Assert.Equal("Items.Items", request.InitialTableName);
+        Assert.Equal(new[] { "0" }, request.InitialRecordKeys);
+        Assert.Contains(data13, request.DataDirectories);
+    }
+
+    /// <summary>
+    /// A committed copy reloads every clean tab of the target data set from disk.
+    /// </summary>
+    [Fact]
+    public async Task CopyData_ReloadsCleanTargetTabs()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var source = CreateNotesData(workspace, "v4", "First");
+        var target = CreateNotesData(workspace, "v5", "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, source, target);
+        var dialog = new FakeDialogService();
+        var copyDialog = new FakeTableCopyDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog, copyDialog: copyDialog);
+        await viewModel.InitializeAsync();
+
+        var targetItem = Assert.Single(
+            viewModel.DataDirectories,
+            item => string.Equals(item.Path, target, StringComparison.OrdinalIgnoreCase));
+        viewModel.SelectedDataDirectory = targetItem;
+        await WaitUntilAsync(() =>
+            string.Equals(viewModel.DataDirectory, target, StringComparison.OrdinalIgnoreCase)
+            && !viewModel.IsBusy);
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var targetEditor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        Assert.Equal("Second", targetEditor.Rows[0]["text"]);
+
+        var notesPath = Path.Combine(target, "TableData", "Custom", "Notes.xml");
+        await File.WriteAllTextAsync(
+            notesPath,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><NOTES>"
+            + "<NOTE><id>1</id><text>External</text></NOTE>"
+            + "</NOTES>");
+
+        var sourceItem = Assert.Single(
+            viewModel.DataDirectories,
+            item => string.Equals(item.Path, source, StringComparison.OrdinalIgnoreCase));
+        viewModel.SelectedDataDirectory = sourceItem;
+        await WaitUntilAsync(() =>
+            string.Equals(viewModel.DataDirectory, source, StringComparison.OrdinalIgnoreCase)
+            && !viewModel.IsBusy);
+
+        var tableName = TableName.Parse("Custom.Notes");
+        copyDialog.Result = new TableCopyDialogOutcome(
+            Path.Combine(target, "TableData"),
+            new TableCopyResult(
+                tableName,
+                new[] { new TableCopyAppliedTable(tableName, 1, 0, 0) },
+                new[] { notesPath },
+                Array.Empty<string>()));
+
+        await viewModel.CopyDataCommand.ExecuteAsync(null);
+
+        await WaitUntilAsync(() => targetEditor.Rows[0]["text"] == "External");
+        Assert.Contains("Copied: 1 added", viewModel.StatusText, StringComparison.Ordinal);
+        Assert.False(targetEditor.IsDirty);
+    }
+
     private static MainViewModel CreateShell(
         SqliteMetadataProvider provider,
         FileSystemTableCatalog catalog,
         TableRepository repository,
         JsonSettingsStore settingsStore,
         FakeDialogService dialog,
-        FakeVersionCompareService? versionCompare = null) =>
+        FakeVersionCompareService? versionCompare = null,
+        FakeTableCopyDialogService? copyDialog = null) =>
         new(
             new DataSetSessionFactory(provider, catalog, repository),
             new TableEditorFactory(dialog, new TestItemImageService()),
             settingsStore,
             dialog,
             new FakeImageViewerService(),
-            versionCompare ?? new FakeVersionCompareService());
+            versionCompare ?? new FakeVersionCompareService(),
+            copyDialog ?? new FakeTableCopyDialogService());
 
-    private static string CreateNotesData(TestWorkspace workspace)
+    private static string CreateNotesData(TestWorkspace workspace) =>
+        CreateNotesData(workspace, gameFolder: null, text: "Hello");
+
+    private static string CreateNotesData(
+        TestWorkspace workspace,
+        string? gameFolder,
+        string text)
     {
-        var data13 = workspace.PathOf("Data-1.13");
+        var data13 = gameFolder is null
+            ? workspace.PathOf("Data-1.13")
+            : workspace.PathOf(Path.Combine(gameFolder, "Data-1.13"));
         var directory = Path.Combine(data13, "TableData", "Custom");
         Directory.CreateDirectory(directory);
         File.WriteAllText(
             Path.Combine(directory, "Notes.xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><NOTES>"
-            + "<NOTE><id>1</id><text>Hello</text></NOTE>"
+            + $"<NOTE><id>1</id><text>{text}</text></NOTE>"
             + "</NOTES>");
         return data13;
     }
@@ -436,7 +582,10 @@ public class MainViewModelTests
         SqliteMetadataProvider Provider,
         FileSystemTableCatalog Catalog,
         TableRepository Repository,
-        JsonSettingsStore SettingsStore)> CreateServicesAsync(TestWorkspace workspace, string data13)
+        JsonSettingsStore SettingsStore)> CreateServicesAsync(
+        TestWorkspace workspace,
+        string data13,
+        params string[] additionalDirectories)
     {
         var databasePath = workspace.PathOf("metadata.sqlite");
         var migration = await new DatabaseMigrator().MigrateAsync(databasePath);
@@ -445,12 +594,13 @@ public class MainViewModelTests
         var catalog = new FileSystemTableCatalog(metadataProvider: provider);
         var repository = new TableRepository(provider);
         var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
+        var directories = new[] { data13 }.Concat(additionalDirectories).ToArray();
         var settings = new AppSettings(
-            new[] { data13 },
+            directories,
             data13,
             "ru",
             "en",
-            new[] { data13 });
+            directories);
         Assert.True((await settingsStore.SaveAsync(settings)).IsSuccess);
         return (provider, catalog, repository, settingsStore);
     }
@@ -518,6 +668,21 @@ public class MainViewModelTests
         public string? LastDataDirectory { get; private set; }
 
         public void Show(string? initialDirectory) => LastDataDirectory = initialDirectory;
+    }
+
+    private sealed class FakeTableCopyDialogService : ITableCopyDialogService
+    {
+        public TableCopyDialogRequest? LastRequest { get; private set; }
+
+        public TableCopyDialogOutcome? Result { get; set; }
+
+        public Task<TableCopyDialogOutcome?> ShowAsync(
+            TableCopyDialogRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            LastRequest = request;
+            return Task.FromResult(Result);
+        }
     }
 
     private sealed class FailingSessionFactory : IDataSetSessionFactory

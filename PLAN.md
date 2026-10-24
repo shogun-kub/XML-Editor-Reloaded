@@ -4,7 +4,7 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M20 завершены (HEAD `cc7ab9e`). Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; full legacy parity — конец M23. **Проверка текущего состояния:** build `-warnaserror` (0/0), 330 тестов (Core 28, Imaging 19, Xml 137, Data 51, App 95), corpus v4/v5 и сравнение v4↔v5 зелёные.
+**Состояние:** M0–M21 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы, multi-dataset с селектором каталогов и кэшем сессий, cross-dataset copy с preview, политиками конфликтов, allocation ключей, remap по display-тексту и копированием связанных строк. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; multi-dataset/copy — M21; full legacy parity — конец M23. **Проверка текущего состояния:** build `-warnaserror` (0/0), 346 тестов (Core 28, Imaging 19, Xml 144, Data 52, App 103), corpus v4/v5, сравнение v4↔v5 и copy v4→v5 зелёные.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается вообще; повреждённый — только диагностика.
@@ -67,11 +67,12 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **Ограничения:** при редактировании отсутствующего у overlay комплекта positional key дополняется пустыми `GEARKIT`; duplicate `uiIndex` в `AdditionalDealer_43_Inventory` репортится, но не переписывается.
 - **Тесты/acceptance:** все пять комплектов и overlay kit names на фикстурах и реальных v4/v5; 104 вспомогательные таблицы открываются с типами, ключами и без ложных предупреждений; item set с 80 dealer inventory грузится и сохраняет только изменённый dealer-файл; sounds round-trip.
 
-### M21 — Multi-dataset и cross-dataset copy/merge
-- **Multi-dataset:** список `DataDirectories`, переключение активного датасета без перезапуска, кэш сессий по каталогу, вкладки с ключом `(datasetPath, tableName)`, Save All по всем вкладкам, recent directories.
-- **Copy service:** `ITableCopyService` копирует строки/таблицу из source в target с preview конфликтов, политиками skip/overwrite/merge, allocation ключей, remap lookup/relation по display-тексту и опциональным копированием связанных строк Items.
-- **Безопасность:** source всегда read-only; запись только в target после preview; ошибка не оставляет частично записанный файл. Legacy drag-copy заменяется явным диалогом — безопасный эквивалент.
-- **Тесты/acceptance:** remap, конфликты, source не изменён, копирование v4→v5 на temp-копиях; предмет с sub-tables копируется, ссылки remap-ятся, target валиден.
+### M21 — Multi-dataset и cross-dataset copy/merge — выполнен
+- **Multi-dataset:** `DataDirectories` в шелле с recent-first порядком, переключение активного датасета без перезапуска и без закрытия вкладок; `DataSetSessionFactory` кэширует сессии по каталогу; вкладки идентифицируются парой `(TableDataDirectory, TableName)`, несут `DatasetLabel` и открываются/переиспользуются в своём датасете; навигация по relation остаётся внутри датасета; Save All охватывает все вкладки; активный каталог и recent сохраняются в настройках.
+- **Backend copy (`Xml/Copy`):** `ITableCopyService` (`PreviewAsync`/`ApplyAsync`) переносит записи как XML-элементы, поэтому unknown-поля, repeated-элементы, sparse-форма и лексические значения сохраняются. Preview показывает действие по каждой записи, allocation ключей, конфликты и связанные строки без записи. Политики `Skip`/`Overwrite`/`Merge`; `Preserve`/`Allocate` ключей; `RemapByText`-relations и lookup-колонки переписываются по display-тексту; `SubTable`/`ChildRows` копируются опционально, parent-link обновляется на target-ключ.
+- **Безопасность:** source только читается; target планируется в памяти и пишется после preview; многофайловая запись атомарна по файлу, при ошибке уже заменённые файлы восстанавливаются из исходных байт; пустой target-файл без записей открывается для вставки только при единственной диагностике `xml.record_element_missing`; одинаковые source/target отклоняются (`copy.same_directory`).
+- **UI:** кнопка «Копировать данные…» открывает явный диалог: source/target (с browse и нормализацией до `TableData`), пересечение таблиц, фильтр ключей (пусто = все), политика, режим ключей, related rows, предпросмотр с remap/related/warnings; apply возвращает результат, после чего чистые вкладки target перезагружаются, а dirty-вкладки помечаются как не перезагруженные.
+- **Тесты/acceptance:** unit-тесты копирования (skip/overwrite/merge, allocation, sub-tables, missing target, read-only source), тесты диалога и multi-dataset во вкладках, env-gated corpus copy v4→v5 на temp-копиях: предмет с Weapon и Attachments копируется с новыми ключами, `ubCalibre` remap-ится по `AmmoStrings`, source побайтно неизменён, target читается.
 
 ### M22 — Grid/workflow parity polish
 - **Фильтры:** структурированный конструктор (`=`, `<>`, `contains`, числовые сравнения, AND/OR), фильтр по выбранному значению и исключение; без произвольного кода.
@@ -125,7 +126,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Shopkeeper/enemy/militia/IMP/sounds | 104 таблицы с типами, ключами, pickers и shopkeeper-вкладкой | выполнен (M20) |
 | Lookup-таблицы | редактируются generic grid; метаданные auxiliary-таблиц | M20; CRUD — M26 |
 | Локализация | 7 языковых кодов с autodiscovery; в v4/v5 есть только `ru` | выполнен (M20) |
-| Multi-dataset и copy строк | есть только compare | M21 |
+| Multi-dataset и copy строк | селектор датасетов, вкладки по датасетам, явный copy-диалог с preview и remap | выполнен (M21) |
 | Item images | превью Big/Medium/Small, picker типа, миниатюры в списке | M19 |
 | Settings/layout | частично; нет settings dialog и persistence | M22 |
 | Packaging | нет у обоих | M27 |
@@ -139,7 +140,6 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Слияние подтаблиц предметов в ITEM | item workspace даёт view-проекцию; слияние в модель хранения — риск для целостности |
 | Shopkeeper `CONTROL` UI | в legacy его не было; `Inventory` редактируется (M20), `CONTROL` сохраняется как есть |
 | Working-data cache | perf-гейты его не требуют; кэш рискует устаревшими данными |
-| Copy между датасетами | M21 |
 | Cities/facilities, value compare, lookup management, packaging | M24–M27 (в legacy отсутствуют) |
 | Three-way merge, Excel-экспорт сравнения, общий STI/Interface/tileset browser | backlog после M27 |
 
@@ -149,7 +149,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 
 - **R1 остаточный:** неоднозначная структурная замена (несколько вставок/удалений в одном родителе) уходит в serializer и нормализует форматирование; данные при этом корректны.
 - **R6 неполные метаданные:** seed покрывает 173 таблицы из 238/239 в v4/v5; document-driven fallback работает, остальные legacy-таблицы добавляются по мере необходимости (M21–M23), миграции растут итеративно.
-- **R12 copy:** cross-dataset copy может затереть target; source read-only, preview, явные политики, тесты на temp-копиях.
+- **R12 copy (закрыт в M21):** cross-dataset copy может затереть target; source read-only, обязательный preview, явные политики, восстановление уже записанных файлов при ошибке, тесты на temp-копиях, включая corpus v4→v5.
 - **R13 многофайловое сохранение:** item workspace пишет несколько XML; per-file atomic save, ошибки агрегируются, частичное сохранение не маскируется.
 - **R14 nested/list-правки:** идут через lossless-патчер и round-trip тесты; неизменённые файлы не перезаписываются.
 - **Закрыты:** byte-identity и perf (R2), malformed-файлы (R3), dict/list-маски (R4), вложенные ключи оверлеев (R5), запись в `References/` (R7), внешние изменения (R9), культура/отмена (R10), relations drift (R11) — покрыты фикстурами, corpus- и perf-гейтами.
@@ -159,9 +159,10 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 330).
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 346).
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — прогон на temp-копиях, без изменений в `References/`.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests` зелёный.
-5. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с (фактические значения см. раздел M0–M10).
-6. Ручной smoke текущего состояния: v5 `Lookup/AttachmentPoint` открывается с диагностикой и без записи; v4 переключение на Russian показывает merged-значения, правка `szItemName` меняет только `Russian.Items.xml`; `Items.Items` открывается как item workspace, правка предмета и Weapon сохраняется одной кнопкой, duplicate/delete отменяются целиком; `Inventory.MercStartingGear` открывается как merc gear workspace, правка любого из пяти комплектов и kit name в Russian сохраняется одной кнопкой; вкладка «Торговцы» показывает дилеров выбранного предмета и пишет количество только в dealer-файл; `Sounds.Sounds` редактируется как text-only таблица; сравнение v4↔v5 экспортирует .md/.csv и не меняет файлы; отсутствующие изображения показывают код ошибки, а не ломают редактор.
-7. `References/` не изменён; `bin`/`obj` в `References/JA 2 1.13 v4|v5` не появляются (в vendored `References/JA 2 1.13 Image viewer` они поставляются вместе с исходниками и не считаются нарушением).
+5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` копирует предмет с Weapon/Attachments на temp-копиях, проверяет remap и неизменность source.
+6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с (фактические значения см. раздел M0–M10).
+7. Ручной smoke текущего состояния: v5 `Lookup/AttachmentPoint` открывается с диагностикой и без записи; v4 переключение на Russian показывает merged-значения, правка `szItemName` меняет только `Russian.Items.xml`; `Items.Items` открывается как item workspace, правка предмета и Weapon сохраняется одной кнопкой, duplicate/delete отменяются целиком; `Inventory.MercStartingGear` открывается как merc gear workspace, правка любого из пяти комплектов и kit name в Russian сохраняется одной кнопкой; вкладка «Торговцы» показывает дилеров выбранного предмета и пишет количество только в dealer-файл; `Sounds.Sounds` редактируется как text-only таблица; сравнение v4↔v5 экспортирует .md/.csv и не меняет файлы; селектор каталогов переключает v4/v5 без закрытия вкладок, а copy-диалог показывает preview и пишет только target; отсутствующие изображения показывают код ошибки, а не ломают редактор.
+8. `References/` не изменён; `bin`/`obj` в `References/JA 2 1.13 v4|v5` не появляются (в vendored `References/JA 2 1.13 Image viewer` они поставляются вместе с исходниками и не считаются нарушением).

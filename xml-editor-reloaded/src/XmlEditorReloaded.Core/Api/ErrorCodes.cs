@@ -103,4 +103,13 @@ public static class ErrorCodes
 
     /// <summary>The bulk preview would not change any value.</summary>
     public const string BulkNoChanges = "bulk.no_changes";
+
+    /// <summary>The source and target of a copy operation point at the same data directory.</summary>
+    public const string CopySameDirectory = "copy.same_directory";
+
+    /// <summary>The target data set does not contain the table being copied.</summary>
+    public const string CopyTargetTableMissing = "copy.target_table_missing";
+
+    /// <summary>The copy request selected no records.</summary>
+    public const string CopyNoRecords = "copy.no_records";
 }

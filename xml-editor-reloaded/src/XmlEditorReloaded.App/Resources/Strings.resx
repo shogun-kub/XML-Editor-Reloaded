@@ -1077,4 +1077,145 @@
   <data name="MercGearSlot.SmallFormat" xml:space="preserve">
     <value>Small slot {0}</value>
   </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Copy data...</value>
+  </data>
+  <data name="CopyResultSummary" xml:space="preserve">
+    <value>Copied: {0} added, {1} updated, {2} skipped.</value>
+  </data>
+  <data name="CopyTabsNotReloaded" xml:space="preserve">
+    <value>{0} tab(s) with unsaved changes were not reloaded.</value>
+  </data>
+  <data name="DataDirectoryMissing" xml:space="preserve">
+    <value>missing</value>
+  </data>
+  <data name="CopyTitle" xml:space="preserve">
+    <value>Copy records between data sets</value>
+  </data>
+  <data name="CopySourceLabel" xml:space="preserve">
+    <value>Source (read-only)</value>
+  </data>
+  <data name="CopyTargetLabel" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="CopyBrowseText" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="CopyTableLabel" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="CopyRecordsLabel" xml:space="preserve">
+    <value>Records</value>
+  </data>
+  <data name="CopyRecordsHint" xml:space="preserve">
+    <value>Leave empty to copy every record; otherwise enter comma-separated keys.</value>
+  </data>
+  <data name="CopyConflictLabel" xml:space="preserve">
+    <value>On conflict</value>
+  </data>
+  <data name="CopyKeyModeLabel" xml:space="preserve">
+    <value>Keys</value>
+  </data>
+  <data name="CopyRelatedLabel" xml:space="preserve">
+    <value>Copy related rows (sub-tables)</value>
+  </data>
+  <data name="CopyPreviewButton" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="CopyApplyButton" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CopyCloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CopyPreviewHeader" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="CopyWarningsHeader" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="CopySourceKeyColumn" xml:space="preserve">
+    <value>Source key</value>
+  </data>
+  <data name="CopySourceDisplayColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CopyTargetKeyColumn" xml:space="preserve">
+    <value>Target key</value>
+  </data>
+  <data name="CopyActionColumn" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="CopyReferencesColumn" xml:space="preserve">
+    <value>References</value>
+  </data>
+  <data name="CopyRelatedColumn" xml:space="preserve">
+    <value>Related rows</value>
+  </data>
+  <data name="CopyWarningsColumn" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="CopyReady" xml:space="preserve">
+    <value>Choose the source and target, then preview the copy.</value>
+  </data>
+  <data name="CopyLoadingTables" xml:space="preserve">
+    <value>Loading tables...</value>
+  </data>
+  <data name="CopyTablesLoaded" xml:space="preserve">
+    <value>Common tables: {0}.</value>
+  </data>
+  <data name="CopyNoCommonTables" xml:space="preserve">
+    <value>The selected data sets have no tables in common.</value>
+  </data>
+  <data name="CopyNoTable" xml:space="preserve">
+    <value>Select a table to copy.</value>
+  </data>
+  <data name="CopyPreviewing" xml:space="preserve">
+    <value>Building the copy plan...</value>
+  </data>
+  <data name="CopyApplying" xml:space="preserve">
+    <value>Writing the target files...</value>
+  </data>
+  <data name="CopyPreviewSummary" xml:space="preserve">
+    <value>Add: {0}, overwrite: {1}, merge: {2}, skip: {3}; related rows: {4}.</value>
+  </data>
+  <data name="CopyPolicySkip" xml:space="preserve">
+    <value>Skip existing</value>
+  </data>
+  <data name="CopyPolicyOverwrite" xml:space="preserve">
+    <value>Overwrite existing</value>
+  </data>
+  <data name="CopyPolicyMerge" xml:space="preserve">
+    <value>Fill missing fields</value>
+  </data>
+  <data name="CopyKeyPreserve" xml:space="preserve">
+    <value>Keep source keys</value>
+  </data>
+  <data name="CopyKeyAllocate" xml:space="preserve">
+    <value>Allocate new keys</value>
+  </data>
+  <data name="CopyActionAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="CopyActionOverwrite" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="CopyActionMerge" xml:space="preserve">
+    <value>Merge</value>
+  </data>
+  <data name="CopyActionSkip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="CopyRemapAmbiguous" xml:space="preserve">
+    <value>ambiguous</value>
+  </data>
+  <data name="CopyRemapNotFound" xml:space="preserve">
+    <value>not found</value>
+  </data>
+  <data name="CopyChooseSource" xml:space="preserve">
+    <value>Choose the source data directory</value>
+  </data>
+  <data name="CopyChooseTarget" xml:space="preserve">
+    <value>Choose the target data directory</value>
+  </data>
 </root>

@@ -9,9 +9,26 @@ namespace XmlEditorReloaded.App.ViewModels;
 public interface IEditorTab
 {
     /// <summary>
-    /// Gets the table this tab edits. The value identifies the tab when a table is opened again.
+    /// Gets the table this tab edits. The value identifies the tab within its data set when a table is
+    /// opened again.
     /// </summary>
     TableName TableName { get; }
+
+    /// <summary>
+    /// Gets the absolute <c>TableData</c> directory of the data set that owns the tab. Together with
+    /// <see cref="TableName"/> it identifies the tab when several data sets are open.
+    /// </summary>
+    string TableDataDirectory { get; }
+
+    /// <summary>
+    /// Gets a short label of the owning data set, for example the game directory name.
+    /// </summary>
+    string DatasetLabel { get; }
+
+    /// <summary>
+    /// Gets the primary key of the selected record, or <see langword="null"/> when no record is selected.
+    /// </summary>
+    string? SelectedRecordKey { get; }
 
     /// <summary>
     /// Gets the tab title without the dirty marker.
@@ -55,6 +72,13 @@ public interface IEditorTab
     /// </summary>
     /// <returns>A task that completes when saving finishes.</returns>
     Task SaveAsync();
+
+    /// <summary>
+    /// Reloads the tab content from disk after an external change, for example a cross-data-set copy
+    /// into the tab's table. Unsaved changes are not discarded by this method.
+    /// </summary>
+    /// <returns>A task that completes when the tab is reloaded.</returns>
+    Task ReloadAsync();
 
     /// <summary>
     /// Selects a record by its primary key, for example after relation navigation.
