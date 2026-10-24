@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.IO;
 
@@ -84,6 +86,11 @@ public sealed class TableDocument
     public IReadOnlyList<TableRecord> Records => _records;
 
     /// <summary>
+    /// Gets the journal of mutations applied to this document, for a future undo implementation.
+    /// </summary>
+    public DocumentChangeTracker ChangeTracker { get; } = new();
+
+    /// <summary>
     /// Gets a value indicating whether the document has unsaved changes.
     /// </summary>
     public bool IsDirty { get; private set; }
@@ -108,6 +115,8 @@ public sealed class TableDocument
     internal byte[] OriginalBytes { get; private set; }
 
     internal XDocument Xml => _document;
+
+    private string? PrimaryKeyField => Metadata?.RecordKey?.Primary.KeyField;
 
     /// <summary>
     /// Finds a record by its primary key value.
@@ -145,6 +154,135 @@ public sealed class TableDocument
         }
 
         return maximum < 0 ? _records.Count : maximum + 1;
+    }
+
+    /// <summary>
+    /// Appends a new record with the next integer primary key.
+    /// </summary>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult<TableRecord> AddRecord()
+    {
+        if (Status != TableDocumentStatus.Loaded || _document.Root is null)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "Records can only be added to a successfully loaded document.");
+        }
+
+        var element = new XElement(XName.Get(RecordElementName));
+        var keyField = PrimaryKeyField;
+        string? key = null;
+
+        if (!string.IsNullOrEmpty(keyField))
+        {
+            key = GetNextPrimaryKey().ToString(CultureInfo.InvariantCulture);
+            element.Add(new XElement(XName.Get(keyField), key));
+        }
+
+        _document.Root.Add(element);
+        var record = new TableRecord(this, element);
+        _records.Add(record);
+        MarkDirty();
+        ChangeTracker.Record(new RecordAdded(key));
+
+        return OperationResult<TableRecord>.Success(record);
+    }
+
+    /// <summary>
+    /// Deep-copies a record, assigns it the next integer primary key, and inserts the copy after the source.
+    /// </summary>
+    /// <param name="key">Key of the record to duplicate.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the copy.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult<TableRecord> DuplicateRecord(string key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        if (Status != TableDocumentStatus.Loaded)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "Records can only be duplicated in a successfully loaded document.");
+        }
+
+        var index = _records.FindIndex(record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
+        if (index < 0)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.KeyNotFound,
+                $"Record '{key}' was not found.");
+        }
+
+        var source = _records[index];
+        var clone = new XElement(source.Element);
+        var keyField = PrimaryKeyField;
+        string? newKey = null;
+
+        if (!string.IsNullOrEmpty(keyField))
+        {
+            newKey = GetNextPrimaryKey().ToString(CultureInfo.InvariantCulture);
+            var keyElement = clone.Elements().FirstOrDefault(element =>
+                string.Equals(element.Name.LocalName, keyField, StringComparison.Ordinal));
+
+            if (keyElement is null)
+            {
+                clone.AddFirst(new XElement(XName.Get(keyField), newKey));
+            }
+            else
+            {
+                keyElement.Value = newKey;
+            }
+        }
+
+        source.Element.AddAfterSelf(clone);
+        var record = new TableRecord(this, clone);
+        _records.Insert(index + 1, record);
+        MarkDirty();
+        ChangeTracker.Record(new RecordDuplicated(key, newKey));
+
+        return OperationResult<TableRecord>.Success(record);
+    }
+
+    /// <summary>
+    /// Removes a record from the document.
+    /// </summary>
+    /// <param name="key">Key of the record to delete.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult DeleteRecord(string key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        if (Status != TableDocumentStatus.Loaded)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "Records can only be deleted from a successfully loaded document.");
+        }
+
+        var index = _records.FindIndex(record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
+        if (index < 0)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                $"Record '{key}' was not found.");
+        }
+
+        var record = _records[index];
+        var snapshot = record.Element.ToString(SaveOptions.DisableFormatting);
+        record.Element.Remove();
+        _records.RemoveAt(index);
+        MarkDirty();
+        ChangeTracker.Record(new RecordDeleted(key, snapshot));
+
+        return OperationResult.Success();
     }
 
     internal void MarkDirty() => IsDirty = true;

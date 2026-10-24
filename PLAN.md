@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0 и M1 завершены (коммит `27bcafe`), M3 реализован: loader, document model, save gate, lookup repository, corpus no-rewrite на v4/v5 и `LosslessDocumentPatcher` для скалярных правок. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M4 (редактирование строк); для структурных изменений (add/delete/duplicate) пока используется обычный serializer.
+**Текущее состояние:** M0/M1/M3/M4 завершены. Реализованы Core-примитивы, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование полей, list/dict-поля, add/duplicate/delete записей и журнал изменений. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M5 (оверлеи); M2 и M7 можно вести параллельно.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -62,9 +62,10 @@
 **Фактический результат:** загрузка, диагностика, редактирование одного значения, save-gate и corpus no-rewrite зелёные на v4 и v5. Добавлен `LosslessDocumentPatcher`: скалярные правки применяются к исходным байтам, поэтому declaration casing, пробелы в атрибутах, `&gt;`, `&#10;`, self-closing теги и остальное форматирование сохраняются. Для структурных изменений (add/delete/duplicate) используется `DocumentSerializer`, который нормализует форматирование; это закрывается в M4. `PrimaryKeyAllocator` реализован как `TableDocument.GetNextPrimaryKey`; `RowFactory` перенесён в M4.
 **Готово (фактически):** corpus no-rewrite; повреждённый файл недеструктивен; скалярная правка меняет только своё значение, форматирование файла сохраняется.
 
-### M4 — Xml: редактирование и строки (~1–1.5 дн)
+### M4 — Xml: редактирование и строки (~1–1.5 дн) — **выполнен**
 `SetFieldValue` (меняет только текст; отсутствующее поле не добавляется без явного `addFieldIfMissing`), `SetListField`, `SetDictField` (маска+индекс), `RecordOps` (Add max+1 / Duplicate deep-clone / Delete), `DocumentChangeTracker` (журнал для будущего undo), отклонение невалидных чисел (`xml.invalid_number`) без мутации документа.
-**Готово:** тесты add/dup/delete/edit зелёные, round-trip фикстур не сломан.
+**Фактический результат:** реализованы `TableRecord.SetFieldValue`/`SetListField`/`SetDictField`, `TableDocument.AddRecord`/`DuplicateRecord`/`DeleteRecord`, `DocumentChangeTracker`. `RowFactory` реализован как `AddRecord`/`DuplicateRecord`. Числовая валидация идёт по `ColumnMetadata`; невалидное значение не меняет документ. Добавлены тесты на edit/list/dict/add/dup/delete и сохранение структурных изменений.
+**Готово:** 41 XML-тест, полный набор 65 тестов, corpus no-rewrite v4/v5 зелёные. Для структурных изменений по-прежнему используется `DocumentSerializer`, поэтому форматирование файла может нормализоваться; lossless-патчер для add/delete/duplicate остаётся follow-up (R1).
 
 ### M5 — Xml: оверлеи (~2–3 дн)
 `OverlayDocument`, `OverlayKeyResolver` (nested/positional, `UnresolvableKey` = diagnostic), `OverlayMerger` (base+overlay → merged cells с признаком перевода), `OverlayWriter` (запись только в оверлей; новая запись = ключ + правленое поле), `TableEditSession` (роутинг: переводимое+язык → оверлей, иначе base; независимые save), `TranslationAnalyzer` (missing/orphan/duplicate/empty/identical/KeyCountMismatch).
@@ -102,7 +103,7 @@ Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк)
 
 ## Основные риски
 
-- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher` (патчинг исходных байтовых диапазонов); тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — закрыть в M4 вместе с `RowFactory`.
+- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher`; тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — форматирование нормализуется; lossless-патчер структурных операций остаётся follow-up.
 - **R2 большие файлы**: lazy-парсинг значений, key-index, async; perf-гейт M10.
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.

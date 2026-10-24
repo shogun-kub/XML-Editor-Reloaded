@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Xml.Linq;
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Values;
 
@@ -18,6 +20,8 @@ public sealed class TableRecord
         _owner = owner;
         _element = element;
     }
+
+    internal XElement Element => _element;
 
     /// <summary>
     /// Gets the distinct direct child element names of the record, in document order.
@@ -105,77 +109,278 @@ public sealed class TableRecord
     }
 
     /// <summary>
-    /// Sets the text of a direct child field without changing its position or any other field.
+    /// Sets the text of a direct or nested field, validating numeric values against metadata.
     /// </summary>
-    /// <param name="fieldName">Case-sensitive XML element name.</param>
+    /// <param name="fieldName">Case-sensitive XML element name for a direct child.</param>
     /// <param name="rawText">Raw replacement text, preserved exactly.</param>
-    /// <param name="addIfMissing">
-    /// When <see langword="true"/>, adds a new empty child element if the field is absent.
-    /// </param>
-    /// <returns><see langword="true"/> when the field exists or was added; otherwise <see langword="false"/>.</returns>
-    public bool TrySetValue(string fieldName, string rawText, bool addIfMissing = false)
+    /// <param name="addIfMissing">When <see langword="true"/>, appends a missing direct child.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetFieldValue(string fieldName, string rawText, bool addIfMissing = false)
     {
         ArgumentException.ThrowIfNullOrEmpty(fieldName);
-        ArgumentNullException.ThrowIfNull(rawText);
-
-        var child = FindDirectChild(fieldName);
-        if (child is null)
-        {
-            if (!addIfMissing)
-            {
-                return false;
-            }
-
-            child = new XElement(XName.Get(fieldName));
-            _element.Add(child);
-        }
-
-        if (child.HasElements)
-        {
-            return false;
-        }
-
-        if (!string.Equals(child.Value, rawText, StringComparison.Ordinal))
-        {
-            child.Value = rawText;
-            _owner.MarkDirty();
-        }
-
-        return true;
+        return SetFieldValue(new FieldPath(new[] { fieldName }), rawText, addIfMissing);
     }
 
     /// <summary>
-    /// Sets the text at a nested field path, matching the first occurrence at every level.
+    /// Sets the text at a field path, validating numeric values against metadata.
     /// </summary>
     /// <param name="path">Slash-separated field path.</param>
     /// <param name="rawText">Raw replacement text, preserved exactly.</param>
     /// <param name="addIfMissing">
-    /// When <see langword="true"/> and the path has one segment, adds a new child element if absent.
+    /// When <see langword="true"/> and the path has one segment, appends a missing field.
     /// </param>
-    /// <returns><see langword="true"/> when the value was found or added; otherwise <see langword="false"/>.</returns>
-    public bool TrySetValue(FieldPath path, string rawText, bool addIfMissing = false)
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetFieldValue(FieldPath path, string rawText, bool addIfMissing = false)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
 
+        var validation = ValidateValue(path.FieldName, rawText);
+        if (!validation.IsSuccess)
+        {
+            return validation;
+        }
+
         if (path.Depth == 1)
         {
-            return TrySetValue(path.FieldName, rawText, addIfMissing);
+            var child = FindDirectChild(path.FieldName);
+            if (child is null)
+            {
+                if (!addIfMissing)
+                {
+                    return OperationResult.Failure(
+                        ErrorCodes.KeyNotFound,
+                        $"Field '{path.FieldName}' is not present in the record.");
+                }
+
+                child = new XElement(XName.Get(path.FieldName));
+                _element.Add(child);
+                child.Value = rawText;
+                _owner.MarkDirty();
+                _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, path.Text, null, rawText));
+                return OperationResult.Success();
+            }
+
+            return SetElementValue(child, path, rawText);
         }
 
         var element = FindPath(path);
-        if (element is null || element.HasElements)
+        if (element is null)
         {
-            return false;
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                $"Field path '{path.Text}' is not present in the record.");
         }
 
-        if (!string.Equals(element.Value, rawText, StringComparison.Ordinal))
+        return SetElementValue(element, path, rawText);
+    }
+
+    /// <summary>
+    /// Replaces all values of a repeated direct child field.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name.</param>
+    /// <param name="rawValues">New values in the desired order; an empty sequence removes the field occurrences.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.invalid_number</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetListField(string fieldName, IEnumerable<string> rawValues)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentNullException.ThrowIfNull(rawValues);
+
+        var values = rawValues.ToArray();
+        foreach (var value in values)
         {
-            element.Value = rawText;
-            _owner.MarkDirty();
+            ArgumentNullException.ThrowIfNull(value);
+            var validation = ValidateValue(fieldName, value);
+            if (!validation.IsSuccess)
+            {
+                return validation;
+            }
         }
 
-        return true;
+        var existing = _element.Elements()
+            .Where(element => string.Equals(element.Name.LocalName, fieldName, StringComparison.Ordinal))
+            .ToList();
+
+        if (existing.Any(static element => element.HasElements))
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                $"List field '{fieldName}' contains nested elements and cannot be replaced as scalar values.");
+        }
+
+        var oldValues = existing.Select(static element => element.Value).ToArray();
+        var changed = existing.Count != values.Length
+            || !oldValues.AsSpan().SequenceEqual(values);
+
+        if (!changed)
+        {
+            return OperationResult.Success();
+        }
+
+        var common = Math.Min(existing.Count, values.Length);
+        for (var index = 0; index < common; index++)
+        {
+            if (!string.Equals(existing[index].Value, values[index], StringComparison.Ordinal))
+            {
+                existing[index].Value = values[index];
+            }
+        }
+
+        if (values.Length > existing.Count)
+        {
+            for (var index = existing.Count; index < values.Length; index++)
+            {
+                var element = new XElement(XName.Get(fieldName), values[index]);
+                if (existing.Count > 0)
+                {
+                    existing[^1].AddAfterSelf(element);
+                }
+                else
+                {
+                    _element.Add(element);
+                }
+
+                existing.Add(element);
+            }
+        }
+        else if (values.Length < existing.Count)
+        {
+            for (var index = values.Length; index < existing.Count; index++)
+            {
+                existing[index].Remove();
+            }
+        }
+
+        _owner.MarkDirty();
+        _owner.ChangeTracker.Record(new ListFieldChanged(OwnerKey, fieldName, oldValues, values));
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Sets one indexed field from a dictionary mask such as <c>ItemCapacityPerSize%Index%</c>.
+    /// </summary>
+    /// <param name="definition">Dictionary field mask definition.</param>
+    /// <param name="index">Zero-based index substituted into the mask.</param>
+    /// <param name="rawText">Raw replacement text, preserved exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, appends the field when it is absent.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetDictField(
+        DictFieldDefinition definition,
+        int index,
+        string rawText,
+        bool addIfMissing = false)
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        var expandedName = definition.Expand(index);
+        return SetFieldValue(expandedName, rawText, addIfMissing);
+    }
+
+    /// <summary>
+    /// Sets one indexed field from a raw mask such as <c>ItemCapacityPerSize%Index%</c>.
+    /// </summary>
+    /// <param name="mask">Element-name mask containing <c>%Index%</c>.</param>
+    /// <param name="index">Zero-based index substituted into the mask.</param>
+    /// <param name="rawText">Raw replacement text, preserved exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, appends the field when it is absent.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult SetDictField(string mask, int index, string rawText, bool addIfMissing = false) =>
+        SetDictField(new DictFieldDefinition(mask), index, rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets a direct field without validation and reports only whether the field was found.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name.</param>
+    /// <param name="rawText">Raw replacement text.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, appends a missing direct child.</param>
+    /// <returns><see langword="true"/> when the value was set; otherwise <see langword="false"/>.</returns>
+    public bool TrySetValue(string fieldName, string rawText, bool addIfMissing = false)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        return SetFieldValue(fieldName, rawText, addIfMissing).IsSuccess;
+    }
+
+    /// <summary>
+    /// Sets a field path without exposing validation details.
+    /// </summary>
+    /// <param name="path">Slash-separated field path.</param>
+    /// <param name="rawText">Raw replacement text.</param>
+    /// <param name="addIfMissing">When <see langword="true"/> and the path has one segment, appends a missing field.</param>
+    /// <returns><see langword="true"/> when the value was set; otherwise <see langword="false"/>.</returns>
+    public bool TrySetValue(FieldPath path, string rawText, bool addIfMissing = false) =>
+        SetFieldValue(path, rawText, addIfMissing).IsSuccess;
+
+    private string OwnerKey => GetKey() ?? string.Empty;
+
+    private OperationResult SetElementValue(XElement element, FieldPath path, string rawText)
+    {
+        if (element.HasElements)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                $"Field '{path.Text}' contains nested elements and cannot be set as scalar text.");
+        }
+
+        var oldValue = element.Value;
+        if (string.Equals(oldValue, rawText, StringComparison.Ordinal))
+        {
+            return OperationResult.Success();
+        }
+
+        element.Value = rawText;
+        _owner.MarkDirty();
+        _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, path.Text, oldValue, rawText));
+        return OperationResult.Success();
+    }
+
+    private OperationResult ValidateValue(string fieldName, string rawText)
+    {
+        if (_owner.Metadata?.TryGetColumn(fieldName, out var column) != true || column is null)
+        {
+            return OperationResult.Success();
+        }
+
+        if (column.DataType == ColumnDataType.Nested)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                $"Field '{fieldName}' is a nested structure and cannot be set as scalar text.");
+        }
+
+        if (column.DataType is ColumnDataType.String or ColumnDataType.Raw || string.IsNullOrEmpty(rawText))
+        {
+            return OperationResult.Success();
+        }
+
+        var valid = column.DataType switch
+        {
+            ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
+                int.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Decimal =>
+                decimal.TryParse(rawText, NumberStyles.Number, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Boolean => rawText is "0" or "1",
+            _ => true,
+        };
+
+        return valid
+            ? OperationResult.Success()
+            : OperationResult.Failure(
+                ErrorCodes.XmlInvalidNumber,
+                $"'{rawText}' is not a valid {column.DataType} value for field '{fieldName}'.");
     }
 
     private XElement? FindDirectChild(string fieldName) =>
