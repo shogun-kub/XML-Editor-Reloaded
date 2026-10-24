@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Xml.Schema;
@@ -20,10 +21,14 @@ namespace XmlEditorReloaded.App.ViewModels;
 public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 {
     private readonly IDataSetSession _session;
+    private readonly IItemImageService _itemImages;
     private readonly string? _languageCode;
     private readonly IDialogService _dialogService;
     private readonly List<TableRowViewModel> _allRows = new();
     private readonly List<TableColumnViewModel> _allColumns = new();
+    private readonly List<DetailFieldViewModel> _allDetailFields = new();
+    private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
+    private CancellationTokenSource? _imageCts;
     private const int DefaultColumnBudget = 8;
     private const NumberStyles DecimalStyles =
         NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
@@ -74,27 +79,50 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     [ObservableProperty]
     private ListSortDirection _sortDirection = ListSortDirection.Ascending;
 
+    [ObservableProperty]
+    private bool _showDetails = true;
+
+    [ObservableProperty]
+    private string _detailFilter = string.Empty;
+
+    [ObservableProperty]
+    private string _detailHeader = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasGraphicFields;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TableEditorViewModel"/> class.
     /// </summary>
     /// <param name="session">Data-set session that opens the table.</param>
     /// <param name="descriptor">Table descriptor to edit.</param>
     /// <param name="languageCode">Optional language code for overlay editing.</param>
-    /// <param name="dialogService">Dialog service used for confirmations.</param>
+    /// <param name="dialogService">Dialog service used for confirmations and bit editing.</param>
+    /// <param name="itemImages">Item image service used by the detail panel.</param>
     public TableEditorViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IItemImageService itemImages)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dialogService);
+        ArgumentNullException.ThrowIfNull(itemImages);
 
         _session = session;
         Descriptor = descriptor;
         _languageCode = languageCode;
         _dialogService = dialogService;
+        _itemImages = itemImages;
+
+        DetailImages = new[]
+        {
+            new DetailImagePanelViewModel(ImageSize.Big, Strings.Get("ImageBigLabel"), 170),
+            new DetailImagePanelViewModel(ImageSize.Medium, Strings.Get("ImageMediumLabel"), 90),
+            new DetailImagePanelViewModel(ImageSize.Small, Strings.Get("ImageSmallLabel"), 50),
+        };
 
         Title = descriptor.TableName.Value;
         _displayName = Title;
@@ -113,6 +141,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         AllColumnsText = Strings.Get("EditorAllColumnsText");
         NoColumnsText = Strings.Get("EditorNoColumnsText");
         ValidationLabel = Strings.Get("EditorValidationLabel");
+        DetailLabel = Strings.Get("DetailLabel");
+        DetailFilterLabel = Strings.Get("DetailFilterLabel");
+        DetailBitsText = Strings.Get("DetailBitsText");
     }
 
     /// <summary>
@@ -196,6 +227,32 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     public string ValidationLabel { get; }
 
     /// <summary>
+    /// Gets the detail panel label.
+    /// </summary>
+    public string DetailLabel { get; }
+
+    /// <summary>
+    /// Gets the detail field filter label.
+    /// </summary>
+    public string DetailFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the bit editor button text.
+    /// </summary>
+    public string DetailBitsText { get; }
+
+    /// <summary>
+    /// Gets the big, medium, and small image preview panels.
+    /// </summary>
+    public IReadOnlyList<DetailImagePanelViewModel> DetailImages { get; }
+
+    /// <summary>
+    /// Gets the grouped fields of the selected row shown in the detail panel, filtered by
+    /// <see cref="DetailFilter"/>.
+    /// </summary>
+    public ObservableCollection<DetailFieldGroupViewModel> DetailGroups { get; } = new();
+
+    /// <summary>
     /// Gets the filtered rows shown in the grid.
     /// </summary>
     public ObservableCollection<TableRowViewModel> Rows { get; } = new();
@@ -224,6 +281,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     {
         IsBusy = true;
         StatusText = Strings.Get("EditorLoading");
+        HasGraphicFields = false;
         try
         {
             var result = await _session
@@ -242,6 +300,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
             IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
             BuildColumns();
+            HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
             RebuildRows(null);
             StatusText = IsEditable
                 ? Strings.Get("EditorReady")
@@ -459,6 +518,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         Rows.Clear();
         Columns.Clear();
         VisibleColumns.Clear();
+        DetailGroups.Clear();
+        _allDetailFields.Clear();
         ValidationIssues.Clear();
         IsValidationVisible = false;
         await InitializeAsync().ConfigureAwait(true);
@@ -558,6 +619,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
                 row.Refresh(refreshed);
             }
 
+            foreach (var detailField in _allDetailFields)
+            {
+                detailField.Refresh();
+            }
+
+            if (fieldName is "ubGraphicNum" or "ubGraphicType")
+            {
+                _ = LoadDetailImagesAsync();
+            }
+
             IsDirty = Workspace.IsDirty;
             StatusText = Strings.Format("EditorCellUpdated", fieldName, row.Key);
         }
@@ -577,6 +648,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     partial void OnSearchTextChanged(string value) => ApplyRowView();
 
     partial void OnColumnSearchTextChanged(string value) => ApplyColumnFilter();
+
+    partial void OnDetailFilterChanged(string value) => ApplyDetailFilter();
+
+    partial void OnSelectedRowChanged(TableRowViewModel? value) => RefreshDetails();
 
     private void BuildColumns()
     {
@@ -710,6 +785,235 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         {
             StatusText = Strings.Get("EditorNoMatches");
         }
+    }
+
+    internal void SetDetailValue(DetailFieldViewModel field, string value)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        ArgumentNullException.ThrowIfNull(value);
+
+        SetCellValue(field.Row, field.Name, value);
+    }
+
+    internal void EditBits(DetailFieldViewModel field)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        if (!field.CanEditBits)
+        {
+            return;
+        }
+
+        var current = uint.TryParse(field.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : 0u;
+        var edited = _dialogService.EditBits(
+            Strings.Format("BitEditorTitleFormat", field.Name),
+            current);
+        if (edited is not { } value)
+        {
+            return;
+        }
+
+        field.Value = value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private void RefreshDetails()
+    {
+        _allDetailFields.Clear();
+        DetailGroups.Clear();
+        if (SelectedRow is null || Workspace is null)
+        {
+            DetailHeader = Strings.Get("StatusNoSelection");
+            CancelDetailImageLoads();
+            ClearDetailImages();
+            return;
+        }
+
+        DetailHeader = Strings.Format("DetailHeaderFormat", SelectedRow.Key ?? string.Empty);
+        foreach (var column in Workspace.Schema.Columns)
+        {
+            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column));
+        }
+
+        ApplyDetailFilter();
+        _ = LoadDetailImagesAsync();
+    }
+
+    private void ApplyDetailFilter()
+    {
+        DetailGroups.Clear();
+        var term = DetailFilter.Trim();
+        var grouped = new Dictionary<string, List<DetailFieldViewModel>>(StringComparer.Ordinal);
+        var metadata = new Dictionary<string, (int GroupOrder, int FirstColumnOrder)>(StringComparer.Ordinal);
+        foreach (var field in _allDetailFields)
+        {
+            if (term.Length > 0
+                && !field.Name.Contains(term, StringComparison.OrdinalIgnoreCase)
+                && !field.TypeText.Contains(term, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (!grouped.TryGetValue(field.GroupKey, out var fields))
+            {
+                fields = new List<DetailFieldViewModel>();
+                grouped.Add(field.GroupKey, fields);
+                metadata.Add(field.GroupKey, (field.GroupOrder, field.Column.Order));
+            }
+
+            fields.Add(field);
+        }
+
+        foreach (var entry in grouped
+                     .OrderBy(pair => metadata[pair.Key].GroupOrder)
+                     .ThenBy(pair => metadata[pair.Key].FirstColumnOrder)
+                     .ThenBy(pair => pair.Key, StringComparer.Ordinal))
+        {
+            var isExpanded = _groupExpansion.TryGetValue(entry.Key, out var remembered)
+                ? remembered
+                : IsExpandedByDefault(entry.Key);
+            var group = new DetailFieldGroupViewModel(
+                entry.Key,
+                Strings.Get($"DetailGroup.{entry.Key}"),
+                metadata[entry.Key].GroupOrder,
+                isExpanded,
+                entry.Value);
+            group.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(DetailFieldGroupViewModel.IsExpanded))
+                {
+                    _groupExpansion[group.Key] = group.IsExpanded;
+                }
+            };
+            DetailGroups.Add(group);
+        }
+    }
+
+    private static bool IsExpandedByDefault(string groupKey) =>
+        groupKey is "identity" or "classification" or "inventory" or "attachments" or "combat";
+
+    private async Task LoadDetailImagesAsync()
+    {
+        var token = BeginImageLoad();
+        var dataDirectory = _session.GameDataDirectory;
+        if (!HasGraphicFields || dataDirectory is null)
+        {
+            ClearDetailImages();
+            return;
+        }
+
+        if (!TryGetGraphic(out var graphicType, out var graphicIndex))
+        {
+            foreach (var panel in DetailImages)
+            {
+                panel.Image = null;
+                panel.InfoText = Strings.Get("DetailNoImage");
+                panel.IsLoading = false;
+            }
+
+            return;
+        }
+
+        await Task.WhenAll(DetailImages
+                .Select(panel => LoadDetailImageAsync(panel, dataDirectory, graphicType, graphicIndex, token)))
+            .ConfigureAwait(true);
+    }
+
+    private async Task LoadDetailImageAsync(
+        DetailImagePanelViewModel panel,
+        string dataDirectory,
+        int graphicType,
+        int graphicIndex,
+        CancellationToken token)
+    {
+        panel.Image = null;
+        panel.InfoText = Strings.Get("EditorLoading");
+        panel.IsLoading = true;
+        try
+        {
+            var result = await _itemImages.GetImageAsync(
+                    dataDirectory,
+                    panel.Size,
+                    graphicType,
+                    graphicIndex,
+                    token)
+                .ConfigureAwait(true);
+            token.ThrowIfCancellationRequested();
+            panel.Image = result.Data;
+            panel.InfoText = result.Data is null
+                ? Strings.Format("ImageNotAvailableFormat", result.ErrorCode ?? string.Empty)
+                : $"{result.Data.PixelWidth}×{result.Data.PixelHeight}";
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer selection replaced this image load.
+        }
+        catch (Exception exception)
+        {
+            if (!token.IsCancellationRequested)
+            {
+                panel.Image = null;
+                panel.InfoText = Strings.Format("StatusError", exception.Message);
+            }
+        }
+        finally
+        {
+            if (!token.IsCancellationRequested)
+            {
+                panel.IsLoading = false;
+            }
+        }
+    }
+
+    private void ClearDetailImages()
+    {
+        foreach (var panel in DetailImages)
+        {
+            panel.Image = null;
+            panel.InfoText = string.Empty;
+            panel.IsLoading = false;
+        }
+    }
+
+    private void CancelDetailImageLoads()
+    {
+        _imageCts?.Cancel();
+        _imageCts?.Dispose();
+        _imageCts = null;
+    }
+
+    private CancellationToken BeginImageLoad()
+    {
+        _imageCts?.Cancel();
+        _imageCts?.Dispose();
+        _imageCts = new CancellationTokenSource();
+        return _imageCts.Token;
+    }
+
+    private bool TryGetGraphic(out int graphicType, out int graphicIndex)
+    {
+        graphicType = 0;
+        graphicIndex = -1;
+        if (SelectedRow is null)
+        {
+            return false;
+        }
+
+        var rawIndex = SelectedRow.GetStoredValue("ubGraphicNum");
+        if (!int.TryParse(rawIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out graphicIndex)
+            || graphicIndex < 0)
+        {
+            return false;
+        }
+
+        var rawType = SelectedRow.GetStoredValue("ubGraphicType");
+        if (int.TryParse(rawType, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedType)
+            && parsedType >= 0)
+        {
+            graphicType = parsedType;
+        }
+
+        return true;
     }
 
     private static bool IsValidValue(TableSchemaColumn column, string value)

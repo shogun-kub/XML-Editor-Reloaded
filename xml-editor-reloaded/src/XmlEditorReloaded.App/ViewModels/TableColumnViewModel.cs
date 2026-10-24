@@ -82,10 +82,10 @@ public sealed class TableColumnViewModel : ObservableObject
     public bool IsHidden => Column.IsHidden;
 
     /// <summary>
-    /// Gets a value indicating whether the grid must not edit this column. Keys and repeated fields
-    /// are read-only until a dedicated editor is available.
+    /// Gets a value indicating whether the grid must not edit this column. Keys, repeated fields, and
+    /// nested structures are read-only until a dedicated editor is available.
     /// </summary>
-    public bool IsReadOnly => Column.IsKey || Column.IsList || Column.IsDict;
+    public bool IsReadOnly => Column.IsKey || Column.IsList || Column.IsDict || Column.IsNested;
 
     /// <summary>
     /// Gets the preferred grid width.
@@ -118,6 +118,11 @@ public sealed class TableColumnViewModel : ObservableObject
             if (IsDict)
             {
                 parts.Add("dict");
+            }
+
+            if (Column.IsNested)
+            {
+                parts.Add("nested");
             }
 
             if (IsTranslatable)

@@ -23,7 +23,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(2, migration.Data);
+        Assert.Equal(4, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -40,6 +40,18 @@ public class MetadataTests
         Assert.Equal(2, metadata.ListFields.Count);
         Assert.Equal(5, metadata.TranslatableFieldPaths.Count);
         Assert.Contains("szItemName", metadata.TranslatableFieldPaths);
+        Assert.Equal(224, metadata.ColumnHints.Count);
+        Assert.True(metadata.TryGetColumnHint("usItemClass", out var classHint));
+        Assert.Equal(ColumnDataType.Flags, classHint!.DataType);
+        Assert.Equal(ColumnEditorKind.FlagEditor, classHint.EditorKind);
+        Assert.Equal("classification", classHint.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("AttachmentClass", out var attachmentHint));
+        Assert.Equal("attachments", attachmentHint!.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("STAND_MODIFIERS", out var stanceHint));
+        Assert.Equal("stance", stanceHint!.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("szItemName", out var nameHint));
+        Assert.Null(nameHint!.DataType);
+        Assert.Equal("identity", nameHint.GroupKey);
 
         var languages = await provider.GetLanguagesAsync();
         Assert.True(languages.IsSuccess, languages.ErrorText);

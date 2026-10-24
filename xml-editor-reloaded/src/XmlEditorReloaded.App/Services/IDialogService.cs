@@ -20,4 +20,12 @@ public interface IDialogService
     /// <param name="title">Dialog title.</param>
     /// <returns><see langword="true"/> when the user confirms; otherwise <see langword="false"/>.</returns>
     bool Confirm(string message, string title);
+
+    /// <summary>
+    /// Shows a 32-bit bit-flags editor.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="value">Initial value.</param>
+    /// <returns>The edited value, or <see langword="null"/> when cancelled.</returns>
+    uint? EditBits(string title, uint value);
 }

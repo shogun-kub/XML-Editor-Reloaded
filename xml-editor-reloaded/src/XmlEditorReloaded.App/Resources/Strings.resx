@@ -282,4 +282,79 @@
   <data name="EditorInvalidValue" xml:space="preserve">
     <value>'{0}' is not a valid value for {1}.</value>
   </data>
+  <data name="DetailLabel" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DetailFilterLabel" xml:space="preserve">
+    <value>Find field</value>
+  </data>
+  <data name="DetailHeaderFormat" xml:space="preserve">
+    <value>Record {0}</value>
+  </data>
+  <data name="DetailNoImage" xml:space="preserve">
+    <value>No item image for this record.</value>
+  </data>
+  <data name="DetailGroupCountFormat" xml:space="preserve">
+    <value>{0} fields</value>
+  </data>
+  <data name="DetailGroup.identity" xml:space="preserve">
+    <value>Identity</value>
+  </data>
+  <data name="DetailGroup.classification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="DetailGroup.inventory" xml:space="preserve">
+    <value>Inventory &amp; graphics</value>
+  </data>
+  <data name="DetailGroup.attachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="DetailGroup.combat" xml:space="preserve">
+    <value>Combat</value>
+  </data>
+  <data name="DetailGroup.vision" xml:space="preserve">
+    <value>Vision &amp; stealth</value>
+  </data>
+  <data name="DetailGroup.robot" xml:space="preserve">
+    <value>Robot</value>
+  </data>
+  <data name="DetailGroup.food" xml:space="preserve">
+    <value>Food &amp; drugs</value>
+  </data>
+  <data name="DetailGroup.modifiers" xml:space="preserve">
+    <value>Modifiers</value>
+  </data>
+  <data name="DetailGroup.stance" xml:space="preserve">
+    <value>Stance modifiers</value>
+  </data>
+  <data name="DetailGroup.flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="DetailGroup.lists" xml:space="preserve">
+    <value>Repeated fields</value>
+  </data>
+  <data name="DetailGroup.nested" xml:space="preserve">
+    <value>Nested structures</value>
+  </data>
+  <data name="DetailGroup.text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="DetailGroup.values" xml:space="preserve">
+    <value>Values</value>
+  </data>
+  <data name="DetailGroup.other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="DetailBitsText" xml:space="preserve">
+    <value>Bits</value>
+  </data>
+  <data name="BitEditorTitleFormat" xml:space="preserve">
+    <value>Bits: {0}</value>
+  </data>
+  <data name="BitEditorOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="BitEditorCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

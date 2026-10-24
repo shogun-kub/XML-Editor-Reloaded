@@ -6,6 +6,7 @@ namespace XmlEditorReloaded.Core.Metadata;
 public sealed class TableMetadata
 {
     private readonly Dictionary<string, ColumnMetadata> _columnsByName;
+    private readonly Dictionary<string, ColumnHint> _hintsByName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableMetadata"/> class.
@@ -19,6 +20,9 @@ public sealed class TableMetadata
     /// <param name="listFields">Repeated child element definitions.</param>
     /// <param name="dictFields">Indexed child element group definitions.</param>
     /// <param name="translatableFieldPaths">Slash-separated field paths that may appear in language overlays.</param>
+    /// <param name="columnHints">
+    /// Optional curated hints applied only to fields that are present in the document.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -29,7 +33,8 @@ public sealed class TableMetadata
         IReadOnlyList<ColumnMetadata>? columns = null,
         IReadOnlyList<ListFieldDefinition>? listFields = null,
         IReadOnlyList<DictFieldDefinition>? dictFields = null,
-        IReadOnlyList<string>? translatableFieldPaths = null)
+        IReadOnlyList<string>? translatableFieldPaths = null,
+        IReadOnlyList<ColumnHint>? columnHints = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -42,7 +47,9 @@ public sealed class TableMetadata
         ListFields = listFields ?? Array.Empty<ListFieldDefinition>();
         DictFields = dictFields ?? Array.Empty<DictFieldDefinition>();
         TranslatableFieldPaths = translatableFieldPaths ?? Array.Empty<string>();
+        ColumnHints = columnHints ?? Array.Empty<ColumnHint>();
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
+        _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
     }
 
     /// <summary>
@@ -89,6 +96,30 @@ public sealed class TableMetadata
     /// Gets the slash-separated field paths that may appear in language overlays.
     /// </summary>
     public IReadOnlyList<string> TranslatableFieldPaths { get; }
+
+    /// <summary>
+    /// Gets the curated hints for fields discovered in the document. Hints never declare fields.
+    /// </summary>
+    public IReadOnlyList<ColumnHint> ColumnHints { get; }
+
+    /// <summary>
+    /// Attempts to find a curated hint by the exact XML element name.
+    /// </summary>
+    /// <param name="xmlFieldName">Case-sensitive XML element name.</param>
+    /// <param name="hint">The hint when found.</param>
+    /// <returns><see langword="true"/> when a hint with that name exists; otherwise <see langword="false"/>.</returns>
+    public bool TryGetColumnHint(string xmlFieldName, out ColumnHint? hint)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(xmlFieldName);
+        if (_hintsByName.TryGetValue(xmlFieldName, out var found))
+        {
+            hint = found;
+            return true;
+        }
+
+        hint = null;
+        return false;
+    }
 
     /// <summary>
     /// Attempts to find column metadata by the exact XML element name.

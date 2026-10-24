@@ -36,4 +36,16 @@ public sealed class WpfDialogService : IDialogService
             System.Windows.MessageBoxResult.No);
         return result == System.Windows.MessageBoxResult.Yes;
     }
+
+    /// <inheritdoc />
+    public uint? EditBits(string title, uint value)
+    {
+        var window = new Views.BitEditorWindow(new ViewModels.BitEditorViewModel(title, value));
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        return window.ShowDialog() == true ? window.Value : null;
+    }
 }

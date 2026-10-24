@@ -64,7 +64,7 @@ public class MainViewModelTests
         var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
             new FailingSessionFactory(),
-            new TableEditorFactory(dialog),
+            new TableEditorFactory(dialog, new TestItemImageService()),
             settingsStore,
             dialog,
             new FakeImageViewerService());
@@ -121,7 +121,7 @@ public class MainViewModelTests
         var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
             new ThrowingSessionFactory(),
-            new TableEditorFactory(dialog),
+            new TableEditorFactory(dialog, new TestItemImageService()),
             new JsonSettingsStore(workspace.PathOf("settings.json")),
             dialog,
             new FakeImageViewerService())
@@ -189,7 +189,7 @@ public class MainViewModelTests
         FakeDialogService dialog) =>
         new(
             new DataSetSessionFactory(provider, catalog, repository),
-            new TableEditorFactory(dialog),
+            new TableEditorFactory(dialog, new TestItemImageService()),
             settingsStore,
             dialog,
             new FakeImageViewerService());
@@ -252,9 +252,13 @@ public class MainViewModelTests
     {
         public bool ConfirmResult { get; set; } = true;
 
+        public uint? EditBitsResult { get; set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public uint? EditBits(string title, uint value) => EditBitsResult;
     }
 
     private sealed class FakeImageViewerService : IImageViewerService

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.App.Views;
+using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
@@ -25,15 +26,15 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _, _, _) = await CreateEditorAsync(workspace);
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
 
         Assert.True(editor.IsEditable);
         Assert.False(editor.IsReadOnly);
         Assert.Equal("Items.Items", editor.DisplayName);
         Assert.Equal("Base", editor.LanguageText);
         Assert.Equal(3, editor.Rows.Count);
-        Assert.Equal(4, editor.Columns.Count);
-        Assert.Equal(4, editor.VisibleColumns.Count);
+        Assert.Equal(5, editor.Columns.Count);
+        Assert.Equal(5, editor.VisibleColumns.Count);
         Assert.True(editor.VisibleColumns[0].IsKey);
         Assert.Contains("3", editor.RecordCountText, StringComparison.Ordinal);
     }
@@ -46,7 +47,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, descriptor, data13, _) = await CreateEditorAsync(workspace);
+        var (editor, descriptor, data13, _, _) = await CreateEditorAsync(workspace);
         var row = Assert.Single(editor.Rows, candidate => candidate.Key == "0");
 
         row["ItemClass"] = "abc";
@@ -81,7 +82,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, descriptor, _, _) = await CreateEditorAsync(workspace, language: "ru");
+        var (editor, descriptor, _, _, _) = await CreateEditorAsync(workspace, language: "ru");
 
         Assert.Contains("Russian", editor.LanguageText, StringComparison.Ordinal);
         var translated = Assert.Single(editor.Rows, row => row.Key == "1");
@@ -112,7 +113,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, descriptor, _, dialog) = await CreateEditorAsync(workspace);
+        var (editor, descriptor, _, dialog, _) = await CreateEditorAsync(workspace);
 
         editor.AddRowCommand.Execute(null);
         Assert.Equal(4, editor.Rows.Count);
@@ -148,7 +149,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _, _, _) = await CreateEditorAsync(workspace);
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
 
         editor.SearchText = "Glock";
         Assert.Equal("1", Assert.Single(editor.Rows).Key);
@@ -173,21 +174,21 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _, _, _) = await CreateEditorAsync(workspace);
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
 
         var weight = Assert.Single(editor.Columns, column => column.Name == "ubWeight");
         weight.IsVisible = false;
-        Assert.Equal(3, editor.VisibleColumns.Count);
+        Assert.Equal(4, editor.VisibleColumns.Count);
         Assert.DoesNotContain(editor.VisibleColumns, column => column.Name == "ubWeight");
 
         editor.ShowAllColumnsCommand.Execute(null);
-        Assert.Equal(4, editor.VisibleColumns.Count);
+        Assert.Equal(5, editor.VisibleColumns.Count);
 
         editor.HideAllColumnsCommand.Execute(null);
         Assert.Empty(editor.VisibleColumns);
 
         editor.ShowDefaultColumnsCommand.Execute(null);
-        Assert.Equal(4, editor.VisibleColumns.Count);
+        Assert.Equal(5, editor.VisibleColumns.Count);
 
         editor.ColumnSearchText = "ubW";
         Assert.Equal("ubWeight", Assert.Single(editor.Columns).Name);
@@ -201,7 +202,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _, _, _) = await CreateEditorAsync(workspace, duplicateKeys: true);
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, duplicateKeys: true);
 
         await editor.ValidateCommand.ExecuteAsync(null);
 
@@ -218,7 +219,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _, _, _) = await CreateEditorAsync(workspace);
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
         Exception? failure = null;
         var thread = new Thread(() =>
         {
@@ -270,7 +271,12 @@ public class TableEditorViewModelTests
             .OpenAsync(data13)).Data!;
         var tables = await session.Catalog.GetTablesAsync(tableData);
         var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
-        var editor = new TableEditorViewModel(session, descriptor, null, new FakeDialogService());
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            null,
+            new FakeDialogService(),
+            new TestItemImageService());
 
         await editor.InitializeAsync();
 
@@ -279,25 +285,224 @@ public class TableEditorViewModelTests
         Assert.InRange(editor.VisibleColumns.Count, 1, 12);
         Assert.Equal("uiIndex", editor.VisibleColumns[0].Name);
         Assert.True(editor.VisibleColumns[0].IsKey);
+        Assert.True(editor.HasGraphicFields);
+        Assert.Contains(editor.DetailGroups, group => group.Key == "identity");
+        Assert.Contains(editor.DetailGroups, group => group.Key == "attachments");
+        Assert.Contains(editor.DetailGroups, group => group.Key == "stance");
+        var fields = FlattenDetailFields(editor);
+        Assert.True(Assert.Single(fields, field => field.Name == "AttachmentClass").CanEditBits);
+        Assert.False(Assert.Single(fields, field => field.Name == "ubWeight").CanEditBits);
+        Assert.True(Assert.Single(fields, field => field.Name == "STAND_MODIFIERS").IsReadOnly);
         Assert.False(editor.IsDirty);
     }
 
-    private static async Task<(TableEditorViewModel Editor, TableDescriptor Descriptor, string Data13, FakeDialogService Dialog)>
-        CreateEditorAsync(
-            TestWorkspace workspace,
-            string? language = null,
-            bool duplicateKeys = false)
+    /// <summary>
+    /// The detail form groups fields, filters them, and edits values through the workspace.
+    /// </summary>
+    [Fact]
+    public async Task DetailGroups_FilterAndEditSelectedRow()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+
+        Assert.Equal(5, FlattenDetailFields(editor).Count);
+        Assert.Contains("0", editor.DetailHeader, StringComparison.Ordinal);
+        Assert.Contains(editor.DetailGroups, group => group.Key == "identity");
+        Assert.Contains(editor.DetailGroups, group => group.Key == "inventory");
+        Assert.Contains(editor.DetailGroups, group => group.Key == "attachments");
+        Assert.True(Assert.Single(FlattenDetailFields(editor), field => field.Name == "uiIndex").IsReadOnly);
+        Assert.False(Assert.Single(FlattenDetailFields(editor), field => field.Name == "AttachmentClass").IsReadOnly);
+        var name = Assert.Single(FlattenDetailFields(editor), field => field.Name == "szItemName");
+        Assert.False(name.IsReadOnly);
+
+        name.Value = "Renamed";
+        Assert.Equal("Renamed", name.Value);
+        Assert.True(editor.IsDirty);
+
+        editor.DetailFilter = "ubW";
+        Assert.Equal("ubWeight", Assert.Single(FlattenDetailFields(editor)).Name);
+        editor.DetailFilter = string.Empty;
+        Assert.Equal(5, FlattenDetailFields(editor).Count);
+
+        var weight = Assert.Single(FlattenDetailFields(editor), field => field.Name == "ubWeight");
+        weight.Value = "abc";
+        Assert.Equal("0", weight.Value);
+    }
+
+    /// <summary>
+    /// Selecting a row with graphic fields loads all three previews; a row without them clears the panels.
+    /// </summary>
+    [Fact]
+    public async Task DetailImages_LoadThreeSizes()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            images: images,
+            includeGraphics: true);
+
+        Assert.True(editor.HasGraphicFields);
+        Assert.All(editor.DetailImages, panel => Assert.Contains("No item image", panel.InfoText));
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        await WaitUntilAsync(() => editor.DetailImages.All(panel => panel.Image is not null));
+
+        Assert.Equal(3, images.Requests.Count);
+        Assert.Contains(images.Requests, request => request.Size == ImageSize.Big);
+        Assert.Contains(images.Requests, request => request.Size == ImageSize.Medium);
+        Assert.Contains(images.Requests, request => request.Size == ImageSize.Small);
+        Assert.All(images.Requests, request =>
+        {
+            Assert.Equal(2, request.GraphicType);
+            Assert.Equal(35, request.GraphicIndex);
+        });
+        Assert.All(editor.DetailImages, panel => Assert.Equal("2×2", panel.InfoText));
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        await WaitUntilAsync(() => editor.DetailImages.All(
+            panel => panel.Image is null && panel.InfoText.Contains("No item image", StringComparison.Ordinal)));
+    }
+
+    /// <summary>
+    /// The detail bit editor is offered only for flag masks and writes the composed value back.
+    /// </summary>
+    [Fact]
+    public async Task DetailBits_AppliesComposedValueOnlyForFlags()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        dialog.EditBitsResult = 5;
+
+        var weight = Assert.Single(FlattenDetailFields(editor), field => field.Name == "ubWeight");
+        Assert.False(weight.CanEditBits);
+        var attachment = Assert.Single(FlattenDetailFields(editor), field => field.Name == "AttachmentClass");
+        Assert.True(attachment.CanEditBits);
+
+        attachment.EditBitsCommand.Execute(null);
+
+        Assert.Equal("5", attachment.Value);
+        Assert.Equal("5", editor.Workspace!.BaseDocument.Records[0].GetRawValue("AttachmentClass"));
+        Assert.True(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// Nested structures are read-only in the detail form and cannot be overwritten as scalar text.
+    /// </summary>
+    [Fact]
+    public async Task DetailNestedField_IsReadOnly()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeNested: true);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+
+        var nested = Assert.Single(FlattenDetailFields(editor), field => field.Name == "MODIFIERS");
+        Assert.True(nested.IsReadOnly);
+        Assert.False(nested.CanEditBits);
+        Assert.Equal("nested", nested.GroupKey);
+
+        nested.Value = "replaced";
+        Assert.False(editor.IsDirty);
+        Assert.Equal("1", editor.Workspace!.BaseDocument.Records[1].GetRawValue("MODIFIERS"));
+    }
+
+    /// <summary>
+    /// The bit editor model composes unsigned values and its window loads XAML.
+    /// </summary>
+    [Fact]
+    public void BitEditor_ComposesValueAndLoadsXaml()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var viewModel = new BitEditorViewModel("bits", 5);
+        Assert.Equal(32, viewModel.Bits.Count);
+        Assert.True(viewModel.Bits[0].IsSet);
+        Assert.False(viewModel.Bits[1].IsSet);
+        Assert.True(viewModel.Bits[2].IsSet);
+        Assert.Equal(5u, viewModel.ComposeValue());
+        viewModel.Bits[1].IsSet = true;
+        Assert.Equal(7u, viewModel.ComposeValue());
+
+        var maxValue = new BitEditorViewModel("bits", uint.MaxValue);
+        Assert.All(maxValue.Bits, bit => Assert.True(bit.IsSet));
+        Assert.Equal(uint.MaxValue, maxValue.ComposeValue());
+
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var window = new BitEditorWindow(viewModel);
+                Assert.Same(viewModel, window.DataContext);
+                window.Close();
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The bit editor window test did not finish in time.");
+        Assert.Null(failure);
+    }
+
+    private static List<DetailFieldViewModel> FlattenDetailFields(TableEditorViewModel editor) =>
+        editor.DetailGroups.SelectMany(static group => group.Fields).ToList();
+
+    private static async Task WaitUntilAsync(Func<bool> predicate)
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            if (predicate())
+            {
+                return;
+            }
+
+            await Task.Delay(25);
+        }
+
+        Assert.Fail("The asynchronous editor operation did not complete in time.");
+    }
+
+    private static async Task<(
+        TableEditorViewModel Editor,
+        TableDescriptor Descriptor,
+        string Data13,
+        FakeDialogService Dialog,
+        TestItemImageService Images)> CreateEditorAsync(
+        TestWorkspace workspace,
+        string? language = null,
+        bool duplicateKeys = false,
+        TestItemImageService? images = null,
+        bool includeGraphics = false,
+        bool includeNested = false)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
         var itemsDirectory = Path.Combine(tableData, "Items");
         Directory.CreateDirectory(itemsDirectory);
         var secondKey = duplicateKeys ? "1" : "2";
+        var graphics = includeGraphics
+            ? "<ubGraphicType>2</ubGraphicType><ubGraphicNum>35</ubGraphicNum>"
+            : string.Empty;
+        var nested = includeNested
+            ? "<MODIFIERS><FlatBase>1</FlatBase></MODIFIERS>"
+            : string.Empty;
         await File.WriteAllTextAsync(
             Path.Combine(itemsDirectory, "Items.xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName><ubWeight>0</ubWeight></ITEM>"
-            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>10</ubWeight></ITEM>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName><ubWeight>0</ubWeight>"
+            + "<AttachmentClass>1</AttachmentClass></ITEM>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>10</ubWeight>"
+            + graphics + nested + "</ITEM>"
             + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
             + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass></ITEM>"
             + "</ITEMLIST>");
@@ -317,17 +522,22 @@ public class TableEditorViewModelTests
         var tables = await session.Catalog.GetTablesAsync(tableData);
         var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
         var dialog = new FakeDialogService();
-        var editor = new TableEditorViewModel(session, descriptor, language, dialog);
+        images ??= new TestItemImageService();
+        var editor = new TableEditorViewModel(session, descriptor, language, dialog, images);
         await editor.InitializeAsync();
-        return (editor, descriptor, data13, dialog);
+        return (editor, descriptor, data13, dialog, images);
     }
 
     private sealed class FakeDialogService : IDialogService
     {
         public bool ConfirmResult { get; set; } = true;
 
+        public uint? EditBitsResult { get; set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public uint? EditBits(string title, uint value) => EditBitsResult;
     }
 }

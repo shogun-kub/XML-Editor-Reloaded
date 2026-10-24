@@ -282,4 +282,79 @@
   <data name="EditorInvalidValue" xml:space="preserve">
     <value>«{0}» — недопустимое значение для {1}.</value>
   </data>
+  <data name="DetailLabel" xml:space="preserve">
+    <value>Детали</value>
+  </data>
+  <data name="DetailFilterLabel" xml:space="preserve">
+    <value>Найти поле</value>
+  </data>
+  <data name="DetailHeaderFormat" xml:space="preserve">
+    <value>Запись {0}</value>
+  </data>
+  <data name="DetailNoImage" xml:space="preserve">
+    <value>Для этой записи нет изображения.</value>
+  </data>
+  <data name="DetailGroupCountFormat" xml:space="preserve">
+    <value>Полей: {0}</value>
+  </data>
+  <data name="DetailGroup.identity" xml:space="preserve">
+    <value>Основное</value>
+  </data>
+  <data name="DetailGroup.classification" xml:space="preserve">
+    <value>Классификация</value>
+  </data>
+  <data name="DetailGroup.inventory" xml:space="preserve">
+    <value>Инвентарь и графика</value>
+  </data>
+  <data name="DetailGroup.attachments" xml:space="preserve">
+    <value>Приспособления</value>
+  </data>
+  <data name="DetailGroup.combat" xml:space="preserve">
+    <value>Бой</value>
+  </data>
+  <data name="DetailGroup.vision" xml:space="preserve">
+    <value>Обзор и скрытность</value>
+  </data>
+  <data name="DetailGroup.robot" xml:space="preserve">
+    <value>Робот</value>
+  </data>
+  <data name="DetailGroup.food" xml:space="preserve">
+    <value>Еда и препараты</value>
+  </data>
+  <data name="DetailGroup.modifiers" xml:space="preserve">
+    <value>Модификаторы</value>
+  </data>
+  <data name="DetailGroup.stance" xml:space="preserve">
+    <value>Модификаторы стоек</value>
+  </data>
+  <data name="DetailGroup.flags" xml:space="preserve">
+    <value>Флаги</value>
+  </data>
+  <data name="DetailGroup.lists" xml:space="preserve">
+    <value>Повторяющиеся поля</value>
+  </data>
+  <data name="DetailGroup.nested" xml:space="preserve">
+    <value>Вложенные структуры</value>
+  </data>
+  <data name="DetailGroup.text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="DetailGroup.values" xml:space="preserve">
+    <value>Значения</value>
+  </data>
+  <data name="DetailGroup.other" xml:space="preserve">
+    <value>Прочее</value>
+  </data>
+  <data name="DetailBitsText" xml:space="preserve">
+    <value>Биты</value>
+  </data>
+  <data name="BitEditorTitleFormat" xml:space="preserve">
+    <value>Биты: {0}</value>
+  </data>
+  <data name="BitEditorOk" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="BitEditorCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
 </root>

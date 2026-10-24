@@ -182,6 +182,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         var listFields = await ReadListFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var dictFields = await ReadDictFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var translatableFields = await ReadTranslatableFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
+        var columnHints = await ReadColumnHintsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -192,7 +193,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             columns,
             listFields,
             dictFields,
-            translatableFields);
+            translatableFields,
+            columnHints);
     }
 
     private static async Task<RecordKeySpec?> ReadRecordKeyAsync(
@@ -340,6 +342,54 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         }
 
         return fields;
+    }
+
+    private static async Task<IReadOnlyList<ColumnHint>> ReadColumnHintsAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var hints = new List<ColumnHint>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT XmlFieldName, DataType, EditorKind, DisplayWidth, LookupTable, TooltipKey, Flags, GroupKey, GroupOrder
+            FROM ColumnHints
+            WHERE TableId = $tableId
+            ORDER BY XmlFieldName;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var name = reader.GetString(0);
+            hints.Add(new ColumnHint(name)
+            {
+                DataType = ReadNullableEnum<ColumnDataType>(reader, 1),
+                EditorKind = ReadNullableEnum<ColumnEditorKind>(reader, 2),
+                DisplayWidth = reader.IsDBNull(3) ? null : reader.GetInt32(3),
+                LookupTable = reader.IsDBNull(4) ? null : reader.GetString(4),
+                TooltipKey = reader.IsDBNull(5) ? null : reader.GetString(5),
+                Flags = reader.IsDBNull(6) ? null : (ColumnFlags)reader.GetInt32(6),
+                GroupKey = reader.IsDBNull(7) ? null : reader.GetString(7),
+                GroupOrder = reader.GetInt32(8),
+            });
+        }
+
+        return hints;
+    }
+
+    private static TEnum? ReadNullableEnum<TEnum>(SqliteDataReader reader, int ordinal)
+        where TEnum : struct, Enum
+    {
+        if (reader.IsDBNull(ordinal))
+        {
+            return null;
+        }
+
+        return Enum.TryParse<TEnum>(reader.GetString(ordinal), ignoreCase: true, out var value)
+            ? value
+            : null;
     }
 
     private sealed record TableRow(

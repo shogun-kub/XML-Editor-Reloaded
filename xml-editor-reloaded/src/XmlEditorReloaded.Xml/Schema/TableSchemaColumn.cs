@@ -24,7 +24,10 @@ public sealed class TableSchemaColumn
         int? displayWidth,
         string? lookupTable,
         string? tooltipKey,
-        ColumnFlags flags)
+        ColumnFlags flags,
+        bool isNested,
+        string groupKey,
+        int groupOrder)
     {
         XmlFieldName = xmlFieldName;
         DataType = dataType;
@@ -42,6 +45,9 @@ public sealed class TableSchemaColumn
         LookupTable = lookupTable;
         TooltipKey = tooltipKey;
         Flags = flags;
+        IsNested = isNested;
+        GroupKey = groupKey;
+        GroupOrder = groupOrder;
     }
 
     /// <summary>
@@ -124,4 +130,20 @@ public sealed class TableSchemaColumn
     /// <see cref="ColumnFlags.Hidden"/> when they were derived from the schema.
     /// </summary>
     public ColumnFlags Flags { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field contains nested elements and must be edited by a
+    /// dedicated sub-table editor rather than as scalar text.
+    /// </summary>
+    public bool IsNested { get; }
+
+    /// <summary>
+    /// Gets the stable group key used by the detail form, for example <c>attachments</c>.
+    /// </summary>
+    public string GroupKey { get; }
+
+    /// <summary>
+    /// Gets the group display order; smaller values are shown first.
+    /// </summary>
+    public int GroupOrder { get; }
 }

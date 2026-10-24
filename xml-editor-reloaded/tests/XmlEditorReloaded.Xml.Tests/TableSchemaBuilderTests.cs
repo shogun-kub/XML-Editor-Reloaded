@@ -134,6 +134,82 @@ public class TableSchemaBuilderTests
         Assert.True(schema.FindColumn("id")!.IsKey);
     }
 
+    /// <summary>
+    /// Column hints refine fields that exist in the document and never declare absent fields.
+    /// </summary>
+    [Fact]
+    public async Task Build_ColumnHints_RefinePresentFieldsOnly()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "hints.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><LIST>"
+            + "<ROW><id>1</id><mask>3</mask></ROW>"
+            + "</LIST>");
+        var metadata = new TableMetadata(
+            TableName.Parse("Test.Hints"),
+            "LIST",
+            "ROW",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "id") }),
+            columnHints: new[]
+            {
+                new ColumnHint("mask")
+                {
+                    DataType = ColumnDataType.Flags,
+                    EditorKind = ColumnEditorKind.FlagEditor,
+                    GroupKey = "flags",
+                    GroupOrder = 100,
+                },
+                new ColumnHint("absent")
+                {
+                    DataType = ColumnDataType.Flags,
+                    EditorKind = ColumnEditorKind.FlagEditor,
+                    GroupKey = "flags",
+                },
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        Assert.Equal(new[] { "id", "mask" }, schema.Columns.Select(static column => column.XmlFieldName));
+        var mask = schema.FindColumn("mask")!;
+        Assert.Equal(ColumnDataType.Flags, mask.DataType);
+        Assert.Equal(ColumnEditorKind.FlagEditor, mask.EditorKind);
+        Assert.Equal("flags", mask.GroupKey);
+        Assert.Equal(100, mask.GroupOrder);
+        Assert.Null(schema.FindColumn("absent"));
+        Assert.Equal("identity", schema.FindColumn("id")!.GroupKey);
+        Assert.Equal(10, schema.FindColumn("id")!.GroupOrder);
+    }
+
+    /// <summary>
+    /// Elements with child nodes are typed as nested and grouped as structures instead of being
+    /// inferred from concatenated text.
+    /// </summary>
+    [Fact]
+    public async Task Build_NestedElement_UsesNestedTypeAndGroup()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "nested.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><LIST>"
+            + "<ROW><id>1</id><MODIFIERS><FlatBase>1</FlatBase><PercentAim>0.5</PercentAim></MODIFIERS></ROW>"
+            + "</LIST>");
+        var document = await LoadAsync(path, metadata: null);
+
+        var schema = new TableSchemaBuilder().Build(document);
+        var nested = schema.FindColumn("MODIFIERS")!;
+
+        Assert.True(nested.IsNested);
+        Assert.Equal(ColumnDataType.Nested, nested.DataType);
+        Assert.Equal(ColumnEditorKind.SubTableGrid, nested.EditorKind);
+        Assert.Equal("nested", nested.GroupKey);
+        Assert.Equal(210, nested.GroupOrder);
+    }
+
     private static async Task<TableDocument> LoadAsync(string path, TableMetadata? metadata)
     {
         var descriptor = new TableDescriptor(

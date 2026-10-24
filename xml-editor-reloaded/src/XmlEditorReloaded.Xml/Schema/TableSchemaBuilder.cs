@@ -6,8 +6,9 @@ namespace XmlEditorReloaded.Xml.Schema;
 
 /// <summary>
 /// Builds a <see cref="TableSchema"/> from a loaded document. Fields are discovered as the union of
-/// all records in first-appearance order; curated column metadata, when present, overrides types and
-/// editor hints and contributes declared fields that the document does not currently contain.
+/// all records in first-appearance order; curated column metadata overrides types and editor hints,
+/// contributes declared fields that the document does not currently contain, and non-declaring
+/// column hints refine fields that are present.
 /// </summary>
 public sealed class TableSchemaBuilder
 {
@@ -46,7 +47,12 @@ public sealed class TableSchemaBuilder
                 occurrences.TryGetValue(name, out var seen);
                 occurrences[name] = seen + 1;
                 columnStats.MaxOccurrences = Math.Max(columnStats.MaxOccurrences, seen + 1);
-                ObserveValue(columnStats, element.Value);
+                var isNestedElement = element.HasElements;
+                columnStats.HasNested |= isNestedElement;
+                if (!isNestedElement)
+                {
+                    ObserveValue(columnStats, element.Value);
+                }
             }
         }
 
@@ -87,13 +93,25 @@ public sealed class TableSchemaBuilder
                 declared = resolved;
             }
 
-            var dataType = declared?.DataType
-                ?? columnStats.InferDataType(string.Equals(name, keyField, StringComparison.Ordinal));
+            ColumnHint? hint = null;
+            metadata?.TryGetColumnHint(name, out hint);
+
+            var isKey = string.Equals(name, keyField, StringComparison.Ordinal);
+            var dataType = columnStats.HasNested
+                ? ColumnDataType.Nested
+                : hint?.DataType
+                    ?? declared?.DataType
+                    ?? columnStats.InferDataType(isKey);
+            var editorKind = dataType == ColumnDataType.Nested
+                ? ColumnEditorKind.SubTableGrid
+                : hint?.EditorKind ?? declared?.EditorKind ?? DefaultEditorKind(dataType);
             var isTranslatable = translatableFields?.Contains(name) == true
+                || hint?.Flags?.HasFlag(ColumnFlags.Translatable) == true
                 || declared?.Flags.HasFlag(ColumnFlags.Translatable) == true;
-            var isHidden = declared?.EditorKind == ColumnEditorKind.Hidden
+            var isHidden = editorKind == ColumnEditorKind.Hidden
+                || hint?.Flags?.HasFlag(ColumnFlags.Hidden) == true
                 || declared?.Flags.HasFlag(ColumnFlags.Hidden) == true;
-            var flags = declared?.Flags ?? ColumnFlags.None;
+            var flags = (hint?.Flags ?? ColumnFlags.None) | (declared?.Flags ?? ColumnFlags.None);
             if (isTranslatable)
             {
                 flags |= ColumnFlags.Translatable;
@@ -107,24 +125,30 @@ public sealed class TableSchemaBuilder
             var isList = columnStats.MaxOccurrences > 1
                 || listFields?.Contains(name) == true;
             var dictMask = FindDictMask(dictPatterns, name);
+            var isDict = dictMask is not null;
+            var groupKey = ResolveGroupKey(hint, isKey, columnStats.HasNested, isList, isDict, dataType);
+            var groupOrder = ResolveGroupOrder(hint, groupKey);
 
             columns.Add(new TableSchemaColumn(
                 name,
                 dataType,
-                declared?.EditorKind ?? DefaultEditorKind(dataType),
+                editorKind,
                 index,
                 columnStats.PresenceCount,
                 columnStats.MaxOccurrences,
-                string.Equals(name, keyField, StringComparison.Ordinal),
+                isKey,
                 isList,
-                dictMask is not null,
+                isDict,
                 dictMask,
                 isTranslatable,
                 isHidden,
-                declared?.DisplayWidth,
-                declared?.LookupTable,
-                declared?.TooltipKey,
-                flags));
+                hint?.DisplayWidth ?? declared?.DisplayWidth,
+                hint?.LookupTable ?? declared?.LookupTable,
+                hint?.TooltipKey ?? declared?.TooltipKey,
+                flags,
+                columnStats.HasNested,
+                groupKey,
+                groupOrder));
         }
 
         return new TableSchema(
@@ -139,8 +163,66 @@ public sealed class TableSchemaBuilder
     {
         ColumnDataType.Integer => ColumnEditorKind.IntegerBox,
         ColumnDataType.Decimal => ColumnEditorKind.DecimalBox,
+        ColumnDataType.Lookup => ColumnEditorKind.LookupCombo,
+        ColumnDataType.Flags => ColumnEditorKind.FlagEditor,
+        ColumnDataType.Nested => ColumnEditorKind.SubTableGrid,
         _ => ColumnEditorKind.TextBox,
     };
+
+    private static string ResolveGroupKey(
+        ColumnHint? hint,
+        bool isKey,
+        bool isNested,
+        bool isList,
+        bool isDict,
+        ColumnDataType dataType)
+    {
+        if (!string.IsNullOrWhiteSpace(hint?.GroupKey))
+        {
+            return hint!.GroupKey!;
+        }
+
+        if (isKey)
+        {
+            return "identity";
+        }
+
+        if (isNested)
+        {
+            return "nested";
+        }
+
+        if (isList || isDict)
+        {
+            return "lists";
+        }
+
+        return dataType switch
+        {
+            ColumnDataType.Boolean => "flags",
+            ColumnDataType.String or ColumnDataType.Raw => "text",
+            _ => "values",
+        };
+    }
+
+    private static int ResolveGroupOrder(ColumnHint? hint, string groupKey)
+    {
+        if (hint is { GroupOrder: > 0 })
+        {
+            return hint.GroupOrder;
+        }
+
+        return groupKey switch
+        {
+            "identity" => 10,
+            "text" => 20,
+            "values" => 30,
+            "flags" => 100,
+            "lists" => 200,
+            "nested" => 210,
+            _ => 250,
+        };
+    }
 
     private static void ObserveValue(ColumnStatistics statistics, string rawText)
     {
@@ -222,10 +304,17 @@ public sealed class TableSchemaBuilder
 
         public bool AllBoolean { get; set; } = true;
 
+        public bool HasNested { get; set; }
+
         public ColumnMetadata? DeclaredColumn { get; set; }
 
         public ColumnDataType InferDataType(bool isKey)
         {
+            if (HasNested)
+            {
+                return ColumnDataType.Nested;
+            }
+
             if (!HasValue)
             {
                 return ColumnDataType.String;
