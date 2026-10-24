@@ -1,0 +1,179 @@
+using System.Security.Cryptography;
+using System.Xml;
+using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Xml.Documents;
+
+namespace XmlEditorReloaded.Xml.Saving;
+
+/// <summary>
+/// Saves a <see cref="TableDocument"/> with a safety gate: unchanged documents and documents whose
+/// serialized bytes are identical to the source are not rewritten.
+/// </summary>
+public sealed class TableFileSaver
+{
+    private readonly DocumentSerializer _serializer;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TableFileSaver"/> class.
+    /// </summary>
+    /// <param name="serializer">Serializer to use; a default serializer is created when omitted.</param>
+    public TableFileSaver(DocumentSerializer? serializer = null)
+    {
+        _serializer = serializer ?? new DocumentSerializer();
+    }
+
+    /// <summary>
+    /// Saves the document when it has unsaved changes and the file has not changed externally.
+    /// </summary>
+    /// <param name="document">The loaded document to save.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>, <c>xml.file_changed_externally</c>,
+    /// <c>xml.serialization_error</c>, <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="document"/> is <see langword="null"/>.</exception>
+    public async Task<OperationResult> SaveAsync(TableDocument document, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+
+        if (document.Status != TableDocumentStatus.Loaded)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The document is not saveable because it was not loaded successfully.");
+        }
+
+        if (!document.IsDirty)
+        {
+            return OperationResult.Success();
+        }
+
+        var path = document.Descriptor.FilePath;
+        var externalChange = DetectExternalChange(document, path);
+        if (externalChange is not null)
+        {
+            return externalChange;
+        }
+
+        byte[] bytes;
+        try
+        {
+            bytes = _serializer.Serialize(document);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or XmlException)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlSerializationError,
+                $"The document could not be serialized: {exception.Message}");
+        }
+
+        if (!CanReparse(bytes))
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlSerializationError,
+                "The serialized XML failed verification by re-parsing and was not written.");
+        }
+
+        var hash = Convert.ToHexString(SHA256.HashData(bytes));
+        if (string.Equals(hash, document.OriginalSha256, StringComparison.Ordinal))
+        {
+            document.MarkClean();
+            return OperationResult.Success();
+        }
+
+        var secondCheck = DetectExternalChange(document, path);
+        if (secondCheck is not null)
+        {
+            return secondCheck;
+        }
+
+        var directory = Path.GetDirectoryName(path) ?? ".";
+        var tempPath = Path.Combine(directory, $".{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
+
+        try
+        {
+            await File.WriteAllBytesAsync(tempPath, bytes, cancellationToken).ConfigureAwait(false);
+            File.Move(tempPath, path, overwrite: true);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.IoAccessDenied,
+                $"Access to table file '{path}' was denied.");
+        }
+        catch (IOException exception)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.IoError,
+                $"The table file '{path}' could not be written: {exception.Message}");
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                try
+                {
+                    File.Delete(tempPath);
+                }
+                catch (IOException)
+                {
+                    // A leftover temporary file is harmless; the original file was not affected.
+                }
+            }
+        }
+
+        document.AcceptSaved(bytes.LongLength, File.GetLastWriteTimeUtc(path), hash);
+        return OperationResult.Success();
+    }
+
+    private static OperationResult? DetectExternalChange(TableDocument document, string path)
+    {
+        var info = new FileInfo(path);
+        if (!info.Exists)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.IoFileNotFound,
+                $"The table file '{path}' no longer exists.");
+        }
+
+        if (info.Length != document.OriginalLength || info.LastWriteTimeUtc != document.OriginalLastWriteTimeUtc)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlFileChangedExternally,
+                $"The table file '{path}' changed on disk after it was loaded.");
+        }
+
+        return null;
+    }
+
+    private static bool CanReparse(byte[] bytes)
+    {
+        try
+        {
+            using var stream = new MemoryStream(bytes, writable: false);
+            using var reader = XmlReader.Create(stream, new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null,
+                IgnoreWhitespace = false,
+                CloseInput = false,
+            });
+            while (reader.Read())
+            {
+                // Reading to the end verifies that the whole document is well-formed.
+            }
+
+            return true;
+        }
+        catch (XmlException)
+        {
+            return false;
+        }
+    }
+}

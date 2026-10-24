@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<JA2Data>
+	<ItemClass>
+		<id>1</id>
+		<name>Оружие</name>
+	</ItemClass>
+	<ItemClass>
+		<id>99</id>
+		<name>Orphan</name>
+	</ItemClass>
+</JA2Data>

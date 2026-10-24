@@ -2,6 +2,9 @@
 # Local-only copies used for study and comparison; never committed.
 References/
 
+# ===== Local agent tooling =====
+.mimocode/
+
 # ===== Build results =====
 [Bb]in/
 [Oo]bj/

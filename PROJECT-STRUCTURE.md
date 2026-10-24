@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** scaffolded. The `xml-editor-reloaded/` solution (`XmlEditorReloaded.slnx`) contains empty backend libraries and a WPF shell stub; tests are not created yet. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0/M1 complete and M3 core implemented. `XmlEditorReloaded.slnx` contains the 5 source projects and 4 test projects; Core primitives and the XML loading/save layer (loader, document model, save gate, lookup repository) are implemented and tested. `Data` and `Imaging` are still class-library stubs, and the WPF shell is a template. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -57,6 +57,7 @@ xml-editor-reloaded/
 │   └── XmlEditorReloaded.App/        # WPF application (views, view models, services)
 └── tests/
     ├── XmlEditorReloaded.Core.Tests/
+    ├── XmlEditorReloaded.Data.Tests/
     ├── XmlEditorReloaded.Xml.Tests/
     └── XmlEditorReloaded.Imaging.Tests/
 ```

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ITEMLIST>
+	<ITEM>
+		<uiIndex>0</uiIndex>
+		<szItemName>Nothing</szItemName>
+		<ubWeight>0</ubWeight>
+		<spreadPattern></spreadPattern>
+		<CustomUnknown>keep me</CustomUnknown>
+	</ITEM>
+	<ITEM>
+		<uiIndex>1</uiIndex>
+		<szItemName>Glock 17</szItemName>
+		<ubWeight>10</ubWeight>
+		<ProjectionFactor>1.0</ProjectionFactor>
+		<AvailableAttachmentPoint>1</AvailableAttachmentPoint>
+		<AvailableAttachmentPoint>2</AvailableAttachmentPoint>
+	</ITEM>
+</ITEMLIST>

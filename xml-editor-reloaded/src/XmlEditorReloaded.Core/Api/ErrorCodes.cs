@@ -17,6 +17,18 @@ public static class ErrorCodes
     /// <summary>The document is not saveable, for example because it failed to parse.</summary>
     public const string XmlNotSaveable = "xml.not_saveable";
 
+    /// <summary>The document was parsed but its root element does not match the metadata.</summary>
+    public const string XmlUnexpectedRoot = "xml.unexpected_root";
+
+    /// <summary>The record element declared by metadata was not found under the document root.</summary>
+    public const string XmlRecordElementMissing = "xml.record_element_missing";
+
+    /// <summary>Serialized XML could not be verified by re-parsing it.</summary>
+    public const string XmlSerializationError = "xml.serialization_error";
+
+    /// <summary>A lookup table entry is missing its <c>id</c> or <c>name</c> element.</summary>
+    public const string XmlInvalidLookupEntry = "xml.invalid_lookup_entry";
+
     /// <summary>The requested table is not present in the metadata store.</summary>
     public const string MetadataNotFound = "metadata.not_found";
 

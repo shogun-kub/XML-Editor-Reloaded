@@ -6,13 +6,14 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** решение `XmlEditorReloaded.slnx` с 5 заглушечными проектами в `src/` (сборка зелёная). Нет `Directory.Build.props`, `.editorconfig`, `tests/`.
+**Текущее состояние:** M0 и M1 завершены (коммит `27bcafe`), M3 реализован в объёме core: loader, document model, save gate, lookup repository, фикстуры и corpus no-rewrite тесты зелёные на v4/v5. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. R1 (побайтовая идентичность отредактированных файлов) остаётся открытым и требует `ValueSpanPatcher`; следующий milestone — M4 (редактирование строк), R1 можно закрывать параллельно.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
 - Метаданные и документ — единственные источники; никакого хардкода полей v4/v5.
 - `References/` — только чтение; тесты работают на копиях; проекты из `References/` никогда не собираются.
 - UTF-8 без BOM в исходниках; XML-документация на английском; async + `CancellationToken`; сборка `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx` зелёная на каждом шаге.
+- После завершения каждого milestone — локальный git-коммит (`M0: …`, `M1: …`); push только по явной просьбе.
 
 ---
 
@@ -36,11 +37,11 @@
 ### M-pre — Публикация плана (~5 мин; первое действие при выходе из plan mode)
 Скопировать этот план в **`E:\Projects\JA2_1.13 Tools\PLAN.md`** (корень репозитория, UTF-8 без BOM), чтобы другие агенты могли ссылаться на него. Обновлять `PLAN.md` по завершении существенных milestone (отмечать сделанное, вносить изменения в course). Корень репозитория по правилам AGENTS.md предназначен для документации и конфигурации — это исключение допустимо.
 
-### M0 — Scaffolding (~0.5 дн)
+### M0 — Scaffolding (~0.5 дн) — **выполнен**
 `Directory.Build.props` (net10.0, nullable, docs XML для backend), `.editorconfig` (utf-8), 4 тест-проекта в `tests/` (`Core.Tests`, `Data.Tests`, `Xml.Tests`, `Imaging.Tests`; `Data.Tests` — новое относительно PROJECT-STRUCTURE.md) + xUnit-пакеты; `Microsoft.Data.Sqlite` → Data; MVVM-пакеты → App. Smoke-тест в каждом.
 **Готово:** build + `dotnet test` зелёные.
 
-### M1 — Core (~1 дн)
+### M1 — Core (~1 дн) — **выполнен**
 Типы: `OperationResult`/`OperationResult<T>`/`ErrorCodes`; `TableName`, `TableMetadata`, `ColumnMetadata`, `FieldPath`, `RecordKeySpec`/`RecordKeySegment`, `ListFieldDefinition`, `DictFieldDefinition`; абстракции `ITableMetadataProvider`, `ITableCatalog`, `ITableRepository`, `ILookupRepository`, `ITranslationCatalog`, `ISettingsStore`; `LanguageDescriptor`, `OverlayDescriptor`, `TranslationReport`; `ValidationIssue`/`ValidationReport`; `RgbaBuffer`, `ImageSize`. Без I/O.
 **Готово:** XML-доки на всех public-членах, тесты `TableName`/`FieldPath`/`RecordKeySpec`/`OperationResult` зелёные.
 
@@ -54,11 +55,12 @@
 `StciHeader`/`StciFlags`/`SubImageDescriptor`/`StciImage`/`StciParser` (ошибки `sti.bad_magic/truncated/unsupported_flags`); `EtrleDecoder` (control-byte семантика, overrun = diagnostic); `ItemImageCatalog` (Big: `BigItems/gun{NN}.sti`/`p{t}item{NN}.sti`, паддинг до 2 цифр только для <10, case-insensitive; Medium: `Interface/mdguns.sti`/`mdp{t}items.sti` frame=index; Small: `tilesets/0/smguns.sti`/`smp{t}items.sti`; прозрачность: индекс 0 везде, зелёный 0,255,0 — medium/small); `DecodedFrameCache` (LRU ~64–128 МБ, invalidation по mtime). Фикстуры: 2–3 маленьких реальных STI, скопированных в тест-проект.
 **Готово:** все edge-кейсы покрыты, zero WPF-ссылок.
 
-### M3 — Xml: загрузка, round-trip, диагностика (~4–6 дн; самое сложное)
-`FileFormatInfo`, `TableFileLoader` (`XmlReaderSettings` + `PreserveWhitespace`, `XmlException` → `xml.parse_error` + line/position/excerpt), `DocumentSerializer`, `TableDocument`, `TableRecord`, `LexicalValue`, `PrimaryKeyAllocator`, `RowFactory`, `TableLoadResult` (`Loaded|LoadedReadOnly|Malformed`), `XmlFileLookupRepository`.
+### M3 — Xml: загрузка, round-trip, диагностика (~4–6 дн; самое сложное) — **выполнен (core), R1 открыт**
+`FileFormatInfo`, `TableFileLoader` (`XmlReaderSettings` + `PreserveWhitespace`, `XmlException` → `xml.parse_error` + line/position), `DocumentSerializer`, `TableFileSaver`, `TableDocument`, `TableRecord`, `LexicalValue`, `TableLoadResult` (`Loaded|LoadedReadOnly|Malformed`), `XmlFileLookupRepository`.
 **Алгоритм сохранения:** dirty? → serialize → re-parse verify → сравнить с оригиналом → если идентично, не писать → атомарная запись → проверка (length, mtime).
-**Тесты:** байтовая идентичность неотредактированных фикстур; «не перезаписан вообще» (mtime); sparse-набор полей; `1.0`/пустые/повторяющиеся/dict/неизвестные поля; порядок и регистр; v5 AttachmentPoint → ошибка без записи; `EditSingleValue_Save_ChangesOnlyThatValue`; BOM/newline; внешняя модификация. **Corpus harness** (`XER_CORPUS_DIR`, копия во temp): 263/263 v4 и 238+1malformed v5 — довести DocumentSerializer до зелёного.
-**Готово:** корпус byte-identity; повреждённый файл недеструктивен.
+**Тесты:** байтовая идентичность неотредактированной фикстуры; «не перезаписан вообще» (mtime); sparse-набор полей; `1.0`/пустые/повторяющиеся/неизвестные поля; порядок и регистр; v5 AttachmentPoint → ошибка без записи; `EditSingleValue_Save_ChangesOnlyThatValue`; BOM/newline; внешняя модификация. **Corpus harness** (`XER_CORPUS_DIR`, копия во temp): v4 — 263 файла, v5 — 239 файлов + 1 malformed; проверяется отсутствие перезаписи неизменённых файлов.
+**Фактический результат:** загрузка, диагностика, редактирование одного значения, save-gate и corpus no-rewrite зелёные на v4 и v5. Побайтовая идентичность после редактирования не достигнута: стандартный `XmlWriter` нормализует регистр encoding в declaration, пробелы вокруг `=`, `&gt;`, `&#10;`, пробел в self-closing тегах и форматирование атрибутов. Это R1; `ValueSpanPatcher` остаётся отдельным follow-up. `PrimaryKeyAllocator` реализован как `TableDocument.GetNextPrimaryKey`; `RowFactory` перенесён в M4.
+**Готово (фактически):** corpus no-rewrite; повреждённый файл недеструктивен; load/edit/save сохраняет поля и значения, но может нормализовать форматирование отредактированного файла.
 
 ### M4 — Xml: редактирование и строки (~1–1.5 дн)
 `SetFieldValue` (меняет только текст; отсутствующее поле не добавляется без явного `addFieldIfMissing`), `SetListField`, `SetDictField` (маска+индекс), `RecordOps` (Add max+1 / Duplicate deep-clone / Delete), `DocumentChangeTracker` (журнал для будущего undo), отклонение невалидных чисел (`xml.invalid_number`) без мутации документа.
@@ -100,7 +102,7 @@ Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк)
 
 ## Основные риски
 
-- **R1 writer quirks → byte-identity на edited-файлах**: корпус harness рано; contingency `ValueSpanPatcher`.
+- **R1 writer quirks → byte-identity на edited-файлах**: подтверждено на корпусе. `XmlWriter` меняет declaration encoding case, пробелы в атрибутах, `&gt;`, `&#10;`, self-closing `/>`; 15 из 263 файлов v4 расходятся уже без правок. Неизменённые файлы не перезаписываются, поэтому это не риск потери данных. Для byte-identity edited-файлов нужен `ValueSpanPatcher` (патчинг исходных байтовых диапазонов) — отдельный follow-up до M4/M10.
 - **R2 большие файлы**: lazy-парсинг значений, key-index, async; perf-гейт M10.
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.
