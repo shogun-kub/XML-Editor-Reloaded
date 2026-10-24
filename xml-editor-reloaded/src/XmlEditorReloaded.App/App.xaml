@@ -1,9 +1,7 @@
 <Application x:Class="XmlEditorReloaded.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:XmlEditorReloaded.App"
-             StartupUri="MainWindow.xaml">
+             ShutdownMode="OnMainWindowClose">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

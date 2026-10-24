@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0/M1/M2/M3/M4/M5/M6/M7/M8 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 4 test projects; the backend is fully implemented and wired through DI: Core primitives, SQLite metadata and catalog, XML loading/editing/overlays/validation/saving, lookup repository, settings, and STI/ETRLE imaging with caching. The WPF shell is still a template. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI, and the minimal WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, and persist settings. Editing grids/forms, item image UI, and the lossless structural patcher remain future work. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -59,7 +59,8 @@ xml-editor-reloaded/
     ├── XmlEditorReloaded.Core.Tests/
     ├── XmlEditorReloaded.Data.Tests/
     ├── XmlEditorReloaded.Xml.Tests/
-    └── XmlEditorReloaded.Imaging.Tests/
+    ├── XmlEditorReloaded.Imaging.Tests/
+    └── XmlEditorReloaded.App.Tests/
 ```
 
 Project names, folder names, and the exact split are preliminary. The hard constraints are:

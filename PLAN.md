@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4/M5/M6/M7/M8 завершены. Backend полностью собран: Core, SQLite-метаданные, каталог, настройки, XML load/edit/overlays/save/validation, DI-wiring и STI/ETRLE imaging. `App` — шаблонная WPF-заглушка. Следующий шаг — M9 (минимальная WPF-оболочка); опционально R1 (lossless structural patcher) или наполнение `Columns`.
+**Текущее состояние:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. Редакторы сеток/форм, image UI и R1 structural patcher остаются следующими задачами.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -84,9 +84,10 @@
 **Фактический результат:** `TableRepository` загружает mapped-таблицы с metadata и падает обратно в document-driven режим с диагностикой `metadata.unmapped`; `AddXmlEditorData`/`AddXmlEditorXml` собирают metadata provider, каталог, translation catalog, settings, repository и lookup; `FileSystemTableCatalog` и `XmlFileLookupRepository` сами получают языки из metadata provider. Добавлены 7 интеграционных тестов: load/edit/save, malformed fail-soft, unmapped fallback, lookup overlay, translation cycle, composition root.
 **Готово:** 21 Data-тест, всего 93 теста; build 0 warnings/errors; corpus no-rewrite v4/v5 зелёный.
 
-### M9 — Минимальный WPF shell (~1–1.5 дн)
+### M9 — Минимальный WPF shell (~1–1.5 дн) — **выполнен**
 `App.xaml.cs` — composition root (`AddXmlEditorData/Xml/Imaging`); `IDialogService` (folder picker); `AppSettingsViewModel`; `MainViewModel` + список таблиц из `ITableCatalog` (имя, оверлей-языки, mapped/unmapped); выбор таблицы → record count или malformed-диагностика (async + CTS). Строки UI — сразу в RESX (`Strings.resx` + `Strings.ru.resx`).
-**Готово:** приложение запускается, выбирает `Data-1.13`, список таблиц реальный, детали/диагностика отображаются; backend без WPF.
+**Фактический результат:** `App` собирает DI, применяет миграции, читает настройки и применяет `UiLanguageCode` до создания окна; `WpfDialogService` использует `OpenFolderDialog`; `MainViewModel` загружает каталог, показывает mapped/unmapped и языки, по выбору таблицы загружает документ, record count и диагностику, поддерживает отмену операций; UI-строки в RESX с английским и русским ресурсами и satellite-сборкой. Настройки хранятся через `JsonSettingsStore`; выбранный каталог сохраняется. Отдельный `AppSettingsViewModel` не понадобился: настройки ведёт `MainViewModel` + `ISettingsStore`.
+**Готово:** приложение запускается (проверено), создаёт окно и остаётся работоспособным; добавлен `App.Tests` с проверкой реального каталога и загрузки записи. Всего 119 тестов.
 
 ### M10 — Hardening (~1–2 дн)
 Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк), cancellation-тесты, аудит XML-доков (CS1591), обновление `PROJECT-STRUCTURE.md` и `README.md`, финальные `dotnet build` + `dotnet test` + оба корпусных прогона.

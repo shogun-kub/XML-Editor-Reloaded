@@ -7,6 +7,7 @@
     <Project Path="src/XmlEditorReloaded.App/XmlEditorReloaded.App.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/XmlEditorReloaded.App.Tests/XmlEditorReloaded.App.Tests.csproj" />
     <Project Path="tests/XmlEditorReloaded.Core.Tests/XmlEditorReloaded.Core.Tests.csproj" />
     <Project Path="tests/XmlEditorReloaded.Data.Tests/XmlEditorReloaded.Data.Tests.csproj" />
     <Project Path="tests/XmlEditorReloaded.Imaging.Tests/XmlEditorReloaded.Imaging.Tests.csproj" />

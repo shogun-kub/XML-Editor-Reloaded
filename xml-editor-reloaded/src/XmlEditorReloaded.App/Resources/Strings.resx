@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>XML Editor Reloaded</value>
+  </data>
+  <data name="BrowseText" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="RefreshText" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="DataDirectoryLabel" xml:space="preserve">
+    <value>Data directory</value>
+  </data>
+  <data name="TablesLabel" xml:space="preserve">
+    <value>Tables</value>
+  </data>
+  <data name="DetailsLabel" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DiagnosticsLabel" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="TableColumn" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="LanguagesColumn" xml:space="preserve">
+    <value>Languages</value>
+  </data>
+  <data name="MappedColumn" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>Mapped</value>
+  </data>
+  <data name="Unmapped" xml:space="preserve">
+    <value>Unmapped</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Select a Data-1.13 directory to load tables.</value>
+  </data>
+  <data name="StatusNoDataDirectory" xml:space="preserve">
+    <value>No data directory is selected.</value>
+  </data>
+  <data name="StatusLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="StatusTablesLoaded" xml:space="preserve">
+    <value>Loaded {0} tables.</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="StatusLoaded" xml:space="preserve">
+    <value>Loaded</value>
+  </data>
+  <data name="StatusLoadedReadOnly" xml:space="preserve">
+    <value>Loaded (read-only)</value>
+  </data>
+  <data name="StatusMalformed" xml:space="preserve">
+    <value>Malformed file</value>
+  </data>
+  <data name="StatusNoSelection" xml:space="preserve">
+    <value>Select a table to view details.</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>Records: {0}</value>
+  </data>
+  <data name="ChooseDataDirectory" xml:space="preserve">
+    <value>Choose the Data-1.13 directory</value>
+  </data>
+  <data name="InvalidDataDirectory" xml:space="preserve">
+    <value>The selected folder does not contain TableData or Data-1.13\TableData.</value>
+  </data>
+  <data name="TableSelected" xml:space="preserve">
+    <value>Table: {0}</value>
+  </data>
+</root>

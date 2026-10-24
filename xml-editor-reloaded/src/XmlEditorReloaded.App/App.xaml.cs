@@ -1,13 +1,97 @@
-using System.Configuration;
-using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core;
+using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Data;
+using XmlEditorReloaded.Data.Metadata;
+using XmlEditorReloaded.Xml;
 
 namespace XmlEditorReloaded.App;
 
 /// <summary>
-/// Interaction logic for App.xaml
+/// Application entry point and dependency-injection composition root.
 /// </summary>
 public partial class App : Application
 {
-}
+    private ServiceProvider? _serviceProvider;
 
+    /// <inheritdoc />
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        try
+        {
+            var appDataDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "XmlEditorReloaded");
+            var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
+
+            var services = new ServiceCollection();
+            services.AddXmlEditorCore();
+            services.AddXmlEditorData(databasePath);
+            services.AddXmlEditorXml();
+            services.AddSingleton<IDialogService, WpfDialogService>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<MainWindow>();
+            _serviceProvider = services.BuildServiceProvider();
+
+            var migration = await _serviceProvider
+                .GetRequiredService<DatabaseMigrator>()
+                .MigrateAsync(databasePath);
+            if (!migration.IsSuccess)
+            {
+                MessageBox.Show(
+                    Strings.Format("StatusError", migration.ErrorText ?? string.Empty),
+                    Strings.Get("AppTitle"),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Shutdown();
+                return;
+            }
+
+            var settingsStore = _serviceProvider.GetRequiredService<ISettingsStore>();
+            var settings = await settingsStore.LoadAsync();
+            var uiLanguage = settings.IsSuccess
+                ? settings.Data!.UiLanguageCode
+                : "en";
+            if (!string.IsNullOrWhiteSpace(uiLanguage))
+            {
+                try
+                {
+                    CultureInfo.CurrentUICulture = new CultureInfo(uiLanguage);
+                }
+                catch (CultureNotFoundException)
+                {
+                    // Fall back to the current UI culture when settings contain an unknown culture.
+                }
+            }
+
+            var window = _serviceProvider.GetRequiredService<MainWindow>();
+            MainWindow = window;
+            window.Show();
+            await _serviceProvider.GetRequiredService<MainViewModel>().InitializeAsync();
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(
+                Strings.Format("StatusError", exception.Message),
+                Strings.Get("AppTitle"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown();
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _serviceProvider?.Dispose();
+        base.OnExit(e);
+    }
+}

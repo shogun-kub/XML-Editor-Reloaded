@@ -1,4 +1,5 @@
 using System.Windows;
+using XmlEditorReloaded.App.ViewModels;
 
 namespace XmlEditorReloaded.App;
 
@@ -10,8 +11,14 @@ public partial class MainWindow : Window
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public MainWindow()
+    /// <param name="viewModel">Main shell view model.</param>
+    public MainWindow(MainViewModel viewModel)
     {
+        ArgumentNullException.ThrowIfNull(viewModel);
         InitializeComponent();
+        DataContext = viewModel;
+        TableNameColumn.Header = viewModel.TableColumn;
+        LanguagesColumn.Header = viewModel.LanguagesColumn;
+        MappedColumn.Header = viewModel.MappedColumn;
     }
 }
