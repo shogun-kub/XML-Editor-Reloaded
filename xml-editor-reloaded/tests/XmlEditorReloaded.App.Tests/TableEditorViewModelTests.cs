@@ -1399,6 +1399,68 @@ public class TableEditorViewModelTests
         Assert.Null(failure);
     }
 
+    /// <summary>
+    /// A confirmed overwrite replaces an externally changed file and rebases the editor baseline, so a
+    /// later regular save succeeds.
+    /// </summary>
+    [Fact]
+    public async Task Save_ExternalChangeOverwrite_ReplacesFileAndRebasesBaseline()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, data13, dialog, _) = await CreateEditorAsync(workspace);
+        var path = Path.Combine(data13, "TableData", "Items", "Items.xml");
+        editor.Rows[0]["szItemName"] = "Changed";
+        await File.AppendAllTextAsync(path, " ");
+        dialog.ExternalChangeResult = ExternalChangeChoice.Overwrite;
+
+        var saved = await editor.SaveWithRecoveryAsync();
+
+        Assert.True(saved);
+        Assert.False(editor.IsDirty);
+        Assert.Contains("changed on disk", dialog.LastExternalChangeMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(
+            "Changed",
+            System.Xml.Linq.XDocument.Load(path).Root!
+                .Elements("ITEM").First().Element("szItemName")!.Value);
+
+        editor.Rows[0]["szItemName"] = "Changed again";
+        Assert.True(await editor.SaveWithRecoveryAsync());
+        Assert.Equal(
+            "Changed again",
+            System.Xml.Linq.XDocument.Load(path).Root!
+                .Elements("ITEM").First().Element("szItemName")!.Value);
+    }
+
+    /// <summary>
+    /// Choosing reload on an external change discards unsaved edits and shows the file contents.
+    /// </summary>
+    [Fact]
+    public async Task Save_ExternalChangeReload_DiscardsEditorChanges()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, data13, dialog, _) = await CreateEditorAsync(workspace);
+        var path = Path.Combine(data13, "TableData", "Items", "Items.xml");
+        editor.Rows[0]["szItemName"] = "Changed";
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>External</szItemName><ubWeight>0</ubWeight></ITEM>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>10</ubWeight></ITEM>"
+            + "<ITEM><uiIndex>2</uiIndex><szItemName>Knife</szItemName><ubWeight>2</ubWeight></ITEM>"
+            + "</ITEMLIST>");
+        dialog.ExternalChangeResult = ExternalChangeChoice.Reload;
+
+        var saved = await editor.SaveWithRecoveryAsync();
+
+        Assert.True(saved);
+        Assert.False(editor.IsDirty);
+        Assert.Equal("External", editor.Rows[0]["szItemName"]);
+        Assert.Equal("External", System.Xml.Linq.XDocument.Load(path).Root!
+            .Elements("ITEM").First().Element("szItemName")!.Value);
+    }
+
     private static List<DetailFieldViewModel> FlattenDetailFields(TableEditorViewModel editor) =>
         editor.DetailGroups.SelectMany(static group => group.Fields).ToList();
 
@@ -1529,6 +1591,12 @@ public class TableEditorViewModelTests
     {
         public bool ConfirmResult { get; set; } = true;
 
+        public UnsavedChangesChoice UnsavedChangesResult { get; set; } = UnsavedChangesChoice.Discard;
+
+        public ExternalChangeChoice ExternalChangeResult { get; set; } = ExternalChangeChoice.Cancel;
+
+        public string? LastExternalChangeMessage { get; private set; }
+
         public uint? EditBitsResult { get; set; }
 
         public IReadOnlyDictionary<int, string>? LastBitLabels { get; private set; }
@@ -1548,6 +1616,15 @@ public class TableEditorViewModelTests
         public string? PickSaveFile(string title, string filter, string defaultFileName) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title) =>
+            UnsavedChangesResult;
+
+        public ExternalChangeChoice ResolveExternalChange(string message, string title)
+        {
+            LastExternalChangeMessage = message;
+            return ExternalChangeResult;
+        }
 
         public uint? EditBits(
             string title,

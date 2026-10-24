@@ -29,6 +29,12 @@ public sealed class TableFileSaver
     /// </summary>
     /// <param name="document">The loaded document to save.</param>
     /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, the external-change gate is skipped and the current editor contents
+    /// replace the file. The written bytes become the new baseline of the document, so a later regular
+    /// save succeeds even though the file changed on disk after loading. The caller must obtain the
+    /// user's confirmation before passing this value; the default keeps the gate.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>, <c>xml.file_changed_externally</c>,
@@ -36,7 +42,10 @@ public sealed class TableFileSaver
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="document"/> is <see langword="null"/>.</exception>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the target file is left unchanged.</exception>
-    public async Task<OperationResult> SaveAsync(TableDocument document, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> SaveAsync(
+        TableDocument document,
+        CancellationToken cancellationToken = default,
+        bool forceOverwrite = false)
     {
         ArgumentNullException.ThrowIfNull(document);
         cancellationToken.ThrowIfCancellationRequested();
@@ -54,10 +63,13 @@ public sealed class TableFileSaver
         }
 
         var path = document.Descriptor.FilePath;
-        var externalChange = DetectExternalChange(document, path);
-        if (externalChange is not null)
+        if (!forceOverwrite)
         {
-            return externalChange;
+            var externalChange = DetectExternalChange(document, path);
+            if (externalChange is not null)
+            {
+                return externalChange;
+            }
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -91,10 +103,13 @@ public sealed class TableFileSaver
             return OperationResult.Success();
         }
 
-        var secondCheck = DetectExternalChange(document, path);
-        if (secondCheck is not null)
+        if (!forceOverwrite)
         {
-            return secondCheck;
+            var secondCheck = DetectExternalChange(document, path);
+            if (secondCheck is not null)
+            {
+                return secondCheck;
+            }
         }
 
         cancellationToken.ThrowIfCancellationRequested();

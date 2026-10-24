@@ -47,6 +47,7 @@ public partial class App : Application
         services.AddSingleton<CompareViewModel>();
         services.AddSingleton<IVersionCompareService, WpfVersionCompareService>();
         services.AddSingleton<ITableCopyDialogService, WpfTableCopyDialogService>();
+        services.AddSingleton<ISettingsDialogService, WpfSettingsDialogService>();
         services.AddSingleton<ImageViewerViewModel>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();

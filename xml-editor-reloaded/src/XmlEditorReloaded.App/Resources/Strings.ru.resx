@@ -240,15 +240,6 @@
   <data name="EditorDeleteTitle" xml:space="preserve">
     <value>Удаление записи</value>
   </data>
-  <data name="EditorConfirmClose" xml:space="preserve">
-    <value>Отменить несохранённые изменения в {0}?</value>
-  </data>
-  <data name="EditorConfirmCloseAll" xml:space="preserve">
-    <value>Отменить несохранённые изменения в открытых таблицах ({0})?</value>
-  </data>
-  <data name="EditorCloseTitle" xml:space="preserve">
-    <value>Несохранённые изменения</value>
-  </data>
   <data name="EditorConfirmReload" xml:space="preserve">
     <value>Отменить изменения и перезагрузить {0}?</value>
   </data>
@@ -1295,5 +1286,129 @@
   </data>
   <data name="BulkEditClearValueText" xml:space="preserve">
     <value>Очистить значение</value>
+  </data>
+  <data name="SettingsButton" xml:space="preserve">
+    <value>Настройки…</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsDataDirectoriesLabel" xml:space="preserve">
+    <value>Каталоги данных</value>
+  </data>
+  <data name="SettingsActiveDirectoryLabel" xml:space="preserve">
+    <value>Активный каталог данных</value>
+  </data>
+  <data name="SettingsRecentLabel" xml:space="preserve">
+    <value>Недавние каталоги</value>
+  </data>
+  <data name="SettingsUiLanguageLabel" xml:space="preserve">
+    <value>Язык интерфейса</value>
+  </data>
+  <data name="SettingsUiLanguageNote" xml:space="preserve">
+    <value>Язык интерфейса изменится после перезапуска редактора.</value>
+  </data>
+  <data name="SettingsResetLayouts" xml:space="preserve">
+    <value>Сбросить все макеты…</value>
+  </data>
+  <data name="SettingsResetLayoutsTitle" xml:space="preserve">
+    <value>Сброс макетов</value>
+  </data>
+  <data name="SettingsResetLayoutsConfirm" xml:space="preserve">
+    <value>Удалить все сохранённые макеты таблиц? Открытые вкладки вернутся к колонкам, сортировке и фильтрам по умолчанию после повторного открытия.</value>
+  </data>
+  <data name="SettingsResetLayoutsPending" xml:space="preserve">
+    <value>Все сохранённые макеты будут удалены после нажатия «ОК».</value>
+  </data>
+  <data name="SettingsAddDirectory" xml:space="preserve">
+    <value>Добавить…</value>
+  </data>
+  <data name="SettingsRemoveDirectory" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="SettingsSetActive" xml:space="preserve">
+    <value>Сделать активным</value>
+  </data>
+  <data name="SettingsActiveColumn" xml:space="preserve">
+    <value>Активный</value>
+  </data>
+  <data name="SettingsPathColumn" xml:space="preserve">
+    <value>Путь</value>
+  </data>
+  <data name="SettingsChooseDirectory" xml:space="preserve">
+    <value>Выберите каталог данных</value>
+  </data>
+  <data name="SettingsNoActiveDirectory" xml:space="preserve">
+    <value>Каталог данных не настроен.</value>
+  </data>
+  <data name="SettingsNoDirectorySelected" xml:space="preserve">
+    <value>Сначала выберите каталог данных.</value>
+  </data>
+  <data name="SettingsDirectoryAdded" xml:space="preserve">
+    <value>Каталог данных добавлен.</value>
+  </data>
+  <data name="SettingsDirectoryRemoved" xml:space="preserve">
+    <value>Каталог данных удалён.</value>
+  </data>
+  <data name="SettingsActiveDirectoryChanged" xml:space="preserve">
+    <value>Активный каталог данных изменён.</value>
+  </data>
+  <data name="SettingsApplied" xml:space="preserve">
+    <value>Настройки сохранены.</value>
+  </data>
+  <data name="SettingsOk" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="SettingsCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="UnsavedChangesTitle" xml:space="preserve">
+    <value>Несохранённые изменения</value>
+  </data>
+  <data name="UnsavedChangesMessageFormat" xml:space="preserve">
+    <value>В «{0}» есть несохранённые изменения.</value>
+  </data>
+  <data name="UnsavedChangesSave" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="UnsavedChangesDiscard" xml:space="preserve">
+    <value>Не сохранять</value>
+  </data>
+  <data name="UnsavedChangesCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ExternalChangeTitle" xml:space="preserve">
+    <value>Файл изменён на диске</value>
+  </data>
+  <data name="ExternalChangeMessageFormat" xml:space="preserve">
+    <value>{0} изменён на диске после открытия.
+
+{1}
+
+«Перезагрузить» отбрасывает несохранённые изменения и читает файл заново. «Перезаписать» заменяет файл содержимым редактора.</value>
+  </data>
+  <data name="ExternalChangeReload" xml:space="preserve">
+    <value>Перезагрузить</value>
+  </data>
+  <data name="ExternalChangeOverwrite" xml:space="preserve">
+    <value>Перезаписать</value>
+  </data>
+  <data name="ExternalChangeCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ExternalChangeReloaded" xml:space="preserve">
+    <value>«{0}» перезагружен с диска.</value>
+  </data>
+  <data name="ExternalChangeOverwritten" xml:space="preserve">
+    <value>Изменённый файл перезаписан, «{0}» сохранён.</value>
+  </data>
+  <data name="ExternalChangeCancelled" xml:space="preserve">
+    <value>Сохранение отменено: файл изменён на диске.</value>
   </data>
 </root>

@@ -5,6 +5,36 @@ using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Xml.Workspace;
 
 /// <summary>
+/// User decision for closing a tab or the application with unsaved changes.
+/// </summary>
+public enum UnsavedChangesChoice
+{
+    /// <summary>Save the changes and continue closing.</summary>
+    Save,
+
+    /// <summary>Discard the changes and continue closing.</summary>
+    Discard,
+
+    /// <summary>Keep the tab or application open.</summary>
+    Cancel,
+}
+
+/// <summary>
+/// User decision for a file that changed on disk after it was loaded.
+/// </summary>
+public enum ExternalChangeChoice
+{
+    /// <summary>Discard unsaved changes and read the file again.</summary>
+    Reload,
+
+    /// <summary>Replace the changed file with the editor contents.</summary>
+    Overwrite,
+
+    /// <summary>Keep the editor contents unsaved and leave the file as it is.</summary>
+    Cancel,
+}
+
+/// <summary>
 /// UI dialog abstraction used by view models.
 /// </summary>
 public interface IDialogService
@@ -24,6 +54,22 @@ public interface IDialogService
     /// <param name="title">Dialog title.</param>
     /// <returns><see langword="true"/> when the user confirms; otherwise <see langword="false"/>.</returns>
     bool Confirm(string message, string title);
+
+    /// <summary>
+    /// Asks whether unsaved changes should be saved, discarded, or kept.
+    /// </summary>
+    /// <param name="message">Text shown to the user.</param>
+    /// <param name="title">Dialog title.</param>
+    /// <returns>The selected decision; <see cref="UnsavedChangesChoice.Cancel"/> when the dialog is closed.</returns>
+    UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title);
+
+    /// <summary>
+    /// Asks how to resolve a file that changed on disk after it was loaded.
+    /// </summary>
+    /// <param name="message">Text shown to the user, usually with the failed file names.</param>
+    /// <param name="title">Dialog title.</param>
+    /// <returns>The selected decision; <see cref="ExternalChangeChoice.Cancel"/> when the dialog is closed.</returns>
+    ExternalChangeChoice ResolveExternalChange(string message, string title);
 
     /// <summary>
     /// Shows a 32-bit bit-flags editor.

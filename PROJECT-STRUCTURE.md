@@ -90,8 +90,8 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 WPF shell and MVVM layer: data-directory selector across several data sets, table browser and tabs keyed
 by data set and table, generic grid editor with structured filters, multi-row selection, per-table layout
 persistence, item workspace, mercenary gear workspace, detail panel, STI image viewer, cross-version
-comparison window, cross-data-set copy dialog, dialogs, settings, and RESX localization (English and
-Russian).
+comparison window, cross-data-set copy dialog, settings dialog, safe tab/application close, external
+file-change recovery, and RESX localization (English and Russian).
 
 Folders: `Imaging`, `Resources`, `Services`, `ViewModels`, `Views`. All UI strings come from RESX;
 views contain no business logic.
@@ -147,6 +147,19 @@ Presentation state of each standalone grid tab is stored outside the game data i
 structured filter. Writes are atomic and UTF-8 without BOM; an unreadable file is reported and backed up
 as `layouts.json.bad` before a fresh file is written. Embedded grids and the item/gear workspaces keep
 their layout in memory only.
+
+### Settings and safety
+
+Application settings live in `%AppData%\XmlEditorReloaded\settings.json` (directories, active data set,
+overlay language, UI language, recent directories) and grid layouts in `layouts.json`. The settings
+dialog edits the configured directories and active data set without closing tabs, stores the UI language
+for the next start, and can remove every stored layout.
+
+Closing a dirty tab or the application asks Save / Discard / Cancel; a failed save keeps the tab open and
+a pending layout is written before exit. If a table file changed on disk after loading, an ordinary save
+is still refused by the `(length, mtime)` gate; the user then chooses Reload (discard edits and reread),
+Overwrite (force the write and rebase the document baseline), or Cancel. Multi-file sets report every
+failed file before the recovery choice is applied.
 
 ### STI images
 

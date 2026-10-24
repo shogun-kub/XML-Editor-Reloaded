@@ -26,7 +26,7 @@ public class MercGearWorkspaceViewModelTests
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
         var fixture = CreateFixture(workspace);
-        var viewModel = await CreateWorkspaceAsync(fixture);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
         var itemsBefore = await File.ReadAllBytesAsync(fixture.ItemsPath);
         var overlayBefore = await File.ReadAllBytesAsync(fixture.OverlayPath);
 
@@ -78,7 +78,7 @@ public class MercGearWorkspaceViewModelTests
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
         var fixture = CreateFixture(workspace);
-        var viewModel = await CreateWorkspaceAsync(fixture, languageCode: "ru");
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture, languageCode: "ru");
         var baseBefore = await File.ReadAllBytesAsync(fixture.BasePath);
 
         Assert.True(viewModel.IsTranslationMode);
@@ -110,7 +110,32 @@ public class MercGearWorkspaceViewModelTests
             .Element("mGearKitName")?.Value);
     }
 
-    private static async Task<MercGearWorkspaceViewModel> CreateWorkspaceAsync(
+    /// <summary>
+    /// A confirmed overwrite saves gear edits over an externally changed file and rebases the baseline.
+    /// </summary>
+    [Fact]
+    public async Task Save_ExternalChangeOverwrite_WritesGearFile()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+        viewModel.Kits[0].PriceMod = "5";
+        await File.AppendAllTextAsync(fixture.BasePath, " ");
+        dialog.ExternalChangeResult = ExternalChangeChoice.Overwrite;
+
+        var saved = await viewModel.SaveWithRecoveryAsync();
+
+        Assert.True(saved);
+        Assert.False(viewModel.IsDirty);
+        Assert.Contains("changed on disk", dialog.LastExternalChangeMessage, StringComparison.OrdinalIgnoreCase);
+        var savedDocument = System.Xml.Linq.XDocument.Load(fixture.BasePath);
+        var merc = savedDocument.Root!.Elements("MERCGEAR")
+            .First(static element => element.Element("mIndex")?.Value == "0");
+        Assert.Equal("5", merc.Elements("GEARKIT").First().Element("mPriceMod")?.Value);
+    }
+
+    private static async Task<(MercGearWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
         Fixture fixture,
         string? languageCode = null)
     {
@@ -130,7 +155,7 @@ public class MercGearWorkspaceViewModelTests
         var dialog = new FakeDialogService();
         var viewModel = new MercGearWorkspaceViewModel(session, descriptor, languageCode, dialog);
         await viewModel.InitializeAsync();
-        return viewModel;
+        return (viewModel, dialog);
     }
 
     private static Fixture CreateFixture(TestWorkspace workspace)
@@ -223,9 +248,24 @@ public class MercGearWorkspaceViewModelTests
 
     private sealed class FakeDialogService : IDialogService
     {
+        public UnsavedChangesChoice UnsavedChangesResult { get; set; } = UnsavedChangesChoice.Discard;
+
+        public ExternalChangeChoice ExternalChangeResult { get; set; } = ExternalChangeChoice.Cancel;
+
+        public string? LastExternalChangeMessage { get; private set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => true;
+
+        public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title) =>
+            UnsavedChangesResult;
+
+        public ExternalChangeChoice ResolveExternalChange(string message, string title)
+        {
+            LastExternalChangeMessage = message;
+            return ExternalChangeResult;
+        }
 
         public uint? EditBits(
             string title,

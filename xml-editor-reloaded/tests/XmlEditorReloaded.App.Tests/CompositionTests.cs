@@ -65,6 +65,23 @@ public class CompositionTests
                 var copyWindow = new global::XmlEditorReloaded.App.Views.TableCopyWindow(copyViewModel);
                 Assert.IsType<TableCopyViewModel>(copyWindow.DataContext);
                 copyWindow.Close();
+
+                var settingsWindow = new global::XmlEditorReloaded.App.Views.SettingsWindow(
+                    new SettingsViewModel(
+                        new SettingsRequest(Array.Empty<string>(), null, "en", Array.Empty<string>()),
+                        provider.GetRequiredService<IDialogService>()));
+                Assert.IsType<SettingsViewModel>(settingsWindow.DataContext);
+                settingsWindow.Close();
+
+                var unsavedWindow = new global::XmlEditorReloaded.App.Views.UnsavedChangesWindow(
+                    "Unsaved changes",
+                    "Close");
+                unsavedWindow.Close();
+
+                var externalWindow = new global::XmlEditorReloaded.App.Views.ExternalChangeWindow(
+                    "File changed",
+                    "Save");
+                externalWindow.Close();
             }
             catch (Exception exception)
             {

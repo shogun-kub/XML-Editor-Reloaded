@@ -4,7 +4,7 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M21 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы, multi-dataset с селектором каталогов и кэшем сессий, cross-dataset copy с preview, политиками конфликтов, allocation ключей, remap по display-тексту и копированием связанных строк. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **M22 разбит на подшаги:** M22a — фильтры, multi-select/bulk и per-table layout — выполнен; M22b — settings dialog, close safety и external-change recovery — текущий подшаг. M23 также разбит: M23a — аудит паритета, M23b — исправления и gate. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; multi-dataset/copy — M21; full legacy parity — M23b. **Проверка текущего состояния:** build `-warnaserror` (0/0), 370 тестов (Core 28, Imaging 19, Xml 155, Data 60, App 108), corpus v4/v5, сравнение v4↔v5, copy v4→v5 и perf-гейты зелёные.
+**Состояние:** M0–M22 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка/фильтры, multi-select/bulk, chooser колонок, per-table layout), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы, multi-dataset с селектором каталогов и кэшем сессий, cross-dataset copy с preview, политиками конфликтов, allocation ключей, remap по display-тексту и копированием связанных строк, settings dialog, безопасное закрытие и external-change recovery. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **M22 разбит на подшаги:** M22a — фильтры, multi-select/bulk и per-table layout — выполнен; M22b — settings dialog, close safety и external-change recovery — выполнен. M23 также разбит: M23a — аудит паритета, M23b — исправления и gate. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; multi-dataset/copy — M21; M22 — фильтры/выделение/layout и shell-безопасность; full legacy parity — M23b. **Проверка текущего состояния:** build `-warnaserror` (0/0), 389 тестов (Core 28, Imaging 19, Xml 156, Data 60, App 126), corpus v4/v5, сравнение v4↔v5, copy v4→v5 и perf-гейты зелёные.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается вообще; повреждённый — только диагностика.
@@ -82,11 +82,11 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **Тесты:** matcher (типы, missing, AND/OR, культура), VM-фильтры, bulk по выделению и пустой Set, layout round-trip/restore/reset, XAML smoke; 370 тестов, corpus v4/v5 и perf-гейт фильтра `Items` зелёные.
 - **Коммит:** `M22a: grid filters, multi-select, layout persistence`.
 
-### M22b — Shell: настройки и безопасность
-- **Settings dialog:** каталоги данных (добавить/удалить/активный), recent dirs, UI-язык en/ru с пометкой «после перезапуска», сброс всех layout; сохранение через `ISettingsStore`, применение активного датасета без закрытия вкладок.
-- **Safety:** закрытие вкладки и приложения с несохранёнными изменениями — Save/Discard/Cancel; Save-ошибка не закрывает вкладку; перед выходом flush layout.
-- **External change:** при `xml.file_changed_externally` — Reload (отбросить правки и перечитать) / Overwrite (записать поверх через `forceOverwrite`) / Cancel; обычный save-gate не ослабляется, multi-file ошибки агрегируются.
-- **Тесты/acceptance:** settings round-trip, close-сценарии, force-overwrite и rebase baseline, внешние изменения для grid/item/merc; закрытие не теряет данные молча.
+### M22b — Shell: настройки и безопасность — выполнен
+- **Settings dialog:** `SettingsViewModel`/`SettingsWindow` управляют каталогами данных (добавление с проверкой `TableData`, удаление, выбор активного), показывают recent dirs, UI-язык en/ru с пометкой «после перезапуска» и кнопку сброса всех layout (с подтверждением и отложенным применением до OK). `MainViewModel.ApplySettingsAsync` сохраняет настройки через `ISettingsStore`, применяет активный датасет через существующий activation flow, не закрывая вкладки, и сбрасывает layout-файл и layout открытых generic-вкладок.
+- **Safety:** `IEditorTab.SaveWithRecoveryAsync`/`ReloadFromDiskAsync`; закрытие вкладки и приложения (`MainWindow.OnClosing` → `MainViewModel.RequestCloseAsync`) предлагает Save/Discard/Cancel. Save-ошибка или отмена внешнего изменения оставляют вкладку открытой; перед выходом выполняется flush layout. Диалоги — отдельные `UnsavedChangesWindow` и `ExternalChangeWindow`.
+- **External change:** при `xml.file_changed_externally` grid/item/merc показывают Reload / Overwrite / Cancel. Reload перечитывает с диска и сбрасывает dirty-флаг; Overwrite вызывает `TableFileSaver` с `forceOverwrite`, после записи baseline (length/mtime/SHA-256) пересчитывается через `AcceptSaved`, поэтому следующий обычный save снова проходит. Обычный save-gate не ослаблен; для item set `TableSetSaveReport` агрегирует ошибки по файлам, а не маскирует их первой.
+- **Тесты:** settings round-trip и применение каталога/языка/сброса layout; закрытие вкладки и приложения (Cancel/Discard/Save/Save-ошибка); force-overwrite и rebase baseline; внешние изменения для grid (overwrite/reload), item (sub-table, overwrite/reload) и merc (overwrite); 389 тестов, corpus v4/v5 зелёные.
 - **Коммит:** `M22b: settings, close safety, external-change recovery`.
 
 ### M23a — Аудит паритета
@@ -106,7 +106,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **M26a — Lookup CRUD:** создание/изменение/удаление lookup-таблиц, bitmask allocation ID, free-form ID. **M26b — Protection:** «где используется», защита используемых значений, валидация flag-lookup.
 - **M27a — Packaging:** self-contained publish, portable zip, CI-гейты сборки/тестов/корпуса. **M27b — Release:** иконка/версия/changelog, README и user guide.
 
-**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17 → M18 → **M19 (item parity)** → M20 → M21 → M22a → M22b → M23a → **M23b (full legacy parity)** → M24a → M24b → M25a → M25b → M26a → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
+**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17 → M18 → **M19 (item parity)** → M20 → M21 → M22a → M22b → **M23a (parity audit)** → M23b (full legacy parity) → M24a → M24b → M25a → M25b → M26a → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
 
 ---
 
@@ -139,7 +139,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Локализация | 7 языковых кодов с autodiscovery; в v4/v5 есть только `ru` | выполнен (M20) |
 | Multi-dataset и copy строк | селектор датасетов, вкладки по датасетам, явный copy-диалог с preview и remap | выполнен (M21) |
 | Item images | превью Big/Medium/Small, picker типа, миниатюры в списке | M19 |
-| Settings/layout | layout — M22a; settings dialog и safety — M22b | M22a–M22b |
+| Settings/layout/safety | настройки каталогов и языка, сброс layout, safe close, external-change recovery | выполнен (M22a–M22b) |
 | Packaging | нет у обоих | M27a–M27b |
 
 ---
@@ -170,7 +170,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 346).
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 389).
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — прогон на temp-копиях, без изменений в `References/`.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests` зелёный.
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` копирует предмет с Weapon/Attachments на temp-копиях, проверяет remap и неизменность source.

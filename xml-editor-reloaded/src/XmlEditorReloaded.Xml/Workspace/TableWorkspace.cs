@@ -664,15 +664,21 @@ public sealed partial class TableWorkspace
     /// Saves the base document and the overlay independently. Clean documents are not rewritten.
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the save.</param>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, external file changes do not block the save; the written bytes become
+    /// the new baseline. The caller must obtain the user's confirmation first.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, the error from the base or overlay saver is returned.
     /// </returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the current file is left unchanged.</exception>
-    public Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default) =>
+    public Task<OperationResult> SaveAsync(
+        CancellationToken cancellationToken = default,
+        bool forceOverwrite = false) =>
         Session is not null
-            ? Session.SaveAsync(cancellationToken)
-            : _saver.SaveAsync(BaseDocument, cancellationToken);
+            ? Session.SaveAsync(cancellationToken, forceOverwrite)
+            : _saver.SaveAsync(BaseDocument, cancellationToken, forceOverwrite);
 
     /// <summary>
     /// Validates the base document without mutating it.

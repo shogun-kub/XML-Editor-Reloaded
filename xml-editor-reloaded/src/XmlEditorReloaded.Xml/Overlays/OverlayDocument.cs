@@ -242,11 +242,17 @@ public sealed class OverlayDocument
     /// Saves the overlay when it has unsaved changes.
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the save.</param>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, external file changes do not block the save. The caller must obtain
+    /// the user's confirmation first.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is the same as for <see cref="TableFileSaver.SaveAsync"/>.
     /// </returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the file is left unchanged.</exception>
-    public Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default) =>
-        new TableFileSaver().SaveAsync(_document, cancellationToken);
+    public Task<OperationResult> SaveAsync(
+        CancellationToken cancellationToken = default,
+        bool forceOverwrite = false) =>
+        new TableFileSaver().SaveAsync(_document, cancellationToken, forceOverwrite);
 }

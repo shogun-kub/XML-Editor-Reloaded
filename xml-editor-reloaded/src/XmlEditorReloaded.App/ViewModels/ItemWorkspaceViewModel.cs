@@ -545,6 +545,7 @@ public sealed partial class ItemWorkspaceViewModel :
         {
             _pendingSelection = null;
             RefreshHistoryState();
+            IsDirty = _set?.IsDirty == true;
             IsBusy = false;
         }
     }
@@ -554,55 +555,138 @@ public sealed partial class ItemWorkspaceViewModel :
     /// </summary>
     /// <returns>A task that completes when saving finishes.</returns>
     [RelayCommand]
-    public async Task SaveAsync()
+    public async Task SaveAsync() => await SaveWithRecoveryAsync().ConfigureAwait(true);
+
+    /// <inheritdoc />
+    public async Task<bool> SaveWithRecoveryAsync()
     {
         if (_set is null)
         {
-            return;
+            return false;
         }
 
         if (!_set.IsDirty)
         {
             IsDirty = false;
             StatusText = Strings.Get("EditorNoChanges");
-            return;
+            return true;
         }
 
         IsBusy = true;
         try
         {
-            var result = await _set.SaveAsync().ConfigureAwait(true);
-            if (result.IsSuccess)
+            var report = await _set.SaveDetailedAsync().ConfigureAwait(true);
+            if (report.IsSuccess)
             {
-                foreach (var tableName in new[] { _descriptor.TableName }
-                             .Concat(_set.Members.Select(static member => member.Workspace.Descriptor.TableName)))
-                {
-                    _session.RelationResolver.Invalidate(tableName);
-                }
+                ApplySavedState();
+                return true;
+            }
 
-                IsDirty = false;
-                StatusText = Strings.Get("EditorSaved");
-                foreach (var section in ChildSections)
-                {
-                    section.Editor.RefreshFieldValues();
-                }
-            }
-            else
+            if (report.HasExternalChanges)
             {
-                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                return await ResolveExternalChangeAsync(report).ConfigureAwait(true);
             }
+
+            StatusText = Strings.Format("StatusError", FormatReport(report));
+            return false;
         }
         catch (OperationCanceledException)
         {
             StatusText = Strings.Get("EditorLoadingCancelled");
+            return false;
         }
         catch (Exception exception)
         {
             StatusText = Strings.Format("StatusError", exception.Message);
+            return false;
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    /// <inheritdoc />
+    public Task ReloadFromDiskAsync() => ReloadPreservingSelectionAsync();
+
+    private async Task<bool> ResolveExternalChangeAsync(TableSetSaveReport failedReport)
+    {
+        var tables = string.Join(
+            ", ",
+            failedReport.Failures
+                .Where(static failure => string.Equals(
+                    failure.ErrorCode,
+                    ErrorCodes.XmlFileChangedExternally,
+                    StringComparison.Ordinal))
+                .Select(static failure => failure.Table.Value));
+        var choice = _dialogService.ResolveExternalChange(
+            Strings.Format(
+                "ExternalChangeMessageFormat",
+                tables,
+                string.Join(
+                    Environment.NewLine,
+                    failedReport.Failures.Select(static failure =>
+                        $"{failure.Table}: {failure.ErrorCode}: {failure.ErrorText}"))),
+            Strings.Get("ExternalChangeTitle"));
+        switch (choice)
+        {
+            case ExternalChangeChoice.Reload:
+                await ReloadFromDiskAsync().ConfigureAwait(true);
+                if (_set is null)
+                {
+                    return false;
+                }
+
+                StatusText = Strings.Format("ExternalChangeReloaded", Title);
+                return !IsDirty;
+
+            case ExternalChangeChoice.Overwrite:
+                if (_set is null)
+                {
+                    return false;
+                }
+
+                var forced = await _set.SaveDetailedAsync(forceOverwrite: true).ConfigureAwait(true);
+                if (forced.IsSuccess)
+                {
+                    ApplySavedState();
+                    StatusText = Strings.Format("ExternalChangeOverwritten", Title);
+                    return true;
+                }
+
+                StatusText = Strings.Format("StatusError", FormatReport(forced));
+                return false;
+
+            default:
+                StatusText = Strings.Format("ExternalChangeCancelled", Title);
+                return false;
+        }
+    }
+
+    private static string FormatReport(TableSetSaveReport report) =>
+        string.Join(
+            "; ",
+            report.Failures.Select(static failure =>
+                $"{failure.Table}: {failure.ErrorCode}: {failure.ErrorText}"));
+
+    private void ApplySavedState()
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        foreach (var tableName in new[] { _descriptor.TableName }
+                     .Concat(_set.Members.Select(static member => member.Workspace.Descriptor.TableName)))
+        {
+            _session.RelationResolver.Invalidate(tableName);
+        }
+
+        IsDirty = false;
+        StatusText = Strings.Get("EditorSaved");
+        foreach (var section in ChildSections)
+        {
+            section.Editor.RefreshFieldValues();
         }
     }
 

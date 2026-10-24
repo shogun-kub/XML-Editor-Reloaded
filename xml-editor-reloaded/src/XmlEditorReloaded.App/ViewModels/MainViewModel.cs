@@ -6,6 +6,7 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 
@@ -27,6 +28,8 @@ public partial class MainViewModel : ObservableObject
     private readonly IImageViewerService _imageViewer;
     private readonly IVersionCompareService _versionCompare;
     private readonly ITableCopyDialogService _copyDialog;
+    private readonly ISettingsDialogService _settingsDialog;
+    private readonly ITableLayoutStore _layoutStore;
     private AppSettings _settings = AppSettings.Default;
     private IDataSetSession? _dataSet;
     private CancellationTokenSource? _operationCts;
@@ -67,6 +70,8 @@ public partial class MainViewModel : ObservableObject
     /// <param name="imageViewer">Item image viewer service.</param>
     /// <param name="versionCompare">Cross-version comparison window service.</param>
     /// <param name="copyDialog">Cross-data-set copy dialog service.</param>
+    /// <param name="settingsDialog">Application settings dialog service.</param>
+    /// <param name="layoutStore">Stored grid layouts, reset from the settings dialog.</param>
     public MainViewModel(
         IDataSetSessionFactory sessionFactory,
         ITableEditorFactory editorFactory,
@@ -74,7 +79,9 @@ public partial class MainViewModel : ObservableObject
         IDialogService dialogService,
         IImageViewerService imageViewer,
         IVersionCompareService versionCompare,
-        ITableCopyDialogService copyDialog)
+        ITableCopyDialogService copyDialog,
+        ISettingsDialogService settingsDialog,
+        ITableLayoutStore layoutStore)
     {
         ArgumentNullException.ThrowIfNull(sessionFactory);
         ArgumentNullException.ThrowIfNull(editorFactory);
@@ -83,6 +90,8 @@ public partial class MainViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(imageViewer);
         ArgumentNullException.ThrowIfNull(versionCompare);
         ArgumentNullException.ThrowIfNull(copyDialog);
+        ArgumentNullException.ThrowIfNull(settingsDialog);
+        ArgumentNullException.ThrowIfNull(layoutStore);
 
         _sessionFactory = sessionFactory;
         _editorFactory = editorFactory;
@@ -91,6 +100,8 @@ public partial class MainViewModel : ObservableObject
         _imageViewer = imageViewer;
         _versionCompare = versionCompare;
         _copyDialog = copyDialog;
+        _settingsDialog = settingsDialog;
+        _layoutStore = layoutStore;
 
         Editors.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasEditors));
 
@@ -100,6 +111,7 @@ public partial class MainViewModel : ObservableObject
         ImagesText = Strings.Get("ImageViewerButton");
         CompareText = Strings.Get("CompareButton");
         CopyText = Strings.Get("CopyButton");
+        SettingsText = Strings.Get("SettingsButton");
         OpenTableText = Strings.Get("EditorOpenText");
         SaveAllText = Strings.Get("EditorSaveAllText");
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
@@ -143,6 +155,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the cross-data-set copy button text.
     /// </summary>
     public string CopyText { get; }
+
+    /// <summary>
+    /// Gets the settings button text.
+    /// </summary>
+    public string SettingsText { get; }
 
     /// <summary>
     /// Gets the open-table button text.
@@ -329,6 +346,76 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task OpenSettingsAsync()
+    {
+        var request = new SettingsRequest(
+            _settings.DataDirectories,
+            _settings.ActiveDataDirectory ?? DataDirectory,
+            _settings.UiLanguageCode,
+            _settings.RecentDataDirectories);
+        var result = _settingsDialog.Show(request);
+        if (result is null)
+        {
+            return;
+        }
+
+        await ApplySettingsAsync(result).ConfigureAwait(true);
+    }
+
+    private async Task ApplySettingsAsync(SettingsResult result)
+    {
+        string? resetError = null;
+        if (result.ResetLayouts)
+        {
+            foreach (var editor in Editors.OfType<TableEditorViewModel>())
+            {
+                await editor.ResetLayoutAsync().ConfigureAwait(true);
+            }
+
+            var reset = await _layoutStore.ResetAllAsync().ConfigureAwait(true);
+            if (!reset.IsSuccess)
+            {
+                resetError = $"{reset.ErrorCode}: {reset.ErrorText}";
+            }
+        }
+
+        _settings = _settings with
+        {
+            DataDirectories = result.DataDirectories.ToArray(),
+            ActiveDataDirectory = result.ActiveDataDirectory,
+            UiLanguageCode = result.UiLanguageCode,
+            RecentDataDirectories = _settings.RecentDataDirectories
+                .Where(recent => result.DataDirectories.Any(directory => SamePath(directory, recent)))
+                .ToArray(),
+        };
+
+        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        if (!save.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
+            return;
+        }
+
+        RebuildDataDirectories();
+        if (!string.IsNullOrWhiteSpace(result.ActiveDataDirectory))
+        {
+            await ActivateDataDirectoryAsync(result.ActiveDataDirectory).ConfigureAwait(true);
+        }
+
+        if (resetError is not null)
+        {
+            StatusText = Strings.Format("StatusError", resetError);
+        }
+        else if (result.ActiveDataDirectory is null
+                 || SamePath(DataDirectory, result.ActiveDataDirectory))
+        {
+            StatusText = Strings.Get("SettingsApplied");
+        }
+
+        // Otherwise activation already reported why the requested directory could not be opened.
+    }
+
+    [RelayCommand]
     private async Task OpenTableAsync()
     {
         if (_dataSet is null)
@@ -395,17 +482,14 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void CloseEditor(IEditorTab? editor)
+    private async Task CloseEditorAsync(IEditorTab? editor)
     {
         if (editor is null)
         {
             return;
         }
 
-        if (editor.IsDirty
-            && !_dialogService.Confirm(
-                Strings.Format("EditorConfirmClose", editor.Title),
-                Strings.Get("EditorCloseTitle")))
+        if (!await ConfirmCloseEditorAsync(editor).ConfigureAwait(true))
         {
             return;
         }
@@ -413,9 +497,45 @@ public partial class MainViewModel : ObservableObject
         var wasSelected = ReferenceEquals(SelectedEditor, editor);
         DetachEditor(editor);
         Editors.Remove(editor);
+        if (editor is TableEditorViewModel tableEditor)
+        {
+            await tableEditor.FlushLayoutAsync().ConfigureAwait(true);
+        }
+
         if (wasSelected)
         {
             SelectedEditor = Editors.FirstOrDefault();
+        }
+    }
+
+    /// <summary>
+    /// Closes every tab after resolving unsaved changes and flushes pending grid layouts. The window uses
+    /// this before it closes; a <see langword="false"/> result means the close must be cancelled.
+    /// </summary>
+    /// <returns><see langword="true"/> when the application may close; otherwise <see langword="false"/>.</returns>
+    public async Task<bool> RequestCloseAsync()
+    {
+        foreach (var editor in Editors.ToArray())
+        {
+            if (!await ConfirmCloseEditorAsync(editor).ConfigureAwait(true))
+            {
+                return false;
+            }
+        }
+
+        await FlushLayoutsAsync().ConfigureAwait(true);
+        return true;
+    }
+
+    /// <summary>
+    /// Writes pending grid layouts immediately, for example before the application exits.
+    /// </summary>
+    /// <returns>A task that completes when every layout is stored.</returns>
+    public async Task FlushLayoutsAsync()
+    {
+        foreach (var editor in Editors.OfType<TableEditorViewModel>())
+        {
+            await editor.FlushLayoutAsync().ConfigureAwait(true);
         }
     }
 
@@ -433,8 +553,8 @@ public partial class MainViewModel : ObservableObject
         var failed = 0;
         foreach (var editor in dirty)
         {
-            await editor.SaveAsync().ConfigureAwait(true);
-            if (editor.IsDirty)
+            var clean = await editor.SaveWithRecoveryAsync().ConfigureAwait(true);
+            if (!clean || editor.IsDirty)
             {
                 failed++;
             }
@@ -447,6 +567,24 @@ public partial class MainViewModel : ObservableObject
         StatusText = failed == 0
             ? Strings.Format("EditorSaveAllSummary", saved)
             : Strings.Get("EditorSaveAllErrors");
+    }
+
+    private async Task<bool> ConfirmCloseEditorAsync(IEditorTab editor)
+    {
+        if (!editor.IsDirty)
+        {
+            return true;
+        }
+
+        var choice = _dialogService.ConfirmUnsavedChanges(
+            Strings.Format("UnsavedChangesMessageFormat", editor.Title),
+            Strings.Get("UnsavedChangesTitle"));
+        return choice switch
+        {
+            UnsavedChangesChoice.Save => await editor.SaveWithRecoveryAsync().ConfigureAwait(true),
+            UnsavedChangesChoice.Discard => true,
+            _ => false,
+        };
     }
 
     [RelayCommand]

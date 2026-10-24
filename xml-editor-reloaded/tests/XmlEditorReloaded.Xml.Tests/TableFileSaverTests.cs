@@ -156,6 +156,40 @@ public class TableFileSaverTests
     }
 
     /// <summary>
+    /// A confirmed force overwrite replaces an externally changed file and rebases the saved baseline,
+    /// so the next regular save is accepted.
+    /// </summary>
+    [Fact]
+    public async Task Save_ForceOverwrite_ReplacesExternalChangeAndRebasesBaseline()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var document = await LoadAsync(path);
+        document.Records[0].TrySetValue("szItemName", "Changed");
+        await File.AppendAllTextAsync(path, " ");
+
+        var refused = await Saver.SaveAsync(document);
+        var forced = await Saver.SaveAsync(document, forceOverwrite: true);
+
+        Assert.False(refused.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlFileChangedExternally, refused.ErrorCode);
+        Assert.True(forced.IsSuccess, forced.ErrorText);
+        Assert.False(document.IsDirty);
+
+        var saved = XDocument.Load(path, LoadOptions.PreserveWhitespace);
+        Assert.Equal("Changed", saved.Root!.Elements("ITEM").First().Element("szItemName")!.Value);
+        Assert.Equal(document.OriginalLastWriteTimeUtc, File.GetLastWriteTimeUtc(path));
+
+        document.Records[0].TrySetValue("szItemName", "Changed again");
+        var next = await Saver.SaveAsync(document);
+
+        Assert.True(next.IsSuccess, next.ErrorText);
+        Assert.Equal(
+            "Changed again",
+            XDocument.Load(path).Root!.Elements("ITEM").First().Element("szItemName")!.Value);
+    }
+
+    /// <summary>
     /// A document loaded read-only cannot be saved.
     /// </summary>
     [Fact]

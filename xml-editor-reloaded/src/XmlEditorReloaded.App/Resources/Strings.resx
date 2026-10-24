@@ -240,15 +240,6 @@
   <data name="EditorDeleteTitle" xml:space="preserve">
     <value>Delete record</value>
   </data>
-  <data name="EditorConfirmClose" xml:space="preserve">
-    <value>Discard unsaved changes in {0}?</value>
-  </data>
-  <data name="EditorConfirmCloseAll" xml:space="preserve">
-    <value>Discard unsaved changes in {0} open table(s)?</value>
-  </data>
-  <data name="EditorCloseTitle" xml:space="preserve">
-    <value>Unsaved changes</value>
-  </data>
   <data name="EditorConfirmReload" xml:space="preserve">
     <value>Discard unsaved changes and reload {0}?</value>
   </data>
@@ -1295,5 +1286,129 @@
   </data>
   <data name="BulkEditClearValueText" xml:space="preserve">
     <value>Clear value</value>
+  </data>
+  <data name="SettingsButton" xml:space="preserve">
+    <value>Settings…</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsDataDirectoriesLabel" xml:space="preserve">
+    <value>Data directories</value>
+  </data>
+  <data name="SettingsActiveDirectoryLabel" xml:space="preserve">
+    <value>Active data directory</value>
+  </data>
+  <data name="SettingsRecentLabel" xml:space="preserve">
+    <value>Recently used directories</value>
+  </data>
+  <data name="SettingsUiLanguageLabel" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="SettingsUiLanguageNote" xml:space="preserve">
+    <value>The interface language changes after the editor is restarted.</value>
+  </data>
+  <data name="SettingsResetLayouts" xml:space="preserve">
+    <value>Reset all layouts…</value>
+  </data>
+  <data name="SettingsResetLayoutsTitle" xml:space="preserve">
+    <value>Reset layouts</value>
+  </data>
+  <data name="SettingsResetLayoutsConfirm" xml:space="preserve">
+    <value>Remove every stored grid layout? Open tabs return to the default columns, sorting, and filters when they are reopened.</value>
+  </data>
+  <data name="SettingsResetLayoutsPending" xml:space="preserve">
+    <value>All stored layouts will be removed when you click OK.</value>
+  </data>
+  <data name="SettingsAddDirectory" xml:space="preserve">
+    <value>Add…</value>
+  </data>
+  <data name="SettingsRemoveDirectory" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SettingsSetActive" xml:space="preserve">
+    <value>Set active</value>
+  </data>
+  <data name="SettingsActiveColumn" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SettingsPathColumn" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="SettingsChooseDirectory" xml:space="preserve">
+    <value>Choose data directory</value>
+  </data>
+  <data name="SettingsNoActiveDirectory" xml:space="preserve">
+    <value>No data directory is configured.</value>
+  </data>
+  <data name="SettingsNoDirectorySelected" xml:space="preserve">
+    <value>Select a data directory first.</value>
+  </data>
+  <data name="SettingsDirectoryAdded" xml:space="preserve">
+    <value>Data directory added.</value>
+  </data>
+  <data name="SettingsDirectoryRemoved" xml:space="preserve">
+    <value>Data directory removed.</value>
+  </data>
+  <data name="SettingsActiveDirectoryChanged" xml:space="preserve">
+    <value>Active data directory changed.</value>
+  </data>
+  <data name="SettingsApplied" xml:space="preserve">
+    <value>Settings saved.</value>
+  </data>
+  <data name="SettingsOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="SettingsCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="UnsavedChangesTitle" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="UnsavedChangesMessageFormat" xml:space="preserve">
+    <value>{0} has unsaved changes.</value>
+  </data>
+  <data name="UnsavedChangesSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="UnsavedChangesDiscard" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="UnsavedChangesCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ExternalChangeTitle" xml:space="preserve">
+    <value>File changed on disk</value>
+  </data>
+  <data name="ExternalChangeMessageFormat" xml:space="preserve">
+    <value>{0} changed on disk after it was opened.
+
+{1}
+
+Reload discards unsaved changes and reads the file again. Overwrite replaces the file with the editor contents.</value>
+  </data>
+  <data name="ExternalChangeReload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ExternalChangeOverwrite" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="ExternalChangeCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ExternalChangeReloaded" xml:space="preserve">
+    <value>{0} was reloaded from disk.</value>
+  </data>
+  <data name="ExternalChangeOverwritten" xml:space="preserve">
+    <value>The changed file was overwritten and {0} was saved.</value>
+  </data>
+  <data name="ExternalChangeCancelled" xml:space="preserve">
+    <value>Save cancelled: the file changed on disk.</value>
   </data>
 </root>

@@ -378,6 +378,76 @@ public class ItemWorkspaceViewModelTests
         Assert.Equal("1", row.Element("sItemIndex")?.Value);
     }
 
+    /// <summary>
+    /// An external change in a sub-table is reported with the table name; overwriting saves the item and
+    /// the changed sub-table in one retry.
+    /// </summary>
+    [Fact]
+    public async Task Save_ExternalChangeInSubTable_OverwriteSavesWholeSet()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+        viewModel.ItemGroups
+            .SelectMany(group => group.Fields)
+            .Single(field => field.Name == "szItemName")
+            .Value = "Glock 17A";
+        viewModel.SubTableSections
+            .Single(section => section.TableName == Weapons)
+            .Fields
+            .Single(field => field.Name == "usRange")
+            .Value = "150";
+        await File.AppendAllTextAsync(fixture.WeaponPath, " ");
+        dialog.ExternalChangeResult = ExternalChangeChoice.Overwrite;
+
+        var saved = await viewModel.SaveWithRecoveryAsync();
+
+        Assert.True(saved);
+        Assert.False(viewModel.IsDirty);
+        Assert.Contains("Items.Weapons", dialog.LastExternalChangeMessage, StringComparison.Ordinal);
+        Assert.Equal(
+            "Glock 17A",
+            XDocument.Load(fixture.ItemsPath).Root!
+                .Elements("ITEM").First(item => item.Element("uiIndex")?.Value == "1")
+                .Element("szItemName")!.Value);
+        Assert.Equal(
+            "150",
+            XDocument.Load(fixture.WeaponPath).Root!
+                .Elements("WEAPON").First(weapon => weapon.Element("uiIndex")?.Value == "1")
+                .Element("usRange")!.Value);
+    }
+
+    /// <summary>
+    /// Reloading after an external change discards item-set edits and rereads every file.
+    /// </summary>
+    [Fact]
+    public async Task Save_ExternalChangeInSubTable_ReloadKeepsExternalContents()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+        viewModel.SubTableSections
+            .Single(section => section.TableName == Weapons)
+            .Fields
+            .Single(field => field.Name == "usRange")
+            .Value = "150";
+        await File.AppendAllTextAsync(fixture.WeaponPath, " ");
+        dialog.ExternalChangeResult = ExternalChangeChoice.Reload;
+
+        var saved = await viewModel.SaveWithRecoveryAsync();
+
+        Assert.True(saved);
+        Assert.False(viewModel.IsDirty);
+        var range = viewModel.SubTableSections
+            .Single(section => section.TableName == Weapons)
+            .Fields
+            .Single(field => field.Name == "usRange");
+        Assert.Equal("100", range.Value);
+        Assert.Contains("Items.Weapons", dialog.LastExternalChangeMessage, StringComparison.Ordinal);
+    }
+
     private static async Task<(ItemWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
         Fixture fixture,
         string? languageCode = null)
@@ -530,11 +600,26 @@ public class ItemWorkspaceViewModelTests
     {
         public bool ConfirmResult { get; set; }
 
+        public UnsavedChangesChoice UnsavedChangesResult { get; set; } = UnsavedChangesChoice.Discard;
+
+        public ExternalChangeChoice ExternalChangeResult { get; set; } = ExternalChangeChoice.Cancel;
+
+        public string? LastExternalChangeMessage { get; private set; }
+
         public ItemCreationRequest? CreateItemResult { get; set; }
 
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title) =>
+            UnsavedChangesResult;
+
+        public ExternalChangeChoice ResolveExternalChange(string message, string title)
+        {
+            LastExternalChangeMessage = message;
+            return ExternalChangeResult;
+        }
 
         public uint? EditBits(
             string title,

@@ -68,10 +68,21 @@ public interface IEditorTab
     Task InitializeAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Saves the tab content when it has unsaved changes.
+    /// Saves the tab content when it has unsaved changes. If a file changed on disk, the user is asked
+    /// to reload, overwrite, or cancel before the tab is written.
     /// </summary>
     /// <returns>A task that completes when saving finishes.</returns>
     Task SaveAsync();
+
+    /// <summary>
+    /// Saves the tab content and recovers from external file changes with an explicit user choice.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> when the tab has no unsaved changes after the operation, either because it
+    /// was saved, was already clean, or was reloaded from disk; <see langword="false"/> when the user
+    /// cancelled, the overwrite failed, or the reload could not load the tab.
+    /// </returns>
+    Task<bool> SaveWithRecoveryAsync();
 
     /// <summary>
     /// Reloads the tab content from disk after an external change, for example a cross-data-set copy
@@ -79,6 +90,13 @@ public interface IEditorTab
     /// </summary>
     /// <returns>A task that completes when the tab is reloaded.</returns>
     Task ReloadAsync();
+
+    /// <summary>
+    /// Discards unsaved changes and reads the tab content from disk without asking for confirmation.
+    /// Callers must obtain the user's decision first.
+    /// </summary>
+    /// <returns>A task that completes when the tab is reloaded.</returns>
+    Task ReloadFromDiskAsync();
 
     /// <summary>
     /// Selects a record by its primary key, for example after relation navigation.

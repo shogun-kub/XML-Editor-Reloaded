@@ -26,6 +26,48 @@ public sealed record TableDependentDeletion(
     string Field);
 
 /// <summary>
+/// A file that failed to save as part of a table-set save.
+/// </summary>
+/// <param name="Table">Table whose workspace failed.</param>
+/// <param name="FilePath">Absolute path of the base file that failed, or <see langword="null"/> when unknown.</param>
+/// <param name="ErrorCode">Stable error code, for example <c>xml.file_changed_externally</c>.</param>
+/// <param name="ErrorText">Human-readable error text.</param>
+public sealed record TableSetSaveFailure(
+    TableName Table,
+    string? FilePath,
+    string ErrorCode,
+    string ErrorText);
+
+/// <summary>
+/// Per-file result of saving a table set. A set save writes every dirty file independently, so one
+/// externally changed file does not hide failures or successes of the other files.
+/// </summary>
+/// <param name="Failures">Files that could not be saved, in table-set order.</param>
+public sealed record TableSetSaveReport(IReadOnlyList<TableSetSaveFailure> Failures)
+{
+    /// <summary>
+    /// Gets a report with no failures.
+    /// </summary>
+    public static TableSetSaveReport Success { get; } = new(Array.Empty<TableSetSaveFailure>());
+
+    /// <summary>
+    /// Gets a value indicating whether every dirty file was saved.
+    /// </summary>
+    public bool IsSuccess => Failures.Count == 0;
+
+    /// <summary>
+    /// Gets a value indicating whether at least one file changed on disk after it was loaded.
+    /// </summary>
+    public bool HasExternalChanges => Failures.Any(static failure =>
+        string.Equals(failure.ErrorCode, ErrorCodes.XmlFileChangedExternally, StringComparison.Ordinal));
+
+    /// <summary>
+    /// Gets the error code of the first failure, or <see langword="null"/> when every file was saved.
+    /// </summary>
+    public string? FirstErrorCode => Failures.Count == 0 ? null : Failures[0].ErrorCode;
+}
+
+/// <summary>
 /// A primary table and the related tables that are edited together, for example an item and its weapon,
 /// magazine, attachment, and attachment-info records. All documents share one undo history, so an edit
 /// that spans several files is undone and redone as a single step, and saving writes every dirty file
@@ -765,19 +807,25 @@ public sealed class TableSetWorkspace
     }
 
     /// <summary>
-    /// Saves every dirty document of the set. Files with no changes are not rewritten, and each file is
-    /// replaced atomically.
+    /// Saves every dirty document of the set and reports each failed file separately. Files with no
+    /// changes are not rewritten, and each file is replaced atomically.
     /// </summary>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, external file changes do not block the save and the written bytes
+    /// become the new baseline of each file. The caller must obtain the user's confirmation first.
+    /// </param>
     /// <param name="cancellationToken">Token to cancel the save.</param>
     /// <returns>
-    /// On success, <c>error_code</c> is <see langword="null"/>.
-    /// On failure, <c>error_code</c> is the first file error and <c>error_text</c> lists every failed file.
+    /// A report that lists every failed file; a save without failures returns
+    /// <see cref="TableSetSaveReport.Success"/>. File failures are reported through the result rather than
+    /// thrown, because the other files were written independently.
     /// </returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
-    public async Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default)
+    public async Task<TableSetSaveReport> SaveDetailedAsync(
+        bool forceOverwrite = false,
+        CancellationToken cancellationToken = default)
     {
-        var failures = new List<string>();
-        string? firstCode = null;
+        var failures = new List<TableSetSaveFailure>();
 
         foreach (var workspace in _workspaces.Values)
         {
@@ -790,7 +838,9 @@ public sealed class TableSetWorkspace
             OperationResult result;
             try
             {
-                result = await workspace.SaveAsync(cancellationToken).ConfigureAwait(false);
+                result = await workspace
+                    .SaveAsync(cancellationToken, forceOverwrite)
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -803,14 +853,46 @@ public sealed class TableSetWorkspace
 
             if (!result.IsSuccess)
             {
-                firstCode ??= result.ErrorCode;
-                failures.Add($"{workspace.Descriptor.TableName}: {result.ErrorCode}: {result.ErrorText}");
+                failures.Add(new TableSetSaveFailure(
+                    workspace.Descriptor.TableName,
+                    workspace.Descriptor.FilePath,
+                    result.ErrorCode ?? ErrorCodes.IoError,
+                    result.ErrorText ?? string.Empty));
             }
         }
 
         return failures.Count == 0
+            ? TableSetSaveReport.Success
+            : new TableSetSaveReport(failures);
+    }
+
+    /// <summary>
+    /// Saves every dirty document of the set. Files with no changes are not rewritten, and each file is
+    /// replaced atomically.
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the save.</param>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, external file changes do not block the save; every written file
+    /// becomes its new baseline. The caller must obtain the user's confirmation first.
+    /// </param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is the first file error and <c>error_text</c> lists every failed file.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    public async Task<OperationResult> SaveAsync(
+        CancellationToken cancellationToken = default,
+        bool forceOverwrite = false)
+    {
+        var report = await SaveDetailedAsync(forceOverwrite, cancellationToken).ConfigureAwait(false);
+        return report.IsSuccess
             ? OperationResult.Success()
-            : OperationResult.Failure(firstCode ?? ErrorCodes.IoError, string.Join("; ", failures));
+            : OperationResult.Failure(
+                report.FirstErrorCode ?? ErrorCodes.IoError,
+                string.Join(
+                    "; ",
+                    report.Failures.Select(static failure =>
+                        $"{failure.Table}: {failure.ErrorCode}: {failure.ErrorText}")));
     }
 
     private static LanguageDescriptor? ResolveLanguage(TableDescriptor descriptor, LanguageDescriptor? language) =>

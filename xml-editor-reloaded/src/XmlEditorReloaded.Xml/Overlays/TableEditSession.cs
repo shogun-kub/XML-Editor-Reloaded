@@ -162,15 +162,23 @@ public sealed class TableEditSession
     /// Saves the base document and the overlay independently. Clean documents are not rewritten.
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the save.</param>
+    /// <param name="forceOverwrite">
+    /// When <see langword="true"/>, external file changes do not block the save; the written bytes become
+    /// the new baseline. The caller must obtain the user's confirmation first.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, the error from the base or overlay saver is returned.
     /// </returns>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the current file is left unchanged.</exception>
-    public async Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default)
+    public async Task<OperationResult> SaveAsync(
+        CancellationToken cancellationToken = default,
+        bool forceOverwrite = false)
     {
         var saver = new TableFileSaver();
-        var baseSave = await saver.SaveAsync(BaseDocument, cancellationToken).ConfigureAwait(false);
+        var baseSave = await saver
+            .SaveAsync(BaseDocument, cancellationToken, forceOverwrite)
+            .ConfigureAwait(false);
         if (!baseSave.IsSuccess)
         {
             return baseSave;
@@ -178,7 +186,7 @@ public sealed class TableEditSession
 
         return Overlay is null
             ? OperationResult.Success()
-            : await Overlay.SaveAsync(cancellationToken).ConfigureAwait(false);
+            : await Overlay.SaveAsync(cancellationToken, forceOverwrite).ConfigureAwait(false);
     }
 
     /// <summary>

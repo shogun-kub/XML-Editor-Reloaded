@@ -10,7 +10,7 @@
         Height="780"
         Width="1280"
         MinHeight="520"
-        MinWidth="900"
+        MinWidth="1100"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -27,6 +27,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -74,6 +75,11 @@
                     Padding="12,4"
                     Content="{Binding SaveAllText}"
                     Command="{Binding SaveAllCommand}" />
+            <Button Grid.Column="8"
+                    Margin="8,0,0,0"
+                    Padding="12,4"
+                    Content="{Binding SettingsText}"
+                    Command="{Binding OpenSettingsCommand}" />
         </Grid>
 
         <Grid Grid.Row="1">

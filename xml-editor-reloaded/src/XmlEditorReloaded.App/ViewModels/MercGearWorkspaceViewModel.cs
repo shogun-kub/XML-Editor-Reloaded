@@ -313,6 +313,7 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
         {
             _pendingSelection = null;
             RefreshHistoryState();
+            IsDirty = _workspace?.IsDirty == true;
             IsBusy = false;
         }
     }
@@ -322,18 +323,21 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
     /// </summary>
     /// <returns>A task that completes when saving finishes.</returns>
     [RelayCommand]
-    public async Task SaveAsync()
+    public async Task SaveAsync() => await SaveWithRecoveryAsync().ConfigureAwait(true);
+
+    /// <inheritdoc />
+    public async Task<bool> SaveWithRecoveryAsync()
     {
         if (_workspace is null)
         {
-            return;
+            return false;
         }
 
         if (!_workspace.IsDirty)
         {
             IsDirty = false;
             StatusText = Strings.Get("EditorNoChanges");
-            return;
+            return true;
         }
 
         IsBusy = true;
@@ -342,28 +346,91 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
             var result = await _workspace.SaveAsync().ConfigureAwait(true);
             if (result.IsSuccess)
             {
-                _session.RelationResolver.Invalidate(_descriptor.TableName);
-                IsDirty = false;
-                StatusText = Strings.Get("EditorSaved");
-                RefreshAllKits();
+                ApplySavedState();
+                return true;
             }
-            else
+
+            if (string.Equals(
+                    result.ErrorCode,
+                    ErrorCodes.XmlFileChangedExternally,
+                    StringComparison.Ordinal))
             {
-                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                return await ResolveExternalChangeAsync(result).ConfigureAwait(true);
             }
+
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return false;
         }
         catch (OperationCanceledException)
         {
             StatusText = Strings.Get("EditorLoadingCancelled");
+            return false;
         }
         catch (Exception exception)
         {
             StatusText = Strings.Format("StatusError", exception.Message);
+            return false;
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    /// <inheritdoc />
+    public Task ReloadFromDiskAsync() => ReloadPreservingSelectionAsync();
+
+    private async Task<bool> ResolveExternalChangeAsync(OperationResult failedSave)
+    {
+        var choice = _dialogService.ResolveExternalChange(
+            Strings.Format(
+                "ExternalChangeMessageFormat",
+                Title,
+                failedSave.ErrorText ?? string.Empty),
+            Strings.Get("ExternalChangeTitle"));
+        switch (choice)
+        {
+            case ExternalChangeChoice.Reload:
+                await ReloadFromDiskAsync().ConfigureAwait(true);
+                if (_workspace is null)
+                {
+                    return false;
+                }
+
+                StatusText = Strings.Format("ExternalChangeReloaded", Title);
+                return !IsDirty;
+
+            case ExternalChangeChoice.Overwrite:
+                if (_workspace is null)
+                {
+                    return false;
+                }
+
+                var forced = await _workspace
+                    .SaveAsync(CancellationToken.None, forceOverwrite: true)
+                    .ConfigureAwait(true);
+                if (forced.IsSuccess)
+                {
+                    ApplySavedState();
+                    StatusText = Strings.Format("ExternalChangeOverwritten", Title);
+                    return true;
+                }
+
+                StatusText = Strings.Format("StatusError", $"{forced.ErrorCode}: {forced.ErrorText}");
+                return false;
+
+            default:
+                StatusText = Strings.Format("ExternalChangeCancelled", Title);
+                return false;
+        }
+    }
+
+    private void ApplySavedState()
+    {
+        _session.RelationResolver.Invalidate(_descriptor.TableName);
+        IsDirty = false;
+        StatusText = Strings.Get("EditorSaved");
+        RefreshAllKits();
     }
 
     /// <summary>

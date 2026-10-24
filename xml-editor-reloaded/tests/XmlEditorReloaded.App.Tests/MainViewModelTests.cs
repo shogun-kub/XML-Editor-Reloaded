@@ -6,6 +6,7 @@ using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
@@ -73,7 +74,9 @@ public class MainViewModelTests
             dialog,
             new FakeImageViewerService(),
             new FakeVersionCompareService(),
-            new FakeTableCopyDialogService());
+            new FakeTableCopyDialogService(),
+            new FakeSettingsDialogService(),
+            new FakeTableLayoutStore());
 
         await viewModel.InitializeAsync();
 
@@ -132,7 +135,9 @@ public class MainViewModelTests
             dialog,
             new FakeImageViewerService(),
             new FakeVersionCompareService(),
-            new FakeTableCopyDialogService())
+            new FakeTableCopyDialogService(),
+            new FakeSettingsDialogService(),
+            new FakeTableLayoutStore())
         {
             DataDirectory = data13,
         };
@@ -184,7 +189,7 @@ public class MainViewModelTests
         var saved = XDocument.Load(Path.Combine(data13, "TableData", "Custom", "Notes.xml"));
         Assert.Equal("Hello again", saved.Root!.Element("NOTE")!.Element("text")!.Value);
 
-        viewModel.CloseEditorCommand.Execute(editor);
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
         Assert.Empty(viewModel.Editors);
         Assert.False(viewModel.HasEditors);
     }
@@ -353,7 +358,7 @@ public class MainViewModelTests
         var overlayPath = Path.Combine(data13, "TableData", "Items", "Russian.Items.xml");
         Assert.True(File.Exists(overlayPath));
 
-        viewModel.CloseEditorCommand.Execute(editor);
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
         await viewModel.OpenTableCommand.ExecuteAsync(null);
 
         var reopened = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
@@ -514,6 +519,255 @@ public class MainViewModelTests
         Assert.False(targetEditor.IsDirty);
     }
 
+    /// <summary>
+    /// Confirming settings switches the active data set without closing open tabs and persists the new
+    /// directory list and interface language.
+    /// </summary>
+    [Fact]
+    public async Task OpenSettings_AppliesActiveDirectoryAndPersistsSettings()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, "v4", "First");
+        var second = CreateNotesData(workspace, "v5", "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, first, second);
+        var dialog = new FakeDialogService();
+        var settingsDialog = new FakeSettingsDialogService
+        {
+            Result = new SettingsResult(new[] { first, second }, second, "ru", ResetLayouts: false),
+        };
+        var viewModel = CreateShell(
+            provider,
+            catalog,
+            repository,
+            settingsStore,
+            dialog,
+            settingsDialog: settingsDialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.Single(viewModel.Editors);
+
+        await viewModel.OpenSettingsCommand.ExecuteAsync(null);
+
+        Assert.Equal(first, settingsDialog.LastRequest!.DataDirectories[0]);
+        Assert.Equal(second, viewModel.DataDirectory);
+        Assert.Equal(new[] { first, second }, settingsDialog.LastRequest.DataDirectories);
+        Assert.Single(viewModel.Editors);
+        Assert.Same(editor, viewModel.Editors[0]);
+        Assert.StartsWith(first, editor.TableDataDirectory, StringComparison.OrdinalIgnoreCase);
+
+        var persisted = (await settingsStore.LoadAsync()).Data!;
+        Assert.Equal(new[] { first, second }, persisted.DataDirectories);
+        Assert.Equal(second, persisted.ActiveDataDirectory);
+        Assert.Equal("ru", persisted.UiLanguageCode);
+    }
+
+    /// <summary>
+    /// Confirming the settings dialog with the layout reset removes every stored layout.
+    /// </summary>
+    [Fact]
+    public async Task OpenSettings_ResetLayouts_ClearsStoredLayouts()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var layoutStore = new FakeTableLayoutStore();
+        var tableData = Path.Combine(data13, "TableData");
+        Assert.True((await layoutStore.SaveAsync(tableData, "Custom.Notes", new TableLayout(
+            Array.Empty<ColumnLayout>(),
+            "id",
+            TableSortDirection.Descending,
+            null))).IsSuccess);
+        var settingsDialog = new FakeSettingsDialogService
+        {
+            Result = new SettingsResult(new[] { data13 }, data13, "en", ResetLayouts: true),
+        };
+        var viewModel = CreateShell(
+            provider,
+            catalog,
+            repository,
+            settingsStore,
+            dialog,
+            settingsDialog: settingsDialog,
+            layoutStore: layoutStore);
+        await viewModel.InitializeAsync();
+
+        await viewModel.OpenSettingsCommand.ExecuteAsync(null);
+
+        Assert.Empty(layoutStore.Layouts);
+        Assert.Equal(1, layoutStore.ResetCount);
+        Assert.Contains("Settings saved.", viewModel.StatusText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Cancelling the unsaved-changes dialog keeps a dirty tab open.
+    /// </summary>
+    [Fact]
+    public async Task CloseDirtyTab_CancelKeepsTab()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { UnsavedChangesResult = UnsavedChangesChoice.Cancel };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
+
+        Assert.Same(editor, Assert.Single(viewModel.Editors));
+        Assert.True(editor.IsDirty);
+        Assert.Contains("unsaved changes", dialog.LastUnsavedChangesMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Discarding changes closes a dirty tab without writing the file.
+    /// </summary>
+    [Fact]
+    public async Task CloseDirtyTab_DiscardClosesWithoutSaving()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { UnsavedChangesResult = UnsavedChangesChoice.Discard };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+        var path = Path.Combine(data13, "TableData", "Custom", "Notes.xml");
+
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
+
+        Assert.Empty(viewModel.Editors);
+        Assert.Contains("Hello", await File.ReadAllTextAsync(path), StringComparison.Ordinal);
+        Assert.DoesNotContain("Changed", await File.ReadAllTextAsync(path), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Choosing Save in the unsaved-changes dialog writes the file before the tab is removed.
+    /// </summary>
+    [Fact]
+    public async Task CloseDirtyTab_SaveWritesAndCloses()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { UnsavedChangesResult = UnsavedChangesChoice.Save };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+        var path = Path.Combine(data13, "TableData", "Custom", "Notes.xml");
+
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
+
+        Assert.Empty(viewModel.Editors);
+        Assert.Contains("Changed", await File.ReadAllTextAsync(path), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A failed save keeps the tab open and preserves its unsaved changes.
+    /// </summary>
+    [Fact]
+    public async Task CloseDirtyTab_SaveFailureKeepsTabOpen()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService
+        {
+            UnsavedChangesResult = UnsavedChangesChoice.Save,
+            ExternalChangeResult = ExternalChangeChoice.Cancel,
+        };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+        await File.AppendAllTextAsync(
+            Path.Combine(data13, "TableData", "Custom", "Notes.xml"),
+            " ");
+
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
+
+        Assert.Same(editor, Assert.Single(viewModel.Editors));
+        Assert.True(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// Closing the application saves dirty tabs, flushes pending layouts, and reports that closing may
+    /// proceed.
+    /// </summary>
+    [Fact]
+    public async Task RequestClose_SavesDirtyTabsAndFlushesLayouts()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { UnsavedChangesResult = UnsavedChangesChoice.Save };
+        var layoutStore = new FakeTableLayoutStore();
+        var viewModel = CreateShell(
+            provider,
+            catalog,
+            repository,
+            settingsStore,
+            dialog,
+            layoutStore: layoutStore);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+        editor.SortBy("id", System.ComponentModel.ListSortDirection.Ascending);
+
+        var canClose = await viewModel.RequestCloseAsync();
+
+        Assert.True(canClose);
+        Assert.False(editor.IsDirty);
+        Assert.NotEmpty(layoutStore.Saved);
+        Assert.Contains("Changed", await File.ReadAllTextAsync(
+            Path.Combine(data13, "TableData", "Custom", "Notes.xml")), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Cancelling the unsaved-changes dialog during application close aborts the close.
+    /// </summary>
+    [Fact]
+    public async Task RequestClose_CancelledByUser_ReturnsFalse()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { UnsavedChangesResult = UnsavedChangesChoice.Cancel };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        editor.Rows[0]["text"] = "Changed";
+
+        Assert.False(await viewModel.RequestCloseAsync());
+        Assert.True(editor.IsDirty);
+        Assert.Single(viewModel.Editors);
+    }
+
     private static MainViewModel CreateShell(
         SqliteMetadataProvider provider,
         FileSystemTableCatalog catalog,
@@ -521,15 +775,22 @@ public class MainViewModelTests
         JsonSettingsStore settingsStore,
         FakeDialogService dialog,
         FakeVersionCompareService? versionCompare = null,
-        FakeTableCopyDialogService? copyDialog = null) =>
+        FakeTableCopyDialogService? copyDialog = null,
+        FakeSettingsDialogService? settingsDialog = null,
+        FakeTableLayoutStore? layoutStore = null) =>
         new(
             new DataSetSessionFactory(provider, catalog, repository),
-            new TableEditorFactory(dialog, new TestItemImageService(), new FakeTableLayoutStore()),
+            new TableEditorFactory(
+                dialog,
+                new TestItemImageService(),
+                layoutStore ?? new FakeTableLayoutStore()),
             settingsStore,
             dialog,
             new FakeImageViewerService(),
             versionCompare ?? new FakeVersionCompareService(),
-            copyDialog ?? new FakeTableCopyDialogService());
+            copyDialog ?? new FakeTableCopyDialogService(),
+            settingsDialog ?? new FakeSettingsDialogService(),
+            layoutStore ?? new FakeTableLayoutStore());
 
     private static string CreateNotesData(TestWorkspace workspace) =>
         CreateNotesData(workspace, gameFolder: null, text: "Hello");
@@ -624,9 +885,17 @@ public class MainViewModelTests
     {
         public bool ConfirmResult { get; set; } = true;
 
+        public UnsavedChangesChoice UnsavedChangesResult { get; set; } = UnsavedChangesChoice.Discard;
+
+        public ExternalChangeChoice ExternalChangeResult { get; set; } = ExternalChangeChoice.Cancel;
+
         public uint? EditBitsResult { get; set; }
 
         public TranslationReport? LastTranslationReport { get; private set; }
+
+        public string? LastUnsavedChangesMessage { get; private set; }
+
+        public string? LastExternalChangeMessage { get; private set; }
 
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
@@ -635,6 +904,18 @@ public class MainViewModelTests
         public string? PickSaveFile(string title, string filter, string defaultFileName) => SaveFileResult;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title)
+        {
+            LastUnsavedChangesMessage = message;
+            return UnsavedChangesResult;
+        }
+
+        public ExternalChangeChoice ResolveExternalChange(string message, string title)
+        {
+            LastExternalChangeMessage = message;
+            return ExternalChangeResult;
+        }
 
         public uint? EditBits(
             string title,
@@ -654,6 +935,19 @@ public class MainViewModelTests
             string suggestedId,
             string suggestedName,
             IReadOnlyList<LookupOption> classes) => CreateItemResult;
+    }
+
+    private sealed class FakeSettingsDialogService : ISettingsDialogService
+    {
+        public SettingsRequest? LastRequest { get; private set; }
+
+        public SettingsResult? Result { get; set; }
+
+        public SettingsResult? Show(SettingsRequest request)
+        {
+            LastRequest = request;
+            return Result;
+        }
     }
 
     private sealed class FakeImageViewerService : IImageViewerService

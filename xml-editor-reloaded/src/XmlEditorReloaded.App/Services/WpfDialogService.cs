@@ -55,6 +55,32 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title)
+    {
+        var window = new Views.UnsavedChangesWindow(message, title);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
+        return window.Choice;
+    }
+
+    /// <inheritdoc />
+    public ExternalChangeChoice ResolveExternalChange(string message, string title)
+    {
+        var window = new Views.ExternalChangeWindow(message, title);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
+        return window.Choice;
+    }
+
+    /// <inheritdoc />
     public uint? EditBits(
         string title,
         uint value,

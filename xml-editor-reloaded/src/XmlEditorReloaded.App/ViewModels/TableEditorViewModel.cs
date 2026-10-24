@@ -638,24 +638,28 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// </summary>
     /// <returns>A task that completes when saving finishes.</returns>
     [RelayCommand]
-    public async Task SaveAsync()
+    public async Task SaveAsync() => await SaveWithRecoveryAsync().ConfigureAwait(true);
+
+    /// <inheritdoc />
+    public async Task<bool> SaveWithRecoveryAsync()
     {
         if (IsEmbedded && EmbeddedSave is not null)
         {
             await EmbeddedSave().ConfigureAwait(true);
-            return;
+            IsDirty = Workspace?.IsDirty == true;
+            return !IsDirty;
         }
 
         if (Workspace is null)
         {
-            return;
+            return false;
         }
 
         if (!Workspace.IsDirty)
         {
             IsDirty = false;
             StatusText = Strings.Get("EditorNoChanges");
-            return;
+            return true;
         }
 
         IsBusy = true;
@@ -664,29 +668,92 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             var result = await Workspace.SaveAsync().ConfigureAwait(true);
             if (result.IsSuccess)
             {
-                IsDirty = false;
-                // Picker display text in other editors is cached per target table; the saved values
-                // must be visible the next time a target is resolved.
-                _session.RelationResolver.Invalidate(Descriptor.TableName);
-                StatusText = Strings.Get("EditorSaved");
+                ApplySavedState();
+                return true;
             }
-            else
+
+            if (string.Equals(
+                    result.ErrorCode,
+                    ErrorCodes.XmlFileChangedExternally,
+                    StringComparison.Ordinal))
             {
-                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                return await ResolveExternalChangeAsync(result).ConfigureAwait(true);
             }
+
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return false;
         }
         catch (OperationCanceledException)
         {
             StatusText = Strings.Get("EditorLoadingCancelled");
+            return false;
         }
         catch (Exception exception)
         {
             StatusText = Strings.Format("StatusError", exception.Message);
+            return false;
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    /// <inheritdoc />
+    public Task ReloadFromDiskAsync() => ReloadForLanguageAsync();
+
+    private async Task<bool> ResolveExternalChangeAsync(OperationResult failedSave)
+    {
+        var choice = _dialogService.ResolveExternalChange(
+            Strings.Format(
+                "ExternalChangeMessageFormat",
+                Title,
+                failedSave.ErrorText ?? string.Empty),
+            Strings.Get("ExternalChangeTitle"));
+        switch (choice)
+        {
+            case ExternalChangeChoice.Reload:
+                await ReloadFromDiskAsync().ConfigureAwait(true);
+                if (Workspace is null)
+                {
+                    return false;
+                }
+
+                StatusText = Strings.Format("ExternalChangeReloaded", Title);
+                return !IsDirty;
+
+            case ExternalChangeChoice.Overwrite:
+                if (Workspace is null)
+                {
+                    return false;
+                }
+
+                var forced = await Workspace
+                    .SaveAsync(CancellationToken.None, forceOverwrite: true)
+                    .ConfigureAwait(true);
+                if (forced.IsSuccess)
+                {
+                    ApplySavedState();
+                    StatusText = Strings.Format("ExternalChangeOverwritten", Title);
+                    return true;
+                }
+
+                StatusText = Strings.Format("StatusError", $"{forced.ErrorCode}: {forced.ErrorText}");
+                return false;
+
+            default:
+                StatusText = Strings.Format("ExternalChangeCancelled", Title);
+                return false;
+        }
+    }
+
+    private void ApplySavedState()
+    {
+        IsDirty = false;
+        // Picker display text in other editors is cached per target table; the saved values must be
+        // visible the next time a target is resolved.
+        _session.RelationResolver.Invalidate(Descriptor.TableName);
+        StatusText = Strings.Get("EditorSaved");
     }
 
     /// <summary>

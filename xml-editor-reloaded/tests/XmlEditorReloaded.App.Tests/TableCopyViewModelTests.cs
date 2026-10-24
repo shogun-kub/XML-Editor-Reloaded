@@ -302,6 +302,12 @@ public class TableCopyViewModelTests
 
         public bool Confirm(string message, string title) => true;
 
+        public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title) =>
+            UnsavedChangesChoice.Cancel;
+
+        public ExternalChangeChoice ResolveExternalChange(string message, string title) =>
+            ExternalChangeChoice.Cancel;
+
         public uint? EditBits(
             string title,
             uint value,
