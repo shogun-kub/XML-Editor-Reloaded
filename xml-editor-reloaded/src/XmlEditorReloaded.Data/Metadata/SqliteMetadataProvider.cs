@@ -266,6 +266,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         var translatableFields = await ReadTranslatableFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var columnHints = await ReadColumnHintsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var recordKeyFields = await ReadRecordKeyFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
+        var visibilityRules = await ReadClassVisibilityRulesAsync(connection, row.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -278,7 +280,37 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             dictFields,
             translatableFields,
             columnHints,
-            recordKeyFields);
+            recordKeyFields,
+            visibilityRules);
+    }
+
+    private static async Task<IReadOnlyList<ClassVisibilityRule>> ReadClassVisibilityRulesAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var rules = new List<ClassVisibilityRule>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT Kind, SectionKey, VisibleClasses
+            FROM ClassVisibilityRules
+            WHERE TableId = $tableId
+            ORDER BY Kind, SectionKey;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            if (!Enum.TryParse<ClassVisibilitySectionKind>(reader.GetString(0), ignoreCase: true, out var kind))
+            {
+                continue;
+            }
+
+            rules.Add(new ClassVisibilityRule(kind, reader.GetString(1), reader.GetInt64(2)));
+        }
+
+        return rules;
     }
 
     private static async Task<IReadOnlyList<string>> ReadRecordKeyFieldsAsync(

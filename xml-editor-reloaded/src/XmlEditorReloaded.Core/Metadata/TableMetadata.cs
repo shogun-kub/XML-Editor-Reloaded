@@ -7,6 +7,8 @@ public sealed class TableMetadata
 {
     private readonly Dictionary<string, ColumnMetadata> _columnsByName;
     private readonly Dictionary<string, ColumnHint> _hintsByName;
+    private readonly Dictionary<(ClassVisibilitySectionKind Kind, string SectionKey), ClassVisibilityRule>
+        _classVisibilityBySection;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableMetadata"/> class.
@@ -29,6 +31,10 @@ public sealed class TableMetadata
     /// key is a separate concept from <see cref="RecordKeySpec"/> segments, which describe nested
     /// collections and singletons.
     /// </param>
+    /// <param name="classVisibilityRules">
+    /// Optional rules that limit item field groups and related sections to selected item classes. An
+    /// empty list keeps every section visible.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -41,7 +47,8 @@ public sealed class TableMetadata
         IReadOnlyList<DictFieldDefinition>? dictFields = null,
         IReadOnlyList<string>? translatableFieldPaths = null,
         IReadOnlyList<ColumnHint>? columnHints = null,
-        IReadOnlyList<string>? recordKeyFields = null)
+        IReadOnlyList<string>? recordKeyFields = null,
+        IReadOnlyList<ClassVisibilityRule>? classVisibilityRules = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -56,8 +63,12 @@ public sealed class TableMetadata
         TranslatableFieldPaths = translatableFieldPaths ?? Array.Empty<string>();
         ColumnHints = columnHints ?? Array.Empty<ColumnHint>();
         RecordKeyFields = recordKeyFields ?? Array.Empty<string>();
+        ClassVisibilityRules = classVisibilityRules ?? Array.Empty<ClassVisibilityRule>();
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
         _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
+        _classVisibilityBySection = ClassVisibilityRules
+            .GroupBy(static rule => (rule.Kind, rule.SectionKey))
+            .ToDictionary(static group => group.Key, static group => group.First());
     }
 
     /// <summary>
@@ -127,6 +138,38 @@ public sealed class TableMetadata
     /// Gets the curated hints for fields discovered in the document. Hints never declare fields.
     /// </summary>
     public IReadOnlyList<ColumnHint> ColumnHints { get; }
+
+    /// <summary>
+    /// Gets the rules that limit item field groups and related sections to selected item classes. An
+    /// empty list means that no section is class-restricted.
+    /// </summary>
+    public IReadOnlyList<ClassVisibilityRule> ClassVisibilityRules { get; }
+
+    /// <summary>
+    /// Attempts to find a class visibility rule for one section.
+    /// </summary>
+    /// <param name="kind">Kind of the section.</param>
+    /// <param name="sectionKey">
+    /// Group key for a group rule; dotted table name for sub-table and child-table rules.
+    /// </param>
+    /// <param name="rule">The matching rule when found.</param>
+    /// <returns><see langword="true"/> when the section is class-restricted; otherwise <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="sectionKey"/> is empty.</exception>
+    public bool TryGetClassVisibilityRule(
+        ClassVisibilitySectionKind kind,
+        string sectionKey,
+        out ClassVisibilityRule? rule)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sectionKey);
+        if (_classVisibilityBySection.TryGetValue((kind, sectionKey), out var found))
+        {
+            rule = found;
+            return true;
+        }
+
+        rule = null;
+        return false;
+    }
 
     /// <summary>
     /// Attempts to find a curated hint by the exact XML element name.

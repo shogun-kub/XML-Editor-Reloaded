@@ -24,7 +24,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(9, migration.Data);
+        Assert.Equal(10, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -55,6 +55,29 @@ public class MetadataTests
         Assert.True(metadata.TryGetColumnHint("szItemName", out var nameHint));
         Assert.Null(nameHint!.DataType);
         Assert.Equal("identity", nameHint.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("usOverheatingCooldownFactor", out var overheatHint));
+        Assert.Equal("overheating", overheatHint!.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("sBackpackWeightModifier", out var pocketsHint));
+        Assert.Equal("pockets", pocketsHint!.GroupKey);
+        Assert.Equal(23, metadata.ClassVisibilityRules.Count);
+        Assert.True(metadata.TryGetClassVisibilityRule(
+            ClassVisibilitySectionKind.Group,
+            "combat",
+            out var combatRule));
+        Assert.Equal(268484606, combatRule!.VisibleClasses);
+        Assert.True(combatRule.IsVisible(2));
+        Assert.False(combatRule.IsVisible(65536));
+        Assert.True(metadata.TryGetClassVisibilityRule(
+            ClassVisibilitySectionKind.SubTable,
+            "Items.Magazines",
+            out var magazineRule));
+        Assert.True(magazineRule!.IsVisible(1024));
+        Assert.False(magazineRule.IsVisible(2));
+        Assert.True(metadata.TryGetClassVisibilityRule(
+            ClassVisibilitySectionKind.Group,
+            "identity",
+            out var identityRule));
+        Assert.True(identityRule!.IsVisible(0));
         Assert.True(metadata.TryGetColumnHint("DrugType", out var drugHint));
         Assert.Equal(ColumnDataType.Flags, drugHint!.DataType);
         Assert.Equal(ColumnEditorKind.FlagEditor, drugHint.EditorKind);
