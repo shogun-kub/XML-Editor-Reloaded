@@ -234,6 +234,21 @@ public sealed class TableWorkspace
     }
 
     /// <summary>
+    /// Rebuilds one row from the current base and overlay state. Use it after an edit that creates
+    /// an overlay record, because a previously captured row does not know about the new record.
+    /// </summary>
+    /// <param name="key">Primary record key.</param>
+    /// <returns>The refreshed row, or <see langword="null"/> when the key is not present.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>
+    public WorkspaceRow? GetRow(string key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        return GetRows().FirstOrDefault(row =>
+            string.Equals(row.Key, key, StringComparison.Ordinal));
+    }
+
+    /// <summary>
     /// Sets a field value, routing translatable fields to the overlay when one is selected.
     /// </summary>
     /// <param name="recordKey">Primary record key.</param>

@@ -1,4 +1,6 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using XmlEditorReloaded.App.ViewModels;
 
 namespace XmlEditorReloaded.App;
@@ -20,5 +22,23 @@ public partial class MainWindow : Window
         TableNameColumn.Header = viewModel.TableColumn;
         LanguagesColumn.Header = viewModel.LanguagesColumn;
         MappedColumn.Header = viewModel.MappedColumn;
+    }
+
+    private void OnTablesGridDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (DataContext is not MainViewModel viewModel || viewModel.SelectedTable is null)
+        {
+            return;
+        }
+
+        if (ItemsControl.ContainerFromElement(TablesGrid, e.OriginalSource as DependencyObject) is not DataGridRow)
+        {
+            return;
+        }
+
+        if (viewModel.OpenTableCommand.CanExecute(null))
+        {
+            viewModel.OpenTableCommand.Execute(null);
+        }
     }
 }

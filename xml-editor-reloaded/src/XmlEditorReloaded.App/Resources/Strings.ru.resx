@@ -147,4 +147,139 @@
   <data name="ImageNotAvailableFormat" xml:space="preserve">
     <value>недоступно ({0})</value>
   </data>
+  <data name="EditorOpenText" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="EditorPlaceholder" xml:space="preserve">
+    <value>Дважды щёлкните таблицу в списке, чтобы открыть её для редактирования.</value>
+  </data>
+  <data name="EditorSaveAllText" xml:space="preserve">
+    <value>Сохранить всё</value>
+  </data>
+  <data name="EditorAddRowText" xml:space="preserve">
+    <value>Добавить запись</value>
+  </data>
+  <data name="EditorDuplicateRowText" xml:space="preserve">
+    <value>Дублировать</value>
+  </data>
+  <data name="EditorDeleteRowText" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="EditorSaveText" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="EditorValidateText" xml:space="preserve">
+    <value>Проверить</value>
+  </data>
+  <data name="EditorReloadText" xml:space="preserve">
+    <value>Перезагрузить</value>
+  </data>
+  <data name="EditorSearchLabel" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="EditorColumnsLabel" xml:space="preserve">
+    <value>Колонки</value>
+  </data>
+  <data name="EditorColumnSearchLabel" xml:space="preserve">
+    <value>Найти колонку</value>
+  </data>
+  <data name="EditorDefaultColumnsText" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="EditorAllColumnsText" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="EditorNoColumnsText" xml:space="preserve">
+    <value>Колонки не выбраны.</value>
+  </data>
+  <data name="EditorValidationLabel" xml:space="preserve">
+    <value>Валидация</value>
+  </data>
+  <data name="EditorLoading" xml:space="preserve">
+    <value>Загрузка таблицы...</value>
+  </data>
+  <data name="EditorLoadingCancelled" xml:space="preserve">
+    <value>Операция отменена.</value>
+  </data>
+  <data name="EditorReady" xml:space="preserve">
+    <value>Готово.</value>
+  </data>
+  <data name="EditorReadOnly" xml:space="preserve">
+    <value>Таблица доступна только для чтения.</value>
+  </data>
+  <data name="EditorReadOnlyNested" xml:space="preserve">
+    <value>Вложенные записи доступны только для чтения.</value>
+  </data>
+  <data name="EditorSaved" xml:space="preserve">
+    <value>Сохранено.</value>
+  </data>
+  <data name="EditorNoChanges" xml:space="preserve">
+    <value>Нет изменений для сохранения.</value>
+  </data>
+  <data name="EditorCellUpdated" xml:space="preserve">
+    <value>{0} обновлено в записи {1}.</value>
+  </data>
+  <data name="EditorRowAdded" xml:space="preserve">
+    <value>Запись {0} добавлена.</value>
+  </data>
+  <data name="EditorRowDuplicated" xml:space="preserve">
+    <value>Запись {0} продублирована как {1}.</value>
+  </data>
+  <data name="EditorRowDeleted" xml:space="preserve">
+    <value>Запись {0} удалена.</value>
+  </data>
+  <data name="EditorSelectRow" xml:space="preserve">
+    <value>Сначала выберите запись.</value>
+  </data>
+  <data name="EditorConfirmDelete" xml:space="preserve">
+    <value>Удалить запись {0}? Её перевод также будет удалён.</value>
+  </data>
+  <data name="EditorDeleteTitle" xml:space="preserve">
+    <value>Удаление записи</value>
+  </data>
+  <data name="EditorConfirmClose" xml:space="preserve">
+    <value>Отменить несохранённые изменения в {0}?</value>
+  </data>
+  <data name="EditorConfirmCloseAll" xml:space="preserve">
+    <value>Отменить несохранённые изменения в открытых таблицах ({0})?</value>
+  </data>
+  <data name="EditorCloseTitle" xml:space="preserve">
+    <value>Несохранённые изменения</value>
+  </data>
+  <data name="EditorConfirmReload" xml:space="preserve">
+    <value>Отменить изменения и перезагрузить {0}?</value>
+  </data>
+  <data name="EditorReloadTitle" xml:space="preserve">
+    <value>Перезагрузка таблицы</value>
+  </data>
+  <data name="EditorRefreshCancelled" xml:space="preserve">
+    <value>Обновление отменено.</value>
+  </data>
+  <data name="EditorRowCount" xml:space="preserve">
+    <value>Записей: {0} из {1}</value>
+  </data>
+  <data name="EditorColumnCount" xml:space="preserve">
+    <value>Колонок: {0} из {1}</value>
+  </data>
+  <data name="EditorValidationSummary" xml:space="preserve">
+    <value>Замечаний: {0}.</value>
+  </data>
+  <data name="EditorBaseLanguage" xml:space="preserve">
+    <value>Базовая</value>
+  </data>
+  <data name="EditorLanguageFormat" xml:space="preserve">
+    <value>Язык: {0}</value>
+  </data>
+  <data name="EditorNoMatches" xml:space="preserve">
+    <value>Нет записей по запросу.</value>
+  </data>
+  <data name="EditorSaveAllSummary" xml:space="preserve">
+    <value>Сохранено таблиц: {0}.</value>
+  </data>
+  <data name="EditorSaveAllErrors" xml:space="preserve">
+    <value>Некоторые таблицы не удалось сохранить.</value>
+  </data>
+  <data name="EditorInvalidValue" xml:space="preserve">
+    <value>«{0}» — недопустимое значение для {1}.</value>
+  </data>
 </root>

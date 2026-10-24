@@ -90,12 +90,17 @@ public class TableWorkspaceTests
         var baseBytes = await File.ReadAllBytesAsync(basePath);
         Assert.True(table.SetValue("0", "szItemName", "Ничто").IsSuccess);
         Assert.Equal(baseBytes, await File.ReadAllBytesAsync(basePath));
+        var refreshed = table.GetRow("0");
+        Assert.NotNull(refreshed);
+        Assert.Equal("Ничто", refreshed.GetValue("szItemName"));
+        Assert.True(refreshed.IsTranslated("szItemName"));
         var created = table.Overlay.Document.FindRecord("0");
         Assert.NotNull(created);
         Assert.Equal(new[] { "uiIndex", "szItemName" }, created.FieldNames);
 
         Assert.True(table.SetValue("0", "ubWeight", "5").IsSuccess);
         Assert.Equal("5", table.BaseDocument.Records[0].GetRawValue("ubWeight"));
+        Assert.Equal("5", refreshed.GetValue("ubWeight"));
         Assert.Equal(
             "Ничто",
             Assert.Single(table.GetRows(), candidate => candidate.Key == "0").GetValue("szItemName"));
@@ -207,12 +212,16 @@ public class TableWorkspaceTests
             cell => cell.FieldPath.EndsWith("townName", StringComparison.Ordinal));
         Assert.Equal("Омерта", translatedCell.Value);
         Assert.True(translatedCell.IsTranslated);
+        Assert.Equal("Омерта", translated.GetValue("townName"));
+        Assert.Equal("1", translated.GetValue("townUsesLoyalty"));
         var untranslated = Assert.Single(rows, row => row.Key == "2");
         var untranslatedCell = Assert.Single(
             untranslated.Merged!.Cells,
             cell => cell.FieldPath.EndsWith("townName", StringComparison.Ordinal));
         Assert.Equal("Drassen", untranslatedCell.Value);
         Assert.False(untranslatedCell.IsTranslated);
+        Assert.Equal("Drassen", untranslated.GetValue("townName"));
+        Assert.Equal("1", untranslated.GetValue("townUsesLoyalty"));
 
         var rootCells = table.GetRootCells();
         var countryName = Assert.Single(rootCells, cell => cell.FieldPath.EndsWith("countryName", StringComparison.Ordinal));

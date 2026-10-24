@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0–M11 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, persist settings, and open a standalone STI image viewer. M10 added environment-gated performance gates, cancellation checks across all I/O services, culture-independent numeric editing, and shell robustness. M11 added document-driven schema discovery (`TableSchemaBuilder`), the editable `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), a runtime `DataSetSession` with per-directory lookup and translation services, and lossless structural patches (insert/delete/duplicate preserve surrounding bytes). The grid editor (M12), item detail form (M13), localization UI (M14), and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M12 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. The item detail form (M13), localization UI (M14), and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -127,6 +127,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - Conversion of backend pixel buffers to `BitmapSource` and image display.
 - Dependency injection composition root and application configuration.
 - Runtime data-set session (`IDataSetSessionFactory`/`DataSetSession`) that binds lookup and translation services to the selected data directory and opens tables through `TableWorkspace`.
+- Grid editor (`TableEditorViewModel`, `TableView`): table tabs, schema-driven columns, sparse cell editing, row operations, search/sorting, column chooser, validation panel, and save/save-all.
 - Async loading with progress reporting and cancellation.
 - Depends on all backend libraries.
 
@@ -395,7 +396,7 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 6. Build the WPF shell: settings, data directory selection, table list. **Done (M9).**
 7. Harden the backend: performance gates, cancellation contract, culture-independent numerics, documentation audit. **Done (M10).**
 8. Add schema discovery, the table workspace (base + overlay, unified save), runtime data-set binding, and the lossless structural patcher. **Done (M11).**
-9. Add grid editing (sorting, filtering, row operations, column selection) (M12).
+9. Add grid editing (sorting, filtering, row operations, column selection). **Done (M12).**
 10. Add the item detail form with STI images and flag editors (M13).
 11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization (M14).
 12. Add merc gear editor, lookup management, bulk operations, and a cross-version field report (M15).

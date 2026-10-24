@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
         mc:Ignorable="d"
         Title="{Binding Title}"
-        Height="720"
-        Width="1100"
-        MinHeight="480"
-        MinWidth="800"
+        Height="780"
+        Width="1280"
+        MinHeight="520"
+        MinWidth="900"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -25,6 +26,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -52,63 +54,132 @@
                     Padding="12,4"
                     Content="{Binding ImagesText}"
                     Command="{Binding OpenImageViewerCommand}" />
+            <Button Grid.Column="5"
+                    Margin="8,0,0,0"
+                    Padding="12,4"
+                    Content="{Binding SaveAllText}"
+                    Command="{Binding SaveAllCommand}" />
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="380" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <GroupBox Grid.Column="0" Header="{Binding TablesLabel}" Margin="0,0,8,0">
-                <DataGrid x:Name="TablesGrid"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          CanUserAddRows="False"
-                          SelectionMode="Single"
-                          SelectionUnit="FullRow"
-                          HeadersVisibility="Column"
-                          ItemsSource="{Binding Tables}"
-                          SelectedItem="{Binding SelectedTable, Mode=TwoWay}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="TableNameColumn"
-                                            Binding="{Binding TableName}"
-                                            Width="*" />
-                        <DataGridTextColumn x:Name="LanguagesColumn"
-                                            Binding="{Binding Languages}"
-                                            Width="140" />
-                        <DataGridTextColumn x:Name="MappedColumn"
-                                            Binding="{Binding MappedText}"
-                                            Width="110" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DataGrid x:Name="TablesGrid"
+                              Grid.Row="0"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              HeadersVisibility="Column"
+                              ItemsSource="{Binding Tables}"
+                              SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
+                              MouseDoubleClick="OnTablesGridDoubleClick">
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding OpenTableCommand}" />
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="TableNameColumn"
+                                                Binding="{Binding TableName}"
+                                                Width="*" />
+                            <DataGridTextColumn x:Name="LanguagesColumn"
+                                                Binding="{Binding Languages}"
+                                                Width="90" />
+                            <DataGridTextColumn x:Name="MappedColumn"
+                                                Binding="{Binding MappedText}"
+                                                Width="90" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Grid.Row="1"
+                            Margin="0,6,0,0"
+                            Padding="12,4"
+                            HorizontalAlignment="Left"
+                            Content="{Binding OpenTableText}"
+                            Command="{Binding OpenTableCommand}" />
+
+                    <Expander Grid.Row="2"
+                              Margin="0,8,0,0"
+                              Header="{Binding DetailsLabel}"
+                              IsExpanded="True">
+                        <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="4">
+                                <TextBlock FontWeight="Bold"
+                                           Text="{Binding SelectedTable.TableName}" />
+                                <TextBlock Margin="0,6,0,0"
+                                           Text="{Binding DetailsText}" />
+                                <TextBlock Margin="0,4,0,0"
+                                           Text="{Binding RecordCountText}" />
+                                <TextBlock Margin="0,12,0,4"
+                                           FontWeight="Bold"
+                                           Text="{Binding DiagnosticsLabel}" />
+                                <ItemsControl ItemsSource="{Binding Diagnostics}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4"
+                                                       TextWrapping="Wrap"
+                                                       Text="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Expander>
+                </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Column="1" Header="{Binding DetailsLabel}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="8">
-                        <TextBlock FontWeight="Bold"
-                                   FontSize="15"
-                                   Text="{Binding SelectedTable.TableName}" />
-                        <TextBlock Margin="0,8,0,0"
-                                   Text="{Binding DetailsText}" />
-                        <TextBlock Margin="0,4,0,0"
-                                   Text="{Binding RecordCountText}" />
-                        <TextBlock Margin="0,16,0,4"
-                                   FontWeight="Bold"
-                                   Text="{Binding DiagnosticsLabel}" />
-                        <ItemsControl ItemsSource="{Binding Diagnostics}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Margin="0,0,0,4"
-                                               TextWrapping="Wrap"
-                                               Text="{Binding}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </ScrollViewer>
-            </GroupBox>
+            <Grid Grid.Column="1">
+                <TabControl ItemsSource="{Binding Editors}"
+                            SelectedItem="{Binding SelectedEditor, Mode=TwoWay}">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                                <Button Margin="8,0,0,0"
+                                        Padding="5,0"
+                                        Content="✕"
+                                        Command="{Binding DataContext.CloseEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <views:TableView />
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="#FF777777"
+                           TextWrapping="Wrap"
+                           MaxWidth="420"
+                           TextAlignment="Center"
+                           Text="{Binding EditorPlaceholder}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasEditors}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
         </Grid>
 
         <ProgressBar Grid.Row="2"

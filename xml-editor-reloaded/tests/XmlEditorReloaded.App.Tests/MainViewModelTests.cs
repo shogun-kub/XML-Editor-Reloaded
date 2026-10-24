@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Xml.Linq;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
@@ -13,7 +14,7 @@ using XmlEditorReloaded.Xml.Repository;
 namespace XmlEditorReloaded.App.Tests;
 
 /// <summary>
-/// Smoke tests for the WPF shell view model.
+/// Tests for the WPF shell view model, its table list, and its editor tabs.
 /// </summary>
 public class MainViewModelTests
 {
@@ -25,35 +26,10 @@ public class MainViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var data13 = workspace.PathOf("Data-1.13");
-        Directory.CreateDirectory(Path.Combine(data13, "TableData", "Items"));
-        await File.WriteAllTextAsync(
-            Path.Combine(data13, "TableData", "Items", "Items.xml"),
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName></ITEM>"
-            + "</ITEMLIST>");
-
-        var databasePath = workspace.PathOf("metadata.sqlite");
-        var migration = await new DatabaseMigrator().MigrateAsync(databasePath);
-        Assert.True(migration.IsSuccess, migration.ErrorText);
-        var provider = new SqliteMetadataProvider(databasePath);
-        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
-        var repository = new TableRepository(provider);
-        var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
-        var settings = new AppSettings(
-            new[] { data13 },
-            data13,
-            "ru",
-            "en",
-            new[] { data13 });
-        Assert.True((await settingsStore.SaveAsync(settings)).IsSuccess);
-
-        var viewModel = new MainViewModel(
-            catalog,
-            repository,
-            settingsStore,
-            new FakeDialogService(),
-            new FakeImageViewerService());
+        var data13 = CreateItemsData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
 
         await viewModel.InitializeAsync();
 
@@ -66,10 +42,11 @@ public class MainViewModelTests
 
         Assert.Contains("1", viewModel.RecordCountText, StringComparison.Ordinal);
         Assert.Equal("Loaded", viewModel.DetailsText);
+        Assert.False(viewModel.HasEditors);
     }
 
     /// <summary>
-    /// An invalid data directory clears the table list and reports the problem without throwing.
+    /// A failed data-set session leaves the shell empty and reports the invalid directory.
     /// </summary>
     [Fact]
     public async Task Initialize_MissingDataDirectory_ShowsInvalidDirectory()
@@ -84,11 +61,12 @@ public class MainViewModelTests
             "ru",
             "en",
             new[] { missing }))).IsSuccess);
+        var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
-            new FileSystemTableCatalog(),
-            new TableRepository(),
+            new FailingSessionFactory(),
+            new TableEditorFactory(dialog),
             settingsStore,
-            new FakeDialogService(),
+            dialog,
             new FakeImageViewerService());
 
         await viewModel.InitializeAsync();
@@ -114,19 +92,9 @@ public class MainViewModelTests
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><NOTES>"
             + "<NOTE><id>1</id><text>Hello</text></NOTE>"
             + "</NOTES>");
-        var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
-        Assert.True((await settingsStore.SaveAsync(new AppSettings(
-            new[] { data13 },
-            data13,
-            "en",
-            "en",
-            new[] { data13 }))).IsSuccess);
-        var viewModel = new MainViewModel(
-            new FileSystemTableCatalog(),
-            new TableRepository(),
-            settingsStore,
-            new FakeDialogService(),
-            new FakeImageViewerService());
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
 
         await viewModel.InitializeAsync();
         var table = Assert.Single(viewModel.Tables);
@@ -141,20 +109,21 @@ public class MainViewModelTests
     }
 
     /// <summary>
-    /// An unexpected catalog failure is reported through the status text instead of escaping the command.
+    /// An unexpected session failure is reported through the status text instead of escaping the command.
     /// </summary>
     [Fact]
-    public async Task Refresh_CatalogThrows_SetsErrorStatus()
+    public async Task Refresh_SessionFactoryThrows_SetsErrorStatus()
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
         var data13 = workspace.PathOf("Data-1.13");
         Directory.CreateDirectory(Path.Combine(data13, "TableData"));
+        var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
-            new ThrowingCatalog(),
-            new TableRepository(),
+            new ThrowingSessionFactory(),
+            new TableEditorFactory(dialog),
             new JsonSettingsStore(workspace.PathOf("settings.json")),
-            new FakeDialogService(),
+            dialog,
             new FakeImageViewerService())
         {
             DataDirectory = data13,
@@ -164,6 +133,104 @@ public class MainViewModelTests
 
         Assert.Equal("Error: boom", viewModel.StatusText);
         Assert.False(viewModel.IsBusy);
+    }
+
+    /// <summary>
+    /// Opening a table creates an editor tab, cells edit through the workspace, invalid values are
+    /// rejected, saving writes the file, and closing a clean tab removes it.
+    /// </summary>
+    [Fact]
+    public async Task OpenTable_EditsCellAndSaves()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateItemsData(workspace, includeWeight: true);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var editor = Assert.Single(viewModel.Editors);
+        Assert.Same(editor, viewModel.SelectedEditor);
+        Assert.True(viewModel.HasEditors);
+        Assert.Single(editor.Rows);
+        Assert.Equal("Items.Items", editor.DisplayName);
+        var row = editor.Rows[0];
+        Assert.Equal("Nothing", row["szItemName"]);
+
+        row["szItemName"] = "Glock 18";
+        Assert.True(editor.IsDirty);
+        Assert.EndsWith("*", editor.DisplayName, StringComparison.Ordinal);
+
+        row["ubWeight"] = "not a number";
+        Assert.Equal("10", row["ubWeight"]);
+        Assert.Contains("not a valid value", editor.StatusText, StringComparison.Ordinal);
+
+        await editor.SaveCommand.ExecuteAsync(null);
+
+        Assert.False(editor.IsDirty);
+        Assert.Equal("Items.Items", editor.DisplayName);
+        var saved = XDocument.Load(Path.Combine(data13, "TableData", "Items", "Items.xml"));
+        Assert.Equal("Glock 18", saved.Root!.Element("ITEM")!.Element("szItemName")!.Value);
+
+        viewModel.CloseEditorCommand.Execute(editor);
+        Assert.Empty(viewModel.Editors);
+        Assert.False(viewModel.HasEditors);
+    }
+
+    private static MainViewModel CreateShell(
+        SqliteMetadataProvider provider,
+        FileSystemTableCatalog catalog,
+        TableRepository repository,
+        JsonSettingsStore settingsStore,
+        FakeDialogService dialog) =>
+        new(
+            new DataSetSessionFactory(provider, catalog, repository),
+            new TableEditorFactory(dialog),
+            settingsStore,
+            dialog,
+            new FakeImageViewerService());
+
+    private static string CreateItemsData(
+        TestWorkspace workspace,
+        bool includeWeight = false)
+    {
+        var data13 = workspace.PathOf("Data-1.13");
+        var itemsDirectory = Path.Combine(data13, "TableData", "Items");
+        Directory.CreateDirectory(itemsDirectory);
+        var weight = includeWeight ? "<ubWeight>10</ubWeight>" : string.Empty;
+        File.WriteAllText(
+            Path.Combine(itemsDirectory, "Items.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + weight + "</ITEM>"
+            + "</ITEMLIST>");
+        return data13;
+    }
+
+    private static async Task<(
+        SqliteMetadataProvider Provider,
+        FileSystemTableCatalog Catalog,
+        TableRepository Repository,
+        JsonSettingsStore SettingsStore)> CreateServicesAsync(TestWorkspace workspace, string data13)
+    {
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        var migration = await new DatabaseMigrator().MigrateAsync(databasePath);
+        Assert.True(migration.IsSuccess, migration.ErrorText);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
+        var settings = new AppSettings(
+            new[] { data13 },
+            data13,
+            "ru",
+            "en",
+            new[] { data13 });
+        Assert.True((await settingsStore.SaveAsync(settings)).IsSuccess);
+        return (provider, catalog, repository, settingsStore);
     }
 
     private static async Task WaitUntilAsync(Func<bool> predicate)
@@ -183,7 +250,11 @@ public class MainViewModelTests
 
     private sealed class FakeDialogService : IDialogService
     {
+        public bool ConfirmResult { get; set; } = true;
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
+
+        public bool Confirm(string message, string title) => ConfirmResult;
     }
 
     private sealed class FakeImageViewerService : IImageViewerService
@@ -193,10 +264,20 @@ public class MainViewModelTests
         public void Show(string? dataDirectory) => LastDataDirectory = dataDirectory;
     }
 
-    private sealed class ThrowingCatalog : ITableCatalog
+    private sealed class FailingSessionFactory : IDataSetSessionFactory
     {
-        public Task<OperationResult<IReadOnlyList<TableDescriptor>>> GetTablesAsync(
-            string tableDataDirectory,
+        public Task<OperationResult<IDataSetSession>> OpenAsync(
+            string? selectedPath,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IDataSetSession>.Failure(
+                ErrorCodes.IoFileNotFound,
+                "The selected path does not contain a TableData directory."));
+    }
+
+    private sealed class ThrowingSessionFactory : IDataSetSessionFactory
+    {
+        public Task<OperationResult<IDataSetSession>> OpenAsync(
+            string? selectedPath,
             CancellationToken cancellationToken = default) =>
             throw new InvalidOperationException("boom");
     }

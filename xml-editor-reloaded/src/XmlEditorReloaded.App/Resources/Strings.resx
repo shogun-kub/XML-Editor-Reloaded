@@ -147,4 +147,139 @@
   <data name="ImageNotAvailableFormat" xml:space="preserve">
     <value>not available ({0})</value>
   </data>
+  <data name="EditorOpenText" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="EditorPlaceholder" xml:space="preserve">
+    <value>Double-click a table in the list to open it for editing.</value>
+  </data>
+  <data name="EditorSaveAllText" xml:space="preserve">
+    <value>Save all</value>
+  </data>
+  <data name="EditorAddRowText" xml:space="preserve">
+    <value>Add row</value>
+  </data>
+  <data name="EditorDuplicateRowText" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="EditorDeleteRowText" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="EditorSaveText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditorValidateText" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="EditorReloadText" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="EditorSearchLabel" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="EditorColumnsLabel" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="EditorColumnSearchLabel" xml:space="preserve">
+    <value>Find column</value>
+  </data>
+  <data name="EditorDefaultColumnsText" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="EditorAllColumnsText" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="EditorNoColumnsText" xml:space="preserve">
+    <value>No columns selected.</value>
+  </data>
+  <data name="EditorValidationLabel" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="EditorLoading" xml:space="preserve">
+    <value>Loading table...</value>
+  </data>
+  <data name="EditorLoadingCancelled" xml:space="preserve">
+    <value>The operation was cancelled.</value>
+  </data>
+  <data name="EditorReady" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="EditorReadOnly" xml:space="preserve">
+    <value>The table is read-only.</value>
+  </data>
+  <data name="EditorReadOnlyNested" xml:space="preserve">
+    <value>Nested records are read-only in this view.</value>
+  </data>
+  <data name="EditorSaved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="EditorNoChanges" xml:space="preserve">
+    <value>No changes to save.</value>
+  </data>
+  <data name="EditorCellUpdated" xml:space="preserve">
+    <value>{0} updated in record {1}.</value>
+  </data>
+  <data name="EditorRowAdded" xml:space="preserve">
+    <value>Record {0} added.</value>
+  </data>
+  <data name="EditorRowDuplicated" xml:space="preserve">
+    <value>Record {0} duplicated as {1}.</value>
+  </data>
+  <data name="EditorRowDeleted" xml:space="preserve">
+    <value>Record {0} deleted.</value>
+  </data>
+  <data name="EditorSelectRow" xml:space="preserve">
+    <value>Select a record first.</value>
+  </data>
+  <data name="EditorConfirmDelete" xml:space="preserve">
+    <value>Delete record {0}? Its translation will be removed too.</value>
+  </data>
+  <data name="EditorDeleteTitle" xml:space="preserve">
+    <value>Delete record</value>
+  </data>
+  <data name="EditorConfirmClose" xml:space="preserve">
+    <value>Discard unsaved changes in {0}?</value>
+  </data>
+  <data name="EditorConfirmCloseAll" xml:space="preserve">
+    <value>Discard unsaved changes in {0} open table(s)?</value>
+  </data>
+  <data name="EditorCloseTitle" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="EditorConfirmReload" xml:space="preserve">
+    <value>Discard unsaved changes and reload {0}?</value>
+  </data>
+  <data name="EditorReloadTitle" xml:space="preserve">
+    <value>Reload table</value>
+  </data>
+  <data name="EditorRefreshCancelled" xml:space="preserve">
+    <value>Refresh cancelled.</value>
+  </data>
+  <data name="EditorRowCount" xml:space="preserve">
+    <value>Rows: {0} of {1}</value>
+  </data>
+  <data name="EditorColumnCount" xml:space="preserve">
+    <value>Columns: {0} of {1}</value>
+  </data>
+  <data name="EditorValidationSummary" xml:space="preserve">
+    <value>Validation issues: {0}.</value>
+  </data>
+  <data name="EditorBaseLanguage" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="EditorLanguageFormat" xml:space="preserve">
+    <value>Language: {0}</value>
+  </data>
+  <data name="EditorNoMatches" xml:space="preserve">
+    <value>No records match the search.</value>
+  </data>
+  <data name="EditorSaveAllSummary" xml:space="preserve">
+    <value>Saved tables: {0}.</value>
+  </data>
+  <data name="EditorSaveAllErrors" xml:space="preserve">
+    <value>Some tables could not be saved.</value>
+  </data>
+  <data name="EditorInvalidValue" xml:space="preserve">
+    <value>'{0}' is not a valid value for {1}.</value>
+  </data>
 </root>

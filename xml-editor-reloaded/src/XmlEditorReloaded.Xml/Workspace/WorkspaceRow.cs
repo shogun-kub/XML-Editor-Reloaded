@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Overlays;
 
@@ -50,6 +51,18 @@ public sealed class WorkspaceRow
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fieldPath);
 
+        if (Merged is not null && IsTopLevelField(fieldPath))
+        {
+            var overlayLeaf = FindTopLevelLeaf(Merged.OverlayElement, fieldPath);
+            if (overlayLeaf is not null)
+            {
+                return overlayLeaf.Value;
+            }
+
+            var baseLeaf = FindTopLevelLeaf(Merged.BaseElement, fieldPath);
+            return baseLeaf?.Value ?? Record?.GetRawValue(fieldPath);
+        }
+
         if (_cells is not null && _cells.TryGetValue(fieldPath, out var cells) && cells.Length > 0)
         {
             return cells[0].Value;
@@ -68,6 +81,29 @@ public sealed class WorkspaceRow
     public IReadOnlyList<string> GetValues(string fieldPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fieldPath);
+
+        if (Merged is not null && IsTopLevelField(fieldPath))
+        {
+            var overlayValues = Merged.OverlayElement?.Elements()
+                .Where(element => string.Equals(element.Name.LocalName, fieldPath, StringComparison.Ordinal))
+                .Where(static element => !element.HasElements)
+                .Select(static element => element.Value)
+                .ToArray();
+            if (overlayValues is { Length: > 0 })
+            {
+                return overlayValues;
+            }
+
+            var baseValues = Merged.BaseElement.Elements()
+                .Where(element => string.Equals(element.Name.LocalName, fieldPath, StringComparison.Ordinal))
+                .Where(static element => !element.HasElements)
+                .Select(static element => element.Value)
+                .ToArray();
+            return baseValues.Length > 0
+                ? baseValues
+                : Record?.GetValues(fieldPath).Select(static value => value.RawText).ToArray()
+                    ?? Array.Empty<string>();
+        }
 
         if (_cells is not null && _cells.TryGetValue(fieldPath, out var cells))
         {
@@ -88,8 +124,28 @@ public sealed class WorkspaceRow
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fieldPath);
 
+        if (Merged is not null && IsTopLevelField(fieldPath))
+        {
+            return FindTopLevelLeaf(Merged.OverlayElement, fieldPath) is not null;
+        }
+
         return _cells is not null
             && _cells.TryGetValue(fieldPath, out var cells)
             && cells.Any(static cell => cell.OverlayValue is not null);
+    }
+
+    private static bool IsTopLevelField(string fieldPath) =>
+        fieldPath.IndexOf('/') < 0 && fieldPath.IndexOf('[') < 0;
+
+    private static XElement? FindTopLevelLeaf(XElement? overlayElement, string fieldPath)
+    {
+        if (overlayElement is null)
+        {
+            return null;
+        }
+
+        var leaf = overlayElement.Elements()
+            .FirstOrDefault(element => string.Equals(element.Name.LocalName, fieldPath, StringComparison.Ordinal));
+        return leaf is null || leaf.HasElements ? null : leaf;
     }
 }

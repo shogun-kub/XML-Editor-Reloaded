@@ -37,6 +37,7 @@ public partial class App : Application
         services.AddXmlEditorXml();
         services.AddSingleton<IDialogService, WpfDialogService>();
         services.AddSingleton<IDataSetSessionFactory, DataSetSessionFactory>();
+        services.AddSingleton<ITableEditorFactory, TableEditorFactory>();
         services.AddSingleton<IItemImageService, WpfItemImageService>();
         services.AddSingleton<IImageViewerService, WpfImageViewerService>();
         services.AddSingleton<ImageViewerViewModel>();

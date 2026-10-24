@@ -24,4 +24,16 @@ public sealed class WpfDialogService : IDialogService
 
         return dialog.ShowDialog() == true ? dialog.FolderName : null;
     }
+
+    /// <inheritdoc />
+    public bool Confirm(string message, string title)
+    {
+        var result = System.Windows.MessageBox.Show(
+            message,
+            title,
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question,
+            System.Windows.MessageBoxResult.No);
+        return result == System.Windows.MessageBoxResult.Yes;
+    }
 }
