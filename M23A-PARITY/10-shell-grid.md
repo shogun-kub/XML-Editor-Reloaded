@@ -10,9 +10,9 @@
 |---|---|
 | реализовано | 32 |
 | superseded | 183 |
-| исключено | 37 |
+| исключено | 41 |
 | пробел | 26 |
-| **Всего** | **278** |
+| **Всего** | **282** |
 
 ## Пробелы
 | ID | Серьёзность | Суть | Где должно быть |
@@ -207,6 +207,7 @@
 | L-AUX-001 | SimpleFormBase: OK | References/xml-editor/GUI/Forms/SimpleFormBase.vb:20 | Кнопки OK в диалогах WPF | xml-editor-reloaded/src/XmlEditorReloaded.App/Views/SettingsWindow.xaml:124 | superseded | Общего базового класса нет; диалоги используют `DialogResult`. |
 | L-AUX-002 | SimpleFormBase: Cancel | References/xml-editor/GUI/Forms/SimpleFormBase.vb:16 | IsCancel-кнопки диалогов | xml-editor-reloaded/src/XmlEditorReloaded.App/Views/SettingsWindow.xaml:129 | superseded | То же. |
 | L-AUX-003 | SimpleFormBase: Load → WindowState.Normal | References/xml-editor/GUI/Forms/SimpleFormBase.vb:28 | WPF-позиционирование окон | xml-editor-reloaded/src/XmlEditorReloaded.App/Views/SettingsWindow.xaml:13 | superseded | Восстанавливать Normal-состояние MDI-окна не требуется. |
+| L-AUX-004, L-AUX-005, L-AUX-006, L-AUX-007 | BitCodeMakerForm: Add To Table, Close, динамические флаги, построение UI | References/xml-editor/GUI/Forms/BitCodeMakerForm.vb:20, 50, 72, 92 | — | — | исключено | Форма скрыта вместе с L-SHELL-066/070 (`Visible = False`); BitCodeMaker вне паритета (`PLAN.md:105`). |
 | L-AUX-010 | ColumnSelectForm: OK → SaveSchema | References/xml-editor/GUI/Forms/ColumnSelectForm.vb:29 | Встроенная панель колонок и layout store | xml-editor-reloaded/src/XmlEditorReloaded.App/Views/TableView.xaml:245; ViewModels/TableColumnViewModel.cs:57; ViewModels/TableEditorViewModel.cs:1189 | superseded | Видимость сохраняется в JSON layout, схема игры не переписывается. |
 | L-AUX-011 | ColumnSelectForm: список колонок | References/xml-editor/GUI/Forms/ColumnSelectForm.vb:36 | Чекбоксы всех колонок схемы с поиском | xml-editor-reloaded/src/XmlEditorReloaded.App/Views/TableView.xaml:245; ViewModels/TableColumnViewModel.cs:57 | superseded | Скрытые/подтабличные колонки не смешиваются: подтаблицы имеют свои вкладки. |
 | L-AUX-012 | CustomFilterForm: OK | References/xml-editor/GUI/Forms/CustomFilterForm.vb:19 | Живой структурированный фильтр, кнопка Clear | xml-editor-reloaded/src/XmlEditorReloaded.App/ViewModels/TableFilterViewModel.cs:78, 95 | superseded | Отдельного OK нет: изменения применяются сразу. |
