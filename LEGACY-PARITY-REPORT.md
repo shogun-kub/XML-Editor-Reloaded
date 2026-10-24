@@ -1,6 +1,6 @@
 # Legacy parity report (M23a)
 
-**Status:** in progress — M23a0 inventories complete (UI, tables, UI verification, item field map); M23a1 shell/grid section complete; M23a2 item workspace UI section complete; M23a3 item tables and images section complete; M23a4 merc gear and auxiliary tables section complete; M23a5 backend storage/operations next.
+**Status:** in progress — M23a0 inventories complete (UI, tables, UI verification, item field map); M23a1 shell/grid section complete; M23a2 item workspace UI section complete; M23a3 item tables and images section complete; M23a4 merc gear and auxiliary tables section complete; M23a5 backend storage/operations sections complete; M23a6 consolidation and gap register next.
 **Reference implementation:** `References/xml-editor` (VB.NET/WinForms), read-only. `References/JA_2_1.13_TableData_Editor` is a prototype and is not a reference.
 **Scope:** every user-visible and backend behaviour that is actually reachable in the legacy editor is either implemented in the rewrite, replaced by a safer equivalent, or explicitly excluded. Bug-for-bug compatibility is not required. M23a changes no product behaviour.
 **Method and substeps:** `M23A-PARITY-AUDIT-PLAN.md`. Working evidence lives in `M23A-PARITY/`; this report is assembled from those sections.
@@ -34,8 +34,8 @@
 | 20 | Item workspace UI | `M23A-PARITY/20-item-ui.md` | done |
 | 21 | Item tables and images | `M23A-PARITY/21-item-data-images.md` | done |
 | 30 | Merc gear and auxiliary tables | `M23A-PARITY/30-merc-aux.md` | done |
-| 40 | Backend: storage | `M23A-PARITY/40-storage.md` | pending |
-| 41 | Backend: operations | `M23A-PARITY/41-operations.md` | pending |
+| 40 | Backend: storage | `M23A-PARITY/40-storage.md` | done |
+| 41 | Backend: operations | `M23A-PARITY/41-operations.md` | done |
 
 ## Gap register
 
