@@ -24,11 +24,17 @@ public class TableRelationsTests
 
         Assert.True(result.IsSuccess, result.ErrorText);
         var relations = result.Data!;
-        Assert.Equal(23, relations.Count);
+        Assert.Equal(103, relations.Count);
         Assert.Equal(7, relations.Count(relation => relation.Kind == TableRelationKind.Reference));
         Assert.Equal(5, relations.Count(relation => relation.Kind == TableRelationKind.SubTable));
         Assert.Equal(7, relations.Count(relation => relation.Kind == TableRelationKind.ChildRows));
-        Assert.Equal(4, relations.Count(relation => relation.Kind == TableRelationKind.Reverse));
+        Assert.Equal(84, relations.Count(relation => relation.Kind == TableRelationKind.Reverse));
+        Assert.Contains(
+            relations,
+            relation => relation.Kind == TableRelationKind.Reverse
+                && relation.TargetTable.Value == "NPCInventory.AlbertoInventory"
+                && relation.TargetValueField == "sItemIndex"
+                && relation.TargetDisplayField == "ubOptimalNumber");
 
         var defaultAttachment = Assert.Single(
             relations,
@@ -102,6 +108,51 @@ public class TableRelationsTests
     }
 
     /// <summary>
+    /// Auxiliary inventory tables declare item pickers: dealer stock, enemy/militia choices, drops, and
+    /// every mercenary gear slot.
+    /// </summary>
+    [Fact]
+    public async Task GetRelations_AuxiliaryTables_DeclareItemReferences()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var dealer = await provider.GetRelationsAsync(TableName.Parse("NPCInventory.TonyInventory"));
+        Assert.True(dealer.IsSuccess, dealer.ErrorText);
+        var stock = Assert.Single(dealer.Data!, relation => relation.Kind == TableRelationKind.Reference);
+        Assert.Equal("sItemIndex", stock.SourceField);
+        Assert.Equal("Items.Items", stock.TargetTable.Value);
+        Assert.Equal("szLongItemName", stock.TargetDisplayField);
+        Assert.True(stock.RemapByText);
+
+        var gear = await provider.GetRelationsAsync(TableName.Parse("Inventory.MercStartingGear"));
+        Assert.True(gear.IsSuccess, gear.ErrorText);
+        Assert.Equal(21, gear.Data!.Count);
+        Assert.All(gear.Data, relation =>
+        {
+            Assert.Equal(TableRelationKind.Reference, relation.Kind);
+            Assert.Equal("Items.Items", relation.TargetTable.Value);
+        });
+        Assert.Contains(gear.Data, relation => relation.SourceField == "mHelmet"
+            && relation.Filter!.Operator == RelationFilterOperator.Equals
+            && relation.Filter.Value == "2048");
+        Assert.Contains(gear.Data, relation => relation.SourceField == "mWeapon" && relation.Filter is null);
+
+        var choices = await provider.GetRelationsAsync(TableName.Parse("Inventory.GunChoices_Enemy_Admin"));
+        Assert.True(choices.IsSuccess, choices.ErrorText);
+        Assert.Equal(50, choices.Data!.Count);
+        Assert.All(choices.Data, relation => Assert.Equal(RelationFilterOperator.Equals, relation.Filter!.Operator));
+
+        var drops = await provider.GetRelationsAsync(TableName.Parse("Inventory.EnemyAmmoDrops"));
+        Assert.True(drops.IsSuccess, drops.ErrorText);
+        var ammo = Assert.Single(drops.Data!);
+        Assert.Equal("uiType", ammo.SourceField);
+        Assert.Equal("Items.AmmoTypes", ammo.TargetTable.Value);
+    }
+
+    /// <summary>
     /// Tables without relations and unknown tables return an empty list, not an error.
     /// </summary>
     [Fact]
@@ -159,7 +210,7 @@ public class TableRelationsTests
             }
         }
 
-        Assert.Equal(84, checkedRelations);
+        Assert.Equal(1020, checkedRelations);
     }
 
     private static bool IsKnownField(TableMetadata table, string field) =>

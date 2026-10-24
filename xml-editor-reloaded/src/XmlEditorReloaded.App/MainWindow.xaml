@@ -167,6 +167,9 @@
                         <DataTemplate DataType="{x:Type vm:ItemWorkspaceViewModel}">
                             <views:ItemWorkspaceView />
                         </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:MercGearWorkspaceViewModel}">
+                            <views:MercGearWorkspaceView />
+                        </DataTemplate>
                     </TabControl.Resources>
                 </TabControl>
 

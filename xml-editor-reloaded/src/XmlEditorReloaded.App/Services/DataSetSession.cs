@@ -140,12 +140,21 @@ public sealed class DataSetSession : IDataSetSession
         TableDescriptor descriptor,
         string? languageCode = null,
         CancellationToken cancellationToken = default) =>
+        OpenTableSetAsync(descriptor, languageCode, includeReverseRelations: false, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<OperationResult<TableSetWorkspace>> OpenTableSetAsync(
+        TableDescriptor descriptor,
+        string? languageCode,
+        bool includeReverseRelations,
+        CancellationToken cancellationToken = default) =>
         TableSetWorkspace.LoadAsync(
             descriptor,
             Catalog,
             _metadataProvider,
             TableDataDirectory,
             languageCode,
+            includeReverseRelations,
             cancellationToken);
 
     /// <inheritdoc />

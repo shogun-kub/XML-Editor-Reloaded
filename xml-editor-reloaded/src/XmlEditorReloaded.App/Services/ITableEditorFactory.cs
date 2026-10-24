@@ -32,6 +32,19 @@ public interface ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode);
+
+    /// <summary>
+    /// Creates an uninitialized mercenary starting-gear workspace; call
+    /// <see cref="ViewModels.MercGearWorkspaceViewModel.InitializeAsync"/> before displaying it.
+    /// </summary>
+    /// <param name="session">Data-set session that owns the gear table.</param>
+    /// <param name="descriptor">Descriptor of the <c>Inventory.MercStartingGear</c> table.</param>
+    /// <param name="languageCode">Optional language code for overlay editing.</param>
+    /// <returns>The mercenary gear workspace view model.</returns>
+    ViewModels.MercGearWorkspaceViewModel CreateMercGearWorkspace(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode);
 }
 
 /// <summary>
@@ -69,4 +82,11 @@ public sealed class TableEditorFactory : ITableEditorFactory
         TableDescriptor descriptor,
         string? languageCode) =>
         new(session, descriptor, languageCode, _dialogService, _itemImages);
+
+    /// <inheritdoc />
+    public ViewModels.MercGearWorkspaceViewModel CreateMercGearWorkspace(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode) =>
+        new(session, descriptor, languageCode, _dialogService);
 }

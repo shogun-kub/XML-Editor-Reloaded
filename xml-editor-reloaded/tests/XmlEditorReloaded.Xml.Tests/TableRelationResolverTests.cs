@@ -75,6 +75,42 @@ public class TableRelationResolverTests
     }
 
     /// <summary>
+    /// Two relations to the same target table keep their own filtered option sets; the target cache
+    /// must not leak the options of the first relation into the second.
+    /// </summary>
+    [Fact]
+    public async Task Resolve_DifferentFiltersOnSameTarget_KeepSeparateOptions()
+    {
+        using var workspace = new TestWorkspace();
+        var (resolver, _) = CreateResolver(workspace, ItemsXml);
+        var guns = new TableRelation(
+            TableName.Parse("Items.Weapons"),
+            "ubCalibre",
+            TableName.Parse("Items.Items"),
+            TableRelationKind.Reference,
+            "uiIndex",
+            "szLongItemName",
+            new RelationFilter("usItemClass", RelationFilterOperator.Equals, "2"));
+        var explosives = new TableRelation(
+            TableName.Parse("Items.Explosives"),
+            "ubClassIndex",
+            TableName.Parse("Items.Items"),
+            TableRelationKind.Reference,
+            "uiIndex",
+            "szLongItemName",
+            new RelationFilter("usItemClass", RelationFilterOperator.HasFlag, "768"));
+
+        var gunTarget = await resolver.ResolveAsync(guns);
+        var explosiveTarget = await resolver.ResolveAsync(explosives);
+
+        Assert.True(gunTarget.IsSuccess, gunTarget.ErrorText);
+        Assert.True(explosiveTarget.IsSuccess, explosiveTarget.ErrorText);
+        Assert.Equal("1", Assert.Single(gunTarget.Data!.Options).Value);
+        Assert.Equal("2", Assert.Single(explosiveTarget.Data!.Options).Value);
+        Assert.Equal(3, explosiveTarget.Data.Entries.Count);
+    }
+
+    /// <summary>
     /// A missing target table fails the relation without throwing, so the source table can still open.
     /// </summary>
     [Fact]

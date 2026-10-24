@@ -996,4 +996,85 @@
   <data name="ItemTabNested" xml:space="preserve">
     <value>Вложенные структуры</value>
   </data>
+  <data name="ItemTabShopkeepers" xml:space="preserve">
+    <value>Торговцы</value>
+  </data>
+  <data name="ShopkeeperDealerColumn" xml:space="preserve">
+    <value>Торговец</value>
+  </data>
+  <data name="ShopkeeperQuantityColumn" xml:space="preserve">
+    <value>Оптимальное количество</value>
+  </data>
+  <data name="ShopkeeperCountFormat" xml:space="preserve">
+    <value>Строк у торговцев: {0}</value>
+  </data>
+  <data name="ShopkeeperEmptyText" xml:space="preserve">
+    <value>Ни один торговец не продаёт этот предмет.</value>
+  </data>
+  <data name="MercGearSearchLabel" xml:space="preserve">
+    <value>Поиск наёмника</value>
+  </data>
+  <data name="MercGearCountFormat" xml:space="preserve">
+    <value>Наёмников: {0}</value>
+  </data>
+  <data name="MercGearNoSelection" xml:space="preserve">
+    <value>Выберите наёмника.</value>
+  </data>
+  <data name="MercGearKitTabFormat" xml:space="preserve">
+    <value>Комплект {0}</value>
+  </data>
+  <data name="MercGearKitNameLabel" xml:space="preserve">
+    <value>Название комплекта</value>
+  </data>
+  <data name="MercGearPriceModLabel" xml:space="preserve">
+    <value>Модификатор цены</value>
+  </data>
+  <data name="MercGearAbsolutePriceLabel" xml:space="preserve">
+    <value>Фиксированная цена</value>
+  </data>
+  <data name="MercGearItemColumn" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="MercGearStatusColumn" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="MercGearQuantityColumn" xml:space="preserve">
+    <value>Кол-во</value>
+  </data>
+  <data name="MercGearDropColumn" xml:space="preserve">
+    <value>Сброс</value>
+  </data>
+  <data name="MercGearSlot.Helmet" xml:space="preserve">
+    <value>Шлем</value>
+  </data>
+  <data name="MercGearSlot.Vest" xml:space="preserve">
+    <value>Бронежилет</value>
+  </data>
+  <data name="MercGearSlot.Leg" xml:space="preserve">
+    <value>Защита ног</value>
+  </data>
+  <data name="MercGearSlot.Weapon" xml:space="preserve">
+    <value>Оружие</value>
+  </data>
+  <data name="MercGearSlot.LbeVest" xml:space="preserve">
+    <value>Разгрузочный жилет</value>
+  </data>
+  <data name="MercGearSlot.LeftThigh" xml:space="preserve">
+    <value>Левое бедро</value>
+  </data>
+  <data name="MercGearSlot.RightThigh" xml:space="preserve">
+    <value>Правое бедро</value>
+  </data>
+  <data name="MercGearSlot.LbePack" xml:space="preserve">
+    <value>Разгрузочный рюкзак</value>
+  </data>
+  <data name="MercGearSlot.Backpack" xml:space="preserve">
+    <value>Рюкзак</value>
+  </data>
+  <data name="MercGearSlot.BigFormat" xml:space="preserve">
+    <value>Большой слот {0}</value>
+  </data>
+  <data name="MercGearSlot.SmallFormat" xml:space="preserve">
+    <value>Малый слот {0}</value>
+  </data>
 </root>

@@ -347,6 +347,37 @@ public class ItemWorkspaceViewModelTests
         Assert.All(viewModel.DetailImages, panel => Assert.Equal(2, panel.Image!.PixelWidth));
     }
 
+    /// <summary>
+    /// The shopkeeper tab lists dealer stock rows for the selected item and saves a quantity edit to the
+    /// dealer file without rewriting the item file.
+    /// </summary>
+    [Fact]
+    public async Task ShopkeeperTab_ListsDealersAndSavesQuantity()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDealer: true);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+        var itemsBefore = await File.ReadAllBytesAsync(fixture.ItemsPath);
+
+        Assert.True(viewModel.HasShopkeeperEntries);
+        var entry = Assert.Single(viewModel.ShopkeeperEntries);
+        Assert.Equal("Alberto", entry.DealerName);
+        Assert.Equal("9", entry.Quantity);
+
+        entry.Quantity = "12";
+        Assert.True(viewModel.IsDirty);
+        Assert.True(viewModel.CanUndo);
+        await viewModel.SaveAsync();
+
+        Assert.False(viewModel.IsDirty);
+        Assert.Equal(itemsBefore, await File.ReadAllBytesAsync(fixture.ItemsPath));
+        var saved = XDocument.Load(fixture.DealerPath);
+        var row = saved.Root!.Elements("INVENTORY").First(static element => element.Element("uiIndex")?.Value == "0");
+        Assert.Equal("12", row.Element("ubOptimalNumber")?.Value);
+        Assert.Equal("1", row.Element("sItemIndex")?.Value);
+    }
+
     private static async Task<(ItemWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
         Fixture fixture,
         string? languageCode = null)
@@ -371,7 +402,8 @@ public class ItemWorkspaceViewModelTests
     private static Fixture CreateFixture(
         TestWorkspace workspace,
         bool includeSecondItem = false,
-        bool includeOverlay = false)
+        bool includeOverlay = false,
+        bool includeDealer = false)
     {
         var tableData = workspace.PathOf(Path.Combine("Data-1.13", "TableData"));
         var itemsDirectory = Path.Combine(tableData, "Items");
@@ -468,7 +500,22 @@ public class ItemWorkspaceViewModelTests
             + "\t</ATTACHMENT>\r\n"
             + "</ATTACHMENTLIST>\r\n");
 
-        return new Fixture(workspace, tableData, itemsPath, weaponPath, attachmentsPath);
+        var dealerPath = Path.Combine(tableData, "NPCInventory", "AlbertoInventory.xml");
+        if (includeDealer)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(dealerPath)!);
+            File.WriteAllText(
+                dealerPath,
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><INVENTORYLIST>\r\n"
+                + "\t<INVENTORY>\r\n"
+                + "\t\t<uiIndex>0</uiIndex>\r\n"
+                + "\t\t<sItemIndex>1</sItemIndex>\r\n"
+                + "\t\t<ubOptimalNumber>9</ubOptimalNumber>\r\n"
+                + "\t</INVENTORY>\r\n"
+                + "</INVENTORYLIST>\r\n");
+        }
+
+        return new Fixture(workspace, tableData, itemsPath, weaponPath, attachmentsPath, dealerPath);
     }
 
     private sealed record Fixture(
@@ -476,7 +523,8 @@ public class ItemWorkspaceViewModelTests
         string TableDataDirectory,
         string ItemsPath,
         string WeaponPath,
-        string AttachmentsPath);
+        string AttachmentsPath,
+        string DealerPath);
 
     private sealed class FakeDialogService : IDialogService
     {

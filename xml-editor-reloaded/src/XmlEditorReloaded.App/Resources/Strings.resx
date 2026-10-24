@@ -996,4 +996,85 @@
   <data name="ItemTabNested" xml:space="preserve">
     <value>Nested structures</value>
   </data>
+  <data name="ItemTabShopkeepers" xml:space="preserve">
+    <value>Shopkeepers</value>
+  </data>
+  <data name="ShopkeeperDealerColumn" xml:space="preserve">
+    <value>Dealer</value>
+  </data>
+  <data name="ShopkeeperQuantityColumn" xml:space="preserve">
+    <value>Optimal quantity</value>
+  </data>
+  <data name="ShopkeeperCountFormat" xml:space="preserve">
+    <value>Dealer rows: {0}</value>
+  </data>
+  <data name="ShopkeeperEmptyText" xml:space="preserve">
+    <value>No dealer stocks this item.</value>
+  </data>
+  <data name="MercGearSearchLabel" xml:space="preserve">
+    <value>Search mercenary</value>
+  </data>
+  <data name="MercGearCountFormat" xml:space="preserve">
+    <value>{0} mercenaries</value>
+  </data>
+  <data name="MercGearNoSelection" xml:space="preserve">
+    <value>Select a mercenary.</value>
+  </data>
+  <data name="MercGearKitTabFormat" xml:space="preserve">
+    <value>Kit {0}</value>
+  </data>
+  <data name="MercGearKitNameLabel" xml:space="preserve">
+    <value>Kit name</value>
+  </data>
+  <data name="MercGearPriceModLabel" xml:space="preserve">
+    <value>Price modifier</value>
+  </data>
+  <data name="MercGearAbsolutePriceLabel" xml:space="preserve">
+    <value>Absolute price</value>
+  </data>
+  <data name="MercGearItemColumn" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="MercGearStatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="MercGearQuantityColumn" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="MercGearDropColumn" xml:space="preserve">
+    <value>Drop</value>
+  </data>
+  <data name="MercGearSlot.Helmet" xml:space="preserve">
+    <value>Helmet</value>
+  </data>
+  <data name="MercGearSlot.Vest" xml:space="preserve">
+    <value>Vest</value>
+  </data>
+  <data name="MercGearSlot.Leg" xml:space="preserve">
+    <value>Leg armour</value>
+  </data>
+  <data name="MercGearSlot.Weapon" xml:space="preserve">
+    <value>Weapon</value>
+  </data>
+  <data name="MercGearSlot.LbeVest" xml:space="preserve">
+    <value>LBE vest</value>
+  </data>
+  <data name="MercGearSlot.LeftThigh" xml:space="preserve">
+    <value>Left thigh</value>
+  </data>
+  <data name="MercGearSlot.RightThigh" xml:space="preserve">
+    <value>Right thigh</value>
+  </data>
+  <data name="MercGearSlot.LbePack" xml:space="preserve">
+    <value>LBE pack</value>
+  </data>
+  <data name="MercGearSlot.Backpack" xml:space="preserve">
+    <value>Backpack</value>
+  </data>
+  <data name="MercGearSlot.BigFormat" xml:space="preserve">
+    <value>Big slot {0}</value>
+  </data>
+  <data name="MercGearSlot.SmallFormat" xml:space="preserve">
+    <value>Small slot {0}</value>
+  </data>
 </root>

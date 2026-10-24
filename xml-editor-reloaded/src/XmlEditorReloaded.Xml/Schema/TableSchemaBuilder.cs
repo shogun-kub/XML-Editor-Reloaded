@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Xml.Linq;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 
@@ -33,6 +34,28 @@ public sealed class TableSchemaBuilder
         foreach (var record in document.Records)
         {
             var occurrences = new Dictionary<string, int>(StringComparer.Ordinal);
+            if (!record.Element.HasElements)
+            {
+                // Some tables store one text value per record instead of a container of fields, for
+                // example <SOUND>SOUNDS\DOOR OPEN 01.wav</SOUND>. Expose that text as a virtual column
+                // so such tables stay editable without inventing XML elements.
+                if (record.Element.Nodes().Any(static node => node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
+                {
+                    if (!statistics.TryGetValue(RecordFields.RecordText, out var textStats))
+                    {
+                        textStats = new ColumnStatistics();
+                        statistics.Add(RecordFields.RecordText, textStats);
+                        order.Add(RecordFields.RecordText);
+                    }
+
+                    textStats.PresenceCount++;
+                    textStats.MaxOccurrences = 1;
+                    ObserveValue(textStats, record.Element.Value);
+                }
+
+                continue;
+            }
+
             foreach (var element in record.Element.Elements())
             {
                 var name = element.Name.LocalName;
@@ -77,8 +100,10 @@ public sealed class TableSchemaBuilder
         var translatableFields = metadata?.TranslatableFieldPaths
             .ToHashSet(StringComparer.Ordinal);
         var keyField = metadata?.RecordKey?.Primary.KeyField;
-        if (keyField is null && order.Count > 0)
+        if (keyField is null && metadata is null && order.Count > 0)
         {
+            // Document-driven tables have no key metadata; the first discovered field identifies rows.
+            // A mapped table with a positional or singleton key must not promote its first field.
             keyField = order[0];
         }
 

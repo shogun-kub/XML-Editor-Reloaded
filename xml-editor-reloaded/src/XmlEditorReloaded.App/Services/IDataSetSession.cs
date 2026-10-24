@@ -100,6 +100,30 @@ public interface IDataSetSession
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Opens the primary table together with its 1:1, 1:N, and optionally its reverse-related tables as
+    /// one editable set with a shared undo history.
+    /// </summary>
+    /// <param name="descriptor">Descriptor of the primary table.</param>
+    /// <param name="languageCode">Language code whose overlays should be loaded, or <see langword="null"/> for base-only.</param>
+    /// <param name="includeReverseRelations">
+    /// When <see langword="true"/>, targets of reverse relations are loaded as editable members, for
+    /// example every dealer inventory that references an item.
+    /// </param>
+    /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the set. On failure,
+    /// <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>, or a metadata error for the
+    /// primary table. Missing related files are reported through the set warnings.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<TableSetWorkspace>> OpenTableSetAsync(
+        TableDescriptor descriptor,
+        string? languageCode,
+        bool includeReverseRelations,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Returns every language configured in the metadata database, ordered for display.
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the operation.</param>

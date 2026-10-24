@@ -4,7 +4,7 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M19 завершены (HEAD `1328ec8`). Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save. Метаданные: 502 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 84 `TableRelations` (68 `Reference`, 5 `SubTable`, 7 `ChildRows`, 4 `Reverse`), 64-битные lookup ID. **Паритет:** item-workflow parity достигнут в M19, full legacy parity — конец M23. **Проверка текущего состояния:** build `-warnaserror` (0/0), 316 тестов (Core 28, Imaging 19, Xml 133, Data 44, App 92), corpus v4/v5 и сравнение v4↔v5 зелёные.
+**Состояние:** M0–M20 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; full legacy parity — конец M23. **Проверка текущего состояния:** build `-warnaserror` (0/0), 330 тестов (Core 28, Imaging 19, Xml 137, Data 51, App 95), corpus v4/v5 и сравнение v4↔v5 зелёные.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается вообще; повреждённый — только диагностика.
@@ -48,7 +48,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **M17:** read-only сравнение двух `TableData`: presence/counts/fields/types/cardinality/sparse profile/lookup-доступность, Markdown/CSV export, окно с двумя путями и диагностикой.
 
 ### M18 — Relation model и main-table pickers — выполнен
-- **Метаданные:** `TableRelations` (`Reference`/`SubTable`/`ChildRows`/`Reverse`, value/display-поля, структурированный фильтр `Equals`/`NotEquals`/`Contains`/`HasFlag`, `RemapByText`, `Ordinal`); 84 проверенные связи. `ITEMTOEXPLOSIVE` выражен как `HasFlag 768` по `Items`. Связи для shopkeeper/enemy/militia/IMP/sounds добавляются в M20 вместе с их таблицами (FK).
+- **Метаданные:** `TableRelations` (`Reference`/`SubTable`/`ChildRows`/`Reverse`, value/display-поля, структурированный фильтр `Equals`/`NotEquals`/`Contains`/`HasFlag`, `RemapByText`, `Ordinal`); 84 проверенные связи. `ITEMTOEXPLOSIVE` выражен как `HasFlag 768` по `Items`. Связи для shopkeeper/enemy/militia/IMP/sounds добавлены в M20 вместе с их таблицами (FK).
 - **Backend/UI:** `TableRelationResolver` с кэшем target по штампу файла (length+mtime), оверлеями display-полей, поиском по имени/ID и remap; searchable `RelationPicker` в сетке и деталях, ручной ввод неизвестного ID, кнопка «→» и кросс-табличная навигация; `validation.lookup_missing` по полному набору ключей target.
 - **Ограничение, снятое в M19:** `DefaultAttachment` был read-only как list field. Четыре placeholder-предмета без `ubClassIndex` не имеют строки подтаблицы — это ожидаемо.
 
@@ -59,12 +59,13 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **Переиспользование:** `FieldEditor` вынесен из detail-панели; `FieldSourceSet` централизует lookup/relation-загрузку; `DetailFieldViewModel` принимает `IDetailFieldHost` и поддерживает nested `FieldPath`.
 - **Ограничения:** placeholder-предметы без `ubClassIndex` показывают «no class index» и не создают фиктивных строк; `AvailableAttachmentPoint` остаётся одиночным Flags-полем (объявлен list, но max occurrences = 1); `DefaultAttachment` редактируется как список; nested-поля в generic detail-панели read-only (редактируются в item workspace); embedded child-гриды без панели деталей, Ctrl+S сохраняет весь набор; семь child-таблиц инициализируются при открытии workspace.
 
-### M20 — Merc gear, вспомогательные таблицы, language catalog
-- **Merc gear:** редактор пяти `GEARKIT` (item pickers, quantity/status, price modifiers, kit name), base + overlay; без нормализации 4-vs-5 kits и без потери полей.
-- **Метаданные legacy-таблиц:** 19 shopkeeper inventory и `AdditionalDealer_*` (общая форма), 14 enemy/militia gun/item choices, 6 enemy ammo/drops, IMP choices, `Sounds`/`BurstSounds`; keys, hints, relations; чистка устаревших mapping-ов. `CONTROL`-часть shopkeeper-файлов сохраняется как есть, отдельного UI нет (в legacy его не было).
-- **Item workspace:** обратная вкладка `Items → shopkeeper inventory` с количеством у дилеров.
-- **Локализация:** коды `de/pl/fr/it/nl/zh` с overlay-префиксами и автодискавери; `Russian.AmmoStrings` и другие оверлеи правятся через overlay. В v4/v5 реально есть только `ru` — новые файлы не создаются.
-- **Тесты/acceptance:** nested merc gear round-trip, метаданные на v4/v5, вспомогательные таблицы без ложных предупреждений; все пять комплектов редактируются, shopkeeper/enemy/militia/IMP/sounds открываются с типами, ключами и item pickers; значения не нормализуются.
+### M20 — Merc gear, вспомогательные таблицы, language catalog — выполнен
+- **Merc gear:** `MercGearWorkspaceViewModel`/`MercGearWorkspaceView` открываются вместо generic grid для `Inventory.MercStartingGear`: список наёмников с поиском, пять `GEARKIT` как вкладки, item pickers с фильтрами класса, status/quantity/drop, `mPriceMod`/`mAbsolutePrice`, kit name пишется в overlay при выбранном языке. Правки адресуют occurrence `GEARKIT` через `TableRecord`/`TableWorkspace`, делят один undo/save и не нормализуют sparse-поля.
+- **Метаданные (миграция 0008):** 103 новые вспомогательные таблицы (20 choice/drop-файлов, 80 dealer inventory, `NPCInventory.Merchants`, `Sounds`/`BurstSounds`) плюс существующая `Inventory.MercStartingGear`; scalar/positional keys, hints, 936 новых relations (item pickers, drop lookups, 80 dealer references, 84 reverse) и 6 языковых кодов. Удалены 3 prototype-only mapping-а без файлов в v4/v5. `CONTROL`-часть shopkeeper-файлов сохраняется как есть, отдельного UI нет.
+- **Item workspace:** reverse-связи загружаются как optional editable members; вкладка «Торговцы» показывает dealer rows выбранного предмета и правит `ubOptimalNumber`; rename/delete предмета обновляет/удаляет stock rows; отсутствующие reverse-файлы не порождают warnings.
+- **Sounds:** text-only записи через виртуальное поле `Text` и positional keys, без добавления дочерних элементов.
+- **Ограничения:** при редактировании отсутствующего у overlay комплекта positional key дополняется пустыми `GEARKIT`; duplicate `uiIndex` в `AdditionalDealer_43_Inventory` репортится, но не переписывается.
+- **Тесты/acceptance:** все пять комплектов и overlay kit names на фикстурах и реальных v4/v5; 104 вспомогательные таблицы открываются с типами, ключами и без ложных предупреждений; item set с 80 dealer inventory грузится и сохраняет только изменённый dealer-файл; sounds round-trip.
 
 ### M21 — Multi-dataset и cross-dataset copy/merge
 - **Multi-dataset:** список `DataDirectories`, переключение активного датасета без перезапуска, кэш сессий по каталогу, вкладки с ключом `(datasetPath, tableName)`, Save All по всем вкладкам, recent directories.
@@ -110,7 +111,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - сервисные/вычисляемые настройки (`AP_Maximum`, `Hide_Nothing_Items`) заменяются отображением, поиском и perf-гейтами;
 - Cities/facilities, value-level compare, lookup management и packaging — M24–M27. Undo/redo, оверлеи, структурное сравнение и валидация уже сильнее legacy.
 
-**Маркеры:** **M19 — item-workflow parity (достигнут):** Items + все 1:1/1:N sub-tables, item pickers, nested modifiers, локализованные поля, изображения, item-workflow (shopkeeper-вкладка — M20). **M23 — full functional parity:** все рабочие функции legacy, включая merc gear, shopkeeper/enemy/militia/IMP/sounds, multi-dataset/copy, фильтры/выделение/layout.
+**Маркеры:** **M19 — item-workflow parity (достигнут):** Items + все 1:1/1:N sub-tables, item pickers, nested modifiers, локализованные поля, изображения, item-workflow. **M20 — auxiliary parity (достигнут):** merc gear, shopkeeper-вкладка, 104 вспомогательные таблицы, 7 языков. **M23 — full functional parity:** все рабочие функции legacy, включая multi-dataset/copy, фильтры/выделение/layout.
 
 ### Сводная матрица паритета
 
@@ -120,10 +121,10 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Grid: sort/search/chooser/bulk/add/delete | частично; нет фильтров и multi-select | M22 |
 | Item master-detail и sub-tables | реализованы в item workspace, включая nested/list | M19 |
 | Main-table pickers (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`) | searchable pickers, имена, переход, unknown raw | M18 |
-| Merc gear | таблица открывается, `GEARKIT` read-only | M20 |
-| Shopkeeper/enemy/militia/IMP/sounds | файлы видны, метаданных нет | M20 |
-| Lookup-таблицы | редактируются generic grid | M20 / M26 |
-| Локализация | overlays сильнее legacy; настроен только `ru` | M20 |
+| Merc gear | редактор пяти комплектов, item pickers, base + overlay | выполнен (M20) |
+| Shopkeeper/enemy/militia/IMP/sounds | 104 таблицы с типами, ключами, pickers и shopkeeper-вкладкой | выполнен (M20) |
+| Lookup-таблицы | редактируются generic grid; метаданные auxiliary-таблиц | M20; CRUD — M26 |
+| Локализация | 7 языковых кодов с autodiscovery; в v4/v5 есть только `ru` | выполнен (M20) |
 | Multi-dataset и copy строк | есть только compare | M21 |
 | Item images | превью Big/Medium/Small, picker типа, миниатюры в списке | M19 |
 | Settings/layout | частично; нет settings dialog и persistence | M22 |
@@ -136,7 +137,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Фича | Причина |
 |---|---|
 | Слияние подтаблиц предметов в ITEM | item workspace даёт view-проекцию; слияние в модель хранения — риск для целостности |
-| Shopkeeper `CONTROL` UI | в legacy его не было; `Inventory` — M20, `CONTROL` сохраняется как есть |
+| Shopkeeper `CONTROL` UI | в legacy его не было; `Inventory` редактируется (M20), `CONTROL` сохраняется как есть |
 | Working-data cache | perf-гейты его не требуют; кэш рискует устаревшими данными |
 | Copy между датасетами | M21 |
 | Cities/facilities, value compare, lookup management, packaging | M24–M27 (в legacy отсутствуют) |
@@ -147,7 +148,7 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 ## Основные риски
 
 - **R1 остаточный:** неоднозначная структурная замена (несколько вставок/удалений в одном родителе) уходит в serializer и нормализует форматирование; данные при этом корректны.
-- **R6 неполные метаданные:** seed покрывает 73 таблицы против 238/239 в v4/v5; document-driven fallback работает, M20 добавляет legacy-таблицы, миграции растут итеративно.
+- **R6 неполные метаданные:** seed покрывает 173 таблицы из 238/239 в v4/v5; document-driven fallback работает, остальные legacy-таблицы добавляются по мере необходимости (M21–M23), миграции растут итеративно.
 - **R12 copy:** cross-dataset copy может затереть target; source read-only, preview, явные политики, тесты на temp-копиях.
 - **R13 многофайловое сохранение:** item workspace пишет несколько XML; per-file atomic save, ошибки агрегируются, частичное сохранение не маскируется.
 - **R14 nested/list-правки:** идут через lossless-патчер и round-trip тесты; неизменённые файлы не перезаписываются.
@@ -158,9 +159,9 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 316).
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — все тесты зелёные (сейчас 330).
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — прогон на temp-копиях, без изменений в `References/`.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests` зелёный.
 5. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с (фактические значения см. раздел M0–M10).
-6. Ручной smoke текущего состояния: v5 `Lookup/AttachmentPoint` открывается с диагностикой и без записи; v4 переключение на Russian показывает merged-значения, правка `szItemName` меняет только `Russian.Items.xml`; `Items.Items` открывается как item workspace, правка предмета и Weapon сохраняется одной кнопкой, duplicate/delete отменяются целиком; сравнение v4↔v5 экспортирует .md/.csv и не меняет файлы; отсутствующие изображения показывают код ошибки, а не ломают редактор.
+6. Ручной smoke текущего состояния: v5 `Lookup/AttachmentPoint` открывается с диагностикой и без записи; v4 переключение на Russian показывает merged-значения, правка `szItemName` меняет только `Russian.Items.xml`; `Items.Items` открывается как item workspace, правка предмета и Weapon сохраняется одной кнопкой, duplicate/delete отменяются целиком; `Inventory.MercStartingGear` открывается как merc gear workspace, правка любого из пяти комплектов и kit name в Russian сохраняется одной кнопкой; вкладка «Торговцы» показывает дилеров выбранного предмета и пишет количество только в dealer-файл; `Sounds.Sounds` редактируется как text-only таблица; сравнение v4↔v5 экспортирует .md/.csv и не меняет файлы; отсутствующие изображения показывают код ошибки, а не ломают редактор.
 7. `References/` не изменён; `bin`/`obj` в `References/JA 2 1.13 v4|v5` не появляются (в vendored `References/JA 2 1.13 Image viewer` они поставляются вместе с исходниками и не считаются нарушением).

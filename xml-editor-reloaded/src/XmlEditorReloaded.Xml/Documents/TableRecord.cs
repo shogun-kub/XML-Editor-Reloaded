@@ -118,6 +118,14 @@ public sealed class TableRecord
     public string? GetRawValue(string fieldName)
     {
         ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        if (!_element.HasElements
+            && string.Equals(fieldName, RecordFields.RecordText, StringComparison.Ordinal))
+        {
+            // Text-only records expose their text through the virtual field, matching the
+            // FieldPath overload and the document-driven schema column.
+            return _element.Value;
+        }
+
         return FindDirectChild(fieldName)?.Value;
     }
 
@@ -127,22 +135,60 @@ public sealed class TableRecord
     /// <param name="path">Field path relative to the record.</param>
     /// <returns>The raw text, or <see langword="null"/> when the path is absent.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> is null.</exception>
-    public string? GetRawValue(FieldPath path)
+    public string? GetRawValue(FieldPath path) => GetRawValue(path, occurrenceIndex: 0);
+
+    /// <summary>
+    /// Gets the raw text at a nested field path, selecting an occurrence of the first path segment.
+    /// </summary>
+    /// <param name="path">Field path relative to the record.</param>
+    /// <param name="occurrenceIndex">
+    /// Zero-based occurrence of the first path segment among same-named siblings. The remaining
+    /// segments match their first occurrence. For example, <c>GEARKIT/mPriceMod</c> with index 2 reads
+    /// the price modifier of the third gear kit.
+    /// </param>
+    /// <returns>
+    /// The raw text, or <see langword="null"/> when the path is absent or the occurrence does not exist.
+    /// For records without child elements, the virtual <see cref="RecordFields.RecordText"/> field
+    /// returns the record text.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public string? GetRawValue(FieldPath path, int occurrenceIndex)
     {
         ArgumentNullException.ThrowIfNull(path);
-        return FindPath(path)?.Value;
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        if (occurrenceIndex == 0
+            && path.Depth == 1
+            && !_element.HasElements
+            && string.Equals(path.FieldName, RecordFields.RecordText, StringComparison.Ordinal))
+        {
+            return _element.Value;
+        }
+
+        return FindPath(path, occurrenceIndex)?.Value;
     }
 
     /// <summary>
     /// Gets the record key as defined by metadata, or the first child value for document-driven tables.
     /// </summary>
-    /// <returns>The key text, or <see langword="null"/> when no key can be determined.</returns>
+    /// <returns>
+    /// The key text, or <see langword="null"/> when no key can be determined. Positional keys use the
+    /// zero-based ordinal of the record element among same-named siblings.
+    /// </returns>
     public string? GetKey()
     {
         var primary = _owner.Metadata?.RecordKey?.Primary;
         if (primary is { Kind: RecordKeyKind.Scalar, KeyField: not null })
         {
             return GetRawValue(primary.KeyField) ?? _element.Elements().FirstOrDefault()?.Value;
+        }
+
+        if (primary is { Kind: RecordKeyKind.Positional })
+        {
+            var index = _element.ElementsBeforeSelf()
+                .Count(sibling => sibling.Name == _element.Name);
+            return index.ToString(CultureInfo.InvariantCulture);
         }
 
         return _element.Elements().FirstOrDefault()?.Value;
@@ -178,10 +224,37 @@ public sealed class TableRecord
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult SetFieldValue(FieldPath path, string rawText, bool addIfMissing = false)
+    public OperationResult SetFieldValue(FieldPath path, string rawText, bool addIfMissing = false) =>
+        SetFieldValue(path, occurrenceIndex: 0, rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets the text at a field path, selecting an occurrence of the first path segment.
+    /// </summary>
+    /// <param name="path">Slash-separated field path.</param>
+    /// <param name="occurrenceIndex">
+    /// Zero-based occurrence of the first path segment among same-named siblings, for example the
+    /// second <c>GEARKIT</c> of a mercenary record. Remaining segments match their first occurrence.
+    /// </param>
+    /// <param name="rawText">Raw replacement text, preserved exactly.</param>
+    /// <param name="addIfMissing">
+    /// When <see langword="true"/>, a missing leaf is appended. A missing occurrence of the first
+    /// segment cannot be created and produces <c>key.not_found</c>.
+    /// </param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> or <paramref name="rawText"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult SetFieldValue(
+        FieldPath path,
+        int occurrenceIndex,
+        string rawText,
+        bool addIfMissing = false)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
 
         var validation = ValidateValue(path.FieldName, rawText);
         if (!validation.IsSuccess)
@@ -189,16 +262,44 @@ public sealed class TableRecord
             return validation;
         }
 
+        if (occurrenceIndex == 0
+            && path.Depth == 1
+            && !_element.HasElements
+            && string.Equals(path.FieldName, RecordFields.RecordText, StringComparison.Ordinal))
+        {
+            // The virtual text field of a text-only record, for example one <SOUND>path.wav</SOUND>,
+            // writes the record text itself. A real child element with this name cannot exist because
+            // the record has no child elements.
+            var oldText = _element.Value;
+            if (string.Equals(oldText, rawText, StringComparison.Ordinal))
+            {
+                return OperationResult.Success();
+            }
+
+            _element.Value = rawText;
+            _owner.MarkDirty();
+            _owner.ChangeTracker.Record(
+                new FieldValueChanged(OwnerKey, RecordFields.RecordText, oldText, rawText));
+            return OperationResult.Success();
+        }
+
         if (path.Depth == 1)
         {
-            var child = FindDirectChild(path.FieldName);
+            var child = occurrenceIndex == 0
+                ? FindDirectChild(path.FieldName)
+                : _element.Elements()
+                    .Where(element => string.Equals(element.Name.LocalName, path.FieldName, StringComparison.Ordinal))
+                    .Skip(occurrenceIndex)
+                    .FirstOrDefault();
             if (child is null)
             {
-                if (!addIfMissing)
+                if (!addIfMissing || occurrenceIndex > 0)
                 {
                     return OperationResult.Failure(
                         ErrorCodes.KeyNotFound,
-                        $"Field '{path.FieldName}' is not present in the record.");
+                        occurrenceIndex == 0
+                            ? $"Field '{path.FieldName}' is not present in the record."
+                            : $"Occurrence {occurrenceIndex} of field '{path.FieldName}' is not present in the record.");
                 }
 
                 child = new XElement(XName.Get(path.FieldName));
@@ -209,10 +310,10 @@ public sealed class TableRecord
                 return OperationResult.Success();
             }
 
-            return SetElementValue(child, path, rawText);
+            return SetElementValue(child, path, rawText, occurrenceIndex);
         }
 
-        var element = FindPath(path);
+        var element = FindPath(path, occurrenceIndex);
         if (element is null)
         {
             if (!addIfMissing)
@@ -222,14 +323,22 @@ public sealed class TableRecord
                     $"Field path '{path.Text}' is not present in the record.");
             }
 
-            element = CreatePath(path);
+            element = CreatePath(path, occurrenceIndex);
+            if (element is null)
+            {
+                return OperationResult.Failure(
+                    ErrorCodes.KeyNotFound,
+                    $"Occurrence {occurrenceIndex} of '{path.Segments[0]}' is not present in the record.");
+            }
+
             element.Value = rawText;
             _owner.MarkDirty();
-            _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, path.Text, null, rawText));
+            _owner.ChangeTracker.Record(
+                new FieldValueChanged(OwnerKey, FormatChangePath(path, occurrenceIndex, element), null, rawText));
             return OperationResult.Success();
         }
 
-        return SetElementValue(element, path, rawText);
+        return SetElementValue(element, path, rawText, occurrenceIndex);
     }
 
     /// <summary>
@@ -377,7 +486,11 @@ public sealed class TableRecord
 
     private string OwnerKey => GetKey() ?? string.Empty;
 
-    private OperationResult SetElementValue(XElement element, FieldPath path, string rawText)
+    private OperationResult SetElementValue(
+        XElement element,
+        FieldPath path,
+        string rawText,
+        int occurrenceIndex = 0)
     {
         if (element.HasElements)
         {
@@ -394,8 +507,48 @@ public sealed class TableRecord
 
         element.Value = rawText;
         _owner.MarkDirty();
-        _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, path.Text, oldValue, rawText));
+        _owner.ChangeTracker.Record(
+            new FieldValueChanged(
+                OwnerKey,
+                FormatChangePath(path, occurrenceIndex, element),
+                oldValue,
+                rawText));
         return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Formats the field path of a change so edits of different repeated occurrences stay distinct in
+    /// the change journal, for example <c>GEARKIT[2]/mPriceMod</c>.
+    /// </summary>
+    private static string FormatChangePath(FieldPath path, int occurrenceIndex, XElement? element)
+    {
+        if (occurrenceIndex <= 0 || element is null)
+        {
+            return path.Text;
+        }
+
+        // The occurrence of the first segment is the ancestor at the matching depth, not necessarily
+        // the edited leaf itself.
+        var occurrence = element;
+        for (var level = 1; level < path.Depth && occurrence.Parent is not null; level++)
+        {
+            occurrence = occurrence.Parent;
+        }
+
+        if (occurrence.Parent is null)
+        {
+            return path.Text;
+        }
+
+        var actualIndex = occurrence.Parent
+            .Elements()
+            .Where(sibling => string.Equals(
+                sibling.Name.LocalName,
+                occurrence.Name.LocalName,
+                StringComparison.Ordinal))
+            .TakeWhile(sibling => !ReferenceEquals(sibling, occurrence))
+            .Count();
+        return $"{path.Segments[0]}[{actualIndex}]" + path.Text[path.Segments[0].Length..];
     }
 
     private OperationResult ValidateValue(string fieldName, string rawText)
@@ -447,12 +600,21 @@ public sealed class TableRecord
     private XElement? FindDirectChild(string fieldName) =>
         _element.Elements().FirstOrDefault(element => string.Equals(element.Name.LocalName, fieldName, StringComparison.Ordinal));
 
-    private XElement? FindPath(FieldPath path)
+    private XElement? FindPath(FieldPath path) => FindPath(path, occurrenceIndex: 0);
+
+    private XElement? FindPath(FieldPath path, int occurrenceIndex)
     {
         XElement? current = _element;
-        foreach (var segment in path.Segments)
+        for (var index = 0; index < path.Segments.Count; index++)
         {
-            current = current?.Elements().FirstOrDefault(element => string.Equals(element.Name.LocalName, segment, StringComparison.Ordinal));
+            var segment = path.Segments[index];
+            current = index == 0
+                ? current?.Elements()
+                    .Where(element => string.Equals(element.Name.LocalName, segment, StringComparison.Ordinal))
+                    .Skip(occurrenceIndex)
+                    .FirstOrDefault()
+                : current?.Elements()
+                    .FirstOrDefault(element => string.Equals(element.Name.LocalName, segment, StringComparison.Ordinal));
             if (current is null)
             {
                 return null;
@@ -464,14 +626,28 @@ public sealed class TableRecord
 
     /// <summary>
     /// Creates a missing field path, reusing existing elements and appending new ones in path order.
+    /// The first segment is resolved to the requested occurrence; a missing occurrence is not created.
     /// </summary>
     /// <param name="path">Missing path to create.</param>
-    /// <returns>The leaf element of the created path.</returns>
-    private XElement CreatePath(FieldPath path)
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment.</param>
+    /// <returns>The leaf element of the created path, or <see langword="null"/> when the occurrence is absent.</returns>
+    private XElement? CreatePath(FieldPath path, int occurrenceIndex = 0)
     {
-        var current = _element;
-        foreach (var segment in path.Segments)
+        var current = occurrenceIndex == 0
+            ? _element
+            : _element.Elements()
+                .Where(element => string.Equals(element.Name.LocalName, path.Segments[0], StringComparison.Ordinal))
+                .Skip(occurrenceIndex)
+                .FirstOrDefault();
+        if (current is null)
         {
+            return null;
+        }
+
+        var start = occurrenceIndex == 0 ? 0 : 1;
+        for (var index = start; index < path.Segments.Count; index++)
+        {
+            var segment = path.Segments[index];
             var child = current.Elements()
                 .FirstOrDefault(element => string.Equals(element.Name.LocalName, segment, StringComparison.Ordinal));
             if (child is null)

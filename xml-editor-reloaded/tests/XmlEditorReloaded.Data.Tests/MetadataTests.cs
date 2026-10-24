@@ -11,7 +11,8 @@ namespace XmlEditorReloaded.Data.Tests;
 public class MetadataTests
 {
     /// <summary>
-    /// A fresh database migrates, seeds 73 tables, and exposes keys, list fields, translatable paths, and languages.
+    /// A fresh database migrates, seeds the mapped and auxiliary tables, and exposes keys, list fields,
+    /// translatable paths, and languages.
     /// </summary>
     [Fact]
     public async Task MigrateAndRead_MetadataIsAvailable()
@@ -23,7 +24,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(7, migration.Data);
+        Assert.Equal(8, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -93,9 +94,71 @@ public class MetadataTests
 
         var languages = await provider.GetLanguagesAsync();
         Assert.True(languages.IsSuccess, languages.ErrorText);
-        var language = Assert.Single(languages.Data!);
-        Assert.Equal("ru", language.Code);
-        Assert.Equal("Russian", language.OverlayPrefix);
+        Assert.Equal(7, languages.Data!.Count);
+        var russian = languages.Data[0];
+        Assert.Equal("ru", russian.Code);
+        Assert.Equal("Russian", russian.OverlayPrefix);
+        Assert.Equal(
+            new[] { "de", "pl", "fr", "it", "nl", "zh" },
+            languages.Data.Skip(1).Select(static language => language.Code));
+    }
+
+    /// <summary>
+    /// Auxiliary M20 tables declare their real roots, record elements, keys, hints, and item pickers,
+    /// and prototype-only mappings without files are absent.
+    /// </summary>
+    [Fact]
+    public async Task AuxiliaryTables_DeclareKeysHintsAndLanguages()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var gear = await provider.GetTableAsync(TableName.Parse("Inventory.MercStartingGear"));
+        Assert.True(gear.IsSuccess, gear.ErrorText);
+        Assert.True(gear.Data!.TryGetColumnHint("mHelmet", out var helmetHint));
+        Assert.Equal(ColumnDataType.Integer, helmetHint!.DataType);
+        Assert.True(gear.Data.TryGetColumnHint("mGearKitName", out var kitNameHint));
+        Assert.Equal(ColumnDataType.String, kitNameHint!.DataType);
+        Assert.Contains("GEARKIT/mGearKitName", gear.Data.TranslatableFieldPaths);
+
+        var merchant = await provider.GetTableAsync(TableName.Parse("NPCInventory.Merchants"));
+        Assert.True(merchant.IsSuccess, merchant.ErrorText);
+        Assert.Equal("MERCHANTSLIST", merchant.Data!.XmlRoot);
+        Assert.Equal("MERCHANT", merchant.Data.RecordElement);
+        Assert.Equal("uiIndex", merchant.Data.RecordKey!.Primary.KeyField);
+        Assert.True(merchant.Data.TryGetColumnHint("uiFlags", out var flagsHint));
+        Assert.Equal(ColumnDataType.Flags, flagsHint!.DataType);
+        Assert.True(merchant.Data.TryGetColumnHint("dBuyModifier", out var buyHint));
+        Assert.Equal(ColumnDataType.Decimal, buyHint!.DataType);
+
+        var dealer = await provider.GetTableAsync(TableName.Parse("NPCInventory.AdditionalDealer_60_Inventory"));
+        Assert.True(dealer.IsSuccess, dealer.ErrorText);
+        Assert.Equal("INVENTORYLIST", dealer.Data!.XmlRoot);
+        Assert.Equal("INVENTORY", dealer.Data.RecordElement);
+        Assert.Equal("uiIndex", dealer.Data.RecordKey!.Primary.KeyField);
+        Assert.True(dealer.Data.TryGetColumnHint("sItemIndex", out var itemHint));
+        Assert.Equal(ColumnDataType.Integer, itemHint!.DataType);
+        Assert.True(dealer.Data.TryGetColumnHint("ubOptimalNumber", out var quantityHint));
+        Assert.Equal(ColumnDataType.Integer, quantityHint!.DataType);
+
+        var sounds = await provider.GetTableAsync(TableName.Parse("Sounds.Sounds"));
+        Assert.True(sounds.IsSuccess, sounds.ErrorText);
+        Assert.Equal("SOUNDLIST", sounds.Data!.XmlRoot);
+        Assert.Equal("SOUND", sounds.Data.RecordElement);
+        Assert.Equal(RecordKeyKind.Positional, sounds.Data.RecordKey!.Primary.Kind);
+        Assert.Null(sounds.Data.RecordKey.Primary.KeyField);
+
+        var choices = await provider.GetTableAsync(TableName.Parse("Inventory.ItemChoices_Militia_Green"));
+        Assert.True(choices.IsSuccess, choices.ErrorText);
+        Assert.Equal("ENEMYITEMCHOICESLIST", choices.Data!.XmlRoot);
+        Assert.Equal("ENEMYITEMCHOICES", choices.Data.RecordElement);
+        Assert.Equal("uiIndex", choices.Data.RecordKey!.Primary.KeyField);
+
+        var removed = await provider.GetTableAsync(TableName.Parse("Items.Keys"));
+        Assert.False(removed.IsSuccess);
+        Assert.Equal(ErrorCodes.MetadataNotFound, removed.ErrorCode);
     }
 
     /// <summary>

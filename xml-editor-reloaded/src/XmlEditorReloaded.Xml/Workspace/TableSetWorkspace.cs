@@ -32,10 +32,11 @@ public sealed record TableDependentDeletion(
 /// independently with per-file atomic replaces.
 /// </summary>
 /// <remarks>
-/// Only <see cref="TableRelationKind.SubTable"/> and <see cref="TableRelationKind.ChildRows"/> relations of
-/// the primary table become members. Reference and reverse relations stay read-only lookups. A missing or
-/// malformed related file is reported through <see cref="Warnings"/> and never prevents the primary table
-/// from opening.
+/// <see cref="TableRelationKind.SubTable"/> and <see cref="TableRelationKind.ChildRows"/> relations of the
+/// primary table always become members; <see cref="TableRelationKind.Reverse"/> targets become members when
+/// the caller asks for them, for example to edit dealer stock from an item workspace. Reference relations
+/// stay read-only lookups. A missing or malformed related file is reported through <see cref="Warnings"/>
+/// and never prevents the primary table from opening.
 /// </remarks>
 public sealed class TableSetWorkspace
 {
@@ -105,6 +106,11 @@ public sealed class TableSetWorkspace
     /// <param name="metadataProvider">Metadata provider for table definitions and relations.</param>
     /// <param name="tableDataDirectory">Absolute <c>TableData</c> directory of the data set.</param>
     /// <param name="languageCode">Language overlay to load for tables that provide it, or <see langword="null"/>.</param>
+    /// <param name="includeReverseRelations">
+    /// When <see langword="true"/>, targets of reverse relations are loaded as editable members too,
+    /// unless the same table is already loaded through a 1:N relation. The item workspace uses this
+    /// to show and edit dealer inventories that reference the selected item.
+    /// </param>
     /// <param name="cancellationToken">Token to cancel the load.</param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the set. On failure,
@@ -119,6 +125,7 @@ public sealed class TableSetWorkspace
         ITableMetadataProvider metadataProvider,
         string tableDataDirectory,
         string? languageCode = null,
+        bool includeReverseRelations = false,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(primaryDescriptor);
@@ -203,20 +210,35 @@ public sealed class TableSetWorkspace
             foreach (var relation in relationsResult.Data!)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (relation.Kind is not (TableRelationKind.SubTable or TableRelationKind.ChildRows))
+                var isReverseMember = includeReverseRelations
+                    && relation.Kind == TableRelationKind.Reverse;
+                if (relation.Kind is not (TableRelationKind.SubTable or TableRelationKind.ChildRows)
+                    && !isReverseMember)
                 {
                     continue;
                 }
 
                 if (loaded.TryGetValue(relation.TargetTable, out var alreadyLoaded))
                 {
-                    members.Add(new TableSetMember(relation, alreadyLoaded));
+                    // Reverse views of tables that are already loaded through a 1:N relation add no
+                    // editable member; the child editor already owns the same workspace.
+                    if (!isReverseMember)
+                    {
+                        members.Add(new TableSetMember(relation, alreadyLoaded));
+                    }
+
                     continue;
                 }
 
                 if (!descriptors.TryGetValue(relation.TargetTable, out var descriptor))
                 {
-                    warnings.Add($"Related table '{relation.TargetTable}' was not found in '{tableDataDirectory}'.");
+                    // Reverse targets are optional views: dealer inventories may legitimately be absent
+                    // from a minimal install, and one warning per missing dealer would flood the UI.
+                    if (!isReverseMember)
+                    {
+                        warnings.Add($"Related table '{relation.TargetTable}' was not found in '{tableDataDirectory}'.");
+                    }
+
                     continue;
                 }
 
@@ -383,7 +405,7 @@ public sealed class TableSetWorkspace
     {
         ArgumentNullException.ThrowIfNull(recordKey);
         var result = new List<TableDependentDeletion>();
-        foreach (var relation in GetKeyedRelations())
+        foreach (var relation in GetKeyedRelations(includeReverse: true))
         {
             var workspace = GetWorkspace(relation.TargetTable);
             if (workspace is null)
@@ -507,7 +529,7 @@ public sealed class TableSetWorkspace
         }
 
         var transaction = new TableEditTransaction();
-        foreach (var relation in GetKeyedRelations())
+        foreach (var relation in GetKeyedRelations(includeReverse: true))
         {
             var workspace = GetWorkspace(relation.TargetTable);
             if (workspace is null)
@@ -595,7 +617,7 @@ public sealed class TableSetWorkspace
         primaryState.CompleteAfter(primaryRecord.Element);
         transaction.Add(primaryState);
 
-        foreach (var relation in GetKeyedRelations())
+        foreach (var relation in GetKeyedRelations(includeReverse: true))
         {
             var workspace = GetWorkspace(relation.TargetTable);
             if (workspace is null)
@@ -665,7 +687,7 @@ public sealed class TableSetWorkspace
         transaction.Add(firstState);
         transaction.Add(secondState);
 
-        foreach (var relation in GetKeyedRelations())
+        foreach (var relation in GetKeyedRelations(includeReverse: true))
         {
             var workspace = GetWorkspace(relation.TargetTable);
             if (workspace is null)
@@ -798,7 +820,7 @@ public sealed class TableSetWorkspace
             ? language
             : null;
 
-    private IEnumerable<TableRelation> GetKeyedRelations()
+    private IEnumerable<TableRelation> GetKeyedRelations(bool includeReverse = false)
     {
         var keyField = Primary.Metadata?.RecordKey?.Primary.KeyField;
         if (string.IsNullOrEmpty(keyField))
@@ -809,7 +831,8 @@ public sealed class TableSetWorkspace
         return _members
             .Select(static member => member.Relation)
             .Where(relation =>
-                relation.Kind is TableRelationKind.SubTable or TableRelationKind.ChildRows
+                (relation.Kind is TableRelationKind.SubTable or TableRelationKind.ChildRows
+                    || (includeReverse && relation.Kind == TableRelationKind.Reverse))
                 && string.Equals(relation.SourceField, keyField, StringComparison.Ordinal));
     }
 

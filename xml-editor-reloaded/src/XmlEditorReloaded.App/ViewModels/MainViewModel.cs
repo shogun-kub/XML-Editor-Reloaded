@@ -16,6 +16,7 @@ namespace XmlEditorReloaded.App.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private static readonly TableName ItemsTableName = TableName.Parse("Items.Items");
+    private static readonly TableName MercGearTableName = TableName.Parse("Inventory.MercStartingGear");
 
     private readonly IDataSetSessionFactory _sessionFactory;
     private readonly ITableEditorFactory _editorFactory;
@@ -298,7 +299,9 @@ public partial class MainViewModel : ObservableObject
         var language = ResolveLanguageCode(descriptor);
         IEditorTab editor = descriptor.IsMapped && tableName == ItemsTableName
             ? _editorFactory.CreateItemWorkspace(_dataSet, descriptor, language)
-            : _editorFactory.Create(_dataSet, descriptor, language);
+            : descriptor.IsMapped && tableName == MercGearTableName
+                ? _editorFactory.CreateMercGearWorkspace(_dataSet, descriptor, language)
+                : _editorFactory.Create(_dataSet, descriptor, language);
         AttachEditor(editor);
         Editors.Add(editor);
         SelectedEditor = editor;

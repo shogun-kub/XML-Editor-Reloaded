@@ -289,11 +289,36 @@ public sealed partial class TableWorkspace
         string recordKey,
         FieldPath path,
         string rawText,
+        bool addIfMissing = false) =>
+        SetValue(recordKey, path, occurrenceIndex: 0, rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets a field value at a specific occurrence of the first path segment, for example one
+    /// <c>GEARKIT</c> of a mercenary record.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="path">Field path relative to the record.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment among same-named siblings.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base leaf is appended to the record.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>,
+    /// <c>overlay.unresolvable_key</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult SetValue(
+        string recordKey,
+        FieldPath path,
+        int occurrenceIndex,
+        string rawText,
         bool addIfMissing = false)
     {
         ArgumentNullException.ThrowIfNull(recordKey);
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
 
         if (!CanEdit)
         {
@@ -303,12 +328,19 @@ public sealed partial class TableWorkspace
         var isOverlayEdit = Session is not null
             && Session.Overlay is not null
             && Session.IsTranslatable(path);
+        if (isOverlayEdit && occurrenceIndex > 0)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.OverlayUnresolvableKey,
+                $"Field '{path.Text}' is translatable; write occurrence {occurrenceIndex} through SetNestedValue with a nested record key.");
+        }
+
         var transaction = new TableEditTransaction();
         var before = isOverlayEdit
             ? CaptureOverlayState(recordKey)
             : CaptureBaseState(recordKey);
 
-        var result = SetValueCore(recordKey, path, rawText, addIfMissing);
+        var result = SetValueCore(recordKey, path, occurrenceIndex, rawText, addIfMissing);
         if (result.IsSuccess)
         {
             if (isOverlayEdit)
@@ -368,6 +400,23 @@ public sealed partial class TableWorkspace
         string rawText,
         bool addIfMissing = false) =>
         SetValue(recordKey, FieldPath.Parse(fieldPath), rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets a field value at a specific occurrence using a slash-separated field path.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="fieldPath">Slash-separated field path relative to the record.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment among same-named siblings.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base leaf is appended to the record.</param>
+    /// <returns>The result of <see cref="SetValue(string, FieldPath, int, string, bool)"/>.</returns>
+    public OperationResult SetValue(
+        string recordKey,
+        string fieldPath,
+        int occurrenceIndex,
+        string rawText,
+        bool addIfMissing = false) =>
+        SetValue(recordKey, FieldPath.Parse(fieldPath), occurrenceIndex, rawText, addIfMissing);
 
     /// <summary>
     /// Sets a nested translated field in the overlay, for example a gear-kit name.
@@ -662,18 +711,19 @@ public sealed partial class TableWorkspace
     private OperationResult SetValueCore(
         string recordKey,
         FieldPath path,
+        int occurrenceIndex,
         string rawText,
         bool addIfMissing)
     {
         if (Session is not null)
         {
-            return Session.SetValue(recordKey, path, rawText, addIfMissing);
+            return Session.SetValue(recordKey, path, occurrenceIndex, rawText, addIfMissing);
         }
 
         var record = BaseDocument.FindRecord(recordKey);
         return record is null
             ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.")
-            : record.SetFieldValue(path, rawText, addIfMissing);
+            : record.SetFieldValue(path, occurrenceIndex, rawText, addIfMissing);
     }
 
     private ElementSnapshotState? CaptureBaseState(string recordKey)

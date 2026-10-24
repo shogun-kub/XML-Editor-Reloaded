@@ -271,9 +271,57 @@ public class TableSetWorkspaceTests
         Assert.Null(set.GetWorkspace(Weapons)!.FindRecord("3"));
     }
 
+    /// <summary>
+    /// Including reverse relations makes dealer inventories editable members of an item set: quantity
+    /// edits are undoable, and renaming or deleting an item rewrites or removes the stock rows that
+    /// reference it.
+    /// </summary>
+    [Fact]
+    public async Task ReverseRelations_LoadDealerInventoriesAndTrackItemReferences()
+    {
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDealer: true);
+        var (set, _) = await LoadSetAsync(workspace, fixture, includeReverseRelations: true);
+        var dealer = TableName.Parse("NPCInventory.AlbertoInventory");
+        var stock = Assert.Single(
+            set.GetMembers(TableRelationKind.Reverse),
+            member => member.Relation.TargetTable == dealer);
+        Assert.Equal("sItemIndex", stock.Relation.TargetValueField);
+        Assert.Equal("1", stock.Workspace.FindRecord("0")!.GetRawValue("sItemIndex"));
+
+        var quantity = set.SetValue(dealer, "0", "ubOptimalNumber", "11");
+        Assert.True(quantity.IsSuccess, quantity.ErrorText);
+        Assert.Equal("11", stock.Workspace.FindRecord("0")!.GetRawValue("ubOptimalNumber"));
+        Assert.True(set.Undo().IsSuccess);
+        Assert.Equal("9", stock.Workspace.FindRecord("0")!.GetRawValue("ubOptimalNumber"));
+
+        var rename = set.RenameRecord("1", "42");
+        Assert.True(rename.IsSuccess, rename.ErrorText);
+        Assert.Equal("42", stock.Workspace.FindRecord("0")!.GetRawValue("sItemIndex"));
+        Assert.True(set.Undo().IsSuccess);
+        Assert.Equal("1", stock.Workspace.FindRecord("0")!.GetRawValue("sItemIndex"));
+
+        var dependents = Assert.Single(
+            set.DescribeDependents("1"),
+            entry => entry.Table == dealer);
+        Assert.Equal(new[] { "0", "2" }, dependents.Keys.OrderBy(static key => key, StringComparer.Ordinal));
+        Assert.True(set.DeleteRecord("1").IsSuccess);
+        Assert.Null(stock.Workspace.FindRecord("0"));
+        Assert.Null(stock.Workspace.FindRecord("2"));
+        Assert.NotNull(stock.Workspace.FindRecord("1"));
+        Assert.True(set.Undo().IsSuccess);
+        Assert.NotNull(stock.Workspace.FindRecord("0"));
+        Assert.NotNull(stock.Workspace.FindRecord("2"));
+
+        var itemBytes = await File.ReadAllBytesAsync(fixture.ItemsPath);
+        Assert.True((await set.SaveAsync()).IsSuccess);
+        Assert.Equal(itemBytes, await File.ReadAllBytesAsync(fixture.ItemsPath));
+    }
+
     private static async Task<(TableSetWorkspace Set, SqliteMetadataProvider Provider)> LoadSetAsync(
         TestWorkspace workspace,
-        Fixture fixture)
+        Fixture fixture,
+        bool includeReverseRelations = false)
     {
         var databasePath = workspace.PathOf("metadata.sqlite");
         var migration = await new DatabaseMigrator().MigrateAsync(databasePath);
@@ -287,12 +335,16 @@ public class TableSetWorkspaceTests
             descriptor,
             catalog,
             provider,
-            fixture.TableDataDirectory);
+            fixture.TableDataDirectory,
+            includeReverseRelations: includeReverseRelations);
         Assert.True(load.IsSuccess, load.ErrorText);
         return (load.Data!, provider);
     }
 
-    private static Fixture CreateFixture(TestWorkspace workspace, bool includeWeaponFor42 = false)
+    private static Fixture CreateFixture(
+        TestWorkspace workspace,
+        bool includeWeaponFor42 = false,
+        bool includeDealer = false)
     {
         var tableData = workspace.PathOf(Path.Combine("Data-1.13", "TableData"));
         var itemsDirectory = Path.Combine(tableData, "Items");
@@ -300,6 +352,30 @@ public class TableSetWorkspaceTests
         var itemsPath = Path.Combine(itemsDirectory, "Items.xml");
         var weaponPath = Path.Combine(itemsDirectory, "Weapons.xml");
         var attachmentsPath = Path.Combine(itemsDirectory, "Attachments.xml");
+        var dealerPath = Path.Combine(tableData, "NPCInventory", "AlbertoInventory.xml");
+        if (includeDealer)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(dealerPath)!);
+            File.WriteAllText(
+                dealerPath,
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><INVENTORYLIST>\r\n"
+                + "\t<INVENTORY>\r\n"
+                + "\t\t<uiIndex>0</uiIndex>\r\n"
+                + "\t\t<sItemIndex>1</sItemIndex>\r\n"
+                + "\t\t<ubOptimalNumber>9</ubOptimalNumber>\r\n"
+                + "\t</INVENTORY>\r\n"
+                + "\t<INVENTORY>\r\n"
+                + "\t\t<uiIndex>1</uiIndex>\r\n"
+                + "\t\t<sItemIndex>2</sItemIndex>\r\n"
+                + "\t\t<ubOptimalNumber>6</ubOptimalNumber>\r\n"
+                + "\t</INVENTORY>\r\n"
+                + "\t<INVENTORY>\r\n"
+                + "\t\t<uiIndex>2</uiIndex>\r\n"
+                + "\t\t<sItemIndex>1</sItemIndex>\r\n"
+                + "\t\t<ubOptimalNumber>4</ubOptimalNumber>\r\n"
+                + "\t</INVENTORY>\r\n"
+                + "</INVENTORYLIST>\r\n");
+        }
 
         File.WriteAllText(
             itemsPath,
@@ -357,12 +433,13 @@ public class TableSetWorkspaceTests
             + "\t</ATTACHMENT>\r\n"
             + "</ATTACHMENTLIST>\r\n");
 
-        return new Fixture(tableData, itemsPath, weaponPath, attachmentsPath);
+        return new Fixture(tableData, itemsPath, weaponPath, attachmentsPath, dealerPath);
     }
 
     private sealed record Fixture(
         string TableDataDirectory,
         string ItemsPath,
         string WeaponPath,
-        string AttachmentsPath);
+        string AttachmentsPath,
+        string DealerPath);
 }

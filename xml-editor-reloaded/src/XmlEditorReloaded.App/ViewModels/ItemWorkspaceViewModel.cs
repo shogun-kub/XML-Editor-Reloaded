@@ -177,6 +177,10 @@ public sealed partial class ItemWorkspaceViewModel :
         ChildTablesTabText = Strings.Get("ItemTabChildTables");
         ImagesTabText = Strings.Get("ItemTabImages");
         NestedTabText = Strings.Get("ItemTabNested");
+        ShopkeeperTabText = Strings.Get("ItemTabShopkeepers");
+        ShopkeeperDealerColumn = Strings.Get("ShopkeeperDealerColumn");
+        ShopkeeperQuantityColumn = Strings.Get("ShopkeeperQuantityColumn");
+        ShopkeeperEmptyText = Strings.Get("ShopkeeperEmptyText");
         ItemFilterLabel = Strings.Get("ItemFilterLabel");
 
         DetailImages = new[]
@@ -350,6 +354,26 @@ public sealed partial class ItemWorkspaceViewModel :
     public string NestedTabText { get; }
 
     /// <summary>
+    /// Gets the shopkeeper-inventory tab header.
+    /// </summary>
+    public string ShopkeeperTabText { get; }
+
+    /// <summary>
+    /// Gets the dealer column header of the shopkeeper list.
+    /// </summary>
+    public string ShopkeeperDealerColumn { get; }
+
+    /// <summary>
+    /// Gets the quantity column header of the shopkeeper list.
+    /// </summary>
+    public string ShopkeeperQuantityColumn { get; }
+
+    /// <summary>
+    /// Gets the note shown when no dealer stocks the selected item.
+    /// </summary>
+    public string ShopkeeperEmptyText { get; }
+
+    /// <summary>
     /// Gets the field filter label.
     /// </summary>
     public string ItemFilterLabel { get; }
@@ -388,6 +412,22 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Gets the 1:N child-table sections of the item workspace.
     /// </summary>
     public ObservableCollection<ItemChildSectionViewModel> ChildSections { get; } = new();
+
+    /// <summary>
+    /// Gets the dealer inventory rows that stock the selected item, with their quantities.
+    /// </summary>
+    public ObservableCollection<ShopkeeperEntryViewModel> ShopkeeperEntries { get; } = new();
+
+    /// <summary>
+    /// Gets a value indicating whether at least one dealer stocks the selected item.
+    /// </summary>
+    public bool HasShopkeeperEntries => ShopkeeperEntries.Count > 0;
+
+    /// <summary>
+    /// Gets the shopkeeper count text shown above the dealer list.
+    /// </summary>
+    public string ShopkeeperCountText =>
+        Strings.Format("ShopkeeperCountFormat", ShopkeeperEntries.Count);
 
     /// <summary>
     /// Gets the selectable item graphic types.
@@ -439,7 +479,11 @@ public sealed partial class ItemWorkspaceViewModel :
             }
 
             var load = await _session
-                .OpenTableSetAsync(_descriptor, _languageCode, cancellationToken)
+                .OpenTableSetAsync(
+                    _descriptor,
+                    _languageCode,
+                    includeReverseRelations: true,
+                    cancellationToken)
                 .ConfigureAwait(true);
             if (!load.IsSuccess)
             {
@@ -974,6 +1018,57 @@ public sealed partial class ItemWorkspaceViewModel :
     }
 
     /// <summary>
+    /// Applies a quantity edit from the shopkeeper tab to the dealer row that owns it.
+    /// </summary>
+    /// <param name="entry">Dealer row being edited.</param>
+    /// <param name="value">New quantity text.</param>
+    internal void SetShopkeeperQuantity(ShopkeeperEntryViewModel entry, string value)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        ArgumentNullException.ThrowIfNull(value);
+
+        if (_set is null || !IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        var member = FindReverseMember(entry.TableName);
+        var workspace = member?.Workspace;
+        if (member is null || workspace is null)
+        {
+            StatusText = Strings.Format("StatusError", ErrorCodes.MetadataNotFound);
+            return;
+        }
+
+        var displayField = DisplayFieldOf(member.Relation);
+        var wasAbsent = workspace.GetRow(entry.RowKey)?.GetValue(displayField) is null;
+        if (wasAbsent && value.Length == 0)
+        {
+            return;
+        }
+
+        var result = _set.SetValue(
+            entry.TableName,
+            entry.RowKey,
+            displayField,
+            value,
+            addIfMissing: wasAbsent);
+        if (!result.IsSuccess)
+        {
+            entry.Refresh(workspace.GetRow(entry.RowKey)?.GetValue(displayField)?.Trim() ?? string.Empty);
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        var stored = workspace.GetRow(entry.RowKey)?.GetValue(displayField)?.Trim() ?? string.Empty;
+        entry.Refresh(stored);
+        IsDirty = _set.IsDirty;
+        RefreshHistoryState();
+        StatusText = Strings.Format("EditorCellUpdated", displayField, entry.RowKey);
+    }
+
+    /// <summary>
     /// Applies a single cell edit to the item or one of its related records.
     /// </summary>
     /// <param name="row">Edited row.</param>
@@ -1227,6 +1322,8 @@ public sealed partial class ItemWorkspaceViewModel :
         ListSections.Clear();
         ChildSections.Clear();
         ValidationIssues.Clear();
+        ShopkeeperEntries.Clear();
+        NotifyShopkeeperChanged();
         _allItems.Clear();
         _allFields.Clear();
         _rowOwners.Clear();
@@ -1409,6 +1506,7 @@ public sealed partial class ItemWorkspaceViewModel :
             _rowOwners.Clear();
             CancelImageLoads();
             ClearImages();
+            RebuildShopkeeperEntries();
             return;
         }
 
@@ -1416,9 +1514,89 @@ public sealed partial class ItemWorkspaceViewModel :
         DetailHeader = BuildItemHeader(_itemRow);
         ItemClassText = ResolveClassText(_itemRow);
         RebuildSections();
+        RebuildShopkeeperEntries();
         RefreshChildSectionState();
         SyncGraphicType();
         _ = LoadImagesAsync();
+    }
+
+    /// <summary>
+    /// Rebuilds the dealer rows that stock the selected item from the reverse-related inventories.
+    /// </summary>
+    private void RebuildShopkeeperEntries()
+    {
+        ShopkeeperEntries.Clear();
+        if (_set is null || _itemRow?.Key is not { } key)
+        {
+            NotifyShopkeeperChanged();
+            return;
+        }
+
+        var entries = new List<ShopkeeperEntryViewModel>();
+        foreach (var member in _set.GetMembers(TableRelationKind.Reverse))
+        {
+            var relation = member.Relation;
+            var displayField = DisplayFieldOf(relation);
+            foreach (var row in member.Workspace.GetRows())
+            {
+                if (row.Key is null
+                    || !string.Equals(row.GetValue(relation.TargetValueField)?.Trim(), key, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                entries.Add(new ShopkeeperEntryViewModel(
+                    this,
+                    relation.TargetTable,
+                    row.Key,
+                    DealerNameOf(relation.TargetTable),
+                    row.GetValue(displayField)?.Trim() ?? string.Empty));
+            }
+        }
+
+        foreach (var entry in entries.OrderBy(
+                     static entry => entry.DealerName,
+                     StringComparer.OrdinalIgnoreCase))
+        {
+            ShopkeeperEntries.Add(entry);
+        }
+
+        NotifyShopkeeperChanged();
+    }
+
+    /// <summary>
+    /// Refreshes the displayed quantities after an edit that changed several documents at once.
+    /// </summary>
+    private void RefreshShopkeeperQuantities()
+    {
+        foreach (var entry in ShopkeeperEntries)
+        {
+            var member = FindReverseMember(entry.TableName);
+            var stored = member?.Workspace.GetRow(entry.RowKey)?.GetValue(DisplayFieldOf(member.Relation));
+            entry.Refresh(stored?.Trim() ?? string.Empty);
+        }
+    }
+
+    private TableSetMember? FindReverseMember(TableName tableName) =>
+        _set?.GetMembers(TableRelationKind.Reverse)
+            .FirstOrDefault(member => member.Relation.TargetTable == tableName);
+
+    private static string DisplayFieldOf(TableRelation relation) =>
+        relation.TargetDisplayField ?? relation.TargetValueField;
+
+    private static string DealerNameOf(TableName table)
+    {
+        var name = table.Value.Split('.').Last();
+        const string suffix = "Inventory";
+        return name.EndsWith(suffix, StringComparison.Ordinal) && name.Length > suffix.Length
+            ? name[..^suffix.Length]
+            : name;
+    }
+
+    private void NotifyShopkeeperChanged()
+    {
+        OnPropertyChanged(nameof(HasShopkeeperEntries));
+        OnPropertyChanged(nameof(ShopkeeperCountText));
     }
 
     private void RebuildSections()
@@ -1813,6 +1991,8 @@ public sealed partial class ItemWorkspaceViewModel :
             section.RefreshCount();
         }
 
+        RefreshShopkeeperQuantities();
+
         if (_itemRow?.Key is { } key && _set.Primary.FindRecord(key) is null)
         {
             RebuildItemList(null);
@@ -1851,6 +2031,7 @@ public sealed partial class ItemWorkspaceViewModel :
 
             RebuildItemList(selectedKey);
             RebuildSections();
+            RebuildShopkeeperEntries();
             RefreshChildSectionState();
             _ = LoadImagesAsync();
             RefreshHistoryState();
@@ -2162,6 +2343,8 @@ public sealed partial class ItemWorkspaceViewModel :
         SubTableSections.Clear();
         ListSections.Clear();
         ValidationIssues.Clear();
+        ShopkeeperEntries.Clear();
+        NotifyShopkeeperChanged();
         _allFields.Clear();
     }
 }

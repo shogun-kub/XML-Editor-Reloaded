@@ -1036,11 +1036,12 @@ public class TableEditorViewModelTests
         using var withOverlay = new TestWorkspace();
         var (existingEditor, _, _, _, _) = await CreateEditorAsync(withOverlay);
         Assert.False(existingEditor.IsTranslationMode);
-        Assert.Equal(2, existingEditor.LanguageOptions.Count);
+        Assert.Equal(8, existingEditor.LanguageOptions.Count);
         var existingRussian = Assert.Single(existingEditor.LanguageOptions, option => option.Code == "ru");
         Assert.True(existingRussian.HasOverlay);
         Assert.Equal("Russian", existingRussian.DisplayText);
         Assert.Null(existingEditor.LanguageOptions[0].Language);
+        Assert.Contains(existingEditor.LanguageOptions, option => option.Code == "de" && !option.HasOverlay);
 
         using var withoutOverlay = new TestWorkspace();
         var (missingEditor, _, _, _, _) = await CreateEditorAsync(withoutOverlay, includeOverlay: false);

@@ -70,7 +70,14 @@ public sealed class TableRelationResolver : ITableRelationResolver
                 $"Target table '{relation.TargetTable}' was not found in '{_tableDataDirectory}'.");
         }
 
-        var key = new TargetCacheKey(relation.TargetTable, languageCode);
+        var key = new TargetCacheKey(
+            relation.TargetTable,
+            languageCode,
+            relation.TargetValueField,
+            relation.TargetDisplayField,
+            relation.Filter?.Field,
+            relation.Filter?.Operator,
+            relation.Filter?.Value);
         var stamp = BuildStamp(descriptor, languageCode);
         lock (_cacheLock)
         {
@@ -306,7 +313,14 @@ public sealed class TableRelationResolver : ITableRelationResolver
         }
     }
 
-    private readonly record struct TargetCacheKey(TableName TableName, string? LanguageCode);
+    private readonly record struct TargetCacheKey(
+        TableName TableName,
+        string? LanguageCode,
+        string TargetValueField,
+        string? TargetDisplayField,
+        string? FilterField,
+        RelationFilterOperator? FilterOperator,
+        string? FilterValue);
 
     private readonly record struct TargetCacheEntry(string Stamp, RelationTarget Target);
 }

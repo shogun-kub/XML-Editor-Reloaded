@@ -432,6 +432,59 @@
                         </TabControl>
                     </TabItem>
 
+                    <TabItem Header="{Binding ShopkeeperTabText}">
+                        <Grid Margin="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0"
+                                       Margin="0,0,0,6"
+                                       Foreground="#FF666666"
+                                       Text="{Binding ShopkeeperCountText}" />
+                            <Grid Grid.Row="1" Margin="0,0,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="120" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontWeight="SemiBold"
+                                           Text="{Binding ShopkeeperDealerColumn}" />
+                                <TextBlock Grid.Column="1"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding ShopkeeperQuantityColumn}" />
+                            </Grid>
+                            <ScrollViewer Grid.Row="2"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <ItemsControl ItemsSource="{Binding ShopkeeperEntries}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="120" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Text="{Binding DealerName}" />
+                                                <TextBox Grid.Column="1"
+                                                         Margin="8,0,0,0"
+                                                         Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock Grid.Row="2"
+                                       VerticalAlignment="Top"
+                                       Foreground="#FF777777"
+                                       TextWrapping="Wrap"
+                                       Text="{Binding ShopkeeperEmptyText}"
+                                       Visibility="{Binding HasShopkeeperEntries, Converter={StaticResource InverseBoolToVisibility}}" />
+                        </Grid>
+                    </TabItem>
+
                     <TabItem Header="{Binding NestedTabText}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
