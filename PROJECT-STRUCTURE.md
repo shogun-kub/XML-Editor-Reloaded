@@ -12,6 +12,10 @@ JA2_1.13 Tools/
 ├── PLAN.md                          # Roadmap and current status
 ├── PROJECT-STRUCTURE.md             # This document
 ├── M14.5-METADATA-REPORT.md         # Metadata verification report
+├── M22C-COMPOSITE-KEYS-PLAN.md      # Compound record keys plan
+├── M23A-PARITY-AUDIT-PLAN.md        # Parity audit plan, substeps and agent protocol
+├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
+├── M23A-PARITY/                     # Parity audit sections and inventories
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── References/                      # Read-only reference projects and game data (not in git)
 └── xml-editor-reloaded/             # Solution root — all project code
@@ -125,4 +129,7 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 - `PLAN.md` — roadmap, current status and verification commands.
 - `M14.5-METADATA-REPORT.md` — how the metadata seed was verified.
 - `M22C-COMPOSITE-KEYS-PLAN.md` — implementation plan for compound record keys.
+- `M23A-PARITY-AUDIT-PLAN.md` — M23a substeps, section format and subagent protocol.
+- `LEGACY-PARITY-REPORT.md` — legacy parity matrix and gap register (M23a).
+- `M23A-PARITY/` — per-area audit sections and inventories used to build the report.
 - `REFERENCE-PROJECTS-STRUCTURE.md` — contents and roles of the read-only `References/` folder.
