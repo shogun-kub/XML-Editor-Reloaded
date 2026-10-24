@@ -474,4 +474,109 @@
   <data name="TranslationIssue.UnresolvableKey" xml:space="preserve">
     <value>Неразрешимый ключ</value>
   </data>
+  <data name="EditorUndoText" xml:space="preserve">
+    <value>Отменить</value>
+  </data>
+  <data name="EditorRedoText" xml:space="preserve">
+    <value>Повторить</value>
+  </data>
+  <data name="EditorUndoButtonTooltip" xml:space="preserve">
+    <value>Отменить последнее изменение (Ctrl+Z)</value>
+  </data>
+  <data name="EditorRedoButtonTooltip" xml:space="preserve">
+    <value>Повторить отменённое изменение (Ctrl+Y)</value>
+  </data>
+  <data name="EditorUndone" xml:space="preserve">
+    <value>Последнее изменение отменено.</value>
+  </data>
+  <data name="EditorRedone" xml:space="preserve">
+    <value>Изменение повторено.</value>
+  </data>
+  <data name="EditorBulkEditText" xml:space="preserve">
+    <value>Массовая правка…</value>
+  </data>
+  <data name="EditorBulkEditTooltip" xml:space="preserve">
+    <value>Изменить одну колонку во всех строках текущего вида</value>
+  </data>
+  <data name="EditorBulkNoRows" xml:space="preserve">
+    <value>В текущем виде нет строк.</value>
+  </data>
+  <data name="EditorBulkNoColumns" xml:space="preserve">
+    <value>В этой таблице нет редактируемых скалярных колонок.</value>
+  </data>
+  <data name="EditorBulkAppliedFormat" xml:space="preserve">
+    <value>Массовая правка применена: {0} строк, поле {1}: {2}</value>
+  </data>
+  <data name="BulkEditTitleFormat" xml:space="preserve">
+    <value>Массовая правка — {0}</value>
+  </data>
+  <data name="BulkEditColumnLabel" xml:space="preserve">
+    <value>Колонка</value>
+  </data>
+  <data name="BulkEditOperationLabel" xml:space="preserve">
+    <value>Операция</value>
+  </data>
+  <data name="BulkEditValueLabel" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="BulkEditIncludeMissingText" xml:space="preserve">
+    <value>Создавать отсутствующие в записи поля (для арифметики считаются нулём)</value>
+  </data>
+  <data name="BulkEditIncludeMissingTooltip" xml:space="preserve">
+    <value>Если выключено, изменяются только поля, уже присутствующие в записи.</value>
+  </data>
+  <data name="BulkEditTargetFormat" xml:space="preserve">
+    <value>Строк в текущем виде: {0}</value>
+  </data>
+  <data name="BulkEditEnterValue" xml:space="preserve">
+    <value>Введите значение для предпросмотра изменений.</value>
+  </data>
+  <data name="BulkEditSummaryFormat" xml:space="preserve">
+    <value>Строк: {0}; изменится: {1}, без изменений: {2}, пропущено: {3}, ошибок: {4}.</value>
+  </data>
+  <data name="BulkEditNoChanges" xml:space="preserve">
+    <value>Ни одна строка не изменится.</value>
+  </data>
+  <data name="BulkEditKeyHeader" xml:space="preserve">
+    <value>Ключ</value>
+  </data>
+  <data name="BulkEditOldHeader" xml:space="preserve">
+    <value>Текущее</value>
+  </data>
+  <data name="BulkEditNewHeader" xml:space="preserve">
+    <value>Новое</value>
+  </data>
+  <data name="BulkEditStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="BulkEditApplyText" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="BulkEditCancelText" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="BulkEditStatusChanged" xml:space="preserve">
+    <value>Изменено</value>
+  </data>
+  <data name="BulkEditStatusUnchanged" xml:space="preserve">
+    <value>Без изменений</value>
+  </data>
+  <data name="BulkEditStatusSkipped" xml:space="preserve">
+    <value>Пропущено (нет поля)</value>
+  </data>
+  <data name="BulkEditStatusError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="BulkEditAbsentValue" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="BulkEditOperationSet" xml:space="preserve">
+    <value>Установить</value>
+  </data>
+  <data name="BulkEditOperationAdd" xml:space="preserve">
+    <value>Прибавить</value>
+  </data>
+  <data name="BulkEditOperationMultiply" xml:space="preserve">
+    <value>Умножить</value>
+  </data>
 </root>

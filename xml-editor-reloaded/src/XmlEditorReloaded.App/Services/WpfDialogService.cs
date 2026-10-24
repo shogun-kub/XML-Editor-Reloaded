@@ -1,6 +1,7 @@
 using System.IO;
 using Microsoft.Win32;
 using XmlEditorReloaded.Core.Localization;
+using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Services;
 
@@ -69,5 +70,19 @@ public sealed class WpfDialogService : IDialogService
         }
 
         window.ShowDialog();
+    }
+
+    /// <inheritdoc />
+    public BulkEditRequest? EditBulk(BulkEditContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var window = new Views.BulkEditWindow(new ViewModels.BulkEditViewModel(context));
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        return window.ShowDialog() == true ? window.Request : null;
     }
 }

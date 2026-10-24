@@ -11,6 +11,7 @@ using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
 using XmlEditorReloaded.Xml.Repository;
+using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Tests;
 
@@ -351,6 +352,8 @@ public class MainViewModelTests
 
         public void ShowTranslationReport(TranslationReport report, string title) =>
             LastTranslationReport = report;
+
+        public BulkEditRequest? EditBulk(BulkEditContext context) => null;
     }
 
     private sealed class FakeImageViewerService : IImageViewerService

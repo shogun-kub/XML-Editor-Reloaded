@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Localization;
@@ -16,7 +17,7 @@ namespace XmlEditorReloaded.Xml.Workspace;
 /// A loaded table ready for editing: the base document, an optional language overlay, the discovered
 /// schema, and the operations that route edits, row changes, saving, validation, and translation reports.
 /// </summary>
-public sealed class TableWorkspace
+public sealed partial class TableWorkspace
 {
     private readonly TableFileSaver _saver;
 
@@ -71,6 +72,21 @@ public sealed class TableWorkspace
     /// Gets the discovered schema of the table.
     /// </summary>
     public TableSchema Schema { get; }
+
+    /// <summary>
+    /// Gets the undo and redo history of record edits applied through the workspace.
+    /// </summary>
+    public TableEditHistory History { get; } = new();
+
+    /// <summary>
+    /// Gets a value indicating whether a record edit can be undone.
+    /// </summary>
+    public bool CanUndo => History.CanUndo;
+
+    /// <summary>
+    /// Gets a value indicating whether an undone record edit can be redone.
+    /// </summary>
+    public bool CanRedo => History.CanRedo;
 
     /// <summary>
     /// Gets the load status of the base document.
@@ -276,16 +292,59 @@ public sealed class TableWorkspace
             return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
         }
 
-        if (Session is not null)
+        var isOverlayEdit = Session is not null
+            && Session.Overlay is not null
+            && Session.IsTranslatable(path);
+        var transaction = new TableEditTransaction();
+        var before = isOverlayEdit
+            ? CaptureOverlayState(recordKey)
+            : CaptureBaseState(recordKey);
+
+        var result = SetValueCore(recordKey, path, rawText, addIfMissing);
+        if (result.IsSuccess)
         {
-            return Session.SetValue(recordKey, path, rawText, addIfMissing);
+            if (isOverlayEdit)
+            {
+                CompleteOverlayState(transaction, before, recordKey);
+            }
+            else
+            {
+                CompleteBaseState(transaction, before, recordKey);
+            }
+
+            History.Record(transaction);
         }
 
-        var record = BaseDocument.FindRecord(recordKey);
-        return record is null
-            ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.")
-            : record.SetFieldValue(path, rawText, addIfMissing);
+        return result;
     }
+
+    /// <summary>
+    /// Reverses the most recent edit recorded by the workspace.
+    /// </summary>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c> or <c>history.empty</c>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a recorded element is no longer attached to its document.
+    /// </exception>
+    public OperationResult Undo() => CanEdit
+        ? History.Undo()
+        : OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+
+    /// <summary>
+    /// Restores the most recently undone edit.
+    /// </summary>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c> or <c>history.empty</c>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a recorded element is no longer attached to its document.
+    /// </exception>
+    public OperationResult Redo() => CanEdit
+        ? History.Redo()
+        : OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
 
     /// <summary>
     /// Sets a field value using a slash-separated field path.
@@ -318,8 +377,21 @@ public sealed class TableWorkspace
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
 
-        return Session?.SetNestedValue(key, path, rawText)
-            ?? OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+        if (Session?.Overlay is null)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+        }
+
+        var transaction = new TableEditTransaction();
+        var before = key.PrimaryKey is null ? null : CaptureOverlayState(key.PrimaryKey);
+        var result = Session.SetNestedValue(key, path, rawText);
+        if (result.IsSuccess && key.PrimaryKey is not null)
+        {
+            CompleteOverlayState(transaction, before, key.PrimaryKey);
+            History.Record(transaction);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -336,8 +408,22 @@ public sealed class TableWorkspace
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
 
-        return Session?.SetRootValue(path, rawText)
-            ?? OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+        if (Session?.Overlay is null)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+        }
+
+        var transaction = new TableEditTransaction();
+        var firstSegment = path.Segments[0];
+        var before = CaptureOverlayRootElement(firstSegment);
+        var result = Session.SetRootValue(path, rawText);
+        if (result.IsSuccess)
+        {
+            CompleteOverlayRootElement(transaction, before, firstSegment);
+            History.Record(transaction);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -347,9 +433,25 @@ public sealed class TableWorkspace
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
     /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult<TableRecord> AddRecord() => CanEdit
-        ? BaseDocument.AddRecord()
-        : OperationResult<TableRecord>.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+    public OperationResult<TableRecord> AddRecord()
+    {
+        if (!CanEdit)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The table is not editable.");
+        }
+
+        var result = BaseDocument.AddRecord();
+        if (result.IsSuccess)
+        {
+            var transaction = new TableEditTransaction();
+            transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, result.Data!.Element));
+            History.Record(transaction);
+        }
+
+        return result;
+    }
 
     /// <summary>
     /// Duplicates a record directly after its source and assigns the next primary key.
@@ -359,9 +461,25 @@ public sealed class TableWorkspace
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the copy.
     /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult<TableRecord> DuplicateRecord(string key) => CanEdit
-        ? BaseDocument.DuplicateRecord(key)
-        : OperationResult<TableRecord>.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+    public OperationResult<TableRecord> DuplicateRecord(string key)
+    {
+        if (!CanEdit)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The table is not editable.");
+        }
+
+        var result = BaseDocument.DuplicateRecord(key);
+        if (result.IsSuccess)
+        {
+            var transaction = new TableEditTransaction();
+            transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, result.Data!.Element));
+            History.Record(transaction);
+        }
+
+        return result;
+    }
 
     /// <summary>
     /// Deletes a record and, when present, its translation record in the overlay.
@@ -378,20 +496,31 @@ public sealed class TableWorkspace
             return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
         }
 
+        var baseState = CaptureBaseState(key);
+        var overlayState = CaptureOverlayState(key);
         var deleted = BaseDocument.DeleteRecord(key);
-        if (!deleted.IsSuccess || Overlay is null || Metadata is null)
+        if (!deleted.IsSuccess)
         {
             return deleted;
         }
 
-        var overlayRecord = new OverlayKeyResolver(Metadata).FindPrimary(Overlay.Xml, key);
-        if (overlayRecord is not null)
+        baseState?.MarkRemoved();
+        if (Overlay is not null && Metadata is not null)
         {
-            overlayRecord.Remove();
-            Overlay.MarkDirty();
-            Overlay.Document.SynchronizeRecords();
+            var overlayRecord = new OverlayKeyResolver(Metadata).FindPrimary(Overlay.Xml, key);
+            if (overlayRecord is not null)
+            {
+                overlayRecord.Remove();
+                Overlay.MarkDirty();
+                Overlay.Document.SynchronizeRecords();
+                overlayState?.MarkRemoved();
+            }
         }
 
+        var transaction = new TableEditTransaction();
+        transaction.Add(baseState);
+        transaction.Add(overlayState);
+        History.Record(transaction);
         return OperationResult.Success();
     }
 
@@ -433,4 +562,160 @@ public sealed class TableWorkspace
         Metadata is not null && Overlay is not null
             ? new TranslationAnalyzer().Analyze(BaseDocument, Overlay.Document)
             : null;
+
+    private OperationResult SetValueCore(
+        string recordKey,
+        FieldPath path,
+        string rawText,
+        bool addIfMissing)
+    {
+        if (Session is not null)
+        {
+            return Session.SetValue(recordKey, path, rawText, addIfMissing);
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        return record is null
+            ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.")
+            : record.SetFieldValue(path, rawText, addIfMissing);
+    }
+
+    private ElementSnapshotState? CaptureBaseState(string recordKey)
+    {
+        var record = BaseDocument.FindRecord(recordKey);
+        return record is null ? null : ElementSnapshotState.Capture(BaseDocument, record.Element);
+    }
+
+    private ElementSnapshotState? CaptureOverlayState(string recordKey)
+    {
+        var element = FindOverlayTopLevel(recordKey);
+        return element is null || Overlay is null
+            ? null
+            : ElementSnapshotState.Capture(Overlay.Document, element);
+    }
+
+    private void CompleteBaseState(
+        TableEditTransaction transaction,
+        ElementSnapshotState? before,
+        string recordKey)
+    {
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return;
+        }
+
+        if (before is null)
+        {
+            transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, record.Element));
+        }
+        else
+        {
+            before.CompleteAfter(record.Element);
+            transaction.Add(before);
+        }
+    }
+
+    private void CompleteOverlayState(
+        TableEditTransaction transaction,
+        ElementSnapshotState? before,
+        string recordKey)
+    {
+        var element = FindOverlayTopLevel(recordKey);
+        if (Overlay is null)
+        {
+            return;
+        }
+
+        if (element is null)
+        {
+            if (before is not null)
+            {
+                before.MarkRemoved();
+                transaction.Add(before);
+            }
+
+            return;
+        }
+
+        if (before is null)
+        {
+            transaction.Add(ElementSnapshotState.CaptureInsertion(Overlay.Document, element));
+        }
+        else
+        {
+            before.CompleteAfter(element);
+            transaction.Add(before);
+        }
+    }
+
+    private XElement? FindOverlayTopLevel(string recordKey)
+    {
+        if (Overlay is null || Metadata is null)
+        {
+            return null;
+        }
+
+        var root = Overlay.Document.Xml.Root;
+        if (root is null)
+        {
+            return null;
+        }
+
+        var element = new OverlayKeyResolver(Metadata).FindPrimary(Overlay.Document.Xml, recordKey);
+        if (element is null)
+        {
+            return null;
+        }
+
+        while (element.Parent is not null && element.Parent != root)
+        {
+            element = element.Parent;
+        }
+
+        return element.Parent == root ? element : null;
+    }
+
+    private ElementSnapshotState? CaptureOverlayRootElement(string firstSegment)
+    {
+        var element = FindOverlayRootElement(firstSegment);
+        return element is null || Overlay is null
+            ? null
+            : ElementSnapshotState.Capture(Overlay.Document, element);
+    }
+
+    private void CompleteOverlayRootElement(
+        TableEditTransaction transaction,
+        ElementSnapshotState? before,
+        string firstSegment)
+    {
+        if (Overlay is null)
+        {
+            return;
+        }
+
+        var element = FindOverlayRootElement(firstSegment);
+        if (element is null)
+        {
+            return;
+        }
+
+        if (before is null)
+        {
+            transaction.Add(ElementSnapshotState.CaptureInsertion(Overlay.Document, element));
+        }
+        else
+        {
+            before.CompleteAfter(element);
+            transaction.Add(before);
+        }
+    }
+
+    private XElement? FindOverlayRootElement(string firstSegment)
+    {
+        var root = Overlay?.Document.Xml.Root;
+        return root?.Elements()
+            .FirstOrDefault(element =>
+                string.Equals(element.Name.LocalName, firstSegment, StringComparison.Ordinal));
+    }
 }

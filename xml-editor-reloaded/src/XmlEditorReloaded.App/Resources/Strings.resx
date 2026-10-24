@@ -474,4 +474,109 @@
   <data name="TranslationIssue.UnresolvableKey" xml:space="preserve">
     <value>Unresolvable key</value>
   </data>
+  <data name="EditorUndoText" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="EditorRedoText" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="EditorUndoButtonTooltip" xml:space="preserve">
+    <value>Undo the last edit (Ctrl+Z)</value>
+  </data>
+  <data name="EditorRedoButtonTooltip" xml:space="preserve">
+    <value>Redo the last undone edit (Ctrl+Y)</value>
+  </data>
+  <data name="EditorUndone" xml:space="preserve">
+    <value>Undid the last change.</value>
+  </data>
+  <data name="EditorRedone" xml:space="preserve">
+    <value>Redid the last change.</value>
+  </data>
+  <data name="EditorBulkEditText" xml:space="preserve">
+    <value>Bulk edit...</value>
+  </data>
+  <data name="EditorBulkEditTooltip" xml:space="preserve">
+    <value>Change one column across all rows in the current view</value>
+  </data>
+  <data name="EditorBulkNoRows" xml:space="preserve">
+    <value>There are no rows in the current view.</value>
+  </data>
+  <data name="EditorBulkNoColumns" xml:space="preserve">
+    <value>This table has no editable scalar columns.</value>
+  </data>
+  <data name="EditorBulkAppliedFormat" xml:space="preserve">
+    <value>Bulk edit applied to {0} row(s) in {1}: {2}</value>
+  </data>
+  <data name="BulkEditTitleFormat" xml:space="preserve">
+    <value>Bulk edit — {0}</value>
+  </data>
+  <data name="BulkEditColumnLabel" xml:space="preserve">
+    <value>Column</value>
+  </data>
+  <data name="BulkEditOperationLabel" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="BulkEditValueLabel" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="BulkEditIncludeMissingText" xml:space="preserve">
+    <value>Create fields missing in a record (treated as 0 for arithmetic)</value>
+  </data>
+  <data name="BulkEditIncludeMissingTooltip" xml:space="preserve">
+    <value>When off, only fields that already exist in a record are changed.</value>
+  </data>
+  <data name="BulkEditTargetFormat" xml:space="preserve">
+    <value>Rows in the current view: {0}</value>
+  </data>
+  <data name="BulkEditEnterValue" xml:space="preserve">
+    <value>Enter a value to preview changes.</value>
+  </data>
+  <data name="BulkEditSummaryFormat" xml:space="preserve">
+    <value>Rows: {0}; will change: {1}, unchanged: {2}, skipped: {3}, errors: {4}.</value>
+  </data>
+  <data name="BulkEditNoChanges" xml:space="preserve">
+    <value>No rows will change.</value>
+  </data>
+  <data name="BulkEditKeyHeader" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="BulkEditOldHeader" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="BulkEditNewHeader" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="BulkEditStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="BulkEditApplyText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="BulkEditCancelText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BulkEditStatusChanged" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="BulkEditStatusUnchanged" xml:space="preserve">
+    <value>Unchanged</value>
+  </data>
+  <data name="BulkEditStatusSkipped" xml:space="preserve">
+    <value>Skipped (missing)</value>
+  </data>
+  <data name="BulkEditStatusError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="BulkEditAbsentValue" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="BulkEditOperationSet" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="BulkEditOperationAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="BulkEditOperationMultiply" xml:space="preserve">
+    <value>Multiply</value>
+  </data>
 </root>

@@ -308,6 +308,8 @@ public sealed class TableDocument
 
     internal void MarkClean() => IsDirty = false;
 
+    internal void RecomputeDirty() => IsDirty = !XNode.DeepEquals(_document, OriginalXml);
+
     internal void AcceptSaved(byte[] bytes, DateTime lastWriteTimeUtc, string sha256)
     {
         OriginalBytes = bytes;

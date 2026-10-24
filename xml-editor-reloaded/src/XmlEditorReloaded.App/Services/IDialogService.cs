@@ -1,6 +1,7 @@
 namespace XmlEditorReloaded.App.Services;
 
 using XmlEditorReloaded.Core.Localization;
+using XmlEditorReloaded.Xml.Workspace;
 
 /// <summary>
 /// UI dialog abstraction used by view models.
@@ -44,4 +45,12 @@ public interface IDialogService
     /// <param name="title">Window title, including the table and language names.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="report"/> is null.</exception>
     void ShowTranslationReport(TranslationReport report, string title);
+
+    /// <summary>
+    /// Shows the bulk edit dialog with a live preview of the requested changes.
+    /// </summary>
+    /// <param name="context">Columns, target row keys, and the preview callback.</param>
+    /// <returns>The request to apply, or <see langword="null"/> when the user cancels the dialog.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is null.</exception>
+    BulkEditRequest? EditBulk(BulkEditContext context);
 }

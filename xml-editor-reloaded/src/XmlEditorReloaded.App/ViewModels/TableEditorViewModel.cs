@@ -74,6 +74,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     private bool _isEditable;
 
     [ObservableProperty]
+    private bool _canUndo;
+
+    [ObservableProperty]
+    private bool _canRedo;
+
+    [ObservableProperty]
     private bool _isValidationVisible;
 
     [ObservableProperty]
@@ -160,6 +166,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         LanguageLabel = Strings.Get("EditorLanguageLabel");
         TranslationReportText = Strings.Get("EditorTranslationReportText");
         TranslatableColumnSuffix = Strings.Get("EditorTranslatableSuffix");
+        UndoText = Strings.Get("EditorUndoText");
+        RedoText = Strings.Get("EditorRedoText");
+        UndoButtonTooltip = Strings.Get("EditorUndoButtonTooltip");
+        RedoButtonTooltip = Strings.Get("EditorRedoButtonTooltip");
+        BulkEditText = Strings.Get("EditorBulkEditText");
+        BulkEditTooltip = Strings.Get("EditorBulkEditTooltip");
     }
 
     /// <summary>
@@ -283,6 +295,36 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     public string TranslatableColumnSuffix { get; }
 
     /// <summary>
+    /// Gets the undo button text.
+    /// </summary>
+    public string UndoText { get; }
+
+    /// <summary>
+    /// Gets the redo button text.
+    /// </summary>
+    public string RedoText { get; }
+
+    /// <summary>
+    /// Gets the undo button tooltip.
+    /// </summary>
+    public string UndoButtonTooltip { get; }
+
+    /// <summary>
+    /// Gets the redo button tooltip.
+    /// </summary>
+    public string RedoButtonTooltip { get; }
+
+    /// <summary>
+    /// Gets the bulk edit button text.
+    /// </summary>
+    public string BulkEditText { get; }
+
+    /// <summary>
+    /// Gets the bulk edit button tooltip.
+    /// </summary>
+    public string BulkEditTooltip { get; }
+
+    /// <summary>
     /// Gets a value indicating whether the language selector can be used.
     /// </summary>
     public bool IsLanguageSelectorEnabled => !IsBusy && Workspace is not null;
@@ -381,6 +423,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
         finally
         {
+            RefreshHistoryState();
             IsBusy = false;
         }
     }
@@ -453,6 +496,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         IsDirty = Workspace.IsDirty;
         var key = result.Data!.GetKey();
         RebuildRows(key);
+        RefreshHistoryState();
         StatusText = Strings.Format("EditorRowAdded", key ?? string.Empty);
     }
 
@@ -483,6 +527,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         IsDirty = Workspace.IsDirty;
         var newKey = result.Data!.GetKey();
         RebuildRows(newKey);
+        RefreshHistoryState();
         StatusText = Strings.Format("EditorRowDuplicated", key, newKey ?? string.Empty);
     }
 
@@ -519,7 +564,87 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
         IsDirty = Workspace.IsDirty;
         RebuildRows(null);
+        RefreshHistoryState();
         StatusText = Strings.Format("EditorRowDeleted", key);
+    }
+
+    /// <summary>
+    /// Reverses the most recent cell, row, or bulk edit.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    public void Undo()
+    {
+        ApplyHistory(undo: true);
+    }
+
+    /// <summary>
+    /// Restores the most recently undone edit.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    public void Redo()
+    {
+        ApplyHistory(undo: false);
+    }
+
+    /// <summary>
+    /// Opens the bulk edit dialog for the rows in the current view and applies the confirmed request
+    /// as one undoable transaction.
+    /// </summary>
+    [RelayCommand]
+    public void BulkEdit()
+    {
+        if (Workspace is null || !IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        var keys = Rows
+            .Where(static row => row.Key is not null)
+            .Select(static row => row.Key!)
+            .ToArray();
+        if (keys.Length == 0)
+        {
+            StatusText = Strings.Get("EditorBulkNoRows");
+            return;
+        }
+
+        var columns = _allColumns
+            .Where(static column => !column.IsReadOnly)
+            .Select(static column => new BulkEditColumnOption(column.Name, column.TypeText, column.DataType))
+            .ToArray();
+        if (columns.Length == 0)
+        {
+            StatusText = Strings.Get("EditorBulkNoColumns");
+            return;
+        }
+
+        var context = new BulkEditContext(
+            Strings.Format("BulkEditTitleFormat", Title),
+            columns,
+            keys,
+            request => Workspace.PreviewBulk(request));
+        var request = _dialogService.EditBulk(context);
+        if (request is null)
+        {
+            return;
+        }
+
+        var result = Workspace.ApplyBulk(request);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = Workspace.IsDirty;
+        RebuildRows(SelectedRow?.Key);
+        RefreshHistoryState();
+        StatusText = Strings.Format(
+            "EditorBulkAppliedFormat",
+            result.Data!.ChangedCount,
+            result.Data.FieldName,
+            result.Data.Operand);
     }
 
     /// <summary>
@@ -616,6 +741,42 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         DetailGroups.Clear();
         ValidationIssues.Clear();
         await InitializeAsync().ConfigureAwait(true);
+    }
+
+    private void ApplyHistory(bool undo)
+    {
+        if (Workspace is null)
+        {
+            return;
+        }
+
+        var selectedKey = SelectedRow?.Key;
+        try
+        {
+            var result = undo ? Workspace.Undo() : Workspace.Redo();
+            if (!result.IsSuccess)
+            {
+                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                RefreshHistoryState();
+                return;
+            }
+
+            IsDirty = Workspace.IsDirty;
+            RebuildRows(selectedKey);
+            RefreshHistoryState();
+            StatusText = Strings.Get(undo ? "EditorUndone" : "EditorRedone");
+        }
+        catch (InvalidOperationException exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+            RefreshHistoryState();
+        }
+    }
+
+    private void RefreshHistoryState()
+    {
+        CanUndo = Workspace?.CanUndo == true;
+        CanRedo = Workspace?.CanRedo == true;
     }
 
     /// <summary>
@@ -723,6 +884,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             }
 
             IsDirty = Workspace.IsDirty;
+            RefreshHistoryState();
             StatusText = Workspace.Language is not null && column?.IsTranslatable != true
                 ? Strings.Format("EditorBaseCellUpdated", fieldName, row.Key)
                 : Strings.Format("EditorCellUpdated", fieldName, row.Key);
@@ -739,6 +901,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
     partial void OnIsDirtyChanged(bool value) =>
         DisplayName = value ? Title + " *" : Title;
+
+    partial void OnCanUndoChanged(bool value) => UndoCommand.NotifyCanExecuteChanged();
+
+    partial void OnCanRedoChanged(bool value) => RedoCommand.NotifyCanExecuteChanged();
 
     partial void OnSearchTextChanged(string value) => ApplyRowView();
 

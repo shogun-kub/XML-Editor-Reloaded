@@ -11,6 +11,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml.Repository;
+using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Tests;
 
@@ -73,6 +74,100 @@ public class TableEditorViewModelTests
         Assert.Equal(
             Path.Combine(data13, "TableData", "Items", "Items.xml"),
             descriptor.FilePath);
+    }
+
+    /// <summary>
+    /// Undo and redo restore grid values, dirty state, and command availability.
+    /// </summary>
+    [Fact]
+    public async Task UndoRedoCommands_RestoreCellAndHistoryState()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+
+        Assert.False(editor.CanUndo);
+        Assert.False(editor.CanRedo);
+
+        Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"] = "12";
+
+        Assert.True(editor.CanUndo);
+        Assert.False(editor.CanRedo);
+        Assert.True(editor.IsDirty);
+        Assert.Equal("12", Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+
+        editor.UndoCommand.Execute(null);
+
+        Assert.Equal("10", Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+        Assert.False(editor.CanUndo);
+        Assert.True(editor.CanRedo);
+        Assert.False(editor.IsDirty);
+
+        editor.RedoCommand.Execute(null);
+
+        Assert.Equal("12", Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+        Assert.True(editor.CanUndo);
+        Assert.False(editor.CanRedo);
+        Assert.True(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// The bulk command passes the current rows and editable columns to the dialog and applies the
+    /// confirmed request as one undoable transaction.
+    /// </summary>
+    [Fact]
+    public async Task BulkEditCommand_AppliesRequestAndUndoesAsOneStep()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        dialog.BulkEditHandler = context =>
+        {
+            Assert.Equal(3, context.RecordKeys.Count);
+            Assert.Contains(context.Columns, column => column.FieldName == "ubWeight");
+            Assert.DoesNotContain(context.Columns, column => column.FieldName == "uiIndex");
+            return new BulkEditRequest(
+                "ubWeight",
+                BulkEditOperation.Set,
+                "7",
+                IncludeMissingFields: false,
+                context.RecordKeys);
+        };
+
+        editor.BulkEditCommand.Execute(null);
+
+        Assert.All(editor.Rows, row => Assert.Equal("7", row["ubWeight"]));
+        Assert.True(editor.CanUndo);
+        Assert.True(editor.IsDirty);
+        Assert.Contains("7", editor.StatusText, StringComparison.Ordinal);
+
+        editor.UndoCommand.Execute(null);
+
+        Assert.Equal("0", Assert.Single(editor.Rows, row => row.Key == "0")["ubWeight"]);
+        Assert.Equal("10", Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+        Assert.Equal("2", Assert.Single(editor.Rows, row => row.Key == "2")["ubWeight"]);
+        Assert.False(editor.CanUndo);
+        Assert.False(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// Cancelling the bulk dialog leaves the table unchanged.
+    /// </summary>
+    [Fact]
+    public async Task BulkEditCommand_Cancelled_DoesNotChangeTable()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        dialog.BulkEditHandler = _ => null;
+
+        editor.BulkEditCommand.Execute(null);
+
+        Assert.All(editor.Rows, row => Assert.NotEqual("7", row["ubWeight"]));
+        Assert.False(editor.IsDirty);
+        Assert.False(editor.CanUndo);
+        Assert.NotNull(dialog.LastBulkContext);
+        Assert.Equal(3, dialog.LastBulkContext!.RecordKeys.Count);
     }
 
     /// <summary>
@@ -1060,6 +1155,10 @@ public class TableEditorViewModelTests
 
         public string? LastTranslationReportTitle { get; private set; }
 
+        public Func<BulkEditContext, BulkEditRequest?>? BulkEditHandler { get; set; }
+
+        public BulkEditContext? LastBulkContext { get; private set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
@@ -1079,6 +1178,12 @@ public class TableEditorViewModelTests
         {
             LastTranslationReport = report;
             LastTranslationReportTitle = title;
+        }
+
+        public BulkEditRequest? EditBulk(BulkEditContext context)
+        {
+            LastBulkContext = context;
+            return BulkEditHandler?.Invoke(context);
         }
     }
 }

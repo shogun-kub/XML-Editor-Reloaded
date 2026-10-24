@@ -44,7 +44,28 @@ public sealed class OverlayWriter
         OverlayDocument overlay,
         OverlayRecordKey key,
         FieldPath path,
-        string rawText)
+        string rawText) =>
+        SetValue(overlay, key, path, rawText, synchronizeRecords: true);
+
+    /// <summary>
+    /// Sets a translated field and optionally defers rebuilding the overlay record list. Bulk edits
+    /// pass <see langword="false"/> and synchronize once after the whole batch.
+    /// </summary>
+    /// <param name="overlay">Overlay to edit.</param>
+    /// <param name="key">Primary and nested record keys.</param>
+    /// <param name="path">Field path relative to the resolved nested record.</param>
+    /// <param name="rawText">Translation text to store exactly.</param>
+    /// <param name="synchronizeRecords">Whether to rebuild the overlay record list immediately.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>overlay.unresolvable_key</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    internal OperationResult SetValue(
+        OverlayDocument overlay,
+        OverlayRecordKey key,
+        FieldPath path,
+        string rawText,
+        bool synchronizeRecords)
     {
         ArgumentNullException.ThrowIfNull(overlay);
         ArgumentNullException.ThrowIfNull(key);
@@ -103,7 +124,7 @@ public sealed class OverlayWriter
         }
 
         var result = SetLeaf(overlay, record, remainingPath, rawText, key.PrimaryKey);
-        if (result.IsSuccess)
+        if (result.IsSuccess && synchronizeRecords)
         {
             overlay.Document.SynchronizeRecords();
         }

@@ -76,4 +76,28 @@ public static class ErrorCodes
 
     /// <summary>A language overlay already exists at the requested path and must not be overwritten.</summary>
     public const string OverlayExists = "overlay.exists";
+
+    /// <summary>The undo or redo stack is empty.</summary>
+    public const string HistoryEmpty = "history.empty";
+
+    /// <summary>No records were selected for a bulk operation.</summary>
+    public const string BulkNoRecords = "bulk.no_records";
+
+    /// <summary>The requested bulk column is not part of the table schema.</summary>
+    public const string BulkFieldNotFound = "bulk.field_not_found";
+
+    /// <summary>The requested bulk column is a key, list, dictionary, or nested field and cannot be edited in bulk.</summary>
+    public const string BulkFieldNotEditable = "bulk.field_not_editable";
+
+    /// <summary>The bulk operation is not supported for the column type.</summary>
+    public const string BulkUnsupportedOperation = "bulk.unsupported_operation";
+
+    /// <summary>The bulk operand is not a valid value for the column type.</summary>
+    public const string BulkInvalidOperand = "bulk.invalid_operand";
+
+    /// <summary>The bulk preview contains per-row errors and cannot be applied.</summary>
+    public const string BulkPreviewHasErrors = "bulk.preview_has_errors";
+
+    /// <summary>The bulk preview would not change any value.</summary>
+    public const string BulkNoChanges = "bulk.no_changes";
 }

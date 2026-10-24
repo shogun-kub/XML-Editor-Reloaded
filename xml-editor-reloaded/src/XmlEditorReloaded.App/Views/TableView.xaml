@@ -35,6 +35,9 @@
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="Z" Modifiers="Control" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="Y" Modifiers="Control" Command="{Binding RedoCommand}" />
+        <KeyBinding Key="Z" Modifiers="Control+Shift" Command="{Binding RedoCommand}" />
     </UserControl.InputBindings>
     <Grid Margin="8">
         <Grid.RowDefinitions>
@@ -81,6 +84,16 @@
                    Margin="0,0,0,6">
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    Content="{Binding UndoText}"
+                    Command="{Binding UndoCommand}"
+                    ToolTip="{Binding UndoButtonTooltip}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding RedoText}"
+                    Command="{Binding RedoCommand}"
+                    ToolTip="{Binding RedoButtonTooltip}" />
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
                     Content="{Binding AddRowText}"
                     Command="{Binding AddRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
@@ -90,9 +103,15 @@
                     Command="{Binding DuplicateRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
-                    Margin="0,0,12,0"
+                    Margin="0,0,6,0"
                     Content="{Binding DeleteRowText}"
                     Command="{Binding DeleteRowCommand}"
+                    IsEnabled="{Binding IsEditable}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding BulkEditText}"
+                    Command="{Binding BulkEditCommand}"
+                    ToolTip="{Binding BulkEditTooltip}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"

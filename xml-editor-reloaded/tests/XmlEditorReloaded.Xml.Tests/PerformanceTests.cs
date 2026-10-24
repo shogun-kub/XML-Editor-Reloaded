@@ -127,6 +127,150 @@ public class PerformanceTests
             $"Opening Items/Items.xml took {elapsed} ms, exceeding the {GateMilliseconds} ms gate.");
     }
 
+    /// <summary>
+    /// Previewing, applying, and undoing a bulk edit over every row of the largest table stays within
+    /// the interactive gate.
+    /// </summary>
+    [Fact]
+    public async Task BulkEdit_ItemsXml_RespondsWithinGate()
+    {
+        var corpusPath = FindCorpusFile("Items/Items.xml");
+        if (corpusPath is null)
+        {
+            return;
+        }
+
+        var metadata = CreateMetadata("Items.Items", "ITEMLIST", "ITEM", "uiIndex");
+        var descriptor = new TableDescriptor(
+            TableName.Parse("Items.Items"),
+            corpusPath,
+            "Items/Items.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata);
+        Assert.True(load.IsSuccess, load.ErrorText);
+        var table = load.Data!;
+        var keys = table.GetRows()
+            .Where(static row => row.Key is not null)
+            .Select(static row => row.Key!)
+            .ToArray();
+        var request = new BulkEditRequest(
+            "ubWeight",
+            BulkEditOperation.Set,
+            "5",
+            IncludeMissingFields: false,
+            keys);
+
+        var previewWatch = Stopwatch.StartNew();
+        var preview = table.PreviewBulk(request);
+        previewWatch.Stop();
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        Assert.True(preview.Data!.ChangedCount > 0);
+
+        var applyWatch = Stopwatch.StartNew();
+        var applied = table.ApplyBulk(request);
+        applyWatch.Stop();
+        Assert.True(applied.IsSuccess, applied.ErrorText);
+
+        var undoWatch = Stopwatch.StartNew();
+        var undone = table.Undo();
+        undoWatch.Stop();
+        Assert.True(undone.IsSuccess, undone.ErrorText);
+
+        _output.WriteLine(
+            $"Bulk edit over {keys.Length} rows of Items/Items.xml: preview {previewWatch.ElapsedMilliseconds} ms, "
+            + $"apply {applyWatch.ElapsedMilliseconds} ms, undo {undoWatch.ElapsedMilliseconds} ms.");
+        Assert.True(
+            previewWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk preview took {previewWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+        Assert.True(
+            applyWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk apply took {applyWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+        Assert.True(
+            undoWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk undo took {undoWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+    }
+
+    /// <summary>
+    /// Bulk-editing translations over every row of a real v4 overlay stays within the interactive gate.
+    /// The test is skipped when the corpus has no Russian overlay.
+    /// </summary>
+    [Fact]
+    public async Task BulkTranslation_ItemsXml_RespondsWithinGate()
+    {
+        var corpusPath = FindCorpusFile("Items/Items.xml");
+        if (corpusPath is null)
+        {
+            return;
+        }
+
+        var overlayPath = Path.Combine(
+            Path.GetDirectoryName(corpusPath)!,
+            "Russian.Items.xml");
+        if (!File.Exists(overlayPath))
+        {
+            _output.WriteLine("The corpus has no Russian.Items.xml; the bulk translation gate was skipped.");
+            return;
+        }
+
+        var metadata = new TableMetadata(
+            TableName.Parse("Items.Items"),
+            "ITEMLIST",
+            "ITEM",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
+            translatableFieldPaths: new[] { "szItemName" });
+        var language = new LanguageDescriptor("ru", "Russian", "Russian", 1);
+        var descriptor = new TableDescriptor(
+            metadata.TableName,
+            corpusPath,
+            "Items/Items.xml",
+            IsMapped: true,
+            new[] { new OverlayDescriptor(language, corpusPath, overlayPath) });
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata, language);
+        Assert.True(load.IsSuccess, load.ErrorText);
+        var table = load.Data!;
+        var keys = table.GetRows()
+            .Where(static row => row.Key is not null)
+            .Select(static row => row.Key!)
+            .ToArray();
+        var request = new BulkEditRequest(
+            "szItemName",
+            BulkEditOperation.Set,
+            "Перевод",
+            IncludeMissingFields: true,
+            keys);
+
+        var previewWatch = Stopwatch.StartNew();
+        var preview = table.PreviewBulk(request);
+        previewWatch.Stop();
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        Assert.True(preview.Data!.ChangedCount > 0);
+
+        var applyWatch = Stopwatch.StartNew();
+        var applied = table.ApplyBulk(request);
+        applyWatch.Stop();
+        Assert.True(applied.IsSuccess, applied.ErrorText);
+
+        var undoWatch = Stopwatch.StartNew();
+        var undone = table.Undo();
+        undoWatch.Stop();
+        Assert.True(undone.IsSuccess, undone.ErrorText);
+
+        _output.WriteLine(
+            $"Bulk translation over {keys.Length} rows of Items/Items.xml: preview {previewWatch.ElapsedMilliseconds} ms, "
+            + $"apply {applyWatch.ElapsedMilliseconds} ms, undo {undoWatch.ElapsedMilliseconds} ms.");
+        Assert.True(
+            previewWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk translation preview took {previewWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+        Assert.True(
+            applyWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk translation apply took {applyWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+        Assert.True(
+            undoWatch.ElapsedMilliseconds < GateMilliseconds,
+            $"Bulk translation undo took {undoWatch.ElapsedMilliseconds} ms, exceeding the {GateMilliseconds} ms gate.");
+    }
+
     private async Task MeasureLoadAsync(
         string relativePath,
         string tableName,
