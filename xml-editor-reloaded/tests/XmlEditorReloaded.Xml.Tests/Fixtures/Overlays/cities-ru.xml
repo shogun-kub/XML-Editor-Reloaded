@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CITY_INFO>
+	<COUNTRY>
+		<countryName>Арулько</countryName>
+		<countryNoun>Арулькиец</countryNoun>
+	</COUNTRY>
+	<CITYLIST>
+		<CITY>
+			<uiIndex>1</uiIndex>
+			<townName>Омерта</townName>
+		</CITY>
+	</CITYLIST>
+</CITY_INFO>

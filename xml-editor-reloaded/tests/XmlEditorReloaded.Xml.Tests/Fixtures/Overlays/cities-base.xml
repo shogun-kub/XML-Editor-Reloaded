@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CITY_INFO>
+	<COUNTRY>
+		<countryName>Arulco</countryName>
+		<countryNoun>Arulcan</countryNoun>
+	</COUNTRY>
+	<CITYLIST>
+		<CITY>
+			<uiIndex>1</uiIndex>
+			<townName>Omerta</townName>
+			<townUsesLoyalty>1</townUsesLoyalty>
+		</CITY>
+		<CITY>
+			<uiIndex>2</uiIndex>
+			<townName>Drassen</townName>
+			<townUsesLoyalty>1</townUsesLoyalty>
+		</CITY>
+	</CITYLIST>
+</CITY_INFO>

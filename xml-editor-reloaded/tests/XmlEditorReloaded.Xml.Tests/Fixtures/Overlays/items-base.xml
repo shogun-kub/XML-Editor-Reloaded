@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ITEMLIST>
+	<ITEM>
+		<uiIndex>0</uiIndex>
+		<szItemName>Nothing</szItemName>
+		<szLongItemName>Nothing</szLongItemName>
+		<szItemDesc>Base description 0</szItemDesc>
+		<szBRName>Nothing</szBRName>
+		<szBRDesc>Base BR 0</szBRDesc>
+		<ubWeight>0</ubWeight>
+	</ITEM>
+	<ITEM>
+		<uiIndex>1</uiIndex>
+		<szItemName>Glock 17</szItemName>
+		<szLongItemName>Glock 17</szLongItemName>
+		<szItemDesc>Base description 1</szItemDesc>
+		<szBRName>Glock 17</szBRName>
+		<szBRDesc>Base BR 1</szBRDesc>
+		<ubWeight>10</ubWeight>
+	</ITEM>
+	<ITEM>
+		<uiIndex>2</uiIndex>
+		<szItemName>Knife</szItemName>
+		<szLongItemName>Knife</szLongItemName>
+		<szItemDesc>Base description 2</szItemDesc>
+		<szBRName>Knife</szBRName>
+		<szBRDesc>Base BR 2</szBRDesc>
+		<ubWeight>2</ubWeight>
+	</ITEM>
+</ITEMLIST>

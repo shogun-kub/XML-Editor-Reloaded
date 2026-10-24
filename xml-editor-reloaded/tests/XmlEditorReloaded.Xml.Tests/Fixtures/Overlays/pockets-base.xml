@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<POCKETPOPUPS>
+	<POCKET>
+		<pIndex>1</pIndex>
+		<pName>Weapon Sling</pName>
+		<popup><generator><id>addWeaponGroups</id></generator></popup>
+	</POCKET>
+	<POCKET>
+		<pIndex>2</pIndex>
+		<pName>Knife</pName>
+		<popup><generator><id>addWeapons</id></generator></popup>
+	</POCKET>
+</POCKETPOPUPS>

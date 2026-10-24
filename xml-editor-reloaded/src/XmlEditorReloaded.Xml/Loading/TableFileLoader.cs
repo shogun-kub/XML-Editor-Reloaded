@@ -27,10 +27,39 @@ public sealed class TableFileLoader
     /// On I/O failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is <see langword="null"/>.</exception>
-    public async Task<OperationResult<TableLoadResult>> LoadAsync(
+    public Task<OperationResult<TableLoadResult>> LoadAsync(
         TableDescriptor descriptor,
         TableMetadata? metadata = null,
+        CancellationToken cancellationToken = default) =>
+        LoadCoreAsync(descriptor, metadata, requireRecords: true, cancellationToken);
+
+    /// <summary>
+    /// Loads a language overlay file without requiring the table's direct record element to be present.
+    /// </summary>
+    /// <param name="descriptor">Descriptor whose file path points at the overlay file.</param>
+    /// <param name="metadata">Metadata of the base table, used for root and key information.</param>
+    /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the overlay document
+    /// with status <see cref="TableDocumentStatus.Loaded"/>.
+    /// A malformed overlay is reported as a successful result with <see cref="TableDocumentStatus.Malformed"/>.
+    /// On I/O failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> or <paramref name="metadata"/> is null.</exception>
+    public Task<OperationResult<TableLoadResult>> LoadOverlayAsync(
+        TableDescriptor descriptor,
+        TableMetadata metadata,
         CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        return LoadCoreAsync(descriptor, metadata, requireRecords: false, cancellationToken);
+    }
+
+    private async Task<OperationResult<TableLoadResult>> LoadCoreAsync(
+        TableDescriptor descriptor,
+        TableMetadata? metadata,
+        bool requireRecords,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -107,7 +136,11 @@ public sealed class TableFileLoader
             status = TableDocumentStatus.LoadedReadOnly;
         }
 
-        if (!root.Elements().Any(element => string.Equals(element.Name.LocalName, recordElementName, StringComparison.Ordinal)))
+        var primaryKeyPath = metadata?.RecordKey?.Primary.Path;
+        var recordsAreNested = !string.IsNullOrEmpty(primaryKeyPath);
+        if (requireRecords
+            && !recordsAreNested
+            && !root.Elements().Any(element => string.Equals(element.Name.LocalName, recordElementName, StringComparison.Ordinal)))
         {
             diagnostics.Add(new LoadDiagnostic(
                 ErrorCodes.XmlRecordElementMissing,

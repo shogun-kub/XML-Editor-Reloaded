@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MERCGEARLIST>
+	<MERCGEAR>
+		<mIndex>0</mIndex>
+		<mName>Barry</mName>
+		<GEARKIT><mGearKitName>Standard</mGearKitName><mWeapon>5</mWeapon></GEARKIT>
+		<GEARKIT><mGearKitName>Mechanic</mGearKitName><mWeapon>6</mWeapon></GEARKIT>
+		<GEARKIT><mGearKitName>Fighter</mGearKitName><mWeapon>7</mWeapon></GEARKIT>
+	</MERCGEAR>
+	<MERCGEAR>
+		<mIndex>1</mIndex>
+		<mName>Blood</mName>
+		<GEARKIT><mGearKitName>Standard</mGearKitName></GEARKIT>
+		<GEARKIT><mGearKitName>Weapons</mGearKitName></GEARKIT>
+	</MERCGEAR>
+</MERCGEARLIST>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<POCKETPOPUPS>
+	<POCKET>
+		<pIndex>1</pIndex>
+		<pName>Ружейный ремень</pName>
+		<popup><generator><id>addWeaponGroups</id></generator></popup>
+	</POCKET>
+</POCKETPOPUPS>

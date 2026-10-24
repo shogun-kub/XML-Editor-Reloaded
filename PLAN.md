@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4 завершены. Реализованы Core-примитивы, SQLite-метаданные с миграциями и seed, каталог таблиц и оверлеев, настройки, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование полей, list/dict-поля, add/duplicate/delete записей и журнал изменений. `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M5 (оверлеи); M7 можно вести параллельно.
+**Текущее состояние:** M0/M1/M2/M3/M4/M5 завершены. Реализованы Core-примитивы, SQLite-метаданные с миграциями и seed, каталог таблиц и оверлеев, настройки, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование, list/dict-поля, record operations, журнал изменений и полный overlay-цикл (merge/edit/save/analyze). `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий шаг — выбрать M7 (Imaging), M8 (wiring) или M6 (валидация).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -68,9 +68,10 @@
 **Фактический результат:** реализованы `TableRecord.SetFieldValue`/`SetListField`/`SetDictField`, `TableDocument.AddRecord`/`DuplicateRecord`/`DeleteRecord`, `DocumentChangeTracker`. `RowFactory` реализован как `AddRecord`/`DuplicateRecord`. Числовая валидация идёт по `ColumnMetadata`; невалидное значение не меняет документ. Добавлены тесты на edit/list/dict/add/dup/delete и сохранение структурных изменений.
 **Готово:** 41 XML-тест, полный набор 65 тестов, corpus no-rewrite v4/v5 зелёные. Для структурных изменений по-прежнему используется `DocumentSerializer`, поэтому форматирование файла может нормализоваться; lossless-патчер для add/delete/duplicate остаётся follow-up (R1).
 
-### M5 — Xml: оверлеи (~2–3 дн)
+### M5 — Xml: оверлеи (~2–3 дн) — **выполнен**
 `OverlayDocument`, `OverlayKeyResolver` (nested/positional, `UnresolvableKey` = diagnostic), `OverlayMerger` (base+overlay → merged cells с признаком перевода), `OverlayWriter` (запись только в оверлей; новая запись = ключ + правленое поле), `TableEditSession` (роутинг: переводимое+язык → оверлей, иначе base; независимые save), `TranslationAnalyzer` (missing/orphan/duplicate/empty/identical/KeyCountMismatch).
-**Готово:** цикл merge→edit→save на реальных фикстурах (Cities, PocketPopups, MercStartingGear, Items-оверлей); base-файл побайтово нетронут.
+**Фактический результат:** реализованы загрузка оверлеев (`LoadOverlayAsync` + `OverlayDocument`), резолвер ключей (scalar/positional/singleton), merge с base-fallback и признаком перевода, запись переводов только в оверлей (новая запись — ключ + поле), маршрутизация `TableEditSession`, анализ переводов. Nested-кейсы: `GEARKIT` по позиции, `ASSIGNMENT` по `ubAssignmentType`, `CITYLIST/CITY` + `COUNTRY` singleton. Base-файл при translation-only save побайтово не изменяется.
+**Готово:** 8 overlay-тестов, всего 49 XML-тестов и 86 тестов в решении; сценарии Items, PocketPopups, MercStartingGear, Cities проходят.
 
 ### M6 — Xml: валидация (~1 дн; параллельно с M5)
 `TableValidator`: unknown-field = info (не error), bad type = warning с ключом+путём, lookup-ref, дубликаты ключей, форма dict-масок. Только чтение.

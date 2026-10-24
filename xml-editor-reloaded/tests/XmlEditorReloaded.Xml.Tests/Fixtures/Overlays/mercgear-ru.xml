@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MERCGEARLIST>
+	<MERCGEAR>
+		<mIndex>0</mIndex>
+		<mName>Барри</mName>
+		<GEARKIT><mGearKitName>Стандарт</mGearKitName></GEARKIT>
+		<GEARKIT><mGearKitName>Механик</mGearKitName></GEARKIT>
+	</MERCGEAR>
+</MERCGEARLIST>

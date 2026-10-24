@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ITEMLIST>
+	<ITEM>
+		<uiIndex>0</uiIndex>
+		<szItemName>Nothing</szItemName>
+	</ITEM>
+	<ITEM>
+		<uiIndex>1</uiIndex>
+		<szItemName></szItemName>
+	</ITEM>
+	<ITEM>
+		<uiIndex>1</uiIndex>
+		<szItemName>Glock 17</szItemName>
+	</ITEM>
+	<ITEM>
+		<uiIndex>99</uiIndex>
+		<szItemName>Orphan</szItemName>
+	</ITEM>
+	<ITEM>
+		<szItemName>No key</szItemName>
+	</ITEM>
+</ITEMLIST>
