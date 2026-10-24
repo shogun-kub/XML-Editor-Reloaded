@@ -266,7 +266,8 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
-    /// The grid view loads its XAML and rebuilds columns when visibility changes.
+    /// The grid view loads its XAML, uses full-row selection for the two-way SelectedRow binding,
+    /// and rebuilds columns when visibility changes.
     /// </summary>
     [Fact]
     public async Task View_LoadsXamlAndRebuildsColumns()
@@ -281,6 +282,7 @@ public class TableEditorViewModelTests
             {
                 var view = new TableView { DataContext = editor };
                 var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
+                Assert.Equal(DataGridSelectionUnit.FullRow, grid.SelectionUnit);
                 Assert.Equal(editor.VisibleColumns.Count, grid.Columns.Count);
 
                 Assert.Single(editor.Columns, column => column.Name == "ubWeight").IsVisible = false;
