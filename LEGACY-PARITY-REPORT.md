@@ -1,6 +1,6 @@
 # Legacy parity report (M23a)
 
-**Status:** in progress — M23a0 inventories complete (UI, tables, UI verification, item field map); commit pending.
+**Status:** in progress — M23a0 inventories complete (UI, tables, UI verification, item field map); M23a1 shell/grid section complete; M23a2 next.
 **Reference implementation:** `References/xml-editor` (VB.NET/WinForms), read-only. `References/JA_2_1.13_TableData_Editor` is a prototype and is not a reference.
 **Scope:** every user-visible and backend behaviour that is actually reachable in the legacy editor is either implemented in the rewrite, replaced by a safer equivalent, or explicitly excluded. Bug-for-bug compatibility is not required. M23a changes no product behaviour.
 **Method and substeps:** `M23A-PARITY-AUDIT-PLAN.md`. Working evidence lives in `M23A-PARITY/`; this report is assembled from those sections.
@@ -30,7 +30,7 @@
 | 00 | UI inventory verification | `M23A-PARITY/00-inventory-ui-verification.md` | done |
 | 00 | Item form field and flag map | `M23A-PARITY/00-inventory-ui-item-fields.md` | done |
 | 00 | Legacy table inventory and coverage | `M23A-PARITY/00-inventory-tables.md` | done |
-| 10 | Shell and grid | `M23A-PARITY/10-shell-grid.md` | pending |
+| 10 | Shell and grid | `M23A-PARITY/10-shell-grid.md` | done |
 | 20 | Item workspace UI | `M23A-PARITY/20-item-ui.md` | pending |
 | 21 | Item tables and images | `M23A-PARITY/21-item-data-images.md` | pending |
 | 30 | Merc gear and auxiliary tables | `M23A-PARITY/30-merc-aux.md` | pending |
