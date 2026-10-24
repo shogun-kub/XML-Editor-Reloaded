@@ -1,6 +1,6 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; M23a7 (проверка на v4/v5 и ручной UI-smoke) — следующий подшаг. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -708,15 +708,41 @@
 
 Сборка, тесты, corpus/compare/copy/perf и ручной WPF-smoke в M23a6 не запускались: это M23a7.
 
-## Проверка M23a7 (ожидает выполнения)
+## Проверка M23a7
 
-- `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror`, `dotnet test`.
-- Corpus v4/v5, сравнение v4↔v5, copy v4→v5, perf-гейты.
-- Приёмка M22c: item 12 показывает 27 вложений; duplicate-baseline v5 — 2 группы `Attachments` и 1 дилер.
-- Ручной UI-smoke по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` (создаётся в M23a7) — item/merc workspace, shopkeeper, pickers, copy, фильтры, изображения, локализация, настройки, close, external-change.
-- Результаты, дата и подпись пользователя вносятся в этот отчёт; без них M23a не считается закрытым.
+**Дата:** 2026-10-24. **Коммит на момент прогона:** `1ebfc3a` (M23a6) + документы M23a7. **Среда:** .NET 10 SDK, Windows 10.0.26300 x64, Debug.
 
-Ограничение среды: WPF-поведение не автоматизируется; агент подтверждает только код, сборку, тесты и данные.
+| Проверка | Условие | Результат |
+|---|---|---|
+| Сборка | `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | `dotnet test … --no-build --no-restore` | 415/415: Core 37, Imaging 19, Xml 167, Data 64, App 128 |
+| Corpus v4 | `XER_CORPUS_DIR=…/JA 2 1.13 v4/Data-1.13/TableData dotnet test …` | 415/415 |
+| Corpus v5 | `XER_CORPUS_DIR=…/JA 2 1.13 v5/Data-1.13/TableData dotnet test …` | 415/415 |
+| Compare v4↔v5 | `XER_COMPARE_LEFT_DIR=…v4… XER_COMPARE_RIGHT_DIR=…v5… --filter FullyQualifiedName~RealDataComparisonTests` | 1/1; 238/239 таблиц, 238 общих, 1 right-only (`Email.EmailSenderNameList`), 1 malformed (`Lookup.AttachmentPoint` v5), 0 failed |
+| Copy v4→v5 | `XER_COPY_SOURCE_DIR=…v4… XER_COPY_TARGET_DIR=…v5… --filter FullyQualifiedName~CorpusCopyTests` | 1/1; remap связанных строк и калибра, SHA-256 источника не изменён |
+| Perf v5 | `XER_CORPUS_DIR=…v5… --filter Category=Performance` | 9/9 (Xml 7, Data 2); порог 2 с на операцию |
+| Perf v4 | `XER_CORPUS_DIR=…v4… --filter Category=Performance` | 9/9 |
+| `References/` | хеш-инварианты corpus/compare/copy-тестов; `find -newermt 2026-10-24` | изменённых файлов нет; каталог в `.gitignore`, в git не попал |
+| Git | `git status --short` | только документы M23a7; `bin/`/`obj/` не отслеживаются |
+
+### Приёмка M22c (независимый подсчёт по сырому XML)
+
+| Проверка | v4 | v5 |
+|---|---|---|
+| `Items.Attachments`: всего строк | 6079 | 6023 |
+| Строки item 12 (`itemIndex=12`) | 27 | 27 |
+| Точные дубликаты полного ключа (`attachmentIndex`, `itemIndex`) | 0 | 2 группы: (1011,1076), (1750,1332) |
+| `AdditionalDealer_43_Inventory`: строк / дубликатов `uiIndex` | 44 / 1 (`uiIndex=26`) | 44 / 1 (`uiIndex=26`) |
+
+Числа совпадают с `M22C-COMPOSITE-KEYS-PLAN.md` и с ассертами `RealRecordKeyTests` и `ItemWorkspaceViewModelTests.Corpus_Item12ShowsOnlyItsOwnAttachments`: item 12 показывает 27 вложений, baseline известных дефектов данных не изменился. В corpus-прогонах App-тест выполнялся с `XER_CORPUS_DIR`, то есть с реальными ассертами.
+
+### Ручной UI-smoke
+
+Создан `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`: 50 сценариев на v4/v5 — запуск и датасеты, сетка/фильтры/bulk/layout, item и merc workspace, shopkeeper, pickers, copy, compare и экспорт, STI-изображения, локализация, настройки, close/save, external-change, malformed lookup и итоговая целостность. Ожидания в чек-листе выборочно сверены с данными v4/v5 (item 12/1422/1456/1742/1775, 27 вложений, Barry и пять комплектов, 23 строки `Lookup.Cursor`, 63 слота, дубликат дилера).
+
+WPF-поведение в этой среде не автоматизируется. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
+
+Ограничение: при отсутствии env-переменных env-gated тесты делают early-return, поэтому базовые 415 включают их без ассертов; в corpus-, compare- и copy-прогонах они выполнялись.
 
 ## Вне паритета (осознанно)
 
