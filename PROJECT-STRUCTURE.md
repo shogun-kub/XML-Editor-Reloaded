@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0–M14 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. M14 added per-tab language selection, merged translation display with untranslated markers, a translation report window, and creation of new overlay files. Metadata seeding (M14.5) and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M14.5 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. M14 added per-tab language selection, merged translation display with untranslated markers, a translation report window, and creation of new overlay files. M14.5 verified the legacy schema against v4 and v5, seeded 502 non-declaring hints (224 for `Items.Items`) and 46 declaring lookup columns, enabled hint-driven validation, and added 64-bit lookup identifiers. Lookup/flag editors, bulk operations, and cross-version comparison (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -28,7 +28,9 @@ Non-goals (for the first iterations):
 ```
 JA2_1.13 Tools/
 ├── AGENTS.md                        # Rules and context for AI assistants
+├── PLAN.md                          # Implementation plan and milestone history
 ├── PROJECT-STRUCTURE.md             # This document
+├── M14.5-METADATA-REPORT.md         # Verified legacy-schema seed report
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of projects under References/
 ├── .gitignore                       # References/ and build artifacts are ignored
 ├── References/                      # Read-only reference projects and game data (not in git)
@@ -102,7 +104,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
   - `TableMappings` — XML table path, DTO/model name, lookup flag, XML root, list item name.
   - `ListFields` — XML field name ↔ model property for repeated elements.
   - `DictFields` — XML field mask (e.g. `ItemCapacityPerSize%Index%`) ↔ model property.
-- Embedded, versioned migrations (`SchemaMigrations`) create the production schema: `Tables`, `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`, and `ColumnHints`. `Columns` is declaring metadata (an absent field becomes visible); `ColumnHints` is non-declaring and only refines fields discovered in the document.
+- Embedded, versioned migrations (`SchemaMigrations`) create the production schema: `Tables`, `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`, and `ColumnHints`. `Columns` is declaring metadata (an absent field becomes visible); `ColumnHints` is non-declaring and only refines fields discovered in the document. M14.5 populated 46 declaring columns for the 23 lookup tables and 502 verified hints for 25 tables; `Items.Items` remains hints-only so sparse records are never expanded.
 - Lookup table access (`TableData/Lookup/*.xml`), including language-specific overrides.
 - Language catalog: discovery of `<Language>.<BaseFile>.xml` overlays in each data directory, available languages per table, and metadata describing translation keys and translatable paths.
 - Persistence of application settings and recent directories (outside the game folder).
@@ -179,7 +181,7 @@ The prototype database `References/JA_2_1.13_TableData_Editor/Metadata/table_met
 
 Example mappings: `Items.Items → DTO_Item / ITEMLIST / ITEM`, `Items.Weapons → DTO_Weapon / WEAPONLIST / WEAPON`, `Lookup.ItemClass → JA2Data / ItemClass`.
 
-The production schema replaces the prototype mapping tables with `Tables`, `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`, and `ColumnHints`, plus `SchemaMigrations` for versioning. The seed covers 73 tables, 76 key segments, 12 list fields, 3 dict fields, 61 translatable paths, language `ru → Russian`, and 224 curated hints for `Items.Items` (7 of them 32-bit flag masks). `ColumnHints` refines only fields that are present in a document, so sparse-record semantics are preserved.
+The production schema replaces the prototype mapping tables with `Tables`, `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`, and `ColumnHints`, plus `SchemaMigrations` for versioning. The seed covers 73 tables, 76 key segments, 12 list fields, 3 dict fields, 61 translatable paths, language `ru → Russian`, 46 declaring `Columns` rows for the 23 lookup tables, and 502 verified hints for 25 tables. `Items.Items` has 224 hints, including 8 flag masks; its fields are 105 Boolean, 87 Integer, 12 Decimal, 8 Flags, 3 Lookup, 6 String, and 3 nested. `ColumnHints` refines only fields that are present in a document, so sparse-record semantics are preserved. The hints were verified against both v4 and v5; stale legacy fields are excluded (see `M14.5-METADATA-REPORT.md`).
 
 ### 6.3 STI images
 
@@ -195,8 +197,10 @@ The production schema replaces the prototype mapping tables with `Tables`, `Tabl
 ### 6.4 Lookups and flags
 
 - Lookup tables under `TableData\Lookup\*.xml` map numeric IDs to display names (`<id>`, `<name>` pairs).
+- Lookup identifiers are 64-bit values: `Lookup/ItemFlag.xml` contains IDs up to `8589934592`, which exceeds both `int` and `uint`. `LookupEntry.Id` is a `long`, and lookup files are parsed with 64-bit integer semantics.
 - Bit-flag columns (item flags, ammo flags, attachment classes) are edited with a dedicated checkbox dialog rather than raw numbers. Curated flag masks use an unsigned 32-bit editor, so values above `int.MaxValue` are supported; other integer fields remain numeric.
 - Lookups can be language-specific, similar to regular tables.
+- Lookup metadata is seeded for real `Lookup/*.xml` files. Legacy references to main tables (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`) are not imported as lookup files because they use non-`id`/`name` value and text columns; they remain a future relation-model task.
 
 ### 6.5 Legacy configuration and cache
 
@@ -403,5 +407,5 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 9. Add grid editing (sorting, filtering, row operations, column selection). **Done (M12).**
 10. Add the item detail form with STI images and flag editors. **Done (M13).**
 11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization. **Done (M14).**
-12. Seed column metadata from verified legacy definitions and activate type/lookup validation (M14.5).
-13. Add merc gear editor, lookup management, bulk operations, and a cross-version field report (M15).
+12. Seed column metadata from verified legacy definitions and activate type/lookup validation. **Done (M14.5).**
+13. Add lookup/flag editors, bulk operations, and a cross-version field report (M15). Merc gear and lookup-management scope still needs agreement.

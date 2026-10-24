@@ -50,6 +50,25 @@ public class XmlFileLookupRepositoryTests
     }
 
     /// <summary>
+    /// Lookup identifiers are 64-bit values; files such as ItemFlag exceed the signed 32-bit range.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_Reads64BitId()
+    {
+        using var workspace = new TestWorkspace();
+        var directory = workspace.CopyFixtureDirectory("Lookup");
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "Large.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data><ItemFlag><id>8589934592</id><name>Large flag</name></ItemFlag></JA2Data>");
+        var repository = new XmlFileLookupRepository(workspace.DirectoryPath);
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.Large"));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(new LookupEntry(8589934592, "Large flag"), Assert.Single(result.Data!));
+    }
+
+    /// <summary>
     /// A missing lookup file is reported as an operation failure.
     /// </summary>
     [Fact]

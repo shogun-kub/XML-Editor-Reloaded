@@ -357,30 +357,40 @@ public sealed class TableRecord
 
     private OperationResult ValidateValue(string fieldName, string rawText)
     {
-        if (_owner.Metadata?.TryGetColumn(fieldName, out var column) != true || column is null)
+        var metadata = _owner.Metadata;
+        ColumnMetadata? column = null;
+        ColumnHint? hint = null;
+        metadata?.TryGetColumn(fieldName, out column);
+        metadata?.TryGetColumnHint(fieldName, out hint);
+        var dataType = column?.DataType ?? hint?.DataType;
+        if (dataType is null)
         {
             return OperationResult.Success();
         }
 
-        if (column.DataType == ColumnDataType.Nested)
+        if (dataType == ColumnDataType.Nested)
         {
             return OperationResult.Failure(
                 ErrorCodes.XmlNotSaveable,
                 $"Field '{fieldName}' is a nested structure and cannot be set as scalar text.");
         }
 
-        if (column.DataType is ColumnDataType.String or ColumnDataType.Raw || string.IsNullOrEmpty(rawText))
+        if (dataType is ColumnDataType.String or ColumnDataType.Raw || string.IsNullOrEmpty(rawText))
         {
             return OperationResult.Success();
         }
 
-        var valid = column.DataType switch
+        var valid = dataType switch
         {
-            ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
+            ColumnDataType.Integer =>
                 int.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Lookup =>
+                long.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Flags =>
+                uint.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Decimal =>
                 decimal.TryParse(rawText, DecimalStyles, CultureInfo.InvariantCulture, out _),
-            ColumnDataType.Boolean => rawText is "0" or "1",
+            ColumnDataType.Boolean => rawText.Trim() is "0" or "1",
             _ => true,
         };
 
@@ -388,7 +398,7 @@ public sealed class TableRecord
             ? OperationResult.Success()
             : OperationResult.Failure(
                 ErrorCodes.XmlInvalidNumber,
-                $"'{rawText}' is not a valid {column.DataType} value for field '{fieldName}'.");
+                $"'{rawText}' is not a valid {dataType} value for field '{fieldName}'.");
     }
 
     private XElement? FindDirectChild(string fieldName) =>

@@ -1297,11 +1297,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
         return column.DataType switch
         {
-            ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
+            ColumnDataType.Integer =>
                 int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Lookup =>
+                long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ColumnDataType.Flags =>
+                uint.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Decimal =>
                 decimal.TryParse(value, DecimalStyles, CultureInfo.InvariantCulture, out _),
-            ColumnDataType.Boolean => value is "0" or "1",
+            ColumnDataType.Boolean => value.Trim() is "0" or "1",
             _ => true,
         };
     }
@@ -1369,8 +1373,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
             var comparison = _dataType switch
             {
-                ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
-                    CompareIntegers(leftValue, rightValue),
+                ColumnDataType.Integer => CompareSigned(leftValue, rightValue),
+                ColumnDataType.Lookup => CompareLookup(leftValue, rightValue),
+                ColumnDataType.Flags => CompareFlags(leftValue, rightValue),
                 ColumnDataType.Decimal => CompareDecimals(leftValue, rightValue),
                 _ => string.Compare(leftValue, rightValue, StringComparison.OrdinalIgnoreCase),
             };
@@ -1378,7 +1383,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return comparison * _direction;
         }
 
-        private static int CompareIntegers(string left, string right)
+        private static int CompareSigned(string left, string right)
         {
             if (int.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
                 && int.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
@@ -1389,10 +1394,32 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return string.Compare(left, right, StringComparison.OrdinalIgnoreCase);
         }
 
+        private static int CompareLookup(string left, string right)
+        {
+            if (long.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
+                && long.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
+            {
+                return leftValue.CompareTo(rightValue);
+            }
+
+            return string.Compare(left, right, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static int CompareFlags(string left, string right)
+        {
+            if (uint.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
+                && uint.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
+            {
+                return leftValue.CompareTo(rightValue);
+            }
+
+            return string.Compare(left, right, StringComparison.OrdinalIgnoreCase);
+        }
+
         private static int CompareDecimals(string left, string right)
         {
-            if (decimal.TryParse(left, NumberStyles.Number, CultureInfo.InvariantCulture, out var leftValue)
-                && decimal.TryParse(right, NumberStyles.Number, CultureInfo.InvariantCulture, out var rightValue))
+            if (decimal.TryParse(left, DecimalStyles, CultureInfo.InvariantCulture, out var leftValue)
+                && decimal.TryParse(right, DecimalStyles, CultureInfo.InvariantCulture, out var rightValue))
             {
                 return leftValue.CompareTo(rightValue);
             }

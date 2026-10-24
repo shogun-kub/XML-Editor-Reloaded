@@ -1,3 +1,4 @@
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
@@ -45,6 +46,59 @@ public class TableRecordTests
         Assert.True(record.HasField("MissingField"));
         Assert.Equal("value", record.GetRawValue("MissingField"));
         Assert.True(document.IsDirty);
+    }
+
+    /// <summary>
+    /// A non-declaring column hint enforces the numeric type on the backend edit path.
+    /// </summary>
+    [Fact]
+    public async Task SetFieldValue_HintType_RejectsInvalidNumber()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var metadata = new TableMetadata(
+            TableName.Parse("Items.Items"),
+            "ITEMLIST",
+            "ITEM",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
+            columnHints: new[] { new ColumnHint("ubWeight") { DataType = ColumnDataType.Integer } });
+        var document = await LoadAsync(path, metadata);
+        var record = document.Records[1];
+
+        var result = record.SetFieldValue("ubWeight", "abc");
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidNumber, result.ErrorCode);
+        Assert.Equal("10", record.GetRawValue("ubWeight"));
+        Assert.False(document.IsDirty);
+    }
+
+    /// <summary>
+    /// Flag masks use the full unsigned 32-bit range and reject values beyond it.
+    /// </summary>
+    [Fact]
+    public async Task SetFieldValue_FlagHint_AcceptsUInt32Range()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var metadata = new TableMetadata(
+            TableName.Parse("Items.Items"),
+            "ITEMLIST",
+            "ITEM",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
+            columnHints: new[] { new ColumnHint("usItemClass") { DataType = ColumnDataType.Flags } });
+        var document = await LoadAsync(path, metadata);
+        var record = document.Records[0];
+
+        var accepted = record.SetFieldValue("usItemClass", "4294967295", addIfMissing: true);
+        var rejected = record.SetFieldValue("usItemClass", "4294967296");
+
+        Assert.True(accepted.IsSuccess, accepted.ErrorText);
+        Assert.False(rejected.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidNumber, rejected.ErrorCode);
+        Assert.Equal("4294967295", record.GetRawValue("usItemClass"));
     }
 
     /// <summary>

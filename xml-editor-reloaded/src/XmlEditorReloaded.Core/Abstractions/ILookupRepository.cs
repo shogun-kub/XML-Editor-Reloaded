@@ -6,9 +6,12 @@ namespace XmlEditorReloaded.Core.Abstractions;
 /// <summary>
 /// A single id/name pair from a lookup table.
 /// </summary>
-/// <param name="Id">Numeric identifier.</param>
+/// <param name="Id">
+/// Numeric identifier. Lookup files use unsigned identifiers that may exceed the signed 32-bit
+/// range, so the value is stored in a 64-bit integer.
+/// </param>
 /// <param name="Name">Display name.</param>
-public sealed record LookupEntry(int Id, string Name);
+public sealed record LookupEntry(long Id, string Name);
 
 /// <summary>
 /// Provides access to lookup tables under <c>TableData/Lookup</c>, including language overlays.

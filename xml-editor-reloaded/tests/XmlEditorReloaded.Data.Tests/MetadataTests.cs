@@ -23,7 +23,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(4, migration.Data);
+        Assert.Equal(5, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -52,6 +52,28 @@ public class MetadataTests
         Assert.True(metadata.TryGetColumnHint("szItemName", out var nameHint));
         Assert.Null(nameHint!.DataType);
         Assert.Equal("identity", nameHint.GroupKey);
+        Assert.True(metadata.TryGetColumnHint("DrugType", out var drugHint));
+        Assert.Equal(ColumnDataType.Flags, drugHint!.DataType);
+        Assert.Equal(ColumnEditorKind.FlagEditor, drugHint.EditorKind);
+        Assert.True(metadata.TryGetColumnHint("DefaultAttachment", out var defaultAttachmentHint));
+        Assert.Equal(ColumnDataType.Integer, defaultAttachmentHint!.DataType);
+        Assert.True(metadata.TryGetColumnHint("AvailableAttachmentPoint", out var availablePointHint));
+        Assert.Equal(ColumnDataType.Flags, availablePointHint!.DataType);
+        Assert.True(metadata.TryGetColumnHint("Inseparable", out var inseparableHint));
+        Assert.Equal(ColumnDataType.Lookup, inseparableHint!.DataType);
+        Assert.Equal("Lookup.Separability", inseparableHint.LookupTable);
+        Assert.Empty(metadata.Columns);
+
+        var flagLookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemFlag"));
+        Assert.True(flagLookup.IsSuccess, flagLookup.ErrorText);
+        Assert.Equal(2, flagLookup.Data!.Columns.Count);
+        Assert.True(flagLookup.Data.TryGetColumn("id", out var flagIdColumn));
+        Assert.Equal(ColumnDataType.Raw, flagIdColumn!.DataType);
+
+        var disease = await provider.GetTableAsync(TableName.Parse("Disease"));
+        Assert.True(disease.IsSuccess, disease.ErrorText);
+        Assert.True(disease.Data!.TryGetColumnHint("InfectionChance_BADFOOD", out var chanceHint));
+        Assert.Equal(ColumnDataType.Decimal, chanceHint!.DataType);
 
         var languages = await provider.GetLanguagesAsync();
         Assert.True(languages.IsSuccess, languages.ErrorText);

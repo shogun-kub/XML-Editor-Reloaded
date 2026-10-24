@@ -14,6 +14,10 @@ namespace XmlEditorReloaded.Xml.Validation;
 /// </summary>
 public sealed class TableValidator
 {
+    private const NumberStyles DecimalStyles =
+        NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
+        | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+
     /// <summary>
     /// Validates a table document without mutating it.
     /// </summary>
@@ -206,8 +210,12 @@ public sealed class TableValidator
         CancellationToken cancellationToken)
     {
         var fieldName = leaf.Name.LocalName;
-        if (!metadata.TryGetColumn(fieldName, out var column) || column is null)
+        metadata.TryGetColumn(fieldName, out var column);
+        metadata.TryGetColumnHint(fieldName, out var hint);
+        if (column is null && hint is null)
         {
+            // Hints are curated per present field, so only declaring tables can claim a verified
+            // field set. For hint-only tables an unknown field is simply left to discovery.
             if (metadata.Columns.Count > 0 && !IsKnownField(fieldName, metadata))
             {
                 issues.Add(new ValidationIssue(
@@ -222,29 +230,40 @@ public sealed class TableValidator
             return;
         }
 
-        if (string.IsNullOrEmpty(leaf.Value) || column.DataType is ColumnDataType.String or ColumnDataType.Raw or ColumnDataType.Nested)
+        var dataType = hint?.DataType ?? column?.DataType;
+        if (dataType is null or ColumnDataType.String or ColumnDataType.Raw or ColumnDataType.Nested)
         {
             return;
         }
 
-        if (!IsValidValue(column.DataType, leaf.Value))
+        if (string.IsNullOrEmpty(leaf.Value))
+        {
+            return;
+        }
+
+        if (!IsValidValue(dataType.Value, leaf.Value))
         {
             issues.Add(new ValidationIssue(
                 ValidationSeverity.Warning,
                 ValidationCodes.InvalidType,
-                $"Value '{leaf.Value}' is not a valid {column.DataType} value.",
+                $"Value '{leaf.Value}' is not a valid {dataType} value.",
                 tableName,
                 recordKey,
                 path));
             return;
         }
 
-        if (column.LookupTable is not null && lookupRepository is not null
-            && column.DataType is ColumnDataType.Lookup or ColumnDataType.Integer or ColumnDataType.Flags)
+        var lookupTable = hint?.LookupTable ?? column?.LookupTable;
+        if (lookupTable is not null && lookupRepository is not null
+            && dataType is ColumnDataType.Lookup or ColumnDataType.Integer)
         {
-            var id = int.Parse(leaf.Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+            if (!long.TryParse(leaf.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
+            {
+                return;
+            }
+
             var entries = await GetLookupAsync(
-                    column.LookupTable,
+                    lookupTable,
                     lookupRepository,
                     languageCode,
                     lookupCache,
@@ -256,7 +275,7 @@ public sealed class TableValidator
                 issues.Add(new ValidationIssue(
                     ValidationSeverity.Warning,
                     ValidationCodes.LookupMissing,
-                    $"Value '{id}' is not present in lookup table '{column.LookupTable}'.",
+                    $"Value '{id}' is not present in lookup table '{lookupTable}'.",
                     tableName,
                     recordKey,
                     path));
@@ -328,11 +347,15 @@ public sealed class TableValidator
 
     private static bool IsValidValue(ColumnDataType dataType, string value) => dataType switch
     {
-        ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
+        ColumnDataType.Integer =>
             int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+        ColumnDataType.Lookup =>
+            long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+        ColumnDataType.Flags =>
+            uint.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
         ColumnDataType.Decimal =>
-            decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out _),
-        ColumnDataType.Boolean => value is "0" or "1",
+            decimal.TryParse(value, DecimalStyles, CultureInfo.InvariantCulture, out _),
+        ColumnDataType.Boolean => value.Trim() is "0" or "1",
         _ => true,
     };
 }
