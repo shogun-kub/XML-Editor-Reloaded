@@ -14,17 +14,23 @@ public sealed class XmlFileLookupRepository : ILookupRepository
 {
     private readonly string _tableDataDirectory;
     private readonly IReadOnlyDictionary<string, LanguageDescriptor> _languages;
+    private readonly ITableMetadataProvider? _metadataProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="XmlFileLookupRepository"/> class.
     /// </summary>
     /// <param name="tableDataDirectory">Absolute path of the <c>TableData</c> directory.</param>
     /// <param name="languages">Languages whose overlay prefixes may be used; may be empty.</param>
+    /// <param name="metadataProvider">Optional provider used to discover languages when none are supplied.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="tableDataDirectory"/> is empty.</exception>
-    public XmlFileLookupRepository(string tableDataDirectory, IEnumerable<LanguageDescriptor>? languages = null)
+    public XmlFileLookupRepository(
+        string tableDataDirectory,
+        IEnumerable<LanguageDescriptor>? languages = null,
+        ITableMetadataProvider? metadataProvider = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tableDataDirectory);
         _tableDataDirectory = tableDataDirectory;
+        _metadataProvider = metadataProvider;
         _languages = (languages ?? Array.Empty<LanguageDescriptor>())
             .ToDictionary(static language => language.Code, StringComparer.OrdinalIgnoreCase);
     }
@@ -60,7 +66,18 @@ public sealed class XmlFileLookupRepository : ILookupRepository
         {
             var entries = await ReadEntriesAsync(basePath, cancellationToken).ConfigureAwait(false);
 
-            if (languageCode is not null && _languages.TryGetValue(languageCode, out var language))
+            var languages = _languages;
+            if (languages.Count == 0 && _metadataProvider is not null)
+            {
+                var languageResult = await _metadataProvider.GetLanguagesAsync(cancellationToken).ConfigureAwait(false);
+                if (languageResult.IsSuccess)
+                {
+                    languages = languageResult.Data!
+                        .ToDictionary(static language => language.Code, StringComparer.OrdinalIgnoreCase);
+                }
+            }
+
+            if (languageCode is not null && languages.TryGetValue(languageCode, out var language))
             {
                 var overlayPath = Path.Combine(
                     Path.GetDirectoryName(basePath) ?? _tableDataDirectory,

@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4/M5 завершены. Реализованы Core-примитивы, SQLite-метаданные с миграциями и seed, каталог таблиц и оверлеев, настройки, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование, list/dict-поля, record operations, журнал изменений и полный overlay-цикл (merge/edit/save/analyze). `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий шаг — выбрать M7 (Imaging), M8 (wiring) или M6 (валидация).
+**Текущее состояние:** M0/M1/M2/M3/M4/M5/M8 завершены. Backend собран в рабочую композицию: Core, SQLite-метаданные, каталог, настройки, XML loader/save, редактирование, оверлеи и DI-wiring. `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий шаг — выбрать M9 (минимальная WPF-оболочка), M7 (Imaging), M6 (валидация) или R1 (lossless structural patcher).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -76,8 +76,10 @@
 ### M6 — Xml: валидация (~1 дн; параллельно с M5)
 `TableValidator`: unknown-field = info (не error), bad type = warning с ключом+путём, lookup-ref, дубликаты ключей, форма dict-масок. Только чтение.
 
-### M8 — Wiring (~1–1.5 дн)
+### M8 — Wiring (~1–1.5 дн) — **выполнен**
 `TableRepository` (реализация `ITableRepository`), `ServiceCollectionExtensions` в каждом backend-проекте; join правило: нет метаданных → document-driven, статус «unmapped». Интеграционные тесты (end-to-end load-edit-save, malformed fail-soft, lookup overlay, translation cycle через `TableEditSession`).
+**Фактический результат:** `TableRepository` загружает mapped-таблицы с metadata и падает обратно в document-driven режим с диагностикой `metadata.unmapped`; `AddXmlEditorData`/`AddXmlEditorXml` собирают metadata provider, каталог, translation catalog, settings, repository и lookup; `FileSystemTableCatalog` и `XmlFileLookupRepository` сами получают языки из metadata provider. Добавлены 7 интеграционных тестов: load/edit/save, malformed fail-soft, unmapped fallback, lookup overlay, translation cycle, composition root.
+**Готово:** 21 Data-тест, всего 93 теста; build 0 warnings/errors; corpus no-rewrite v4/v5 зелёный.
 
 ### M9 — Минимальный WPF shell (~1–1.5 дн)
 `App.xaml.cs` — composition root (`AddXmlEditorData/Xml/Imaging`); `IDialogService` (folder picker); `AppSettingsViewModel`; `MainViewModel` + список таблиц из `ITableCatalog` (имя, оверлей-языки, mapped/unmapped); выбор таблицы → record count или malformed-диагностика (async + CTS). Строки UI — сразу в RESX (`Strings.resx` + `Strings.ru.resx`).

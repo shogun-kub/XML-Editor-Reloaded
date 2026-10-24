@@ -54,6 +54,18 @@ public sealed class FileSystemTableCatalog : ITableCatalog
                 .ToHashSet(StringComparer.Ordinal);
         }
 
+        IReadOnlyList<LanguageDescriptor> languages = _languages;
+        if (languages.Count == 0 && _metadataProvider is not null)
+        {
+            var languageResult = await _metadataProvider.GetLanguagesAsync(cancellationToken).ConfigureAwait(false);
+            if (!languageResult.IsSuccess)
+            {
+                return OperationResult<IReadOnlyList<TableDescriptor>>.Failure(languageResult);
+            }
+
+            languages = languageResult.Data!;
+        }
+
         try
         {
             var descriptors = new List<TableDescriptor>();
@@ -61,7 +73,7 @@ public sealed class FileSystemTableCatalog : ITableCatalog
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var fileName = Path.GetFileName(file);
-                if (IsOverlayFileName(fileName))
+                if (IsOverlayFileName(fileName, languages))
                 {
                     continue;
                 }
@@ -74,7 +86,7 @@ public sealed class FileSystemTableCatalog : ITableCatalog
 
                 var overlays = new List<OverlayDescriptor>();
                 var directory = Path.GetDirectoryName(file);
-                foreach (var language in _languages)
+                foreach (var language in languages)
                 {
                     var overlayName = language.ToOverlayFileName(fileName);
                     var overlayPath = Path.Combine(directory ?? tableDataDirectory, overlayName);
@@ -109,8 +121,8 @@ public sealed class FileSystemTableCatalog : ITableCatalog
         }
     }
 
-    private bool IsOverlayFileName(string fileName) =>
-        _languages.Any(language => fileName.StartsWith(
+    private static bool IsOverlayFileName(string fileName, IReadOnlyList<LanguageDescriptor> languages) =>
+        languages.Any(language => fileName.StartsWith(
             language.OverlayPrefix + ".",
             StringComparison.OrdinalIgnoreCase));
 }

@@ -32,6 +32,9 @@ public static class ErrorCodes
     /// <summary>The requested table is not present in the metadata store.</summary>
     public const string MetadataNotFound = "metadata.not_found";
 
+    /// <summary>The table has no metadata and is loaded in document-driven mode.</summary>
+    public const string MetadataUnmapped = "metadata.unmapped";
+
     /// <summary>A metadata schema migration failed.</summary>
     public const string MetadataMigrationError = "metadata.migration_error";
 

@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0/M1/M2/M3/M4/M5 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 4 test projects; Core primitives, the SQLite metadata layer (migrations, seed, provider, catalog, translations, settings), and the XML layer (loader, document model, validated editing, record operations, overlays, save gate, lookup repository, lossless scalar patch writer) are implemented and tested. `Imaging` is still a class-library stub, and the WPF shell is a template. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0/M1/M2/M3/M4/M5/M8 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 4 test projects; the backend is wired through DI: Core primitives, SQLite metadata and catalog, XML loading/editing/overlays/saving, settings, lookup repository, and `TableRepository`. `Imaging` is still a class-library stub, and the WPF shell is a template. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
