@@ -2,11 +2,11 @@
 
 ## Объём milestone
 
-Весь backend (`Core`, `Data`, `Xml`, `Imaging`) до рабочего состояния + минимальная WPF-оболочка (composition root, настройки, выбор каталога данных, список таблиц, заглушка детального вида). Сетки редактирования, формы предметов, локализация UI-интерфейса и image-UI — следующие milestone.
+**Исторический объём M0–M10:** весь backend (`Core`, `Data`, `Xml`, `Imaging`) до рабочего состояния + минимальная WPF-оболочка (composition root, настройки, выбор каталога данных, список таблиц, заглушка детального вида). Сетки редактирования, формы предметов, локализация UI-интерфейса и image-UI были следующими milestone и реализованы в M12–M17; дальнейший roadmap — M18–M27.
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0–M17 завершены. Backend, WPF-оболочка, grid-редактор, локализация, верифицированные метаданные, типизированные редакторы, массовые операции с undo и read-only сравнение версий работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки, RESX-локализация, STI-браузер, discovery-схема, `TableWorkspace`, runtime-сессия датасета, lossless-патчер, вкладки таблиц с виртуализированной сеткой, sparse-правка, add/dup/delete, поиск/сортировка, chooser колонок, сохранение, валидация, панель деталей, переключение языковых оверлеев, маркеры «не переведено», отчёт о переводах, создание оверлея, lookup-комбо, Boolean-чекбоксы, именованные биты, bulk set/add/multiply с preview и undo/redo, сравнение двух каталогов `TableData` с экспортом отчёта. Метаданные: 502 проверенных `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок для 23 lookup-таблиц, 11 flag-lookup-связей, 64-битные lookup ID, hints в валидаторе и на backend-пути правки.
+**Текущее состояние:** M0–M17 завершены. Backend, WPF-оболочка, grid-редактор, локализация, верифицированные метаданные, типизированные редакторы, массовые операции с undo и read-only сравнение версий работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки, RESX-локализация, STI-браузер, discovery-схема, `TableWorkspace`, runtime-сессия датасета, lossless-патчер, вкладки таблиц с виртуализированной сеткой, sparse-правка, add/dup/delete, поиск/сортировка, chooser колонок, сохранение, валидация, панель деталей, переключение языковых оверлеев, маркеры «не переведено», отчёт о переводах, создание оверлея, lookup-комбо, Boolean-чекбоксы, именованные биты, bulk set/add/multiply с preview и undo/redo, сравнение двух каталогов `TableData` с экспортом отчёта. Метаданные: 502 проверенных `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок для 23 lookup-таблиц, 11 flag-lookup-связей, 64-битные lookup ID, hints в валидаторе и на backend-пути правки. Дальнейший roadmap (M18–M27) и точка паритета с legacy-редактором зафиксированы ниже: **item-workflow parity — конец M19, full legacy parity — конец M23**.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -179,18 +179,113 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 - **Тесты:** 19 новых (13 Xml, 5 App, 1 env-gated Data); всего 264. Env-gated сравнение v4↔v5 (`XER_COMPARE_LEFT_DIR`/`XER_COMPARE_RIGHT_DIR`) проверяет 238/239 таблиц, 238 общих, одну right-only (`Email.EmailSenderNameList`), 25 таблиц с русскими оверлеями, malformed `Lookup.AttachmentPoint` в v5, record counts `Items.Items` 1776/1775, `Items.Weapons` 389/388, `Items.Attachments` 6079/6023, `AttachmentPoint`-lookup как `Unreadable` справа и отсутствие изменений в обоих каталогах. Сравнение ~1 с.
 **Ограничения:** значения ячеек не сравниваются, только структура и типы; singleton-поля nested-таблиц вне record scope (например `COUNTRY`) в профиль не попадают; наличие оверлеев сравнивается, но их содержимое — нет; отчёт не поддерживает трёхстороннее слияние и экспорт в Excel.
 
-**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17. Corpus harness запускается на каждом milestone; perf-гейты — на M10, M11 и перед релизом.
+---
+
+## Функциональный паритет с legacy-редактором
+
+**Эталон:** `References/xml-editor` — единственный реально работающий legacy-редактор (VB.NET/WinForms, 123 `DataTable`, 97 `DataRelation`). `References/JA_2_1.13_TableData_Editor` — незавершённый прототип с одной кнопкой «Test» и неработающим парсером, поэтому эталоном паритета он не считается и используется только как источник имён полей.
+
+**Определение.** Функциональный паритет означает, что каждая реально доступная и работающая пользовательская функция legacy либо реализована в XML Editor Reloaded, либо заменена более безопасным эквивалентом. Bug-for-bug совместимость не требуется. Критерий проверяется по фактическому поведению legacy-кода, а не по пунктам его меню.
+
+**Вне паритета (осознанно):**
+- скрытые и мёртвые меню legacy: Edit (undo/redo/cut/copy/paste), Print/Preview/Setup, Profiles, Tools/Options, Maps/Cities/SAM/Movement, New Window;
+- неработающие функции: BitCodeMaker (скрыт и подключён не к той таблице), working-data cache (перекрывает актуальную схему), сохранение layout в неверный путь;
+- деструктивное поведение: молчаливая потеря unknown-тегов, каскадное удаление без предупреждения, перезапись `ubClassIndex`, сброс отсутствующих изображений в `0/0`;
+- сервисные/вычисляемые настройки (`AP_Maximum`, `Hide_Nothing_Items`, working cache) — заменяются отображением, поиском и текущими perf-гейтами;
+- Cities/facilities, value-level compare, lookup management и packaging не требуются для паритета — они запланированы в M24–M27; undo/redo, оверлеи, структурное сравнение и валидация уже сильнее legacy.
+
+**Маркеры:**
+- **M19 — Item-workflow parity:** Items + все 1:1/1:N sub-tables, item pickers, nested modifiers, локализованные поля, изображения и item-workflow. Вкладка shopkeeper inventory относится к M20 и в этот маркер не входит.
+- **M23 — Full functional parity:** все рабочие функции legacy, включая merc gear, shopkeeper/enemy/militia/IMP/sounds, multi-dataset/copy, фильтры/выделение/layout. Ориентировочно 22–31 рабочий день после M17.
+
+### Сводная матрица паритета
+
+| Область legacy | Текущее состояние | Milestone |
+|---|---|---|
+| XML round-trip, undo, overlays, compare, валидация | уже сильнее legacy | — |
+| Grid: sort/search/chooser/bulk/add/delete | частично; нет фильтров и multi-select | M22 |
+| Item master-detail и sub-tables | отсутствует; есть generic grid и detail-панель | M19 |
+| Main-table pickers (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`) | отсутствуют | M18 |
+| Merc gear | таблица открывается, `GEARKIT` read-only | M20 |
+| Shopkeeper/enemy/militia/IMP/sounds | каталог видит файлы, метаданных нет | M20 |
+| Lookup-таблицы | редактируются generic grid | M20 / M26 |
+| Локализация | overlays сильнее legacy; настроен только `ru` | M20 |
+| Multi-dataset и copy строк | есть только compare | M21 |
+| Item images | detail-панель и viewer; нет grid-thumbnail и picker | M19 |
+| Settings/layout | частично; нет settings dialog и persistence | M22 |
+| Packaging | нет у обоих | M27 |
+
+### M18 — Relation model и main-table pickers — **следующий**
+- **Метаданные:** миграция `0007_TableRelations.sql`; таблица `TableRelations` (`SourceTableId`, `SourceField`, `TargetTableId`, `TargetValueField`, `TargetDisplayField`, `Kind` = `Reference`/`SubTable`/`ChildRows`/`Reverse`, `FilterField`/`FilterOperator`/`FilterValue`, `LabelKey`, `RemapByText`, `Ordinal`). Фильтры структурированные (`=`, `<>`, `contains`, bitmask-has), без SQL и произвольных выражений.
+- **Импорт связей:** 99 ссылок на `ITEM`, `AMMO`, `AMMOTYPE`, `ITEMTOEXPLOSIVE` из отчёта M14.5 и legacy `DatabaseCode.MakeColumn`, плюс 1:1/1:N связи item-подтаблиц. Каждая ссылка проверяется на v4 и v5. `ITEMTOEXPLOSIVE` заменяется фильтром по `Items`, отдельный файл не создаётся.
+- **Backend:** `TableRelation`, `ITableRelationResolver` с кэшем target-таблиц, поиском по display-тексту и ID, remap по имени. Ошибка загрузки target не ломает открытие исходной таблицы.
+- **UI:** searchable combo для relation-полей в сетке и панели деталей, переход к target-записи, unknown-ID остаётся raw с предупреждением. Значение пишется в исходное поле как ID.
+- **Валидация:** `lookup_missing` для relation-ссылок, без автозаполнения и без создания отсутствующих записей.
+- **Тесты:** metadata-провайдер, resolver, фильтры, remap, picker VM, env-gated проверки `Items → Weapons/Ammo/Explosives` на v4/v5.
+- **Acceptance:** поля-ссылки показывают имена; выбор пишет ID; неизвестный ID виден как raw; неизменённые файлы не перезаписываются.
+
+### M19 — Item master-detail workspace — **item-workflow parity** (без shopkeeper-вкладки; она в M20)
+- **Архитектура:** новый тип вкладки `ItemWorkspace` в главном `TabControl`, открывается двойным щелчком по `Items.Items`. Общий интерфейс `IEditorTab` (`IsDirty`, `Title`, `SaveAsync`, `Close`) реализуют и `TableEditorViewModel`, и item workspace; благодаря этому Save All, dirty-маркер и закрытие вкладки работают единообразно.
+- **Backend:** композитный `TableSetWorkspace` агрегирует Items и связанные документы; 1:1 sub-table находятся по `uiIndex`, 1:N child rows — через M18. Единый dirty/save; композитная транзакция undo для операций, затрагивающих несколько файлов; per-file atomic save с отчётом об ошибках.
+- **UI:** заголовок записи, группы полей из hints, секции `Weapon`, `Magazine`, `Armour`, `Explosive`, `LBE`, attachments/attachment info, shopkeeper inventory (M20), class-aware видимость. Вложенные `MODIFIERS` и list-поля `DefaultAttachment`/`AvailableAttachmentPoint` становятся редактируемыми (backend `SetNestedValue` для base и `SetListField`).
+- **Item-workflow:** new item с классом/именем, duplicate с дочерними записями, relation-aware delete с подтверждением, find by ID, change class без перезаписи `ubClassIndex`, обработка коллизии `uiIndex` со swap.
+- **STI:** превью Big/Medium/Small, picker graphic type/index, inline thumbnail в сетке Items, неразрушающий список отсутствующих изображений.
+- **Локализация:** существующие оверлеи; переводы пишутся только в overlay, базовая таблица не меняется.
+- **Тесты:** композитный save/undo, duplicate/delete, nested/list round-trip, реальные v4/v5 без перезаписи неизменённых файлов.
+- **Acceptance:** любое поле предмета и его sub-table редактируется из одной вкладки; Save All сохраняет все связанные документы; после полной отмены составная операция не оставляет частичных изменений.
+
+### M20 — Merc gear, вспомогательные таблицы, language catalog
+- **Merc gear:** редактор пяти `GEARKIT` (item pickers, quantity/status, price modifiers, kit name), base + overlay; без нормализации 4-vs-5 kits и без потери полей.
+- **Метаданные legacy-таблиц:** 19 shopkeeper inventory и `AdditionalDealer_*` (общая metadata-форма), 14 enemy/militia gun/item choices, 6 enemy ammo/drops, IMP choices, `Sounds`/`BurstSounds`; keys, hints, relations; чистка устаревших mapping-ов. `CONTROL`-часть shopkeeper-файлов сохраняется как есть, отдельного UI нет (в legacy его тоже не было).
+- **Item workspace:** обратная связь `Items → shopkeeper inventory` — вкладка с количеством у дилеров.
+- **Локализация:** добавить в `Languages` коды `de/pl/fr/it/nl/zh` с overlay-префиксами и автодискавери существующих оверлеев; `Russian.AmmoStrings` и другие оверлеи редактируются через overlay. В v4/v5 реально есть только `ru` — новые файлы не создаются.
+- **Тесты:** nested merc gear round-trip, верификация метаданных на v4/v5, вспомогательные таблицы без ложных предупреждений.
+- **Acceptance:** merc gear редактируется по всем пяти комплектам; shopkeeper/enemy/militia/IMP/sounds открываются с типами, ключами и item pickers; существующие значения не нормализуются.
+
+### M21 — Multi-dataset и cross-dataset copy/merge
+- **Multi-dataset:** список `DataDirectories`, переключение активного датасета без перезапуска, кэш сессий по каталогу, вкладки с ключом `(datasetPath, tableName)`, Save All по всем открытым вкладкам, recent directories в UI.
+- **Copy service:** `ITableCopyService` копирует выбранные строки/таблицу из source в target; preview конфликтов; политики skip/overwrite/merge; allocation ключей; remap lookup и relation по display-тексту; опциональное копирование связанных строк Items (sub-tables и shopkeeper inventory).
+- **Безопасность:** source всегда read-only; запись только в target после preview; ошибка не оставляет частично записанный файл. Legacy drag-copy заменяется явным диалогом с preview — это безопасный эквивалент, а не потеря функции.
+- **Тесты:** remap, конфликты, source не изменён, копирование v4→v5 на temp-копиях.
+- **Acceptance:** предмет с sub-tables копируется из v4 в v5, ссылки remap-ятся, target валиден, source не изменён.
+
+### M22 — Grid/workflow parity polish
+- **Фильтры:** структурированный конструктор (`=`, `<>`, `contains`, числовые сравнения, AND/OR-группы), фильтр по выбранному значению и исключение. Legacy-выражение DataView заменяется безопасным конструктором без произвольного кода.
+- **Выделение и bulk:** multi-select в сетке; bulk применяется к выделенным строкам, при пустом выделении — ко всему текущему виду (как в legacy); пустой Set в диалоге.
+- **Persistence:** per `(dataset, table)` — видимость/ширина/порядок колонок, сортировка, фильтр; отдельный versioned `layouts.json` в `%AppData%`, команда сброса.
+- **Settings dialog:** data directories, активный датасет, UI-язык en/ru, recent dirs; смена UI-языка применяется после перезапуска, если runtime-переключение окажется слишком инвазивным.
+- **Safety:** prompt при закрытии приложения с несохранёнными вкладками; при внешнем изменении файла — reload/discard/overwrite с подтверждением.
+- **Тесты:** семантика фильтров, bulk по выделению, settings/layout round-trip.
+- **Acceptance:** фильтр и выделение дают предсказуемый набор строк; layout восстанавливается после перезапуска; закрытие приложения не теряет несохранённые данные молча.
+
+### M23 — Аудит и gate паритета
+- `LEGACY-PARITY-REPORT.md`: построчная матрица «функция legacy → реализация / superseded / исключено» с файлами-доказательствами.
+- Ручная проверка на v4 и v5: item workspace и все sub-tables, merc gear, shopkeeper, pickers, copy, фильтры, изображения, локализация, настройки.
+- Исправляются только найденные пробелы; при крупном пробеле маркер паритета сдвигается.
+- **Маркер: full functional parity.** Коммит `M23: legacy functional parity gate`.
+
+### После паритета — M24–M27
+Паритет не требует этих функций, потому что в legacy их нет; они закрывают собственные пробелы rewrite.
+
+- **M24 — Nested/list/dict editor (4–5 дн):** универсальный редактор `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`), `FacilityTypes/ASSIGNMENT`, root singleton cells и list/dict-полей; nested overlay-переводы. Опирается на base nested write из M19 и gear-редактор M20.
+- **M25 — Comparison v2 и dataset-wide validation (3–4 дн):** дифф значений (не только структуры), содержимое оверлеев, root singleton; валидация всех таблиц датасета одним отчётом; глобальный поиск по таблицам.
+- **M26 — Lookup management и reference protection (3–4 дн):** CRUD lookup-таблиц, bitmask allocation ID, free-form ID, «где используется», защита от удаления используемых значений, валидация flag-lookup.
+- **M27 — Packaging/release (2 дн):** self-contained publish, иконка/версия/changelog, README и user guide, portable zip, CI-гейты сборки/тестов/корпуса.
+
+**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17 → M18 → **M19 (item parity)** → M20 → M21 → M22 → **M23 (full legacy parity)** → M24 → M25 → M26 → M27. Corpus harness запускается на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
 
 ---
 
 ## Отложено за пределы этого milestone (осознанно)
 
-| Фича | Почему позже |
+| Фича | Статус и причина |
 |---|---|
-| Слияние подтаблиц предметов в ITEM (WEAPON/MAGAZURE/…) | Это view-проекция поверх пяти открытых документов, не модель хранения; встроенная в core — риск для целостности |
-| Shopkeeper ControlTable/InventoryTable | Узкоспециальные обработчики, ломают metadata-driven подход |
-| Working-data cache | Преждевременно до замеров M10; кэш = риск устаревших данных при сохранении |
-| Copy между датасетами (ComparisonField, lookup remap) | Workflow над стабильными load/save API; первый кандидат после shell |
+| Слияние подтаблиц предметов в ITEM (WEAPON/MAGAZINE/…) | M19 реализует view-проекцию как item workspace; слияние в модель хранения остаётся вне core — риск для целостности |
+| Shopkeeper ControlTable/InventoryTable | Inventory — M20 через generic grid с item pickers; `CONTROL` сохраняется как есть, отдельного UI нет (в legacy его тоже не было) |
+| Working-data cache | Не вводится: perf-гейты M10/M11/M16 уже закрывают загрузку; кэш — риск устаревших данных при сохранении |
+| Copy между датасетами (ComparisonField, lookup remap) | Запланирован в M21 |
+| Cities/facilities, value-level compare, lookup management, packaging | Post-parity M24–M27: в legacy этих функций нет |
+| Three-way merge, Excel-экспорт сравнения, общий STI/Interface/tileset browser | Backlog после M27; для паритета не требуются |
 
 Включено осознанно: PK max+1, add/duplicate/delete, discovery оверлеев, ColumnMetadata.
 
@@ -203,10 +298,14 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.
 - **R5 вложенные ключи оверлеев**: сегментированные `RecordKeySpec` + реальные фикстуры v4.
-- **R6 53/263 таблицы в метаданных**: document-driven fallback, миграции растут итеративно.
+- **R6 неполные метаданные**: seed покрывает 73 таблицы против 238/239 в v4/v5; document-driven fallback, M20 добавляет legacy-таблицы, миграции растут итеративно.
 - **R7 запись в References/ из тестов**: только temp-копии, проверка в done-when M3.
 - **R9 внешние изменения**: fingerprint (length, mtime) до записи.
 - **R10 культура и отмена**: invariant-числа с запретом запятой/групп, pre-cancelled token во всех I/O-сервисах; проверено тестами M10.
+- **R11 relations drift (M18)**: 99 main-table ссылок и связи item-подтаблиц могут дать ложные или устаревшие связи; каждая проверяется на v4/v5, resolver и фильтры покрываются env-gated тестами, неизвестный target не ломает открытие таблицы.
+- **R12 перезапись при copy (M21)**: cross-dataset copy может затереть target; source всегда read-only, preview и явная политика skip/overwrite/merge, тесты на temp-копиях.
+- **R13 многофайловое сохранение (M19)**: item workspace пишет несколько XML; каждый файл сохраняется атомарно, ошибки возвращаются по файлам, частичное сохранение не маскируется.
+- **R14 base nested/list-правки (M19)**: изменения вложенных и повторяющихся элементов идут через lossless-патчер и round-trip тесты; неизменённые файлы не перезаписываются.
 
 ---
 
@@ -217,4 +316,5 @@ Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков 
 3. M3/M10/M11+: `XER_CORPUS_DIR="…/References/JA 2 1.13 v4/Data-1.13/TableData" dotnet test` (и v5) — corpus harness проходит на копии; в `References/` нет изменений (проверять отсутствием новых `bin/`/`obj/`).
 4. M10+: perf-гейты — `XER_CORPUS_DIR="…v5/Data-1.13/TableData" dotnet test --filter "Category=Performance"`; порог 2 с, фактические значения фиксируются в этом файле. M11: workspace открывает `Items.xml` за 86 мс. M16: bulk по ~1776 строкам `Items.xml` — preview 28–40 мс, apply 91–107 мс, undo 34 мс; bulk переводов v4 — preview 39–68 мс, apply 751–790 мс, undo 23–27 мс. M17: сравнение v4↔v5 (477 файлов) — ~1 с.
 5. M9/M10/M12/M13/M14/M14.5/M15: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Lookup.ItemFlag` → lookup с ID > `int.MaxValue` читается без ошибки; двойной щелчок по `Items.Items` → вкладка с 1775 строками; правка ячейки → сохранение меняет только это поле; add/delete записи → файл остаётся валидным; выбор строки в сетке → панель «Детали» с группами identity/attachments/stance/flags, три превью Big/Medium/Small и кнопка «Биты» только у флаговых полей (значения > `int.MaxValue` открываются корректно); вложенные поля (`MODIFIERS`) read-only; панель валидации на неизменённом `Items.Items` не показывает `invalid_type`/`lookup_missing`, а внесённый вручную `abc` в целочисленное поле даёт предупреждение и не сохраняется. Для v4: переключение языка на Russian показывает merged-значения, непереведённые поля подсвечены, «Переводы» открывает отчёт; правка `szItemName` меняет только `Russian.Items.xml`; для v5 выбор Russian предлагает создать пустой оверлей, после создания и правки файл содержит ключ и только переведённое поле. «Изображения предметов» → предмет 311 (String) или тип 2 / индекс 35 → три панели; отсутствующие размеры показывают код ошибки. В M15: `ubCursor` в `Items.Items` показывает имена из `Lookup.Cursor` и пишет ID; неизвестный ID отображается как `raw (unknown)`; в v5 поля `AttachmentPoint`/`AvailableAttachmentPoint` показывают `⚠` из-за повреждённого lookup-файла и остаются текстовыми; Boolean-поля (`AllowClimbing` и др.) переключаются чекбоксом, пустое поле не превращается в `0` без действия пользователя; кнопка «Биты» у `usItemClass` показывает имена классов (`Gun`, `Knife`, …), а у `usActionItemFlag` — только номера битов. В M16: «Массовая правка…» на отфильтрованном виде показывает preview только изменяемых/ошибочных строк и применяет set/add/multiply одной транзакцией; Ctrl+Z/Ctrl+Y отменяют и повторяют всю операцию, после полной отмены документ снова чистый; bulk перевода в v4 пишет только `Russian.Items.xml`, базовая таблица не меняется. В M17: «Сравнить версии…» → левый путь v4, правый v5 → «Сравнить» показывает 238 общих таблиц, 25 таблиц с overlay `ru`, `ITEMS.Items` 1776→1775, `Lookup.AttachmentPoint` справа «Повреждена», lookup-ссылки `AttachmentPoint` справа «Не читается»; «Экспорт…» сохраняет .md/.csv; после сравнения файлы в `References/` не изменены.
-6. `find References -type d \( -name bin -o -name obj \)` — пусто.
+6. M18–M23 (parity gates): M18 — item/ammo/explosive pickers показывают имена, unknown-ID остаётся raw; M19 — item workspace редактирует Items и все связанные sub-tables, duplicate/delete и Save All не оставляют частичных изменений, **item-workflow parity**; M20 — merc gear пять GEARKIT, shopkeeper/enemy/militia/IMP/sounds открываются с метаданными и pickers, ложных предупреждений нет; M21 — copy v4→v5 с remap и неизменённым source; M22 — фильтры, multi-select, layout persistence и settings/exit prompt; M23 — `LEGACY-PARITY-REPORT.md` не содержит открытых пробелов, **full legacy parity**. На M19–M22 также прогоняются v4/v5 corpus и perf-гейты.
+7. `find References -type d \( -name bin -o -name obj \)` — пусто.

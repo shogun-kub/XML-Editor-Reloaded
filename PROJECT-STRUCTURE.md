@@ -184,6 +184,8 @@ Example mappings: `Items.Items → DTO_Item / ITEMLIST / ITEM`, `Items.Weapons �
 
 The production schema replaces the prototype mapping tables with `Tables`, `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`, and `ColumnHints`, plus `SchemaMigrations` for versioning. The seed covers 73 tables, 76 key segments, 12 list fields, 3 dict fields, 61 translatable paths, language `ru → Russian`, 46 declaring `Columns` rows for the 23 lookup tables, and 502 verified hints for 25 tables. `Items.Items` has 224 hints, including 8 flag masks; its fields are 105 Boolean, 87 Integer, 12 Decimal, 8 Flags, 3 Lookup, 6 String, and 3 nested. `ColumnHints` refines only fields that are present in a document, so sparse-record semantics are preserved. The hints were verified against both v4 and v5; stale legacy fields are excluded (see `M14.5-METADATA-REPORT.md`).
 
+**Planned (M18): `TableRelations`.** The relation model adds one row per source-field-to-target-table link: `SourceTableId`, `SourceField`, `TargetTableId`, `TargetValueField`, `TargetDisplayField`, `Kind` (`Reference`, `SubTable`, `ChildRows`, `Reverse`), structured filter columns (`FilterField`, `FilterOperator`, `FilterValue`), `LabelKey`, `RemapByText`, and `Ordinal`. It seeds the 99 legacy main-table references (`ITEM`, `AMMO`, `AMMOTYPE`, `ITEMTOEXPLOSIVE`) and the 1:1/1:N item-sub-table links. Filters are evaluated in memory with a small closed operator set; no SQL or arbitrary expressions are stored. `ITEMTOEXPLOSIVE` remains a derived filter over `Items` and is never written as a separate table.
+
 ### 6.3 STI images
 
 - Container starts with the ASCII magic `STCI`.
@@ -330,61 +332,64 @@ The remaining overlays (`CampaignStatsEvents`, `CivGroupNames`, `DifficultySetti
 
 ## 7. Planned feature set (parity with the legacy editor)
 
+Legacy parity is tracked in `PLAN.md`. The benchmark is `References/xml-editor`; `References/JA_2_1.13_TableData_Editor` is an unfinished prototype and is not a parity benchmark. **Item-workflow parity is reached at M19; full legacy parity at M23.** M24–M27 are post-parity improvements.
+
 ### Data sources and navigation
 
-- Configure one or more game data directories; detect `TableData` automatically.
-- Optional language-specific directories for localized table variants.
-- Discover language overlays (`<Language>.<BaseFile>.xml`) per table; choose a display/edit language.
-- Open v4, v5, and future versions side by side; report files and fields that differ between data sets. **Implemented read-only (M17):** the comparison window reports table presence, record counts, field sets, inferred types, cardinality, lookup references, and sparse profiles, and exports Markdown or CSV.
-- Table list grouped by category (Items, Weapons, Inventory, Lookup, etc.).
-- Open several tables in tabs/panes; remember layout between sessions.
-- Load malformed files in a diagnostic mode that reports the problem without rewriting the file.
+- Configure one or more game data directories; detect `TableData` automatically. **Multi-dataset management, switching, and recent directories: M21.**
+- Optional language-specific directories for localized table variants. **M20.**
+- Discover language overlays (`<Language>.<BaseFile>.xml`) per table; choose a display/edit language. **Done (M14); additional legacy language codes: M20.**
+- Open v4, v5, and future versions side by side; report files and fields that differ between data sets. **Implemented read-only (M17):** the comparison window reports table presence, record counts, field sets, inferred types, cardinality, lookup references, and sparse profiles, and exports Markdown or CSV. **Value-level diff: M25.**
+- Table list grouped by category (Items, Weapons, Inventory, Lookup, etc.). **Future backlog; not required for legacy parity.**
+- Open several tables in tabs/panes; remember layout between sessions. **Tabs are done; layout persistence: M22.**
+- Load malformed files in a diagnostic mode that reports the problem without rewriting the file. **Done (M3/M9).**
 
 ### Localization
 
-- Show base English values with translated overlay values; mark untranslated fields and records.
-- Edit translations in place; write only to the overlay file.
-- Compare base and translation side by side.
-- Report missing translations, orphan overlay keys, duplicate keys, and empty values.
-- Create a new language overlay containing keys and translatable fields only.
-- Localize the editor UI itself (English/Russian initially), with a language selector in settings.
+- Show base English values with translated overlay values; mark untranslated fields and records. **Done (M14).**
+- Edit translations in place; write only to the overlay file. **Done (M14).**
+- Compare base and translation side by side. **M25.**
+- Report missing translations, orphan overlay keys, duplicate keys, and empty values. **Done (M14).**
+- Create a new language overlay containing keys and translatable fields only. **Done (M14).**
+- Localize the editor UI itself (English/Russian initially), with a language selector in settings. **RESX en/ru done; selector and runtime application: M22.**
 
 ### Grid editing
 
-- Virtualized grid with sorting, filtering (by value, excluding value, custom expression), and column selection.
-- Add, duplicate, and delete rows; automatic primary-key allocation.
-- Bulk value operations: add, multiply, set for a selected column.
-- Copy rows between data sets with overwrite rules.
-- Item grid with inline image previews.
+- Virtualized grid with sorting, filtering (by value, excluding value, structured expression), and column selection. **Sort and column chooser are done (M12); structured filters and filter-by-value: M22.**
+- Add, duplicate, and delete rows; automatic primary-key allocation. **Done (M11/M12).**
+- Bulk value operations: add, multiply, set for a selected column. **Done (M16); selection-scoped bulk and empty Set: M22.**
+- Copy rows between data sets with overwrite rules. **M21.**
+- Item grid with inline image previews. **M19.**
 
 ### Item and gear editors
 
-- Item detail form with fields grouped by category (general, weapon, armour, flags, modifiers, food/drug, etc.).
-- Item image preview (big, medium, small) with transparency.
-- Attachment slots, default attachments, and compatible/incompatible attachment lists.
-- Merc starting gear editor with several gear kits.
-- Bit-flag editor, item class changer, new-item dialog, item ID lookup.
+- Item master-detail with fields grouped by category (general, weapon, armour, flags, modifiers, food/drug, etc.). **Generic detail panel done (M13); full item workspace with related sub-tables: M19.**
+- Item image preview (big, medium, small) with transparency. **Done (M13); graphic type/index picker and grid thumbnail: M19.**
+- Attachment slots, default attachments, and compatible/incompatible attachment lists. **M19.**
+- Merc starting gear editor with several gear kits. **M20.**
+- Bit-flag editor, item class changer, new-item dialog, item ID lookup. **Flag editor done (M15); class changer, new-item dialog, and ID lookup: M19.**
 
 ### Lookup tables
 
-- Editable lookup grids with ID/name validation.
-- Protection against deleting values referenced by other tables.
+- Editable lookup grids with ID/name validation. **Done for `Lookup.*` via the generic grid; auxiliary table metadata: M20.**
+- Main-table item pickers (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`). **M18.**
+- Protection against deleting values referenced by other tables. **M26 (post-parity).**
 
 ### Persistence
 
-- Save individual tables or all modified tables.
-- Detect external file changes and warn before overwriting.
-- Preserve XML structure and encoding; round-trip unknown elements, sparse records, BOM, and line endings.
-- Load → save without edits must reproduce the original file; this is verified by automated tests.
-- Working-data cache for fast reloads.
+- Save individual tables or all modified tables. **Done (M11/M12); item workspace Save All: M19.**
+- Detect external file changes and warn before overwriting. **Detection is done; reload/discard/overwrite prompt: M22.**
+- Preserve XML structure and encoding; round-trip unknown elements, sparse records, BOM, and line endings. **Done (M3/M10/M11).**
+- Load → save without edits must reproduce the original file; this is verified by automated tests. **Done.**
+- No working-data cache. Performance gates cover load time; relation and copy caches are in-memory, per-session, and invalidated on reload (**M18/M21**).
 
 ### UX and infrastructure
 
-- Asynchronous loading with progress and cancellation.
-- Undo/redo for row-level edits where feasible.
-- Clear validation messages tied to table, row, and column.
-- Settings dialog for game paths, language directories, and display options.
-- Crash-safe error reporting that does not discard unsaved changes silently.
+- Asynchronous loading with progress and cancellation. **Done (M9/M10).**
+- Undo/redo for row-level edits where feasible. **Done (M16); composite item-workspace undo: M19.**
+- Clear validation messages tied to table, row, and column. **Done per table; dataset-wide report: M25.**
+- Settings dialog for game paths, language directories, and display options. **M22.**
+- Crash-safe error reporting that does not discard unsaved changes silently. **Exit prompt and external-change handling: M22.**
 
 ## 8. Reference projects
 
@@ -410,6 +415,8 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 
 ## 10. Roadmap
 
+**Legacy parity:** item-workflow parity at M19, full legacy parity at M23; M24–M27 are post-parity. The benchmark is `References/xml-editor`.
+
 1. Scaffold the solution, shared build props, and empty projects; verify the build. **Done (M0).**
 2. Implement `Core` metadata abstractions and the standard result type. **Done (M1).**
 3. Implement `Data` SQLite metadata repository; import the prototype schema. **Done (M2).**
@@ -425,4 +432,13 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 13. Add lookup, Boolean, and flag editors. **Done (M15).**
 14. Add bulk column operations with preview and undo. **Done (M16).**
 15. Add a read-only cross-version field report. **Done (M17).**
-16. Merc gear editor, lookup-table management (ID allocation and reference protection), and main-table item lookups remain future work; scope needs agreement.
+16. Add the relation model and main-table pickers (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`). **Planned (M18).**
+17. Add the item master-detail workspace with related sub-tables, nested/list editing, and item workflows. **Planned (M19); item-workflow parity.**
+18. Add the merc gear editor, legacy auxiliary table metadata (shopkeeper/enemy/militia/IMP/sounds), and the legacy language catalog. **Planned (M20).**
+19. Add multi-dataset management and cross-dataset copy/merge with lookup and relation remapping. **Planned (M21).**
+20. Add grid/workflow parity polish: structured filters, multi-select, selection-scoped bulk, layout persistence, settings dialog, and exit/external-change prompts. **Planned (M22).**
+21. Audit working legacy features and record parity in `LEGACY-PARITY-REPORT.md`. **Planned (M23); full legacy parity.**
+22. Add a universal nested/list/dict editor for Cities, facility assignments, root singleton cells, and overlay nested translations. **Planned (M24).**
+23. Add comparison v2 (value-level diffs, overlay contents, root singletons), dataset-wide validation, and global search. **Planned (M25).**
+24. Add lookup management and reference protection (CRUD, bitmask ID allocation, usage reports, delete protection). **Planned (M26).**
+25. Add packaging and release: self-contained publish, icon/version/changelog, user guide, portable zip, CI gates. **Planned (M27).**
