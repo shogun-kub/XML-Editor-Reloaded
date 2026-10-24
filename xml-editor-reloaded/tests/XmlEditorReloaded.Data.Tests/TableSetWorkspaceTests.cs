@@ -66,7 +66,7 @@ public class TableSetWorkspaceTests
             .Where(record => record.GetRawValue("itemIndex") == "3")
             .ToArray();
         Assert.Single(copiedAttachments);
-        Assert.Equal("21", copiedAttachments[0].GetRawValue("attachmentIndex"));
+        Assert.Equal("10", copiedAttachments[0].GetRawValue("attachmentIndex"));
 
         Assert.True(set.IsDirty);
         Assert.True(set.Undo().IsSuccess);
@@ -93,21 +93,22 @@ public class TableSetWorkspaceTests
         var fixture = CreateFixture(workspace);
         var (set, _) = await LoadSetAsync(workspace, fixture);
 
+        var attachmentKey = AttachmentKey("10", "1");
         var dependents = set.DescribeDependents("1");
         Assert.Contains(dependents, entry => entry.Table == Weapons && entry.Keys.SequenceEqual(new[] { "1" }));
-        Assert.Contains(dependents, entry => entry.Table == Attachments && entry.Keys.SequenceEqual(new[] { "10" }));
+        Assert.Contains(dependents, entry => entry.Table == Attachments && entry.Keys.SequenceEqual(new[] { attachmentKey }));
 
         Assert.True(set.DeleteRecord("1").IsSuccess);
         Assert.Null(set.Primary.FindRecord("1"));
         Assert.Null(set.GetWorkspace(Weapons)!.FindRecord("1"));
-        Assert.Null(set.GetWorkspace(Attachments)!.FindRecord("10"));
+        Assert.Null(set.GetWorkspace(Attachments)!.FindRecord(attachmentKey));
         Assert.NotNull(set.Primary.FindRecord("2"));
         Assert.NotNull(set.GetWorkspace(Weapons)!.FindRecord("2"));
 
         Assert.True(set.Undo().IsSuccess);
         Assert.NotNull(set.Primary.FindRecord("1"));
         Assert.NotNull(set.GetWorkspace(Weapons)!.FindRecord("1"));
-        Assert.NotNull(set.GetWorkspace(Attachments)!.FindRecord("10"));
+        Assert.NotNull(set.GetWorkspace(Attachments)!.FindRecord(attachmentKey));
     }
 
     /// <summary>
@@ -129,12 +130,16 @@ public class TableSetWorkspaceTests
         Assert.True(rename.IsSuccess, rename.ErrorText);
         Assert.NotNull(set.Primary.FindRecord("42"));
         Assert.Equal("42", set.GetWorkspace(Weapons)!.FindRecord("42")!.GetRawValue("uiIndex"));
-        Assert.Equal("42", set.GetWorkspace(Attachments)!.FindRecord("10")!.GetRawValue("itemIndex"));
+        Assert.Equal(
+            "42",
+            set.GetWorkspace(Attachments)!.FindRecord(AttachmentKey("10", "42"))!.GetRawValue("itemIndex"));
 
         Assert.True(set.Undo().IsSuccess);
         Assert.NotNull(set.Primary.FindRecord("1"));
         Assert.Equal("1", set.GetWorkspace(Weapons)!.FindRecord("1")!.GetRawValue("uiIndex"));
-        Assert.Equal("1", set.GetWorkspace(Attachments)!.FindRecord("10")!.GetRawValue("itemIndex"));
+        Assert.Equal(
+            "1",
+            set.GetWorkspace(Attachments)!.FindRecord(AttachmentKey("10", "1"))!.GetRawValue("itemIndex"));
     }
 
     /// <summary>
@@ -153,7 +158,9 @@ public class TableSetWorkspaceTests
         Assert.Equal("Glock 18", set.Primary.FindRecord("1")!.GetRawValue("szItemName"));
         Assert.Equal("1", set.GetWorkspace(Weapons)!.FindRecord("1")!.GetRawValue("uiIndex"));
         Assert.Equal("2", set.GetWorkspace(Weapons)!.FindRecord("2")!.GetRawValue("uiIndex"));
-        Assert.Equal("2", set.GetWorkspace(Attachments)!.FindRecord("10")!.GetRawValue("itemIndex"));
+        Assert.Equal(
+            "2",
+            set.GetWorkspace(Attachments)!.FindRecord(AttachmentKey("10", "2"))!.GetRawValue("itemIndex"));
     }
 
     /// <summary>
@@ -435,6 +442,9 @@ public class TableSetWorkspaceTests
 
         return new Fixture(tableData, itemsPath, weaponPath, attachmentsPath, dealerPath);
     }
+
+    private static string AttachmentKey(string attachmentIndex, string itemIndex) =>
+        RecordKeyCodec.Compose(new[] { attachmentIndex, itemIndex });
 
     private sealed record Fixture(
         string TableDataDirectory,

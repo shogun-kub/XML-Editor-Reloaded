@@ -197,6 +197,8 @@ internal sealed class ElementSnapshotState
         TableDocument document,
         XElement parent,
         int index,
+        XNode? previousNode,
+        XNode? nextNode,
         XElement? current,
         XElement? before,
         XElement? after)
@@ -204,6 +206,8 @@ internal sealed class ElementSnapshotState
         Document = document;
         Parent = parent;
         Index = index;
+        PreviousNode = previousNode;
+        NextNode = nextNode;
         Current = current;
         Before = before;
         After = after;
@@ -214,6 +218,19 @@ internal sealed class ElementSnapshotState
     public XElement Parent { get; }
 
     public int Index { get; }
+
+    /// <summary>
+    /// Gets the sibling node that preceded the element when the snapshot was captured. Restoring next to
+    /// this node keeps formatting whitespace in its original node order, which keeps an undone edit
+    /// deep-equal to the saved baseline.
+    /// </summary>
+    public XNode? PreviousNode { get; }
+
+    /// <summary>
+    /// Gets the sibling node that followed the element when the snapshot was captured, used as a
+    /// fallback when the previous node was removed by the same edit.
+    /// </summary>
+    public XNode? NextNode { get; }
 
     public XElement? Current { get; private set; }
 
@@ -233,6 +250,8 @@ internal sealed class ElementSnapshotState
             document,
             parent,
             ElementIndex(parent, element),
+            element.PreviousNode,
+            element.NextNode,
             element,
             new XElement(element),
             null);
@@ -246,6 +265,8 @@ internal sealed class ElementSnapshotState
             document,
             parent,
             ElementIndex(parent, element),
+            element.PreviousNode,
+            element.NextNode,
             element,
             null,
             new XElement(element));
@@ -287,6 +308,14 @@ internal sealed class ElementSnapshotState
         if (Current is not null && Current.Parent == Parent)
         {
             Current.ReplaceWith(replacement);
+        }
+        else if (PreviousNode is not null && PreviousNode.Parent == Parent)
+        {
+            PreviousNode.AddAfterSelf(replacement);
+        }
+        else if (NextNode is not null && NextNode.Parent == Parent)
+        {
+            NextNode.AddBeforeSelf(replacement);
         }
         else
         {

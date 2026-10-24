@@ -247,6 +247,58 @@ public class TableCopyServiceTests
         Assert.Contains(result.Data.Warnings, warning => warning.Contains("404", StringComparison.Ordinal));
     }
 
+    /// <summary>
+    /// A compound-key table preserves every key component, shows display keys in the preview, and
+    /// rejects automatic key allocation.
+    /// </summary>
+    [Fact]
+    public async Task CompoundKeyTable_PreservesKeysAndRejectsAllocation()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider(compoundAttachments: true));
+        var tableName = TableName.Parse("Items.Attachments");
+
+        var preview = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName));
+
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        Assert.Equal(3, preview.Data!.AddCount);
+        Assert.Equal(
+            new[] { "100 | 5", "101 | 5", "102 | 7" },
+            preview.Data.Records.Select(static record => record.SourceKey));
+        Assert.All(
+            preview.Data.Records,
+            record => Assert.Equal(record.SourceKey, record.TargetKey));
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        var attachmentPath = Path.Combine(data.TargetDirectory, "Items", "Attachments.xml");
+        var rows = XDocument.Load(attachmentPath).Root!.Elements("ATTACHMENT").ToArray();
+        Assert.Equal(3, rows.Length);
+        Assert.Contains(rows, row => row.Element("attachmentIndex")?.Value == "100"
+            && row.Element("itemIndex")?.Value == "5");
+        Assert.Contains(rows, row => row.Element("attachmentIndex")?.Value == "101"
+            && row.Element("itemIndex")?.Value == "5");
+        Assert.All(
+            rows.Where(row => row.Element("itemIndex")?.Value == "5"),
+            row => Assert.Equal("5", row.Element("itemIndex")?.Value));
+
+        var allocate = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            KeyMode: TableCopyKeyMode.Allocate));
+        Assert.False(allocate.IsSuccess);
+        Assert.Equal(ErrorCodes.CopyAllocateUnsupported, allocate.ErrorCode);
+    }
+
     private static CopyData CreateData(TestWorkspace workspace)
     {
         var source = Path.Combine(workspace.DirectoryPath, "source");
@@ -352,7 +404,7 @@ public class TableCopyServiceTests
         private readonly Dictionary<TableName, TableMetadata> _tables;
         private readonly Dictionary<TableName, IReadOnlyList<TableRelation>> _relations;
 
-        public TestMetadataProvider()
+        public TestMetadataProvider(bool compoundAttachments = false)
         {
             var items = TableName.Parse("Items.Items");
             var weapons = TableName.Parse("Items.Weapons");
@@ -387,18 +439,31 @@ public class TableCopyServiceTests
                         new ColumnMetadata("uiIndex", ColumnDataType.Integer),
                         new ColumnMetadata("ubCalibre", ColumnDataType.Integer),
                     }),
-                new TableMetadata(
-                    attachments,
-                    "ATTACHMENTLIST",
-                    "ATTACHMENT",
-                    isLookup: false,
-                    new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "attachmentIndex") }),
-                    columns: new[]
-                    {
-                        new ColumnMetadata("attachmentIndex", ColumnDataType.Integer),
-                        new ColumnMetadata("itemIndex", ColumnDataType.Integer),
-                        new ColumnMetadata("APCost", ColumnDataType.Integer),
-                    }),
+                compoundAttachments
+                    ? new TableMetadata(
+                        attachments,
+                        "ATTACHMENTLIST",
+                        "ATTACHMENT",
+                        isLookup: false,
+                        columns: new[]
+                        {
+                            new ColumnMetadata("attachmentIndex", ColumnDataType.Integer),
+                            new ColumnMetadata("itemIndex", ColumnDataType.Integer),
+                            new ColumnMetadata("APCost", ColumnDataType.Integer),
+                        },
+                        recordKeyFields: new[] { "attachmentIndex", "itemIndex" })
+                    : new TableMetadata(
+                        attachments,
+                        "ATTACHMENTLIST",
+                        "ATTACHMENT",
+                        isLookup: false,
+                        new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "attachmentIndex") }),
+                        columns: new[]
+                        {
+                            new ColumnMetadata("attachmentIndex", ColumnDataType.Integer),
+                            new ColumnMetadata("itemIndex", ColumnDataType.Integer),
+                            new ColumnMetadata("APCost", ColumnDataType.Integer),
+                        }),
                 new TableMetadata(
                     TableName.Parse("Lookup.ItemClass"),
                     "JA2Data",

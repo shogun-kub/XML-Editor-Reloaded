@@ -99,8 +99,11 @@ public sealed class TableSchemaBuilder
         var dictPatterns = BuildDictPatterns(metadata);
         var translatableFields = metadata?.TranslatableFieldPaths
             .ToHashSet(StringComparer.Ordinal);
+        var keyFields = metadata?.RecordKeyFields.ToHashSet(StringComparer.Ordinal)
+            ?? new HashSet<string>(StringComparer.Ordinal);
+        var isCompoundKey = keyFields.Count > 1;
         var keyField = metadata?.RecordKey?.Primary.KeyField;
-        if (keyField is null && metadata is null && order.Count > 0)
+        if (keyFields.Count == 0 && keyField is null && metadata is null && order.Count > 0)
         {
             // Document-driven tables have no key metadata; the first discovered field identifies rows.
             // A mapped table with a positional or singleton key must not promote its first field.
@@ -121,7 +124,8 @@ public sealed class TableSchemaBuilder
             ColumnHint? hint = null;
             metadata?.TryGetColumnHint(name, out hint);
 
-            var isKey = string.Equals(name, keyField, StringComparison.Ordinal);
+            var isKey = keyFields.Contains(name)
+                || string.Equals(name, keyField, StringComparison.Ordinal);
             var dataType = columnStats.HasNested
                 ? ColumnDataType.Nested
                 : hint?.DataType
@@ -162,6 +166,7 @@ public sealed class TableSchemaBuilder
                 columnStats.PresenceCount,
                 columnStats.MaxOccurrences,
                 isKey,
+                isKey && isCompoundKey,
                 isList,
                 isDict,
                 dictMask,

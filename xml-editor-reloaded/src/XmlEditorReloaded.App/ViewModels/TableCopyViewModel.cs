@@ -19,6 +19,7 @@ public sealed partial class TableCopyViewModel : ObservableObject
     private readonly ITableCopyService _copyService;
     private readonly ITableCatalog _catalog;
     private readonly IDialogService _dialogService;
+    private readonly ITableMetadataProvider? _metadataProvider;
     private readonly string? _initialTableName;
     private TableCopyPreview? _preview;
     private int _tableLoadGeneration;
@@ -66,6 +67,9 @@ public sealed partial class TableCopyViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasWarnings;
 
+    [ObservableProperty]
+    private bool _isAllocateAvailable = true;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TableCopyViewModel"/> class.
     /// </summary>
@@ -73,12 +77,16 @@ public sealed partial class TableCopyViewModel : ObservableObject
     /// <param name="catalog">Catalog used to list tables common to both data sets.</param>
     /// <param name="dialogService">Dialog service used to add a target directory.</param>
     /// <param name="request">Initial dialog state.</param>
+    /// <param name="metadataProvider">
+    /// Optional metadata provider used to disable key allocation for tables with a compound key.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency or the request is null.</exception>
     public TableCopyViewModel(
         ITableCopyService copyService,
         ITableCatalog catalog,
         IDialogService dialogService,
-        TableCopyDialogRequest request)
+        TableCopyDialogRequest request,
+        ITableMetadataProvider? metadataProvider = null)
     {
         ArgumentNullException.ThrowIfNull(copyService);
         ArgumentNullException.ThrowIfNull(catalog);
@@ -88,6 +96,7 @@ public sealed partial class TableCopyViewModel : ObservableObject
         _copyService = copyService;
         _catalog = catalog;
         _dialogService = dialogService;
+        _metadataProvider = metadataProvider;
         _initialTableName = request.InitialTableName;
 
         var source = Normalize(request.InitialSourceDirectory);
@@ -387,6 +396,8 @@ public sealed partial class TableCopyViewModel : ObservableObject
             SelectedTable = wanted is null
                 ? Tables.FirstOrDefault()
                 : Tables.FirstOrDefault(item => item.TableName == wanted) ?? Tables.FirstOrDefault();
+            await UpdateKeyModeAvailabilityAsync(SelectedTable?.TableName, cancellationToken)
+                .ConfigureAwait(true);
 
             StatusText = Tables.Count == 0
                 ? Strings.Get("CopyNoCommonTables")
@@ -411,6 +422,29 @@ public sealed partial class TableCopyViewModel : ObservableObject
             {
                 IsTablesLoading = false;
             }
+        }
+    }
+
+    private async Task UpdateKeyModeAvailabilityAsync(
+        TableName? tableName,
+        CancellationToken cancellationToken)
+    {
+        var allowed = true;
+        if (tableName is { } name && _metadataProvider is not null)
+        {
+            var metadata = await _metadataProvider
+                .GetTableAsync(name, cancellationToken)
+                .ConfigureAwait(true);
+            if (metadata.IsSuccess)
+            {
+                allowed = !metadata.Data!.HasCompoundRecordKey;
+            }
+        }
+
+        IsAllocateAvailable = allowed;
+        if (!allowed && SelectedKeyMode?.Mode == TableCopyKeyMode.Allocate)
+        {
+            SelectedKeyMode = KeyModes[0];
         }
     }
 
@@ -654,7 +688,11 @@ public sealed partial class TableCopyViewModel : ObservableObject
         _ = LoadTablesAsync();
     }
 
-    partial void OnSelectedTableChanged(TableCopyTableItem? value) => ClearPreview();
+    partial void OnSelectedTableChanged(TableCopyTableItem? value)
+    {
+        ClearPreview();
+        _ = UpdateKeyModeAvailabilityAsync(value?.TableName, CancellationToken.None);
+    }
 
     partial void OnRecordKeysTextChanged(string value) => ClearPreview();
 

@@ -210,6 +210,40 @@ public class TableSchemaBuilderTests
         Assert.Equal(210, nested.GroupOrder);
     }
 
+    /// <summary>
+    /// Every compound key field becomes a key column in declaration order, while the first key column
+    /// remains available through <see cref="TableSchema.KeyColumn"/>.
+    /// </summary>
+    [Fact]
+    public async Task Build_CompoundKey_MarksAllKeyColumns()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "attachments.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ATTACHMENTLIST>"
+            + "<ATTACHMENT><attachmentIndex>10</attachmentIndex><itemIndex>1</itemIndex><APCost>5</APCost></ATTACHMENT>"
+            + "</ATTACHMENTLIST>");
+        var metadata = new TableMetadata(
+            TableName.Parse("Items.Attachments"),
+            "ATTACHMENTLIST",
+            "ATTACHMENT",
+            isLookup: false,
+            recordKeyFields: new[] { "attachmentIndex", "itemIndex" });
+        var document = await LoadAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        Assert.True(schema.HasCompoundKey);
+        Assert.Equal(
+            new[] { "attachmentIndex", "itemIndex" },
+            schema.KeyColumns.Select(static column => column.XmlFieldName));
+        Assert.Same(schema.KeyColumns[0], schema.KeyColumn);
+        Assert.All(schema.KeyColumns, static column => Assert.True(column.IsCompoundKey));
+        Assert.All(schema.KeyColumns, static column => Assert.Equal("identity", column.GroupKey));
+        Assert.False(schema.FindColumn("APCost")!.IsCompoundKey);
+    }
+
     private static async Task<TableDocument> LoadAsync(string path, TableMetadata? metadata)
     {
         var descriptor = new TableDescriptor(

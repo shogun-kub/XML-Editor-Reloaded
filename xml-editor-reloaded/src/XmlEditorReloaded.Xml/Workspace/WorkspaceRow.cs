@@ -12,10 +12,11 @@ namespace XmlEditorReloaded.Xml.Workspace;
 public sealed class WorkspaceRow
 {
     private readonly Dictionary<string, MergedCell[]>? _cells;
+    private readonly string? _key;
 
     internal WorkspaceRow(string? key, TableRecord? record, MergedRecord? merged)
     {
-        Key = key;
+        _key = key;
         Record = record;
         Merged = merged;
         _cells = merged?.Cells
@@ -27,9 +28,15 @@ public sealed class WorkspaceRow
     }
 
     /// <summary>
-    /// Gets the primary record key, or <see langword="null"/> when the record has no key.
+    /// Gets the primary record key, or <see langword="null"/> when the record has no key. The value is
+    /// read from the base record, so an edit of a key field is reflected without rebuilding the row.
     /// </summary>
-    public string? Key { get; }
+    public string? Key => Record?.GetKey() ?? _key;
+
+    /// <summary>
+    /// Gets the key formatted for user-facing messages, for example <c>12 | 37</c> for a compound key.
+    /// </summary>
+    public string KeyDisplay => Record?.KeyDisplay ?? _key ?? string.Empty;
 
     /// <summary>
     /// Gets the base record, or <see langword="null"/> for nested records that are not exposed by

@@ -265,6 +265,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         var dictFields = await ReadDictFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var translatableFields = await ReadTranslatableFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var columnHints = await ReadColumnHintsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
+        var recordKeyFields = await ReadRecordKeyFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -276,7 +277,32 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             listFields,
             dictFields,
             translatableFields,
-            columnHints);
+            columnHints,
+            recordKeyFields);
+    }
+
+    private static async Task<IReadOnlyList<string>> ReadRecordKeyFieldsAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var fields = new List<string>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT XmlFieldName
+            FROM RecordKeyFields
+            WHERE TableId = $tableId
+            ORDER BY Ordinal;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            fields.Add(reader.GetString(0));
+        }
+
+        return fields;
     }
 
     private static async Task<RecordKeySpec?> ReadRecordKeyAsync(

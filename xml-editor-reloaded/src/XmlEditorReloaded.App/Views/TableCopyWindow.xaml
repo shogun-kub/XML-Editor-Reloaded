@@ -120,6 +120,7 @@
                       VerticalAlignment="Center"
                       ItemsSource="{Binding KeyModes}"
                       SelectedItem="{Binding SelectedKeyMode, Mode=TwoWay}"
+                      IsEnabled="{Binding IsAllocateAvailable}"
                       DisplayMemberPath="Label" />
             <CheckBox Grid.Column="4"
                       VerticalAlignment="Center"

@@ -23,7 +23,8 @@ public sealed class TableSchema
         IsDocumentDriven = isDocumentDriven;
         Columns = columns;
         _columnsByName = columns.ToDictionary(static column => column.XmlFieldName, StringComparer.Ordinal);
-        KeyColumn = columns.FirstOrDefault(static column => column.IsKey);
+        KeyColumns = columns.Where(static column => column.IsKey).ToArray();
+        KeyColumn = KeyColumns.FirstOrDefault();
     }
 
     /// <summary>
@@ -55,6 +56,17 @@ public sealed class TableSchema
     /// Gets the column that identifies records, or <see langword="null"/> when none was determined.
     /// </summary>
     public TableSchemaColumn? KeyColumn { get; }
+
+    /// <summary>
+    /// Gets every column that participates in record identity, in schema order. A compound-key table
+    /// has more than one entry; single-key and document-driven tables have one.
+    /// </summary>
+    public IReadOnlyList<TableSchemaColumn> KeyColumns { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether record identity requires several key columns.
+    /// </summary>
+    public bool HasCompoundKey => KeyColumns.Count > 1;
 
     /// <summary>
     /// Finds a column by its exact XML element name.

@@ -448,6 +448,53 @@ public class ItemWorkspaceViewModelTests
         Assert.Contains("Items.Weapons", dialog.LastExternalChangeMessage, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// With <c>XER_CORPUS_DIR</c> set, the attachment child section of item 12 shows exactly the rows
+    /// stored for that item instead of the rows of other items that share an attachment index.
+    /// </summary>
+    [Fact]
+    public async Task Corpus_Item12ShowsOnlyItsOwnAttachments()
+    {
+        var corpus = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(corpus) || !Directory.Exists(corpus))
+        {
+            return;
+        }
+
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var session = new DataSetSession(corpus, provider, catalog, repository);
+        var descriptors = await catalog.GetTablesAsync(corpus);
+        Assert.True(descriptors.IsSuccess, descriptors.ErrorText);
+        var descriptor = descriptors.Data!.Single(candidate => candidate.TableName == Items);
+        var viewModel = new ItemWorkspaceViewModel(
+            session,
+            descriptor,
+            languageCode: null,
+            new FakeDialogService(),
+            new TestItemImageService());
+        await viewModel.InitializeAsync();
+
+        viewModel.SelectRecord("12");
+
+        var editor = viewModel.ChildSections
+            .Single(section => section.TableName == Attachments)
+            .Editor;
+        var rawCount = XDocument
+            .Load(Path.Combine(corpus, "Items", "Attachments.xml"))
+            .Root!
+            .Elements("ATTACHMENT")
+            .Count(element => element.Element("itemIndex")?.Value == "12");
+        Assert.True(rawCount > 0);
+        Assert.Equal(rawCount, editor.Rows.Count);
+        Assert.All(editor.Rows, row => Assert.Equal("12", row["itemIndex"]));
+    }
+
     private static async Task<(ItemWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
         Fixture fixture,
         string? languageCode = null)

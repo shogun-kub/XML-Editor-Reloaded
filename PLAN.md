@@ -4,11 +4,11 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M22 завершены (текущий коммит `80cb8cf`). Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, schema-driven grid с фильтрами/выделением/bulk/layout, панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи, read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace со всеми 1:1 и 1:N таблицами, merc gear workspace, shopkeeper inventory, 104 вспомогательные таблицы, multi-dataset, cross-dataset copy с preview и remap, settings dialog, безопасное закрытие и external-change recovery. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints`, 46 declaring-колонок (23 lookup-таблицы), 1020 `TableRelations`, 7 языков, 64-битные lookup ID.
+**Состояние:** M0–M22c завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, schema-driven grid с фильтрами/выделением/bulk/layout, панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи, read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace со всеми 1:1 и 1:N таблицами, merc gear workspace, shopkeeper inventory, 104 вспомогательные таблицы, multi-dataset, cross-dataset copy с preview и remap, settings dialog, безопасное закрытие и external-change recovery. Метаданные: 173 таблицы, 168 key segments, 28 полей восьми составных ключей, 1923 `ColumnHints`, 46 declaring-колонок (23 lookup-таблицы), 1020 `TableRelations`, 7 языков, 64-битные lookup ID. M22c заменил ошибочные однополевые ключи восьми таблиц (`Attachments`, `Launchables`, `IncompatibleAttachments`, `CompatibleFaceItems`, `Merges`, `Item_Transformations`, `StructureConstruct`, `StructureDeconstruct`) составными: item 12 показывает реальные вложения, ложные `validation.duplicate_key` устранены, остались только два известных дефекта данных v5 и один дубликат дилера.
 
-**Подшаги M22:** M22a — фильтры, multi-select/bulk, per-table layout; M22b — settings, close safety, external-change recovery. Оба выполнены. **M23:** M23a — аудит паритета, M23b — исправления и gate. **Паритет:** item-workflow parity — M19; auxiliary parity — M20; full legacy parity — M23b.
+**Подшаги M22:** M22a — фильтры, multi-select/bulk, per-table layout; M22b — settings, close safety, external-change recovery; M22c — compound record keys. Все три выполнены. **M23:** M23a — аудит паритета (после M22c), M23b — исправления и gate. **Паритет:** item-workflow parity — M19; auxiliary parity — M20; full legacy parity — M23b.
 
-**Проверка текущего состояния:** build `-warnaserror` (0/0), 389 тестов (Core 28, Imaging 19, Xml 156, Data 60, App 126), corpus v4/v5, сравнение v4↔v5, copy v4→v5 и perf-гейты зелёные.
+**Проверка текущего состояния:** build `-warnaserror` (0/0), 415 тестов (Core 37, Imaging 19, Xml 167, Data 64, App 128), corpus v4/v5, сравнение v4↔v5, copy v4→v5 и perf-гейты зелёные.
 
 Детали завершённых этапов здесь намеренно не дублируются: источник истины — код, тесты и git-история.
 
@@ -69,7 +69,11 @@ Merc gear workspace: пять `GEARKIT`, item pickers, status/quantity/drop, ц�
 ### M22b — Shell: настройки и безопасность — выполнен
 Settings dialog управляет каталогами, recent, UI-языком (en/ru, после перезапуска) и сбросом layout; активный датасет применяется без закрытия вкладок. Закрытие вкладки и приложения — Save/Discard/Cancel с flush layout; ошибка сохранения оставляет вкладку открытой. При `xml.file_changed_externally` — Reload/Overwrite/Cancel; force-overwrite пересчитывает baseline, multi-file ошибки агрегируются.
 
+### M22c — Compound record keys — выполнен
+Восемь таблиц получают составной естественный ключ вместо ошибочного одиночного: `Items.Attachments` (`attachmentIndex,itemIndex`), `Launchables` (`launchableIndex,itemIndex`), `IncompatibleAttachments` (`itemIndex,incompatibleattachmentIndex`), `CompatibleFaceItems` (`compatiblefaceitemIndex,itemIndex`), `Merges` (4 поля), `Item_Transformations` (`usItem,usResult1..10`), `StructureConstruct` (`usCreationItem,usItemStatusLoss`), `StructureDeconstruct` (`usDeconstructItem,usItemToCreate,usCreatedItemStatus`). Миграция 0009 добавляет `RecordKeyFields` и убирает старые `TableKeys`; `RecordKeyCodec` кодирует compound-ключ, `TableDocument`/workspace работают по ссылке на запись, key-колонки compound-таблиц редактируемы, `Duplicate` отключён. Реальные дубликаты (`Attachments` v5 — 2 группы, `AdditionalDealer_43` — 1) остаются предупреждениями. Таблицы без оверлея читают строки напрямую (без overlay-merge), правки compound-key идут по ссылке на запись, а undo восстанавливает позицию элемента вместе с форматирующими пробелами. Подробный план — `M22C-COMPOSITE-KEYS-PLAN.md`. **Коммит:** `M22c: compound record keys`.
+
 ### M23a — Аудит паритета
+- Выполняется после M22c; отчёт создаётся заново с учётом исправленных compound-ключей.
 - `LEGACY-PARITY-REPORT.md`: построчная матрица «функция legacy → реализация / superseded / исключено» с файлами-доказательствами.
 - Ручная проверка на v4 и v5: item workspace и sub-tables, merc gear, shopkeeper, pickers, copy, фильтры, изображения, локализация, настройки.
 - Только документ и список пробелов, без изменения поведения. **Коммит:** `M23a: legacy parity audit`.
@@ -86,7 +90,7 @@ Settings dialog управляет каталогами, recent, UI-языком
 - **M26a — Lookup CRUD:** создание/изменение/удаление lookup-таблиц, bitmask allocation ID, free-form ID. **M26b — Protection:** «где используется», защита используемых значений, валидация flag-lookup.
 - **M27a — Packaging:** self-contained publish, portable zip, CI-гейты сборки/тестов/корпуса. **M27b — Release:** иконка/версия/changelog, README и user guide.
 
-**Критический путь:** M0 → … → M19 (item parity) → M20 → M21 → M22a → M22b → M23a → M23b (full legacy parity) → M24a → M24b → M25a → M25b → M26a → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
+**Критический путь:** M0 → … → M19 (item parity) → M20 → M21 → M22a → M22b → M22c → M23a → M23b (full legacy parity) → M24a → M24b → M25a → M25b → M26a → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22c и перед релизом.
 
 ---
 
@@ -141,6 +145,7 @@ Settings dialog управляет каталогами, recent, UI-языком
 - **R6 неполные метаданные:** seed покрывает 173 таблицы из 238/239 в v4/v5; document-driven fallback работает, остальные таблицы добавляются по мере необходимости (M23), миграции растут итеративно.
 - **R13 многофайловое сохранение:** item workspace пишет несколько XML; per-file atomic save, ошибки агрегируются, частичное сохранение не маскируется.
 - **R14 nested/list-правки:** идут через lossless-патчер и round-trip тесты; неизменённые файлы не перезаписываются.
+- **R15 compound keys:** закрыт в M22c: `RecordKeyFields`, row-reference операции, no-overlay fast path и byte-safe patcher; приёмка — item 12, точное удаление строки и corpus baseline v4/v5.
 - **Закрыты:** byte-identity и perf (R2), malformed-файлы (R3), dict/list-маски (R4), вложенные ключи оверлеев (R5), запись в `References/` (R7), внешние изменения (R9), культура/отмена (R10), relations drift (R11), copy (R12) — покрыты фикстурами, corpus-, compare-, copy- и perf-гейтами.
 
 ---
@@ -148,7 +153,8 @@ Settings dialog управляет каталогами, recent, UI-языком
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 389 тестов, все зелёные.
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 415 тестов, все зелёные.
+2a. M22c: `RealRecordKeyTests` — duplicate-key baseline (v4: только `AdditionalDealer_43`; v5: `Items.Attachments` 2 + `AdditionalDealer_43`), item 12 attachments = сырой XML count, точное удаление строки и undo; приёмка описана в `M22C-COMPOSITE-KEYS-PLAN.md`.
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — прогон на temp-копиях, без изменений в `References/`.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests`.
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).

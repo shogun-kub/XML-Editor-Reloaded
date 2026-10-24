@@ -57,15 +57,25 @@ internal static class TableSnapshotAnalyzer
             }
         }
 
-        var keyField = metadata?.RecordKey?.Primary.KeyField
-            ?? (order.Count > 0 ? order[0] : null);
+        var keyFields = metadata?.RecordKeyFields.ToHashSet(StringComparer.Ordinal)
+            ?? new HashSet<string>(StringComparer.Ordinal);
+        var keyField = metadata?.RecordKey?.Primary.KeyField;
+        if (keyFields.Count == 0)
+        {
+            keyField ??= order.Count > 0 ? order[0] : null;
+            if (keyField is not null)
+            {
+                keyFields.Add(keyField);
+            }
+        }
+
         var fields = new List<AnalyzedField>(order.Count);
         foreach (var name in order)
         {
             var field = statistics[name];
             fields.Add(new AnalyzedField(
                 name,
-                field.InferDataType(string.Equals(name, keyField, StringComparison.Ordinal)),
+                field.InferDataType(keyFields.Contains(name)),
                 field.PresenceCount,
                 field.MaxOccurrences));
         }

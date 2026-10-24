@@ -228,6 +228,9 @@
   <data name="EditorRowDuplicated" xml:space="preserve">
     <value>Record {0} duplicated as {1}.</value>
   </data>
+  <data name="EditorDuplicateUnsupported" xml:space="preserve">
+    <value>This table uses a compound key; add a row and fill its key fields instead of duplicating.</value>
+  </data>
   <data name="EditorRowDeleted" xml:space="preserve">
     <value>Record {0} deleted.</value>
   </data>
@@ -1102,7 +1105,7 @@
     <value>Records</value>
   </data>
   <data name="CopyRecordsHint" xml:space="preserve">
-    <value>Leave empty to copy every record; otherwise enter comma-separated keys.</value>
+    <value>Leave empty to copy every record; otherwise enter comma-separated keys. A compound key is written as its parts separated by |.</value>
   </data>
   <data name="CopyConflictLabel" xml:space="preserve">
     <value>On conflict</value>

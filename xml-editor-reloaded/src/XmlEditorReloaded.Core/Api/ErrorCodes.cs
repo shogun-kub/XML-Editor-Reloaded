@@ -71,6 +71,12 @@ public static class ErrorCodes
     /// <summary>The requested record key is already used by another record of the same table.</summary>
     public const string KeyConflict = "key.conflict";
 
+    /// <summary>
+    /// A record of a table with a compound key cannot be duplicated automatically because no single key
+    /// value identifies the copy.
+    /// </summary>
+    public const string KeyDuplicateNotSupported = "key.duplicate_not_supported";
+
     /// <summary>The overlay record key could not be resolved from metadata.</summary>
     public const string OverlayUnresolvableKey = "overlay.unresolvable_key";
 
@@ -112,4 +118,9 @@ public static class ErrorCodes
 
     /// <summary>The copy request selected no records.</summary>
     public const string CopyNoRecords = "copy.no_records";
+
+    /// <summary>
+    /// Fresh key allocation is not supported for a table with a compound key.
+    /// </summary>
+    public const string CopyAllocateUnsupported = "copy.allocate_unsupported";
 }

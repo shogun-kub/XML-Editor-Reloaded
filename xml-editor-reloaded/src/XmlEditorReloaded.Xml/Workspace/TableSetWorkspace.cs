@@ -455,8 +455,12 @@ public sealed class TableSetWorkspace
                 continue;
             }
 
-            var keys = FindDependingKeys(workspace, relation, recordKey);
-            if (keys.Count > 0)
+            var keys = FindDependingRecords(workspace, relation, recordKey)
+                .Select(static record => record.GetKey())
+                .Where(static key => !string.IsNullOrEmpty(key))
+                .Select(static key => key!)
+                .ToArray();
+            if (keys.Length > 0)
             {
                 result.Add(new TableDependentDeletion(relation.TargetTable, keys, relation.TargetValueField));
             }
@@ -517,7 +521,11 @@ public sealed class TableSetWorkspace
                     continue;
                 }
 
-                var copy = workspace.BaseDocument.DuplicateRecord(sourceKey);
+                var source = workspace.BaseDocument.FindRecord(sourceKey);
+                var copy = source is not null
+                    && workspace.Metadata?.HasCompoundRecordKey == true
+                        ? workspace.BaseDocument.DuplicateRecordPreservingKey(source)
+                        : workspace.BaseDocument.DuplicateRecord(sourceKey);
                 if (!copy.IsSuccess)
                 {
                     History.Record(transaction);
@@ -529,9 +537,13 @@ public sealed class TableSetWorkspace
                 continue;
             }
 
-            foreach (var dependentKey in FindDependingKeys(workspace, relation, recordKey))
+            foreach (var dependent in FindDependingRecords(workspace, relation, recordKey))
             {
-                var copy = workspace.BaseDocument.DuplicateRecord(dependentKey);
+                // A compound-key child has no single field to allocate, so the copy keeps its key and
+                // changes only the parent link that completes its identity.
+                var copy = workspace.Metadata?.HasCompoundRecordKey == true
+                    ? workspace.BaseDocument.DuplicateRecordPreservingKey(dependent)
+                    : workspace.BaseDocument.DuplicateRecord(dependent.GetKey() ?? string.Empty);
                 if (!copy.IsSuccess)
                 {
                     History.Record(transaction);
@@ -579,13 +591,13 @@ public sealed class TableSetWorkspace
                 continue;
             }
 
-            foreach (var dependentKey in FindDependingKeys(workspace, relation, recordKey))
+            foreach (var dependent in FindDependingRecords(workspace, relation, recordKey))
             {
-                CaptureDeletion(transaction, workspace, dependentKey);
+                CaptureDeletion(transaction, workspace, dependent);
             }
         }
 
-        CaptureDeletion(transaction, Primary, recordKey);
+        CaptureDeletion(transaction, Primary, Primary.BaseDocument.FindRecord(recordKey)!);
         History.Record(transaction);
         return OperationResult.Success();
     }
@@ -918,29 +930,26 @@ public sealed class TableSetWorkspace
                 && string.Equals(relation.SourceField, keyField, StringComparison.Ordinal));
     }
 
-    private IReadOnlyList<string> FindDependingKeys(
+    private static IReadOnlyList<TableRecord> FindDependingRecords(
         TableWorkspace workspace,
         TableRelation relation,
-        string value)
-    {
-        var keys = new List<string>();
-        foreach (var record in workspace.BaseDocument.Records)
-        {
-            var stored = record.GetRawValue(relation.TargetValueField)?.Trim();
-            if (!string.Equals(stored, value, StringComparison.Ordinal))
-            {
-                continue;
-            }
+        string value) =>
+        workspace.BaseDocument.Records
+            .Where(record => string.Equals(
+                record.GetRawValue(relation.TargetValueField)?.Trim(),
+                value,
+                StringComparison.Ordinal))
+            .ToArray();
 
-            var key = record.GetKey();
-            if (!string.IsNullOrEmpty(key))
-            {
-                keys.Add(key);
-            }
-        }
-
-        return keys;
-    }
+    private static IReadOnlyList<string> FindDependingKeys(
+        TableWorkspace workspace,
+        TableRelation relation,
+        string value) =>
+        FindDependingRecords(workspace, relation, value)
+            .Select(static record => record.GetKey())
+            .Where(static key => !string.IsNullOrEmpty(key))
+            .Select(static key => key!)
+            .ToArray();
 
     private static string? FindValue(TableWorkspace workspace, string field, string value)
     {
@@ -984,10 +993,10 @@ public sealed class TableSetWorkspace
     private static void CaptureDeletion(
         TableEditTransaction transaction,
         TableWorkspace workspace,
-        string key)
+        TableRecord record)
     {
-        var state = Capture(workspace, key);
-        if (!workspace.BaseDocument.DeleteRecord(key).IsSuccess)
+        var state = ElementSnapshotState.Capture(workspace.BaseDocument, record.Element);
+        if (!workspace.BaseDocument.DeleteRecord(record).IsSuccess)
         {
             return;
         }

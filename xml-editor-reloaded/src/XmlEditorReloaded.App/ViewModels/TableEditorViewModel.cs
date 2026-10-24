@@ -15,6 +15,7 @@ using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
+using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Filtering;
 using XmlEditorReloaded.Xml.Schema;
 using XmlEditorReloaded.Xml.Workspace;
@@ -784,20 +785,32 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         IsDirty = Workspace.IsDirty;
-        var key = result.Data!.GetKey();
-        RebuildRows(key);
+        var added = result.Data!;
+        RebuildRows(null, added);
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowAdded", key ?? string.Empty);
+        StatusText = Strings.Format("EditorRowAdded", added.KeyDisplay);
     }
+
+    private bool CanDuplicateRows =>
+        Workspace is not null
+        && IsEditable
+        && SelectedRow is not null
+        && Workspace.Metadata?.HasCompoundRecordKey != true;
 
     /// <summary>
     /// Duplicates the selected record.
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanDuplicateRows))]
     public void DuplicateRow()
     {
         if (Workspace is null)
         {
+            return;
+        }
+
+        if (Workspace.Metadata?.HasCompoundRecordKey == true)
+        {
+            StatusText = Strings.Get("EditorDuplicateUnsupported");
             return;
         }
 
@@ -807,6 +820,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
+        var sourceDisplay = SelectedRow.KeyDisplay;
         var result = Workspace.DuplicateRecord(key);
         if (!result.IsSuccess)
         {
@@ -815,10 +829,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         IsDirty = Workspace.IsDirty;
-        var newKey = result.Data!.GetKey();
-        RebuildRows(newKey);
+        var duplicate = result.Data!;
+        RebuildRows(duplicate.GetKey());
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowDuplicated", key, newKey ?? string.Empty);
+        StatusText = Strings.Format("EditorRowDuplicated", sourceDisplay, duplicate.KeyDisplay);
     }
 
     /// <summary>
@@ -832,20 +846,21 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
-        if (SelectedRow?.Key is not { } key)
+        if (SelectedRow is not { } row)
         {
             StatusText = Strings.Get("EditorSelectRow");
             return;
         }
 
+        var display = row.KeyDisplay;
         if (!_dialogService.Confirm(
-                Strings.Format("EditorConfirmDelete", key),
+                Strings.Format("EditorConfirmDelete", display),
                 Strings.Get("EditorDeleteTitle")))
         {
             return;
         }
 
-        var result = Workspace.DeleteRecord(key);
+        var result = Workspace.DeleteRow(row.Row);
         if (!result.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
@@ -855,7 +870,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IsDirty = Workspace.IsDirty;
         RebuildRows(null);
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowDeleted", key);
+        StatusText = Strings.Format("EditorRowDeleted", display);
     }
 
     /// <summary>
@@ -904,7 +919,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         var columns = _allColumns
-            .Where(static column => !column.IsReadOnly)
+            .Where(static column => !column.IsReadOnly && !column.IsKey)
             .Select(static column => new BulkEditColumnOption(column.Name, column.TypeText, column.DataType))
             .ToArray();
         if (columns.Length == 0)
@@ -1421,6 +1436,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         var selectedKey = SelectedRow?.Key;
+        var selectedIndex = SelectedRow?.Row.Record is { } selectedRecord
+            ? IndexOfRecord(selectedRecord)
+            : -1;
         try
         {
             var result = undo ? Workspace.Undo() : Workspace.Redo();
@@ -1432,7 +1450,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             }
 
             IsDirty = Workspace.IsDirty;
-            RebuildRows(selectedKey);
+            RebuildRows(selectedKey, selectRecordIndex: selectedIndex >= 0 ? selectedIndex : null);
             RefreshHistoryState();
             StatusText = Strings.Get(undo ? "EditorUndone" : "EditorRedone");
         }
@@ -1537,14 +1555,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return OperationResult.Failure(ErrorCodes.XmlInvalidNumber, StatusText);
         }
 
+        // Row identity can change when a compound key field is edited, so the edit and the refresh go
+        // through the row record rather than through a key captured before the edit.
         var result = Workspace.SetValue(
-            row.Key,
+            row.Row,
             fieldName,
             value,
             addIfMissing: wasAbsent);
         if (result.IsSuccess)
         {
-            var refreshed = Workspace.GetRow(row.Key);
+            var refreshed = Workspace.GetRow(row.Row);
             if (refreshed is not null)
             {
                 row.Refresh(refreshed);
@@ -1562,9 +1582,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
             IsDirty = Workspace.IsDirty;
             RefreshHistoryState();
+            var display = row.KeyDisplay;
+            if (column?.IsKey == true)
+            {
+                DetailHeader = Strings.Format("DetailHeaderFormat", display);
+            }
+
             StatusText = Workspace.Language is not null && column?.IsTranslatable != true
-                ? Strings.Format("EditorBaseCellUpdated", fieldName, row.Key)
-                : Strings.Format("EditorCellUpdated", fieldName, row.Key);
+                ? Strings.Format("EditorBaseCellUpdated", fieldName, display)
+                : Strings.Format("EditorCellUpdated", fieldName, display);
         }
         else
         {
@@ -1574,7 +1600,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         return result;
     }
 
-    partial void OnIsEditableChanged(bool value) => OnPropertyChanged(nameof(IsReadOnly));
+    partial void OnIsEditableChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsReadOnly));
+        DuplicateRowCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnIsDirtyChanged(bool value) =>
         DisplayName = value ? Title + " *" : Title;
@@ -1594,6 +1624,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         RefreshDetails();
         FilterByValueCommand.NotifyCanExecuteChanged();
         ExcludeValueCommand.NotifyCanExecuteChanged();
+        DuplicateRowCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnCurrentCellFieldChanged(string? value)
@@ -1606,8 +1637,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
     partial void OnHasGraphicFieldsChanged(bool value) => OnPropertyChanged(nameof(ShowThumbnailColumn));
 
-    partial void OnWorkspaceChanged(TableWorkspace? value) =>
+    partial void OnWorkspaceChanged(TableWorkspace? value)
+    {
         OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+        DuplicateRowCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)
     {
@@ -1888,7 +1922,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
     }
 
-    private void RebuildRows(string? selectKey)
+    private void RebuildRows(
+        string? selectKey,
+        TableRecord? selectRecord = null,
+        int? selectRecordIndex = null)
     {
         _allRows.Clear();
         if (Workspace is not null)
@@ -1906,10 +1943,40 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             }
         }
 
-        ApplyRowView(selectKey);
+        ApplyRowView(SelectKeyFor(selectRecord, selectRecordIndex) ?? selectKey, selectRecord);
     }
 
-    private void ApplyRowView(string? selectKey = null)
+    private int IndexOfRecord(TableRecord record)
+    {
+        if (Workspace is null)
+        {
+            return -1;
+        }
+
+        for (var index = 0; index < Workspace.BaseDocument.Records.Count; index++)
+        {
+            if (ReferenceEquals(Workspace.BaseDocument.Records[index], record))
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    private string? SelectKeyFor(TableRecord? selectRecord, int? selectRecordIndex)
+    {
+        if (selectRecord is not null)
+        {
+            return selectRecord.GetKey();
+        }
+
+        return selectRecordIndex is { } index && Workspace is not null
+            ? Workspace.BaseDocument.Records.ElementAtOrDefault(index)?.GetKey()
+            : null;
+    }
+
+    private void ApplyRowView(string? selectKey = null, TableRecord? selectRecord = null)
     {
         var selectedKey = selectKey ?? SelectedRow?.Key;
         IEnumerable<TableRowViewModel> rows = _allRows;
@@ -1951,9 +2018,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             OnPropertyChanged(nameof(SelectedRowCount));
             OnPropertyChanged(nameof(SelectedRowCountText));
             SelectedRow = null;
-            SelectedRow = selectedKey is null
+            if (selectRecord is not null)
+            {
+                SelectedRow = Rows.FirstOrDefault(row => ReferenceEquals(row.Row.Record, selectRecord));
+            }
+
+            SelectedRow ??= selectedKey is null
                 ? Rows.FirstOrDefault()
-                : Rows.FirstOrDefault(row => string.Equals(row.Key, selectedKey, StringComparison.Ordinal));
+                : Rows.FirstOrDefault(row =>
+                    string.Equals(row.Key, selectedKey, StringComparison.Ordinal)
+                    || string.Equals(row.KeyDisplay, selectedKey, StringComparison.Ordinal));
         }
         finally
         {
@@ -2016,8 +2090,21 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
+        var trimmed = key.Trim();
         var row = _allRows.FirstOrDefault(candidate =>
-            string.Equals(candidate.Key, key.Trim(), StringComparison.Ordinal));
+            string.Equals(candidate.Key, trimmed, StringComparison.Ordinal)
+            || string.Equals(candidate.KeyDisplay, trimmed, StringComparison.Ordinal));
+        if (row is null && Workspace is not null)
+        {
+            // A relation can point at one field of a compound key. Fall back to the first row whose key
+            // component matches, which preserves the pre-compound navigation behaviour.
+            row = _allRows.FirstOrDefault(candidate => Workspace.Schema.KeyColumns.Any(column =>
+                string.Equals(
+                    candidate.GetStoredValue(column.XmlFieldName)?.Trim(),
+                    trimmed,
+                    StringComparison.Ordinal)));
+        }
+
         if (row is null)
         {
             StatusText = Strings.Format("EditorRecordNotFound", key);
@@ -2138,7 +2225,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
-        DetailHeader = Strings.Format("DetailHeaderFormat", SelectedRow.Key ?? string.Empty);
+        DetailHeader = Strings.Format("DetailHeaderFormat", SelectedRow.KeyDisplay);
         foreach (var column in Workspace.Schema.Columns)
         {
             _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
@@ -2384,7 +2471,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         string term,
         IReadOnlyList<string> fields)
     {
-        if (row.Key?.Contains(term, StringComparison.OrdinalIgnoreCase) == true)
+        if (row.KeyDisplay.Contains(term, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }

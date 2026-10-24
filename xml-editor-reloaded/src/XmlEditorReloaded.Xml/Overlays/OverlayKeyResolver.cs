@@ -10,7 +10,14 @@ namespace XmlEditorReloaded.Xml.Overlays;
 /// <param name="Key">Resolved key text, or <see langword="null"/> when the key could not be resolved.</param>
 /// <param name="Element">XML element representing the record or nested entry.</param>
 /// <param name="IsKeyResolved">Whether <paramref name="Key"/> was derived successfully.</param>
-public sealed record ResolvedRecord(string? Key, XElement Element, bool IsKeyResolved);
+public sealed record ResolvedRecord(string? Key, XElement Element, bool IsKeyResolved)
+{
+    /// <summary>
+    /// Gets the compound key fields that are missing or empty when the key is incomplete; empty for a
+    /// resolved key and for tables without a compound key.
+    /// </summary>
+    public IReadOnlyList<string> MissingKeyFields { get; init; } = Array.Empty<string>();
+}
 
 /// <summary>
 /// Resolves primary and nested record keys for a table and its language overlays.
@@ -41,6 +48,32 @@ public sealed class OverlayKeyResolver
         if (root is null)
         {
             return Array.Empty<ResolvedRecord>();
+        }
+
+        if (_metadata.HasCompoundRecordKey)
+        {
+            return root.Elements()
+                .Where(element => string.Equals(element.Name.LocalName, _metadata.RecordElement, StringComparison.Ordinal))
+                .Select(CreateCompoundResolved)
+                .ToArray();
+        }
+
+        if (_metadata.RecordKeyFields is { Count: 1 } single)
+        {
+            var field = single[0];
+            return root.Elements()
+                .Where(element => string.Equals(element.Name.LocalName, _metadata.RecordElement, StringComparison.Ordinal))
+                .Select(element =>
+                {
+                    var value = element.Elements()
+                        .FirstOrDefault(child => string.Equals(child.Name.LocalName, field, StringComparison.Ordinal))
+                        ?.Value;
+                    return new ResolvedRecord(
+                        string.IsNullOrEmpty(value) ? null : value,
+                        element,
+                        !string.IsNullOrEmpty(value));
+                })
+                .ToArray();
         }
 
         var spec = _metadata.RecordKey;
@@ -148,6 +181,32 @@ public sealed class OverlayKeyResolver
         }
 
         return current;
+    }
+
+    private ResolvedRecord CreateCompoundResolved(XElement element)
+    {
+        var components = new string?[_metadata.RecordKeyFields.Count];
+        var missing = new List<string>();
+        for (var index = 0; index < _metadata.RecordKeyFields.Count; index++)
+        {
+            var field = _metadata.RecordKeyFields[index];
+            var value = element.Elements()
+                .FirstOrDefault(child => string.Equals(child.Name.LocalName, field, StringComparison.Ordinal))
+                ?.Value;
+            components[index] = value;
+            if (string.IsNullOrEmpty(value))
+            {
+                missing.Add(field);
+            }
+        }
+
+        return new ResolvedRecord(
+            missing.Count == 0 ? RecordKeyCodec.Compose(components) : null,
+            element,
+            missing.Count == 0)
+        {
+            MissingKeyFields = missing,
+        };
     }
 
     private static ResolvedRecord CreateResolved(XElement element, RecordKeySegment segment)

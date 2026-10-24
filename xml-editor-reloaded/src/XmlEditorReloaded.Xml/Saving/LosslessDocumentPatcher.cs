@@ -1,6 +1,7 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.IO;
 
@@ -49,12 +50,14 @@ internal sealed class LosslessDocumentPatcher
 
         var operations = new List<PatchOperation>();
         var keyField = document.Metadata?.RecordKey?.Primary.KeyField;
+        var keyFields = document.Metadata?.RecordKeyFields;
         if (!CollectOperations(
                 originalRoot,
                 currentRoot,
                 new List<int>(),
                 document.RecordElementName,
                 keyField,
+                keyFields,
                 operations))
         {
             return false;
@@ -128,6 +131,7 @@ internal sealed class LosslessDocumentPatcher
         List<int> path,
         string recordElementName,
         string? keyField,
+        IReadOnlyList<string>? keyFields,
         List<PatchOperation> operations)
     {
         if (!string.Equals(original.Name.LocalName, current.Name.LocalName, StringComparison.Ordinal))
@@ -158,8 +162,8 @@ internal sealed class LosslessDocumentPatcher
             return true;
         }
 
-        var originalSignatures = BuildSignatures(originalChildren, recordElementName, keyField);
-        var currentSignatures = BuildSignatures(currentChildren, recordElementName, keyField);
+        var originalSignatures = BuildSignatures(originalChildren, recordElementName, keyField, keyFields);
+        var currentSignatures = BuildSignatures(currentChildren, recordElementName, keyField, keyFields);
 
         var prefix = 0;
         while (prefix < originalChildren.Length
@@ -199,6 +203,7 @@ internal sealed class LosslessDocumentPatcher
                     path,
                     recordElementName,
                     keyField,
+                    keyFields,
                     operations);
                 path.RemoveAt(path.Count - 1);
                 if (!collected)
@@ -219,6 +224,7 @@ internal sealed class LosslessDocumentPatcher
                 path,
                 recordElementName,
                 keyField,
+                keyFields,
                 operations);
             path.RemoveAt(path.Count - 1);
             if (!collected)
@@ -238,6 +244,7 @@ internal sealed class LosslessDocumentPatcher
                 path,
                 recordElementName,
                 keyField,
+                keyFields,
                 operations);
             path.RemoveAt(path.Count - 1);
             if (!collected)
@@ -273,7 +280,8 @@ internal sealed class LosslessDocumentPatcher
     private static string[] BuildSignatures(
         XElement[] children,
         string recordElementName,
-        string? keyField)
+        string? keyField,
+        IReadOnlyList<string>? keyFields)
     {
         var occurrences = new Dictionary<string, int>(StringComparer.Ordinal);
         var signatures = new string[children.Length];
@@ -286,11 +294,7 @@ internal sealed class LosslessDocumentPatcher
 
             if (string.Equals(name, recordElementName, StringComparison.Ordinal))
             {
-                var key = keyField is null
-                    ? element.Elements().FirstOrDefault()?.Value
-                    : element.Elements()
-                        .FirstOrDefault(child => string.Equals(child.Name.LocalName, keyField, StringComparison.Ordinal))
-                        ?.Value;
+                var key = BuildRecordSignatureKey(element, keyField, keyFields);
                 if (!string.IsNullOrEmpty(key))
                 {
                     signatures[index] = "R|" + name + "|" + key;
@@ -302,6 +306,48 @@ internal sealed class LosslessDocumentPatcher
         }
 
         return signatures;
+    }
+
+    private static string? BuildRecordSignatureKey(
+        XElement element,
+        string? keyField,
+        IReadOnlyList<string>? keyFields)
+    {
+        if (keyFields is { Count: 1 })
+        {
+            return element.Elements()
+                .FirstOrDefault(child => string.Equals(
+                    child.Name.LocalName,
+                    keyFields[0],
+                    StringComparison.Ordinal))
+                ?.Value;
+        }
+
+        if (keyFields is { Count: > 1 })
+        {
+            var components = new string?[keyFields.Count];
+            for (var index = 0; index < keyFields.Count; index++)
+            {
+                components[index] = element.Elements()
+                    .FirstOrDefault(child => string.Equals(
+                        child.Name.LocalName,
+                        keyFields[index],
+                        StringComparison.Ordinal))
+                    ?.Value;
+            }
+
+            // An incomplete compound key cannot identify a record across the original and edited trees;
+            // the positional fallback keeps the diff aligned until all components are present.
+            return components.All(static component => !string.IsNullOrEmpty(component))
+                ? RecordKeyCodec.Compose(components)
+                : null;
+        }
+
+        return keyField is null
+            ? element.Elements().FirstOrDefault()?.Value
+            : element.Elements()
+                .FirstOrDefault(child => string.Equals(child.Name.LocalName, keyField, StringComparison.Ordinal))
+                ?.Value;
     }
 
     private static int[] Append(List<int> path, int index)

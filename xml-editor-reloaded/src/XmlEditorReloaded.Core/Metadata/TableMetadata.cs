@@ -23,6 +23,12 @@ public sealed class TableMetadata
     /// <param name="columnHints">
     /// Optional curated hints applied only to fields that are present in the document.
     /// </param>
+    /// <param name="recordKeyFields">
+    /// Ordered direct-child XML fields that together form a compound record key. An empty list means
+    /// that <paramref name="recordKey"/> or the document-driven fallback identifies records. A compound
+    /// key is a separate concept from <see cref="RecordKeySpec"/> segments, which describe nested
+    /// collections and singletons.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -34,7 +40,8 @@ public sealed class TableMetadata
         IReadOnlyList<ListFieldDefinition>? listFields = null,
         IReadOnlyList<DictFieldDefinition>? dictFields = null,
         IReadOnlyList<string>? translatableFieldPaths = null,
-        IReadOnlyList<ColumnHint>? columnHints = null)
+        IReadOnlyList<ColumnHint>? columnHints = null,
+        IReadOnlyList<string>? recordKeyFields = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -48,6 +55,7 @@ public sealed class TableMetadata
         DictFields = dictFields ?? Array.Empty<DictFieldDefinition>();
         TranslatableFieldPaths = translatableFieldPaths ?? Array.Empty<string>();
         ColumnHints = columnHints ?? Array.Empty<ColumnHint>();
+        RecordKeyFields = recordKeyFields ?? Array.Empty<string>();
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
         _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
     }
@@ -76,6 +84,24 @@ public sealed class TableMetadata
     /// Gets the record key specification, or <see langword="null"/> when the table has no defined key.
     /// </summary>
     public RecordKeySpec? RecordKey { get; }
+
+    /// <summary>
+    /// Gets the ordered direct-child XML fields that together form a compound record key, or an empty
+    /// list when the table uses <see cref="RecordKey"/> or document-driven identity.
+    /// </summary>
+    public IReadOnlyList<string> RecordKeyFields { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether records are identified by several fields and no single key can
+    /// be assigned automatically.
+    /// </summary>
+    public bool HasCompoundRecordKey => RecordKeyFields.Count > 1;
+
+    /// <summary>
+    /// Gets a value indicating whether the table declares any record identity: a compound key, a key
+    /// specification, or both.
+    /// </summary>
+    public bool HasRecordKey => RecordKeyFields.Count > 0 || RecordKey is not null;
 
     /// <summary>
     /// Gets the column metadata list. May be empty; unknown fields still round-trip via the document model.

@@ -228,6 +228,9 @@
   <data name="EditorRowDuplicated" xml:space="preserve">
     <value>Запись {0} продублирована как {1}.</value>
   </data>
+  <data name="EditorDuplicateUnsupported" xml:space="preserve">
+    <value>Таблица использует составной ключ; добавьте запись и заполните поля ключа вместо дублирования.</value>
+  </data>
   <data name="EditorRowDeleted" xml:space="preserve">
     <value>Запись {0} удалена.</value>
   </data>
@@ -1102,7 +1105,7 @@
     <value>Записи</value>
   </data>
   <data name="CopyRecordsHint" xml:space="preserve">
-    <value>Оставьте пустым для копирования всех записей; иначе укажите ключи через запятую.</value>
+    <value>Оставьте пустым для копирования всех записей; иначе укажите ключи через запятую. Составной ключ записывается как его части через |.</value>
   </data>
   <data name="CopyConflictLabel" xml:space="preserve">
     <value>При совпадении</value>

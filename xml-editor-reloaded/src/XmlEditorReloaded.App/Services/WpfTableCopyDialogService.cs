@@ -14,6 +14,7 @@ public sealed class WpfTableCopyDialogService : ITableCopyDialogService
     private readonly ITableCopyService _copyService;
     private readonly ITableCatalog _catalog;
     private readonly IDialogService _dialogService;
+    private readonly ITableMetadataProvider? _metadataProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WpfTableCopyDialogService"/> class.
@@ -21,11 +22,15 @@ public sealed class WpfTableCopyDialogService : ITableCopyDialogService
     /// <param name="copyService">Copy service used by the dialog.</param>
     /// <param name="catalog">Catalog used to list tables common to both data sets.</param>
     /// <param name="dialogService">Dialog service used by the browse buttons.</param>
+    /// <param name="metadataProvider">
+    /// Optional metadata provider used to disable key allocation for compound-key tables.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency is null.</exception>
     public WpfTableCopyDialogService(
         ITableCopyService copyService,
         ITableCatalog catalog,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        ITableMetadataProvider? metadataProvider = null)
     {
         ArgumentNullException.ThrowIfNull(copyService);
         ArgumentNullException.ThrowIfNull(catalog);
@@ -34,6 +39,7 @@ public sealed class WpfTableCopyDialogService : ITableCopyDialogService
         _copyService = copyService;
         _catalog = catalog;
         _dialogService = dialogService;
+        _metadataProvider = metadataProvider;
     }
 
     /// <inheritdoc />
@@ -43,7 +49,12 @@ public sealed class WpfTableCopyDialogService : ITableCopyDialogService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var viewModel = new TableCopyViewModel(_copyService, _catalog, _dialogService, request);
+        var viewModel = new TableCopyViewModel(
+            _copyService,
+            _catalog,
+            _dialogService,
+            request,
+            _metadataProvider);
         await viewModel.InitializeAsync(cancellationToken).ConfigureAwait(true);
 
         var window = new TableCopyWindow(viewModel);

@@ -68,9 +68,9 @@ public sealed class TableCopyService : ITableCopyService
         var context = plan.Data!;
         var records = context.Records
             .Select(static record => new TableCopyRecordPreview(
-                record.SourceKey,
+                record.SourceKeyDisplay,
                 record.SourceDisplay,
-                record.TargetKey,
+                record.TargetKeyDisplay,
                 record.Action,
                 record.Remaps,
                 record.Related.Select(CreateRelatedPreview).ToArray(),
@@ -111,10 +111,12 @@ public sealed class TableCopyService : ITableCopyService
         var dirty = new List<TableDocument>();
         var dirtySet = new HashSet<TableDocument>();
 
-        var primaryKeyField = context.TargetTable.KeyField;
-        var primaryExcluded = primaryKeyField is null
-            ? Array.Empty<string>()
-            : new[] { primaryKeyField };
+        var primaryKeyField = context.TargetTable.HasCompoundKey ? null : context.TargetTable.KeyField;
+        var primaryExcluded = context.SourceTable.KeyFields.Count > 0
+            ? context.SourceTable.KeyFields.ToArray()
+            : primaryKeyField is null
+                ? Array.Empty<string>()
+                : new[] { primaryKeyField };
 
         foreach (var record in context.Records)
         {
@@ -179,7 +181,7 @@ public sealed class TableCopyService : ITableCopyService
                         ApplyRemapsToClone(rowClone, row.Remaps);
                         related.TargetTable.Document.InsertRecord(
                             rowClone,
-                            related.TargetTable.KeyField,
+                            related.TargetTable.HasCompoundKey ? null : related.TargetTable.KeyField,
                             row.TargetKey);
                         relatedCounts.Added++;
                     }
@@ -317,9 +319,18 @@ public sealed class TableCopyService : ITableCopyService
             context.Warnings.Add($"Record '{missing}' was not found in the source table.");
         }
 
-        var allocate = request.KeyMode == TableCopyKeyMode.Allocate
-            || sourceTable.PositionalKey
-            || sourceTable.KeyField is null;
+        if (request.KeyMode == TableCopyKeyMode.Allocate
+            && (sourceTable.HasCompoundKey || targetTable.HasCompoundKey))
+        {
+            return OperationResult<CopyContext>.Failure(
+                ErrorCodes.CopyAllocateUnsupported,
+                $"Table '{request.TableName}' uses a compound record key; keys cannot be allocated automatically.");
+        }
+
+        var allocate = !sourceTable.HasCompoundKey
+            && (request.KeyMode == TableCopyKeyMode.Allocate
+                || sourceTable.PositionalKey
+                || sourceTable.KeyField is null);
 
         foreach (var sourceRecord in selected)
         {
@@ -357,9 +368,11 @@ public sealed class TableCopyService : ITableCopyService
                 targetKey = sourceKey;
             }
 
-            var excluded = sourceTable.KeyField is { } sourceKeyField
-                ? new[] { sourceKeyField }
-                : Array.Empty<string>();
+            var excluded = sourceTable.KeyFields.Count > 0
+                ? sourceTable.KeyFields.ToArray()
+                : sourceTable.KeyField is { } sourceKeyField
+                    ? new[] { sourceKeyField }
+                    : Array.Empty<string>();
             var fields = GetFieldsToCopy(sourceRecord, targetRecord, action, excluded);
             var remaps = await context.Remapper
                 .MapRecordAsync(sourceRecord, fields, excluded, cancellationToken)
@@ -370,8 +383,13 @@ public sealed class TableCopyService : ITableCopyService
                 Source = sourceRecord,
                 Target = targetRecord,
                 SourceKey = sourceKey,
+                SourceKeyDisplay = sourceRecord.KeyDisplay,
                 SourceDisplay = ReadDisplay(sourceRecord, sourceTable.DisplayField),
                 TargetKey = targetKey,
+                TargetKeyDisplay = targetRecord?.KeyDisplay
+                    ?? (string.Equals(targetKey, sourceKey, StringComparison.Ordinal)
+                        ? sourceRecord.KeyDisplay
+                        : targetKey),
                 Action = action,
                 Remaps = remaps,
             };
@@ -473,9 +491,14 @@ public sealed class TableCopyService : ITableCopyService
                 .GetRemapperAsync(relation.TargetTable, sourceRelated.Data.Metadata, cancellationToken)
                 .ConfigureAwait(false);
             var relatedKeyField = targetTable.KeyField;
-            var excluded = relatedKeyField is null
-                ? new[] { relation.TargetValueField }
-                : new[] { relation.TargetValueField, relatedKeyField };
+            var excluded = targetTable.KeyFields.Count > 1
+                ? targetTable.KeyFields
+                    .Append(relation.TargetValueField)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray()
+                : relatedKeyField is null
+                    ? new[] { relation.TargetValueField }
+                    : new[] { relation.TargetValueField, relatedKeyField };
             var rows = new List<RelatedRowPlan>();
             var warnings = new List<string>();
 
@@ -558,6 +581,7 @@ public sealed class TableCopyService : ITableCopyService
                             _ => TableCopyAction.Skip,
                         };
                     rowTargetKey = existing?.GetKey()
+                        ?? BuildRelatedTargetKey(targetTable, sourceRow, relation.TargetValueField, parentTargetKey)
                         ?? (string.Equals(targetTable.KeyField, relation.TargetValueField, StringComparison.Ordinal)
                             ? parentTargetKey
                             : AllocateKey(context, targetTable));
@@ -566,7 +590,8 @@ public sealed class TableCopyService : ITableCopyService
                 {
                     existing = null;
                     action = TableCopyAction.Add;
-                    rowTargetKey = AllocateKey(context, targetTable);
+                    rowTargetKey = BuildRelatedTargetKey(targetTable, sourceRow, relation.TargetValueField, parentTargetKey)
+                        ?? AllocateKey(context, targetTable);
                 }
 
                 var rowFields = GetFieldsToCopy(sourceRow, existing, action, excluded);
@@ -635,7 +660,7 @@ public sealed class TableCopyService : ITableCopyService
         var missing = new List<string>();
         foreach (var key in context.Request.RecordKeys.Distinct(StringComparer.Ordinal))
         {
-            var record = context.SourceTable.Document.FindRecord(key);
+            var record = FindSourceRecord(context.SourceTable, key);
             if (record is null)
             {
                 missing.Add(key);
@@ -648,6 +673,22 @@ public sealed class TableCopyService : ITableCopyService
 
         missingKeys = missing;
         return records;
+    }
+
+    private static TableRecord? FindSourceRecord(TableLoad sourceTable, string key)
+    {
+        var record = sourceTable.Document.FindRecord(key);
+        if (record is not null || !sourceTable.HasCompoundKey)
+        {
+            return record;
+        }
+
+        // The copy dialog shows compound keys as "a | b"; accept that form as well as the canonical
+        // internal encoding.
+        var components = key.Split('|', StringSplitOptions.TrimEntries);
+        return components.Length == sourceTable.KeyFields.Count
+            ? sourceTable.Document.FindRecord(RecordKeyCodec.Compose(components))
+            : null;
     }
 
     private static IReadOnlyList<string> GetFieldsToCopy(
@@ -673,9 +714,34 @@ public sealed class TableCopyService : ITableCopyService
     private static string? ReadDisplay(TableRecord record, string? displayField) =>
         displayField is null ? null : record.GetRawValue(displayField)?.Trim();
 
+    private static string? BuildRelatedTargetKey(
+        TableLoad targetTable,
+        TableRecord sourceRow,
+        string parentLinkField,
+        string parentTargetKey)
+    {
+        if (!targetTable.HasCompoundKey)
+        {
+            return null;
+        }
+
+        var components = new string?[targetTable.KeyFields.Count];
+        for (var index = 0; index < targetTable.KeyFields.Count; index++)
+        {
+            var field = targetTable.KeyFields[index];
+            components[index] = string.Equals(field, parentLinkField, StringComparison.Ordinal)
+                ? parentTargetKey
+                : sourceRow.GetRawValue(field);
+        }
+
+        return components.All(static component => !string.IsNullOrEmpty(component))
+            ? RecordKeyCodec.Compose(components)
+            : null;
+    }
+
     private static string? AllocateKey(CopyContext context, TableLoad table)
     {
-        if (table.KeyField is null)
+        if (table.KeyField is null || table.HasCompoundKey)
         {
             return null;
         }
@@ -1227,8 +1293,11 @@ public sealed class TableCopyService : ITableCopyService
 
             var primary = metadata?.RecordKey?.Primary;
             var positional = primary?.Kind == RecordKeyKind.Positional;
-            var keyField = primary is { Kind: RecordKeyKind.Scalar } ? primary.KeyField : null;
-            if (!positional && string.IsNullOrEmpty(keyField))
+            var keyFields = metadata?.RecordKeyFields ?? Array.Empty<string>();
+            var keyField = keyFields.Count == 1
+                ? keyFields[0]
+                : primary is { Kind: RecordKeyKind.Scalar } ? primary.KeyField : null;
+            if (!positional && keyFields.Count == 0 && string.IsNullOrEmpty(keyField))
             {
                 keyField = InferKeyField(document);
             }
@@ -1238,6 +1307,7 @@ public sealed class TableCopyService : ITableCopyService
                 metadata,
                 document,
                 keyField,
+                keyFields,
                 positional,
                 InferDisplayField(document, metadata)));
         }
@@ -1248,8 +1318,12 @@ public sealed class TableCopyService : ITableCopyService
         TableMetadata? Metadata,
         TableDocument Document,
         string? KeyField,
+        IReadOnlyList<string> KeyFields,
         bool PositionalKey,
-        string? DisplayField);
+        string? DisplayField)
+    {
+        public bool HasCompoundKey => KeyFields.Count > 1;
+    }
 
     private sealed class CopyRecordPlan
     {
@@ -1259,9 +1333,13 @@ public sealed class TableCopyService : ITableCopyService
 
         public required string SourceKey { get; init; }
 
+        public required string SourceKeyDisplay { get; init; }
+
         public string? SourceDisplay { get; init; }
 
         public string? TargetKey { get; init; }
+
+        public string? TargetKeyDisplay { get; init; }
 
         public required TableCopyAction Action { get; init; }
 

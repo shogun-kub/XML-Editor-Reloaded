@@ -28,9 +28,15 @@ public sealed partial class TableRowViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets the primary record key, or <see langword="null"/> when the record has no key.
+    /// Gets the primary record key, or <see langword="null"/> when the record has no key. Compound keys
+    /// use the canonical internal encoding; use <see cref="KeyDisplay"/> for messages.
     /// </summary>
     public string? Key => _row.Key;
+
+    /// <summary>
+    /// Gets the key formatted for user-facing messages, for example <c>12 | 37</c>.
+    /// </summary>
+    public string KeyDisplay => _row.KeyDisplay;
 
     /// <summary>
     /// Gets a value indicating whether the row can be edited through the workspace.
@@ -53,9 +59,9 @@ public sealed partial class TableRowViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets the underlying workspace row used by type-aware filters.
+    /// Gets the underlying workspace row used by type-aware filters and row-identity edits.
     /// </summary>
-    internal WorkspaceRow Row => _row;
+    public WorkspaceRow Row => _row;
 
     /// <summary>
     /// Gets the stored value of a field, distinguishing an absent field from an empty one.

@@ -82,6 +82,11 @@ public sealed class TableColumnViewModel : ObservableObject
     public bool IsKey => Column.IsKey;
 
     /// <summary>
+    /// Gets a value indicating whether the field is one component of a compound record key.
+    /// </summary>
+    public bool IsCompoundKey => Column.IsCompoundKey;
+
+    /// <summary>
     /// Gets a value indicating whether the field repeats inside a record.
     /// </summary>
     public bool IsList => Column.IsList;
@@ -102,10 +107,12 @@ public sealed class TableColumnViewModel : ObservableObject
     public bool IsHidden => Column.IsHidden;
 
     /// <summary>
-    /// Gets a value indicating whether the grid must not edit this column. Keys, repeated fields, and
-    /// nested structures are read-only until a dedicated editor is available.
+    /// Gets a value indicating whether the grid must not edit this column. Single-field keys, repeated
+    /// fields, and nested structures are read-only until a dedicated editor is available. Compound key
+    /// fields stay editable because a new row has to be completed by the user.
     /// </summary>
-    public bool IsReadOnly => Column.IsKey || Column.IsList || Column.IsDict || Column.IsNested;
+    public bool IsReadOnly =>
+        (Column.IsKey && !Column.IsCompoundKey) || Column.IsList || Column.IsDict || Column.IsNested;
 
     /// <summary>
     /// Gets a value indicating whether the grid can show a lookup combo for this column.

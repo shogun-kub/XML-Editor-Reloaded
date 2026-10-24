@@ -290,7 +290,7 @@ public class MainViewModelTests
         var target = Assert.Single(
             viewModel.Editors.OfType<TableEditorViewModel>(),
             editor => editor.TableName.Value == "Items.Attachments");
-        await WaitUntilAsync(() => target.SelectedRow?.Key == "7");
+        await WaitUntilAsync(() => target.SelectedRow?.KeyDisplay == "7 | 1");
         Assert.Same(target, viewModel.SelectedEditor);
     }
 

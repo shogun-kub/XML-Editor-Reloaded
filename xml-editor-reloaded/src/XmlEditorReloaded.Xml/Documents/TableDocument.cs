@@ -116,7 +116,11 @@ public sealed class TableDocument
 
     internal XDocument Xml => _document;
 
-    private string? PrimaryKeyField => Metadata?.RecordKey?.Primary.KeyField;
+    private string? PrimaryKeyField => Metadata?.RecordKeyFields is { Count: 1 } single
+        ? single[0]
+        : Metadata?.RecordKey?.Primary.KeyField;
+
+    private bool HasCompoundRecordKey => Metadata?.HasCompoundRecordKey == true;
 
     /// <summary>
     /// Finds a record by its primary key value.
@@ -176,7 +180,9 @@ public sealed class TableDocument
     }
 
     /// <summary>
-    /// Appends a new record with the next integer primary key.
+    /// Appends a new record with the next integer primary key. A table with a compound key appends an
+    /// empty record instead, because no single key value identifies the row; the user fills the key
+    /// fields in the grid or detail form.
     /// </summary>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
@@ -192,7 +198,7 @@ public sealed class TableDocument
         }
 
         var element = new XElement(XName.Get(RecordElementName));
-        var keyField = PrimaryKeyField;
+        var keyField = HasCompoundRecordKey ? null : PrimaryKeyField;
         string? key = null;
 
         if (!string.IsNullOrEmpty(keyField))
@@ -212,11 +218,14 @@ public sealed class TableDocument
 
     /// <summary>
     /// Deep-copies a record, assigns it the next integer primary key, and inserts the copy after the source.
+    /// Tables with a compound key cannot assign a new identity automatically and return
+    /// <c>key.duplicate_not_supported</c>.
     /// </summary>
     /// <param name="key">Key of the record to duplicate.</param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the copy.
-    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>key.duplicate_not_supported</c>, or
+    /// <c>xml.not_saveable</c>.
     /// </returns>
     public OperationResult<TableRecord> DuplicateRecord(string key)
     {
@@ -227,6 +236,13 @@ public sealed class TableDocument
             return OperationResult<TableRecord>.Failure(
                 ErrorCodes.XmlNotSaveable,
                 "Records can only be duplicated in a successfully loaded document.");
+        }
+
+        if (HasCompoundRecordKey)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.KeyDuplicateNotSupported,
+                $"Table '{Descriptor.TableName}' uses a compound record key and cannot duplicate a record automatically.");
         }
 
         var index = _records.FindIndex(record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
@@ -268,7 +284,49 @@ public sealed class TableDocument
     }
 
     /// <summary>
-    /// Removes a record from the document.
+    /// Deep-copies a record without changing its key fields and inserts the copy directly after the
+    /// source. Use this to duplicate dependent rows of a compound-key table whose identity is completed
+    /// by a caller-supplied parent link.
+    /// </summary>
+    /// <param name="source">Record to copy; it must belong to this document.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the copy.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+    public OperationResult<TableRecord> DuplicateRecordPreservingKey(TableRecord source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        if (Status != TableDocumentStatus.Loaded)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "Records can only be duplicated in a successfully loaded document.");
+        }
+
+        var index = _records.IndexOf(source);
+        if (index < 0)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.KeyNotFound,
+                "The source record does not belong to this document.");
+        }
+
+        var key = source.GetKey() ?? string.Empty;
+        var clone = new XElement(source.Element);
+        source.Element.AddAfterSelf(clone);
+        var record = new TableRecord(this, clone);
+        _records.Insert(index + 1, record);
+        MarkDirty();
+        ChangeTracker.Record(new RecordDuplicated(key, key));
+
+        return OperationResult<TableRecord>.Success(record);
+    }
+
+    /// <summary>
+    /// Removes a record identified by its key. When several records share the key, the first one in
+    /// document order is removed; use <see cref="DeleteRecord(TableRecord)"/> to remove an exact row.
     /// </summary>
     /// <param name="key">Key of the record to delete.</param>
     /// <returns>
@@ -279,6 +337,26 @@ public sealed class TableDocument
     {
         ArgumentNullException.ThrowIfNull(key);
 
+        var index = _records.FindIndex(record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
+        return index < 0
+            ? OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{key}' was not found.")
+            : DeleteRecord(_records[index]);
+    }
+
+    /// <summary>
+    /// Removes one exact record from the document. Unlike the key overload, this removes the selected
+    /// row even when another record has the same key.
+    /// </summary>
+    /// <param name="record">Record to remove; it must belong to this document.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="record"/> is null.</exception>
+    public OperationResult DeleteRecord(TableRecord record)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+
         if (Status != TableDocumentStatus.Loaded)
         {
             return OperationResult.Failure(
@@ -286,15 +364,15 @@ public sealed class TableDocument
                 "Records can only be deleted from a successfully loaded document.");
         }
 
-        var index = _records.FindIndex(record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
+        var index = _records.IndexOf(record);
         if (index < 0)
         {
             return OperationResult.Failure(
                 ErrorCodes.KeyNotFound,
-                $"Record '{key}' was not found.");
+                "The record does not belong to this document.");
         }
 
-        var record = _records[index];
+        var key = record.GetKey() ?? string.Empty;
         var snapshot = record.Element.ToString(SaveOptions.DisableFormatting);
         record.Element.Remove();
         _records.RemoveAt(index);

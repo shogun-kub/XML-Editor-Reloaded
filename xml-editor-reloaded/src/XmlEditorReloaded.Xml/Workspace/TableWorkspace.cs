@@ -214,6 +214,16 @@ public sealed partial class TableWorkspace
                 .ToArray();
         }
 
+        if (Overlay is null && BaseDocument.Records.Count > 0)
+        {
+            // Without an overlay there is nothing to merge. Building merged records would group rows by
+            // key and could let a compound row inherit the cells of another row that shares its first
+            // component.
+            return BaseDocument.Records
+                .Select(static record => new WorkspaceRow(record.GetKey(), record, null))
+                .ToArray();
+        }
+
         var merged = new OverlayMerger(Metadata).Merge(BaseDocument, Overlay?.Document);
         if (BaseDocument.Records.Count == 0)
         {
@@ -270,6 +280,172 @@ public sealed partial class TableWorkspace
 
         return GetRows().FirstOrDefault(row =>
             string.Equals(row.Key, key, StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// Rebuilds the current state of a row from its record, without looking it up by a key that may have
+    /// changed. The row record is authoritative; a row without a base record falls back to its key.
+    /// </summary>
+    /// <param name="row">Row previously returned by <see cref="GetRows"/>.</param>
+    /// <returns>The refreshed row, or <see langword="null"/> when the record is no longer present.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> is null.</exception>
+    public WorkspaceRow? GetRow(WorkspaceRow row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+
+        if (row.Record is not { } record)
+        {
+            return row.Key is null ? null : GetRow(row.Key);
+        }
+
+        if (!BaseDocument.Records.Contains(record))
+        {
+            return null;
+        }
+
+        if (Overlay is null)
+        {
+            return new WorkspaceRow(record.GetKey(), record, null);
+        }
+
+        var key = record.GetKey();
+        if (key is null)
+        {
+            return new WorkspaceRow(null, record, null);
+        }
+
+        var merged = new OverlayMerger(Metadata!).Merge(BaseDocument, Overlay.Document).Records
+            .FirstOrDefault(candidate => string.Equals(candidate.Key, key, StringComparison.Ordinal));
+        return new WorkspaceRow(key, record, merged);
+    }
+
+    /// <summary>
+    /// Sets a field value on one exact row, even when another row shares its key. Edits of key fields
+    /// change the identity of the row, so the caller must keep using the same row reference afterwards.
+    /// </summary>
+    /// <param name="row">Row to edit.</param>
+    /// <param name="path">Field path relative to the record.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base field is appended.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>,
+    /// <c>overlay.unresolvable_key</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    public OperationResult SetValue(
+        WorkspaceRow row,
+        FieldPath path,
+        string rawText,
+        bool addIfMissing = false)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(rawText);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        if (row.Record is not { } record)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                "Only rows backed by a base record can be edited in the grid.");
+        }
+
+        var isOverlayEdit = Session?.Overlay is not null && Session.IsTranslatable(path);
+        if (isOverlayEdit)
+        {
+            var key = record.GetKey();
+            return key is null
+                ? OperationResult.Failure(
+                    ErrorCodes.OverlayUnresolvableKey,
+                    "The record has no key that could address an overlay record.")
+                : SetValue(key, path, rawText, addIfMissing);
+        }
+
+        var before = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var result = record.SetFieldValue(path, rawText, addIfMissing);
+        if (result.IsSuccess)
+        {
+            var transaction = new TableEditTransaction();
+            before.CompleteAfter(record.Element);
+            transaction.Add(before);
+            History.Record(transaction);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Sets a field value on one exact row using a slash-separated field path.
+    /// </summary>
+    /// <param name="row">Row to edit.</param>
+    /// <param name="fieldPath">Slash-separated field path relative to the record.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">When <see langword="true"/>, a missing base field is appended.</param>
+    /// <returns>The result of <see cref="SetValue(WorkspaceRow, FieldPath, string, bool)"/>.</returns>
+    public OperationResult SetValue(
+        WorkspaceRow row,
+        string fieldPath,
+        string rawText,
+        bool addIfMissing = false) =>
+        SetValue(row, FieldPath.Parse(fieldPath), rawText, addIfMissing);
+
+    /// <summary>
+    /// Deletes one exact row and, when present, its translation record in the overlay.
+    /// </summary>
+    /// <param name="row">Row to delete.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> is null.</exception>
+    public OperationResult DeleteRow(WorkspaceRow row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        if (row.Record is not { } record)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                "Only rows backed by a base record can be deleted from the grid.");
+        }
+
+        var key = record.GetKey() ?? string.Empty;
+        var overlayState = CaptureOverlayState(key);
+        var baseState = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var deleted = BaseDocument.DeleteRecord(record);
+        if (!deleted.IsSuccess)
+        {
+            return deleted;
+        }
+
+        baseState.MarkRemoved();
+        if (Overlay is not null && Metadata is not null)
+        {
+            var overlayRecord = new OverlayKeyResolver(Metadata).FindPrimary(Overlay.Xml, key);
+            if (overlayRecord is not null)
+            {
+                overlayRecord.Remove();
+                Overlay.MarkDirty();
+                Overlay.Document.SynchronizeRecords();
+                overlayState?.MarkRemoved();
+            }
+        }
+
+        var transaction = new TableEditTransaction();
+        transaction.Add(baseState);
+        transaction.Add(overlayState);
+        History.Record(transaction);
+        return OperationResult.Success();
     }
 
     /// <summary>

@@ -16,6 +16,7 @@ public sealed class TableSchemaColumn
         int presenceCount,
         int maxOccurrences,
         bool isKey,
+        bool isCompoundKey,
         bool isList,
         bool isDict,
         string? dictMask,
@@ -36,6 +37,7 @@ public sealed class TableSchemaColumn
         PresenceCount = presenceCount;
         MaxOccurrences = maxOccurrences;
         IsKey = isKey;
+        IsCompoundKey = isCompoundKey;
         IsList = isList;
         IsDict = isDict;
         DictMask = dictMask;
@@ -84,6 +86,13 @@ public sealed class TableSchemaColumn
     /// Gets a value indicating whether this field identifies a record.
     /// </summary>
     public bool IsKey { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field is one component of a compound record key. Compound
+    /// key fields stay editable in the grid so a new record can be completed; single-key fields are
+    /// read-only.
+    /// </summary>
+    public bool IsCompoundKey { get; }
 
     /// <summary>
     /// Gets a value indicating whether the field repeats inside a record and is therefore a list.

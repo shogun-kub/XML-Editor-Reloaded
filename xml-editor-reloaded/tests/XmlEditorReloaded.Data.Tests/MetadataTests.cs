@@ -24,7 +24,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(8, migration.Data);
+        Assert.Equal(9, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -182,6 +182,69 @@ public class MetadataTests
         Assert.True(cities.IsSuccess, cities.ErrorText);
         Assert.Equal("CITYLIST/CITY", cities.Data!.RecordKey!.Primary.Path);
         Assert.Equal("uiIndex", cities.Data.RecordKey.Primary.KeyField);
+    }
+
+    /// <summary>
+    /// The eight natural composite keys are read in field order, their old single-field keys are gone,
+    /// and compound-key tables never declare translatable fields.
+    /// </summary>
+    [Fact]
+    public async Task CompoundRecordKeys_ReplaceSingleKeys()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var expected = new Dictionary<string, string[]>
+        {
+            ["Items.Attachments"] = new[] { "attachmentIndex", "itemIndex" },
+            ["Items.CompatibleFaceItems"] = new[] { "compatiblefaceitemIndex", "itemIndex" },
+            ["Items.IncompatibleAttachments"] = new[] { "itemIndex", "incompatibleattachmentIndex" },
+            ["Items.Item_Transformations"] = new[]
+            {
+                "usItem", "usResult1", "usResult2", "usResult3", "usResult4", "usResult5",
+                "usResult6", "usResult7", "usResult8", "usResult9", "usResult10",
+            },
+            ["Items.Launchables"] = new[] { "launchableIndex", "itemIndex" },
+            ["Items.Merges"] = new[]
+            {
+                "firstItemIndex", "secondItemIndex", "firstResultingItemIndex", "secondResultingItemIndex",
+            },
+            ["Items.StructureConstruct"] = new[] { "usCreationItem", "usItemStatusLoss" },
+            ["Items.StructureDeconstruct"] = new[] { "usDeconstructItem", "usItemToCreate", "usCreatedItemStatus" },
+        };
+
+        foreach (var pair in expected)
+        {
+            var metadata = await provider.GetTableAsync(TableName.Parse(pair.Key));
+            Assert.True(metadata.IsSuccess, metadata.ErrorText);
+            Assert.Equal(pair.Value, metadata.Data!.RecordKeyFields);
+            Assert.True(metadata.Data.HasCompoundRecordKey, pair.Key);
+            Assert.True(metadata.Data.HasRecordKey, pair.Key);
+            Assert.Null(metadata.Data.RecordKey);
+            Assert.Empty(metadata.Data.TranslatableFieldPaths);
+        }
+
+        var items = await provider.GetTableAsync(TableName.Parse("Items.Items"));
+        Assert.True(items.IsSuccess, items.ErrorText);
+        Assert.Empty(items.Data!.RecordKeyFields);
+        Assert.Equal("uiIndex", items.Data.RecordKey!.Primary.KeyField);
+
+        await using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT COUNT(*)
+            FROM TableKeys k
+            INNER JOIN Tables t ON t.Id = k.TableId
+            WHERE t.XmlTable IN (
+                'Items.Attachments', 'Items.CompatibleFaceItems', 'Items.IncompatibleAttachments',
+                'Items.Item_Transformations', 'Items.Launchables', 'Items.Merges',
+                'Items.StructureConstruct', 'Items.StructureDeconstruct');
+            """;
+        Assert.Equal(0L, (long)(await command.ExecuteScalarAsync())!);
     }
 
     /// <summary>

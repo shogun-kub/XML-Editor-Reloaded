@@ -170,14 +170,55 @@ public sealed class TableRecord
     }
 
     /// <summary>
+    /// Gets the component values of the record key, in key-field order.
+    /// </summary>
+    /// <returns>
+    /// For compound keys, one entry per declared key field; a missing field is <see langword="null"/>.
+    /// For single scalar keys, one entry with the key value; for positional keys, the zero-based ordinal.
+    /// Document-driven tables expose the first child value.
+    /// </returns>
+    public IReadOnlyList<string?> GetKeyComponents()
+    {
+        var keyFields = _owner.Metadata?.RecordKeyFields;
+        if (keyFields is { Count: > 0 })
+        {
+            return keyFields.Select(GetRawValue).ToArray();
+        }
+
+        var primary = _owner.Metadata?.RecordKey?.Primary;
+        if (primary is { Kind: RecordKeyKind.Scalar, KeyField: not null })
+        {
+            return new[] { GetRawValue(primary.KeyField) };
+        }
+
+        if (primary is { Kind: RecordKeyKind.Positional })
+        {
+            return new[] { GetPositionalIndex() };
+        }
+
+        return new[] { _element.Elements().FirstOrDefault()?.Value };
+    }
+
+    /// <summary>
     /// Gets the record key as defined by metadata, or the first child value for document-driven tables.
     /// </summary>
     /// <returns>
-    /// The key text, or <see langword="null"/> when no key can be determined. Positional keys use the
-    /// zero-based ordinal of the record element among same-named siblings.
+    /// The key text, or <see langword="null"/> when no key can be determined. Compound keys use the
+    /// canonical encoding of <see cref="RecordKeyCodec"/>; positional keys use the zero-based ordinal of
+    /// the record element among same-named siblings.
     /// </returns>
     public string? GetKey()
     {
+        if (_owner.Metadata?.HasCompoundRecordKey == true)
+        {
+            return RecordKeyCodec.Compose(GetKeyComponents());
+        }
+
+        if (_owner.Metadata?.RecordKeyFields is { Count: 1 } single)
+        {
+            return GetRawValue(single[0]) ?? _element.Elements().FirstOrDefault()?.Value;
+        }
+
         var primary = _owner.Metadata?.RecordKey?.Primary;
         if (primary is { Kind: RecordKeyKind.Scalar, KeyField: not null })
         {
@@ -186,13 +227,31 @@ public sealed class TableRecord
 
         if (primary is { Kind: RecordKeyKind.Positional })
         {
-            var index = _element.ElementsBeforeSelf()
-                .Count(sibling => sibling.Name == _element.Name);
-            return index.ToString(CultureInfo.InvariantCulture);
+            return GetPositionalIndex();
         }
 
         return _element.Elements().FirstOrDefault()?.Value;
     }
+
+    private string GetPositionalIndex() =>
+        _element.ElementsBeforeSelf()
+            .Count(sibling => sibling.Name == _element.Name)
+            .ToString(CultureInfo.InvariantCulture);
+
+    /// <summary>
+    /// Gets the key formatted for user-facing messages. Compound keys show their components separated by
+    /// <c> | </c>; other tables keep the plain key text.
+    /// </summary>
+    public string KeyDisplay => _owner.Metadata?.HasCompoundRecordKey == true
+        ? RecordKeyCodec.Display(GetKeyComponents())
+        : GetKey() ?? string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether every component of the record key is present and non-empty. A
+    /// numeric zero is a valid component; an absent or empty field is not. A newly added compound record
+    /// is therefore incomplete until the user fills every key field.
+    /// </summary>
+    public bool IsKeyComplete => GetKeyComponents().All(static component => !string.IsNullOrEmpty(component));
 
     /// <summary>
     /// Sets the text of a direct or nested field, validating numeric values against metadata.

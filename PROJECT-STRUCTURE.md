@@ -124,4 +124,5 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 - `AGENTS.md` — working rules and mandatory XML-integrity constraints.
 - `PLAN.md` — roadmap, current status and verification commands.
 - `M14.5-METADATA-REPORT.md` — how the metadata seed was verified.
+- `M22C-COMPOSITE-KEYS-PLAN.md` — implementation plan for compound record keys.
 - `REFERENCE-PROJECTS-STRUCTURE.md` — contents and roles of the read-only `References/` folder.

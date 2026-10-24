@@ -106,7 +106,7 @@ public partial class TableView : UserControl
                 {
                     Text = headerText,
                     ToolTip = column.HeaderTooltip,
-                    FontWeight = column.IsKey ? FontWeights.SemiBold : FontWeights.Normal,
+                    FontWeight = column.IsKey ? FontWeights.Bold : FontWeights.Normal,
                 };
 
                 DataGridColumn gridColumn;

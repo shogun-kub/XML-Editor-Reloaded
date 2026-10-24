@@ -64,10 +64,13 @@ public sealed class TableValidator
 
         foreach (var record in records.Where(static record => !record.IsKeyResolved))
         {
+            var message = record.MissingKeyFields.Count > 0
+                ? $"A record is missing compound key field(s): {string.Join(", ", record.MissingKeyFields)}."
+                : "A record has no resolvable primary key.";
             issues.Add(new ValidationIssue(
                 ValidationSeverity.Warning,
                 ValidationCodes.MissingKey,
-                "A record has no resolvable primary key.",
+                message,
                 tableName));
         }
 
@@ -343,6 +346,12 @@ public sealed class TableValidator
     private static bool IsKnownField(string fieldName, TableMetadata metadata)
     {
         if (metadata.ListFields.Any(field => string.Equals(field.XmlFieldName, fieldName, StringComparison.Ordinal)))
+        {
+            return true;
+        }
+
+        if (metadata.RecordKeyFields.Any(field =>
+                string.Equals(field, fieldName, StringComparison.Ordinal)))
         {
             return true;
         }
