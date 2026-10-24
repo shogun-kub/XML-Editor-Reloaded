@@ -20,6 +20,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ISettingsStore _settingsStore;
     private readonly IDialogService _dialogService;
     private readonly IImageViewerService _imageViewer;
+    private readonly IVersionCompareService _versionCompare;
     private AppSettings _settings = AppSettings.Default;
     private IDataSetSession? _dataSet;
     private CancellationTokenSource? _operationCts;
@@ -54,24 +55,28 @@ public partial class MainViewModel : ObservableObject
     /// <param name="settingsStore">Settings store.</param>
     /// <param name="dialogService">Dialog service.</param>
     /// <param name="imageViewer">Item image viewer service.</param>
+    /// <param name="versionCompare">Cross-version comparison window service.</param>
     public MainViewModel(
         IDataSetSessionFactory sessionFactory,
         ITableEditorFactory editorFactory,
         ISettingsStore settingsStore,
         IDialogService dialogService,
-        IImageViewerService imageViewer)
+        IImageViewerService imageViewer,
+        IVersionCompareService versionCompare)
     {
         ArgumentNullException.ThrowIfNull(sessionFactory);
         ArgumentNullException.ThrowIfNull(editorFactory);
         ArgumentNullException.ThrowIfNull(settingsStore);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(imageViewer);
+        ArgumentNullException.ThrowIfNull(versionCompare);
 
         _sessionFactory = sessionFactory;
         _editorFactory = editorFactory;
         _settingsStore = settingsStore;
         _dialogService = dialogService;
         _imageViewer = imageViewer;
+        _versionCompare = versionCompare;
 
         Editors.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasEditors));
 
@@ -79,6 +84,7 @@ public partial class MainViewModel : ObservableObject
         BrowseText = Strings.Get("BrowseText");
         RefreshText = Strings.Get("RefreshText");
         ImagesText = Strings.Get("ImageViewerButton");
+        CompareText = Strings.Get("CompareButton");
         OpenTableText = Strings.Get("EditorOpenText");
         SaveAllText = Strings.Get("EditorSaveAllText");
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
@@ -112,6 +118,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the item image viewer button text.
     /// </summary>
     public string ImagesText { get; }
+
+    /// <summary>
+    /// Gets the cross-version comparison button text.
+    /// </summary>
+    public string CompareText { get; }
 
     /// <summary>
     /// Gets the open-table button text.
@@ -228,6 +239,9 @@ public partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void OpenImageViewer() => _imageViewer.Show(DataDirectory);
+
+    [RelayCommand]
+    private void CompareVersions() => _versionCompare.Show(DataDirectory);
 
     [RelayCommand]
     private async Task OpenTableAsync()

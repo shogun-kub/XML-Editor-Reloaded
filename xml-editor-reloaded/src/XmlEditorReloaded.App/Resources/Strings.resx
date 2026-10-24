@@ -579,4 +579,223 @@
   <data name="BulkEditOperationMultiply" xml:space="preserve">
     <value>Multiply</value>
   </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Compare versions…</value>
+  </data>
+  <data name="CompareTitle" xml:space="preserve">
+    <value>Compare table data sets</value>
+  </data>
+  <data name="CompareLeftLabel" xml:space="preserve">
+    <value>Left:</value>
+  </data>
+  <data name="CompareRightLabel" xml:space="preserve">
+    <value>Right:</value>
+  </data>
+  <data name="CompareBrowseText" xml:space="preserve">
+    <value>Browse…</value>
+  </data>
+  <data name="CompareRunText" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="CompareCancelText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CompareExportText" xml:space="preserve">
+    <value>Export…</value>
+  </data>
+  <data name="CompareCloseText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CompareFieldsTab" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="CompareLookupTab" xml:space="preserve">
+    <value>Lookup references</value>
+  </data>
+  <data name="CompareProfileLabel" xml:space="preserve">
+    <value>Sparse profile</value>
+  </data>
+  <data name="CompareDiagnosticsLabel" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="CompareTableHeader" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="CompareStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompareLeftRecordsHeader" xml:space="preserve">
+    <value>Left records</value>
+  </data>
+  <data name="CompareRightRecordsHeader" xml:space="preserve">
+    <value>Right records</value>
+  </data>
+  <data name="CompareAddedFieldsHeader" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="CompareRemovedFieldsHeader" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="CompareChangedTypesHeader" xml:space="preserve">
+    <value>Type changes</value>
+  </data>
+  <data name="CompareFieldHeader" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="CompareFieldStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompareLeftTypeHeader" xml:space="preserve">
+    <value>Left type</value>
+  </data>
+  <data name="CompareRightTypeHeader" xml:space="preserve">
+    <value>Right type</value>
+  </data>
+  <data name="CompareLeftPresenceHeader" xml:space="preserve">
+    <value>Left presence</value>
+  </data>
+  <data name="CompareRightPresenceHeader" xml:space="preserve">
+    <value>Right presence</value>
+  </data>
+  <data name="CompareLookupNameHeader" xml:space="preserve">
+    <value>Lookup table</value>
+  </data>
+  <data name="CompareLeftHeader" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="CompareRightHeader" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="CompareReadyText" xml:space="preserve">
+    <value>Select two TableData directories and run the comparison.</value>
+  </data>
+  <data name="CompareRunningText" xml:space="preserve">
+    <value>Comparing…</value>
+  </data>
+  <data name="CompareCancelledText" xml:space="preserve">
+    <value>Comparison cancelled.</value>
+  </data>
+  <data name="CompareFailedText" xml:space="preserve">
+    <value>Comparison failed: {0}</value>
+  </data>
+  <data name="CompareInvalidDirectory" xml:space="preserve">
+    <value>The selected folder does not contain TableData or Data-1.13\TableData.</value>
+  </data>
+  <data name="CompareNoReportText" xml:space="preserve">
+    <value>Run the comparison first.</value>
+  </data>
+  <data name="CompareExportedText" xml:space="preserve">
+    <value>Report exported to {0}</value>
+  </data>
+  <data name="CompareExportFailedText" xml:space="preserve">
+    <value>Report export failed: {0}</value>
+  </data>
+  <data name="CompareExportTitle" xml:space="preserve">
+    <value>Export comparison report</value>
+  </data>
+  <data name="CompareExportFilter" xml:space="preserve">
+    <value>Markdown (*.md)|*.md|CSV (*.csv)|*.csv</value>
+  </data>
+  <data name="CompareChooseLeft" xml:space="preserve">
+    <value>Choose the baseline TableData directory</value>
+  </data>
+  <data name="CompareChooseRight" xml:space="preserve">
+    <value>Choose the candidate TableData directory</value>
+  </data>
+  <data name="CompareSummaryText" xml:space="preserve">
+    <value>{0} common tables: {1} identical, {2} changed; {3} only left, {4} only right; {5} with load problems.</value>
+  </data>
+  <data name="CompareSummaryFieldsText" xml:space="preserve">
+    <value>Fields: +{0} added, −{1} removed, {2} type changes, {3} cardinality changes. Records: {4} → {5}.</value>
+  </data>
+  <data name="CompareStatusBoth" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="CompareStatusLeftOnly" xml:space="preserve">
+    <value>Only left</value>
+  </data>
+  <data name="CompareStatusRightOnly" xml:space="preserve">
+    <value>Only right</value>
+  </data>
+  <data name="CompareStatusMalformed" xml:space="preserve">
+    <value>Malformed</value>
+  </data>
+  <data name="CompareStatusLoadFailed" xml:space="preserve">
+    <value>Load failed</value>
+  </data>
+  <data name="CompareStatusReadOnly" xml:space="preserve">
+    <value>Read-only</value>
+  </data>
+  <data name="CompareStatusLoaded" xml:space="preserve">
+    <value>Loaded</value>
+  </data>
+  <data name="CompareFieldSame" xml:space="preserve">
+    <value>Same</value>
+  </data>
+  <data name="CompareFieldLeftOnly" xml:space="preserve">
+    <value>Only left</value>
+  </data>
+  <data name="CompareFieldRightOnly" xml:space="preserve">
+    <value>Only right</value>
+  </data>
+  <data name="CompareFieldTypeChanged" xml:space="preserve">
+    <value>Type changed</value>
+  </data>
+  <data name="CompareFieldCardinalityChanged" xml:space="preserve">
+    <value>Cardinality changed</value>
+  </data>
+  <data name="CompareTypeString" xml:space="preserve">
+    <value>String</value>
+  </data>
+  <data name="CompareTypeInteger" xml:space="preserve">
+    <value>Integer</value>
+  </data>
+  <data name="CompareTypeDecimal" xml:space="preserve">
+    <value>Decimal</value>
+  </data>
+  <data name="CompareTypeBoolean" xml:space="preserve">
+    <value>Boolean</value>
+  </data>
+  <data name="CompareTypeLookup" xml:space="preserve">
+    <value>Lookup</value>
+  </data>
+  <data name="CompareTypeFlags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="CompareTypeNested" xml:space="preserve">
+    <value>Nested</value>
+  </data>
+  <data name="CompareTypeRaw" xml:space="preserve">
+    <value>Raw</value>
+  </data>
+  <data name="CompareLookupAvailable" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="CompareLookupMissing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="CompareLookupUnreadable" xml:space="preserve">
+    <value>Unreadable</value>
+  </data>
+  <data name="CompareProfileMissing" xml:space="preserve">
+    <value>{0}: not present</value>
+  </data>
+  <data name="CompareProfileUnreadable" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="CompareRootRecordLine" xml:space="preserve">
+    <value>{0}: root {1}, records {2}</value>
+  </data>
+  <data name="CompareProfileLine" xml:space="preserve">
+    <value>{0}: {1} records, {2} fields, {3} distinct shapes, {4}-{5} fields/record (avg {6}), {7} empty; overlays: {8}</value>
+  </data>
+  <data name="CompareOverlaysNone" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="CompareSideLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="CompareSideRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
 </root>

@@ -28,6 +28,21 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public string? PickSaveFile(string title, string filter, string defaultFileName)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = title,
+            Filter = filter,
+            FileName = defaultFileName,
+            AddExtension = true,
+            OverwritePrompt = true,
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc />
     public bool Confirm(string message, string title)
     {
         var result = System.Windows.MessageBox.Show(

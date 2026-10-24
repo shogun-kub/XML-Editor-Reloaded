@@ -579,4 +579,223 @@
   <data name="BulkEditOperationMultiply" xml:space="preserve">
     <value>Умножить</value>
   </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Сравнить версии…</value>
+  </data>
+  <data name="CompareTitle" xml:space="preserve">
+    <value>Сравнение наборов таблиц</value>
+  </data>
+  <data name="CompareLeftLabel" xml:space="preserve">
+    <value>Левый:</value>
+  </data>
+  <data name="CompareRightLabel" xml:space="preserve">
+    <value>Правый:</value>
+  </data>
+  <data name="CompareBrowseText" xml:space="preserve">
+    <value>Обзор…</value>
+  </data>
+  <data name="CompareRunText" xml:space="preserve">
+    <value>Сравнить</value>
+  </data>
+  <data name="CompareCancelText" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="CompareExportText" xml:space="preserve">
+    <value>Экспорт…</value>
+  </data>
+  <data name="CompareCloseText" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="CompareFieldsTab" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="CompareLookupTab" xml:space="preserve">
+    <value>Lookup-связи</value>
+  </data>
+  <data name="CompareProfileLabel" xml:space="preserve">
+    <value>Sparse-профиль</value>
+  </data>
+  <data name="CompareDiagnosticsLabel" xml:space="preserve">
+    <value>Диагностика</value>
+  </data>
+  <data name="CompareTableHeader" xml:space="preserve">
+    <value>Таблица</value>
+  </data>
+  <data name="CompareStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CompareLeftRecordsHeader" xml:space="preserve">
+    <value>Записей слева</value>
+  </data>
+  <data name="CompareRightRecordsHeader" xml:space="preserve">
+    <value>Записей справа</value>
+  </data>
+  <data name="CompareAddedFieldsHeader" xml:space="preserve">
+    <value>Добавлено</value>
+  </data>
+  <data name="CompareRemovedFieldsHeader" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="CompareChangedTypesHeader" xml:space="preserve">
+    <value>Смена типа</value>
+  </data>
+  <data name="CompareFieldHeader" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="CompareFieldStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CompareLeftTypeHeader" xml:space="preserve">
+    <value>Тип слева</value>
+  </data>
+  <data name="CompareRightTypeHeader" xml:space="preserve">
+    <value>Тип справа</value>
+  </data>
+  <data name="CompareLeftPresenceHeader" xml:space="preserve">
+    <value>Есть слева</value>
+  </data>
+  <data name="CompareRightPresenceHeader" xml:space="preserve">
+    <value>Есть справа</value>
+  </data>
+  <data name="CompareLookupNameHeader" xml:space="preserve">
+    <value>Справочник</value>
+  </data>
+  <data name="CompareLeftHeader" xml:space="preserve">
+    <value>Слева</value>
+  </data>
+  <data name="CompareRightHeader" xml:space="preserve">
+    <value>Справа</value>
+  </data>
+  <data name="CompareReadyText" xml:space="preserve">
+    <value>Выберите два каталога TableData и запустите сравнение.</value>
+  </data>
+  <data name="CompareRunningText" xml:space="preserve">
+    <value>Сравнение…</value>
+  </data>
+  <data name="CompareCancelledText" xml:space="preserve">
+    <value>Сравнение отменено.</value>
+  </data>
+  <data name="CompareFailedText" xml:space="preserve">
+    <value>Ошибка сравнения: {0}</value>
+  </data>
+  <data name="CompareInvalidDirectory" xml:space="preserve">
+    <value>Выбранный каталог не содержит TableData или Data-1.13\TableData.</value>
+  </data>
+  <data name="CompareNoReportText" xml:space="preserve">
+    <value>Сначала выполните сравнение.</value>
+  </data>
+  <data name="CompareExportedText" xml:space="preserve">
+    <value>Отчёт сохранён в {0}</value>
+  </data>
+  <data name="CompareExportFailedText" xml:space="preserve">
+    <value>Не удалось сохранить отчёт: {0}</value>
+  </data>
+  <data name="CompareExportTitle" xml:space="preserve">
+    <value>Экспорт отчёта сравнения</value>
+  </data>
+  <data name="CompareExportFilter" xml:space="preserve">
+    <value>Markdown (*.md)|*.md|CSV (*.csv)|*.csv</value>
+  </data>
+  <data name="CompareChooseLeft" xml:space="preserve">
+    <value>Выберите базовый каталог TableData</value>
+  </data>
+  <data name="CompareChooseRight" xml:space="preserve">
+    <value>Выберите сравниваемый каталог TableData</value>
+  </data>
+  <data name="CompareSummaryText" xml:space="preserve">
+    <value>Общих таблиц: {0}; без различий: {1}, изменено: {2}; только слева: {3}, только справа: {4}; с ошибками загрузки: {5}.</value>
+  </data>
+  <data name="CompareSummaryFieldsText" xml:space="preserve">
+    <value>Поля: +{0} добавлено, −{1} удалено, {2} смен типа, {3} изменений кратности. Записей: {4} → {5}.</value>
+  </data>
+  <data name="CompareStatusBoth" xml:space="preserve">
+    <value>Обе</value>
+  </data>
+  <data name="CompareStatusLeftOnly" xml:space="preserve">
+    <value>Только слева</value>
+  </data>
+  <data name="CompareStatusRightOnly" xml:space="preserve">
+    <value>Только справа</value>
+  </data>
+  <data name="CompareStatusMalformed" xml:space="preserve">
+    <value>Повреждена</value>
+  </data>
+  <data name="CompareStatusLoadFailed" xml:space="preserve">
+    <value>Ошибка загрузки</value>
+  </data>
+  <data name="CompareStatusReadOnly" xml:space="preserve">
+    <value>Только чтение</value>
+  </data>
+  <data name="CompareStatusLoaded" xml:space="preserve">
+    <value>Загружена</value>
+  </data>
+  <data name="CompareFieldSame" xml:space="preserve">
+    <value>Одинаково</value>
+  </data>
+  <data name="CompareFieldLeftOnly" xml:space="preserve">
+    <value>Только слева</value>
+  </data>
+  <data name="CompareFieldRightOnly" xml:space="preserve">
+    <value>Только справа</value>
+  </data>
+  <data name="CompareFieldTypeChanged" xml:space="preserve">
+    <value>Тип изменён</value>
+  </data>
+  <data name="CompareFieldCardinalityChanged" xml:space="preserve">
+    <value>Изменена кратность</value>
+  </data>
+  <data name="CompareTypeString" xml:space="preserve">
+    <value>Строка</value>
+  </data>
+  <data name="CompareTypeInteger" xml:space="preserve">
+    <value>Целое</value>
+  </data>
+  <data name="CompareTypeDecimal" xml:space="preserve">
+    <value>Дробное</value>
+  </data>
+  <data name="CompareTypeBoolean" xml:space="preserve">
+    <value>Логическое</value>
+  </data>
+  <data name="CompareTypeLookup" xml:space="preserve">
+    <value>Справочник</value>
+  </data>
+  <data name="CompareTypeFlags" xml:space="preserve">
+    <value>Флаги</value>
+  </data>
+  <data name="CompareTypeNested" xml:space="preserve">
+    <value>Вложенное</value>
+  </data>
+  <data name="CompareTypeRaw" xml:space="preserve">
+    <value>Сырое</value>
+  </data>
+  <data name="CompareLookupAvailable" xml:space="preserve">
+    <value>Доступен</value>
+  </data>
+  <data name="CompareLookupMissing" xml:space="preserve">
+    <value>Отсутствует</value>
+  </data>
+  <data name="CompareLookupUnreadable" xml:space="preserve">
+    <value>Не читается</value>
+  </data>
+  <data name="CompareProfileMissing" xml:space="preserve">
+    <value>{0}: отсутствует</value>
+  </data>
+  <data name="CompareProfileUnreadable" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="CompareRootRecordLine" xml:space="preserve">
+    <value>{0}: корень {1}, записи {2}</value>
+  </data>
+  <data name="CompareProfileLine" xml:space="preserve">
+    <value>{0}: записей {1}, полей {2}, различных наборов {3}, полей на запись {4}-{5} (в среднем {6}), пустых {7}; оверлеи: {8}</value>
+  </data>
+  <data name="CompareOverlaysNone" xml:space="preserve">
+    <value>нет</value>
+  </data>
+  <data name="CompareSideLeft" xml:space="preserve">
+    <value>Слева</value>
+  </data>
+  <data name="CompareSideRight" xml:space="preserve">
+    <value>Справа</value>
+  </data>
 </root>

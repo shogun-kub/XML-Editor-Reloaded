@@ -10,6 +10,7 @@ using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Data;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml;
+using XmlEditorReloaded.Xml.Comparison;
 
 namespace XmlEditorReloaded.App;
 
@@ -40,6 +41,11 @@ public partial class App : Application
         services.AddSingleton<ITableEditorFactory, TableEditorFactory>();
         services.AddSingleton<IItemImageService, WpfItemImageService>();
         services.AddSingleton<IImageViewerService, WpfImageViewerService>();
+        services.AddSingleton<ITableComparisonService>(provider => new TableDataComparer(
+            provider.GetRequiredService<ITableCatalog>(),
+            provider.GetRequiredService<ITableMetadataProvider>()));
+        services.AddSingleton<CompareViewModel>();
+        services.AddSingleton<IVersionCompareService, WpfVersionCompareService>();
         services.AddSingleton<ImageViewerViewModel>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();

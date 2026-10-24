@@ -1,0 +1,262 @@
+<Window x:Class="XmlEditorReloaded.App.Views.CompareWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding Title}"
+        Width="1220"
+        Height="780"
+        MinWidth="900"
+        MinHeight="560"
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"
+                       Text="{Binding LeftLabel}" />
+            <TextBox Grid.Column="1"
+                     VerticalAlignment="Center"
+                     Text="{Binding LeftDirectory, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="2"
+                    Margin="6,0,16,0"
+                    Padding="10,3"
+                    Content="{Binding BrowseText}"
+                    Command="{Binding BrowseLeftCommand}" />
+            <TextBlock Grid.Column="3"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"
+                       Text="{Binding RightLabel}" />
+            <TextBox Grid.Column="4"
+                     VerticalAlignment="Center"
+                     Text="{Binding RightDirectory, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="5"
+                    Margin="6,0,0,0"
+                    Padding="10,3"
+                    Content="{Binding BrowseText}"
+                    Command="{Binding BrowseRightCommand}" />
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Padding="16,4"
+                    IsDefault="True"
+                    Content="{Binding CompareText}"
+                    Command="{Binding CompareCommand}" />
+            <Button Grid.Column="1"
+                    Margin="8,0,0,0"
+                    Padding="16,4"
+                    Content="{Binding CancelText}"
+                    Command="{Binding CancelCompareCommand}" />
+            <ProgressBar Grid.Column="2"
+                         Width="120"
+                         Height="4"
+                         Margin="12,0,0,0"
+                         VerticalAlignment="Center"
+                         IsIndeterminate="True"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Grid.Column="3"
+                       Margin="12,0,0,0"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       Text="{Binding StatusText}" />
+        </Grid>
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,8">
+            <TextBlock FontWeight="SemiBold"
+                       TextWrapping="Wrap"
+                       Text="{Binding SummaryText}" />
+            <TextBlock Margin="0,2,0,0"
+                       Foreground="#FF666666"
+                       TextWrapping="Wrap"
+                       Text="{Binding SummaryFieldsText}" />
+        </StackPanel>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="460" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="TablesGrid"
+                      Grid.Column="0"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="All"
+                      EnableRowVirtualization="True"
+                      ItemsSource="{Binding Tables}"
+                      SelectedItem="{Binding SelectedTable, Mode=TwoWay}">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasDifferences}" Value="True">
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="TableColumn" Binding="{Binding TableName}" Width="*" />
+                    <DataGridTextColumn x:Name="TableStatusColumn" Binding="{Binding StatusText}" Width="120" />
+                    <DataGridTextColumn x:Name="LeftRecordsColumn" Binding="{Binding LeftRecordsText}" Width="70" />
+                    <DataGridTextColumn x:Name="RightRecordsColumn" Binding="{Binding RightRecordsText}" Width="70" />
+                    <DataGridTextColumn x:Name="AddedFieldsColumn" Binding="{Binding AddedFields}" Width="60" />
+                    <DataGridTextColumn x:Name="RemovedFieldsColumn" Binding="{Binding RemovedFields}" Width="70" />
+                    <DataGridTextColumn x:Name="ChangedTypesColumn" Binding="{Binding ChangedTypes}" Width="80" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Column="1"
+                          Width="6"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="Transparent" />
+
+            <TabControl Grid.Column="2"
+                        Margin="6,0,0,0">
+                <TabItem Header="{Binding FieldsTabText}">
+                    <Grid Margin="6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   FontWeight="Bold"
+                                   Text="{Binding SelectedDetailsHeader}" />
+
+                        <StackPanel Grid.Row="1" Margin="0,4,0,8">
+                            <TextBlock FontWeight="SemiBold"
+                                       Text="{Binding ProfileLabel}" />
+                            <TextBlock Margin="0,2,0,0"
+                                       TextWrapping="Wrap"
+                                       FontFamily="Consolas"
+                                       Text="{Binding ProfileText}" />
+                        </StackPanel>
+
+                        <DataGrid x:Name="FieldsGrid"
+                                  Grid.Row="2"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  EnableRowVirtualization="True"
+                                  ItemsSource="{Binding Fields}">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasDifference}" Value="True">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="FieldNameColumn" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn x:Name="FieldStatusColumn" Binding="{Binding StatusText}" Width="130" />
+                                <DataGridTextColumn x:Name="LeftTypeColumn" Binding="{Binding LeftTypeText}" Width="80" />
+                                <DataGridTextColumn x:Name="RightTypeColumn" Binding="{Binding RightTypeText}" Width="80" />
+                                <DataGridTextColumn x:Name="LeftPresenceColumn" Binding="{Binding LeftPresenceText}" Width="80" />
+                                <DataGridTextColumn x:Name="RightPresenceColumn" Binding="{Binding RightPresenceText}" Width="80" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Grid.Row="3"
+                                    Margin="0,6,0,0"
+                                    Visibility="{Binding HasDiagnostics, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock FontWeight="SemiBold"
+                                       Text="{Binding DiagnosticsLabel}" />
+                            <TextBlock Margin="0,2,0,0"
+                                       TextWrapping="Wrap"
+                                       FontFamily="Consolas"
+                                       Text="{Binding DiagnosticsText}" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="{Binding LookupTabText}">
+                    <DataGrid x:Name="LookupGrid"
+                              Margin="6"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="All"
+                              EnableRowVirtualization="True"
+                              ItemsSource="{Binding LookupReferences}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasProblem}" Value="True">
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        <Setter Property="Foreground" Value="#FFB00020" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="LookupTableColumn" Binding="{Binding TableName}" Width="180" />
+                            <DataGridTextColumn x:Name="LookupFieldColumn" Binding="{Binding FieldName}" Width="160" />
+                            <DataGridTextColumn x:Name="LookupNameColumn" Binding="{Binding LookupTable}" Width="*" />
+                            <DataGridTextColumn x:Name="LookupLeftColumn" Binding="{Binding LeftText}" Width="110" />
+                            <DataGridTextColumn x:Name="LookupRightColumn" Binding="{Binding RightText}" Width="110" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Margin="0,10,8,0"
+                    Padding="16,4"
+                    Content="{Binding ExportText}"
+                    Command="{Binding ExportCommand}" />
+            <Button Margin="0,10,0,0"
+                    Padding="16,4"
+                    IsCancel="True"
+                    Content="{Binding CloseText}"
+                    Click="OnClose" />
+        </StackPanel>
+    </Grid>
+</Window>

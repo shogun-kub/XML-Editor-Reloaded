@@ -1161,6 +1161,8 @@ public class TableEditorViewModelTests
 
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
+        public string? PickSaveFile(string title, string filter, string defaultFileName) => null;
+
         public bool Confirm(string message, string title) => ConfirmResult;
 
         public uint? EditBits(

@@ -57,6 +57,11 @@
             <Button Grid.Column="5"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    Content="{Binding CompareText}"
+                    Command="{Binding CompareVersionsCommand}" />
+            <Button Grid.Column="6"
+                    Margin="8,0,0,0"
+                    Padding="12,4"
                     Content="{Binding SaveAllText}"
                     Command="{Binding SaveAllCommand}" />
         </Grid>

@@ -69,7 +69,8 @@ public class MainViewModelTests
             new TableEditorFactory(dialog, new TestItemImageService()),
             settingsStore,
             dialog,
-            new FakeImageViewerService());
+            new FakeImageViewerService(),
+            new FakeVersionCompareService());
 
         await viewModel.InitializeAsync();
 
@@ -126,7 +127,8 @@ public class MainViewModelTests
             new TableEditorFactory(dialog, new TestItemImageService()),
             new JsonSettingsStore(workspace.PathOf("settings.json")),
             dialog,
-            new FakeImageViewerService())
+            new FakeImageViewerService(),
+            new FakeVersionCompareService())
         {
             DataDirectory = data13,
         };
@@ -255,18 +257,40 @@ public class MainViewModelTests
         Assert.True(Assert.Single(reopened.LanguageOptions, option => option.Code == "ru").HasOverlay);
     }
 
+    /// <summary>
+    /// The compare command opens the comparison window with the active data directory.
+    /// </summary>
+    [Fact]
+    public async Task CompareVersions_OpensWithActiveDataDirectory()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateItemsData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var compare = new FakeVersionCompareService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog, compare);
+        await viewModel.InitializeAsync();
+
+        viewModel.CompareVersionsCommand.Execute(null);
+
+        Assert.Equal(data13, compare.LastDataDirectory);
+    }
+
     private static MainViewModel CreateShell(
         SqliteMetadataProvider provider,
         FileSystemTableCatalog catalog,
         TableRepository repository,
         JsonSettingsStore settingsStore,
-        FakeDialogService dialog) =>
+        FakeDialogService dialog,
+        FakeVersionCompareService? versionCompare = null) =>
         new(
             new DataSetSessionFactory(provider, catalog, repository),
             new TableEditorFactory(dialog, new TestItemImageService()),
             settingsStore,
             dialog,
-            new FakeImageViewerService());
+            new FakeImageViewerService(),
+            versionCompare ?? new FakeVersionCompareService());
 
     private static string CreateItemsData(
         TestWorkspace workspace,
@@ -342,6 +366,10 @@ public class MainViewModelTests
 
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
+        public string? SaveFileResult { get; set; }
+
+        public string? PickSaveFile(string title, string filter, string defaultFileName) => SaveFileResult;
+
         public bool Confirm(string message, string title) => ConfirmResult;
 
         public uint? EditBits(
@@ -361,6 +389,13 @@ public class MainViewModelTests
         public string? LastDataDirectory { get; private set; }
 
         public void Show(string? dataDirectory) => LastDataDirectory = dataDirectory;
+    }
+
+    private sealed class FakeVersionCompareService : IVersionCompareService
+    {
+        public string? LastDataDirectory { get; private set; }
+
+        public void Show(string? initialDirectory) => LastDataDirectory = initialDirectory;
     }
 
     private sealed class FailingSessionFactory : IDataSetSessionFactory

@@ -24,6 +24,8 @@ public class CompositionTests
         Assert.NotNull(provider.GetRequiredService<MainViewModel>());
         Assert.NotNull(provider.GetRequiredService<ImageViewerViewModel>());
         Assert.NotNull(provider.GetRequiredService<IImageViewerService>());
+        Assert.NotNull(provider.GetRequiredService<CompareViewModel>());
+        Assert.NotNull(provider.GetRequiredService<IVersionCompareService>());
     }
 
     /// <summary>
@@ -46,6 +48,11 @@ public class CompositionTests
 
                 Assert.IsType<MainViewModel>(window.DataContext);
                 window.Close();
+
+                var compareWindow = new global::XmlEditorReloaded.App.Views.CompareWindow(
+                    provider.GetRequiredService<CompareViewModel>());
+                Assert.IsType<CompareViewModel>(compareWindow.DataContext);
+                compareWindow.Close();
             }
             catch (Exception exception)
             {

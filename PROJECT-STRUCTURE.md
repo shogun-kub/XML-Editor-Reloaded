@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0–M16 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. M14 added per-tab language selection, merged translation display with untranslated markers, a translation report window, and creation of new overlay files. M14.5 verified the legacy schema against v4 and v5, seeded 502 non-declaring hints (224 for `Items.Items`) and 46 declaring lookup columns, enabled hint-driven validation, and added 64-bit lookup identifiers. Lookup/Boolean/flag editors (M15) added lookup combos, Boolean checkboxes, and named bit labels with graceful fallback when a lookup file is malformed. M16 added bulk set/add/multiply with a preview-and-confirm dialog and a bounded undo/redo history covering cell, row, bulk, and translation edits (Ctrl+Z/Ctrl+Y); cross-version comparison (M17) remains future work. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M17 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. M14 added per-tab language selection, merged translation display with untranslated markers, a translation report window, and creation of new overlay files. M14.5 verified the legacy schema against v4 and v5, seeded 502 non-declaring hints (224 for `Items.Items`) and 46 declaring lookup columns, enabled hint-driven validation, and added 64-bit lookup identifiers. Lookup/Boolean/flag editors (M15) added lookup combos, Boolean checkboxes, and named bit labels with graceful fallback when a lookup file is malformed. M16 added bulk set/add/multiply with a preview-and-confirm dialog and a bounded undo/redo history covering cell, row, bulk, and translation edits (Ctrl+Z/Ctrl+Y). M17 added a read-only cross-version comparison of two `TableData` directories with table/field/type/lookup/sparse-profile differences and Markdown/CSV export; it never writes to either data set. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -96,6 +96,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - `TableWorkspace`: a loaded base document plus optional overlay, merged rows, routed edits, add/duplicate/delete, bulk preview/apply, a bounded undo/redo history, unified saving, validation, and translation reports.
 - Lossless structural patching: scalar edits, element insertions, and deletions are applied to the original bytes with neighbor indentation; ambiguous blocks fall back to the serializer.
 - Validation against metadata and referral integrity rules.
+- Read-only cross-version comparison (`Comparison/`): table presence, record counts, field sets, inferred types, cardinality, lookup-reference availability, and sparse profiles for two `TableData` directories, plus Markdown/CSV report formatting. The comparer loads files only and never writes to either directory.
 - Depends on `Core`.
 
 ### XmlEditorReloaded.Data (`net10.0`)
@@ -251,7 +252,20 @@ The editor must never break a table file. These requirements are mandatory for e
 8. **No silent repair.** A malformed file is reported to the user; the editor does not "fix" or overwrite it automatically.
 9. **Version independence.** Field handling comes from metadata plus the document itself, never from hardcoded v4/v5 lists.
 
-### 6.8 Localization
+### 6.8 Cross-version comparison
+
+`TableDataComparer` compares two discovered `TableData` directories without writing to either of them:
+
+- Tables are matched by dotted table name. Left-only and right-only tables are reported with their side; common tables are compared field by field.
+- Records are identified by the metadata record element. Nested-key tables such as `Map.Cities` use descendants (`CITYLIST/CITY`); other tables use direct children of the root. Document-driven tables fall back to the root's children.
+- Per side the report records the root and record element names, record count, distinct field names in first-appearance order, distinct record shapes, minimum/maximum/average fields per record, empty-record count, and overlay languages.
+- Field types are inferred from values (`Boolean`, `Integer`, `Decimal`, `String`, `Nested`) with the same rules as schema discovery; the key field is never inferred as Boolean. Fields are compared by presence, inferred type, and cardinality (scalar versus repeated element).
+- When one side is malformed or unreadable, the other side is still analyzed, but field-level differences are suppressed so that the readable side's fields are not misreported as removed.
+- Lookup references come from `Columns` and `ColumnHints`; each reference reports whether the lookup table is available, missing, or unreadable on each side.
+- The report can be rendered as Markdown (summary, lookup references, table list, details only for changed tables) or as long-format CSV with `Table`, `Field`, `Lookup`, and `Warning` rows. Both formats use invariant numbers and UTF-8 without BOM when exported.
+- The comparison is strictly read-only: files are loaded through the normal loader, no document is saved, and unchanged byte content is verified by tests and the env-gated v4/v5 comparison.
+
+### 6.9 Localization
 
 v4 is the Russian-localized data set; v5 is the English base data set with no overlays. This is intentional.
 
@@ -321,7 +335,7 @@ The remaining overlays (`CampaignStatsEvents`, `CivGroupNames`, `DifficultySetti
 - Configure one or more game data directories; detect `TableData` automatically.
 - Optional language-specific directories for localized table variants.
 - Discover language overlays (`<Language>.<BaseFile>.xml`) per table; choose a display/edit language.
-- Open v4, v5, and future versions side by side; report files and fields that differ between data sets.
+- Open v4, v5, and future versions side by side; report files and fields that differ between data sets. **Implemented read-only (M17):** the comparison window reports table presence, record counts, field sets, inferred types, cardinality, lookup references, and sparse profiles, and exports Markdown or CSV.
 - Table list grouped by category (Items, Weapons, Inventory, Lookup, etc.).
 - Open several tables in tabs/panes; remember layout between sessions.
 - Load malformed files in a diagnostic mode that reports the problem without rewriting the file.
@@ -410,5 +424,5 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 12. Seed column metadata from verified legacy definitions and activate type/lookup validation. **Done (M14.5).**
 13. Add lookup, Boolean, and flag editors. **Done (M15).**
 14. Add bulk column operations with preview and undo. **Done (M16).**
-15. Add a read-only cross-version field report. **Planned (M17).**
+15. Add a read-only cross-version field report. **Done (M17).**
 16. Merc gear editor, lookup-table management (ID allocation and reference protection), and main-table item lookups remain future work; scope needs agreement.

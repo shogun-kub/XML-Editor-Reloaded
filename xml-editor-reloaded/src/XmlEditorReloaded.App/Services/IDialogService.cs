@@ -47,6 +47,15 @@ public interface IDialogService
     void ShowTranslationReport(TranslationReport report, string title);
 
     /// <summary>
+    /// Shows a save-file dialog.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="filter">File-type filter in the standard dialog format.</param>
+    /// <param name="defaultFileName">Suggested file name.</param>
+    /// <returns>The selected file path, or <see langword="null"/> when cancelled.</returns>
+    string? PickSaveFile(string title, string filter, string defaultFileName);
+
+    /// <summary>
     /// Shows the bulk edit dialog with a live preview of the requested changes.
     /// </summary>
     /// <param name="context">Columns, target row keys, and the preview callback.</param>
