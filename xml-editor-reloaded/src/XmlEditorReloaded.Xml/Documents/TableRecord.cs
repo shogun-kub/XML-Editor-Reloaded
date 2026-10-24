@@ -77,6 +77,26 @@ public sealed class TableRecord
     }
 
     /// <summary>
+    /// Gets the distinct direct child element names of a nested field, in document order.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name of the nested container.</param>
+    /// <returns>
+    /// The child names, or an empty list when the field is absent or has no child elements.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    public IReadOnlyList<string> GetChildFieldNames(string fieldName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        var container = FindDirectChild(fieldName);
+        return container is null || !container.HasElements
+            ? Array.Empty<string>()
+            : container.Elements()
+                .Select(static element => element.Name.LocalName)
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+    }
+
+    /// <summary>
     /// Gets all values of a repeated direct child field, in document order.
     /// </summary>
     /// <param name="fieldName">Case-sensitive XML element name.</param>
@@ -99,6 +119,18 @@ public sealed class TableRecord
     {
         ArgumentException.ThrowIfNullOrEmpty(fieldName);
         return FindDirectChild(fieldName)?.Value;
+    }
+
+    /// <summary>
+    /// Gets the raw text at a nested field path, matching the first occurrence at every level.
+    /// </summary>
+    /// <param name="path">Field path relative to the record.</param>
+    /// <returns>The raw text, or <see langword="null"/> when the path is absent.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> is null.</exception>
+    public string? GetRawValue(FieldPath path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        return FindPath(path)?.Value;
     }
 
     /// <summary>
@@ -138,7 +170,9 @@ public sealed class TableRecord
     /// <param name="path">Slash-separated field path.</param>
     /// <param name="rawText">Raw replacement text, preserved exactly.</param>
     /// <param name="addIfMissing">
-    /// When <see langword="true"/> and the path has one segment, appends a missing field.
+    /// When <see langword="true"/>, a missing field is appended to the record. For a nested path the
+    /// missing intermediate elements are created as well, so an edit of a declared nested field works
+    /// for sparse records that omit the container.
     /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
@@ -181,9 +215,18 @@ public sealed class TableRecord
         var element = FindPath(path);
         if (element is null)
         {
-            return OperationResult.Failure(
-                ErrorCodes.KeyNotFound,
-                $"Field path '{path.Text}' is not present in the record.");
+            if (!addIfMissing)
+            {
+                return OperationResult.Failure(
+                    ErrorCodes.KeyNotFound,
+                    $"Field path '{path.Text}' is not present in the record.");
+            }
+
+            element = CreatePath(path);
+            element.Value = rawText;
+            _owner.MarkDirty();
+            _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, path.Text, null, rawText));
+            return OperationResult.Success();
         }
 
         return SetElementValue(element, path, rawText);
@@ -414,6 +457,30 @@ public sealed class TableRecord
             {
                 return null;
             }
+        }
+
+        return current;
+    }
+
+    /// <summary>
+    /// Creates a missing field path, reusing existing elements and appending new ones in path order.
+    /// </summary>
+    /// <param name="path">Missing path to create.</param>
+    /// <returns>The leaf element of the created path.</returns>
+    private XElement CreatePath(FieldPath path)
+    {
+        var current = _element;
+        foreach (var segment in path.Segments)
+        {
+            var child = current.Elements()
+                .FirstOrDefault(element => string.Equals(element.Name.LocalName, segment, StringComparison.Ordinal));
+            if (child is null)
+            {
+                child = new XElement(XName.Get(segment));
+                current.Add(child);
+            }
+
+            current = child;
         }
 
         return current;

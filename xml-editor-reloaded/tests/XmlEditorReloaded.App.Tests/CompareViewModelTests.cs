@@ -192,5 +192,11 @@ public class CompareViewModelTests
         }
 
         public BulkEditRequest? EditBulk(BulkEditContext context) => null;
+
+        public ItemCreationRequest? CreateItem(
+            string title,
+            string suggestedId,
+            string suggestedName,
+            IReadOnlyList<LookupOption> classes) => null;
     }
 }

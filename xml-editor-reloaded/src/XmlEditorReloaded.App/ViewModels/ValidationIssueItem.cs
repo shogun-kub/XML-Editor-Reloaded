@@ -49,8 +49,10 @@ public sealed class ValidationIssueItem
             : string.IsNullOrEmpty(issue.FieldPath)
                 ? issue.RecordKey
                 : $"{issue.RecordKey}/{issue.FieldPath}";
+        var table = issue.TableName?.Value;
+        var prefix = string.IsNullOrEmpty(table) ? string.Empty : table + ": ";
         return location is null
-            ? $"{issue.Severity}: {issue.Code} — {issue.Message}"
-            : $"{issue.Severity}: {issue.Code} [{location}] — {issue.Message}";
+            ? $"{prefix}{issue.Severity}: {issue.Code} — {issue.Message}"
+            : $"{prefix}{issue.Severity}: {issue.Code} [{location}] — {issue.Message}";
     }
 }

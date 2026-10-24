@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Numerics;
+using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
@@ -21,7 +22,7 @@ namespace XmlEditorReloaded.App.ViewModels;
 /// Editable table view: a virtualized grid over <see cref="TableWorkspace"/> with schema-driven
 /// columns, sparse cell editing, row operations, search, sorting, validation, and saving.
 /// </summary>
-public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
+public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, IEditorTab, IDetailFieldHost
 {
     private readonly IDataSetSession _session;
     private readonly IItemImageService _itemImages;
@@ -33,10 +34,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     private readonly Dictionary<string, LookupColumnData> _lookupByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, RelationColumnData> _relationByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
-    private Dictionary<string, IReadOnlySet<string>>? _relationTargetValues;
+    private IReadOnlyDictionary<string, IReadOnlySet<string>>? _relationTargetValues;
     private CancellationTokenSource? _imageCts;
     private bool _suppressLanguageChange;
     private bool _isChangingLanguage;
+    private bool _isEmbedded;
     private const int DefaultColumnBudget = 8;
     private const NumberStyles DecimalStyles =
         NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
@@ -192,15 +194,64 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     /// </summary>
     public TableDescriptor Descriptor { get; private set; }
 
+    /// <inheritdoc />
+    public TableName TableName => Descriptor.TableName;
+
     /// <summary>
     /// Gets the table title.
     /// </summary>
     public string Title { get; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the editor is embedded in another workspace instead of
+    /// owning its own tab. Embedded editors hide the grid chrome and delegate saving to their host.
+    /// </summary>
+    public bool IsEmbedded
+    {
+        get => _isEmbedded;
+        set
+        {
+            if (SetProperty(ref _isEmbedded, value))
+            {
+                OnPropertyChanged(nameof(ShowThumbnailColumn));
+                OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets an additional row filter applied before search and sorting. The item workspace uses
+    /// it to show only the child rows of the selected item.
+    /// </summary>
+    public Func<TableRowViewModel, bool>? ExternalRowFilter { get; set; }
+
+    /// <summary>
+    /// Gets or sets values written to a new row created through <see cref="AddRow"/>, for example the
+    /// parent key of a child row.
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? NewRowDefaults { get; set; }
+
+    /// <summary>
+    /// Gets or sets the save action used while the editor is embedded. When set, Ctrl+S and the save
+    /// command save the whole host set instead of this table alone.
+    /// </summary>
+    public Func<Task>? EmbeddedSave { get; set; }
+
+    /// <summary>
     /// Gets a value indicating whether the grid must be read-only.
     /// </summary>
     public bool IsReadOnly => !IsEditable;
+
+    bool IDetailFieldHost.IsEditable => IsEditable;
+
+    bool IDetailFieldHost.IsTranslationMode => IsTranslationMode;
+
+    /// <summary>
+    /// Gets a value indicating whether the grid shows an item thumbnail column. The column is available
+    /// for tables that define <c>ubGraphicNum</c>, in the standalone editor only.
+    /// </summary>
+    public bool ShowThumbnailColumn =>
+        HasGraphicFields && !IsEmbedded && _session.GameDataDirectory is not null;
 
     /// <summary>
     /// Gets the add-row button text.
@@ -340,7 +391,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     /// <summary>
     /// Gets a value indicating whether the language selector can be used.
     /// </summary>
-    public bool IsLanguageSelectorEnabled => !IsBusy && Workspace is not null;
+    public bool IsLanguageSelectorEnabled => !IsBusy && !IsEmbedded && Workspace is not null;
 
     /// <summary>
     /// Gets the language selector options: the base table and every configured language.
@@ -383,7 +434,32 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the load.</param>
     /// <returns>A task that completes when the table is ready.</returns>
-    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    public Task InitializeAsync(CancellationToken cancellationToken = default) =>
+        InitializeCoreAsync(null, cancellationToken);
+
+    /// <summary>
+    /// Builds the grid over an already loaded workspace that belongs to a shared table set. Lookups,
+    /// relations, and rows are loaded by this method; the workspace itself is not reloaded and keeps the
+    /// shared undo history.
+    /// </summary>
+    /// <param name="workspace">Workspace to display.</param>
+    /// <param name="configuredLanguages">Languages offered by the language selector.</param>
+    /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <returns>A task that completes when the table is ready.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="workspace"/> is null.</exception>
+    public Task InitializeFromWorkspaceAsync(
+        TableWorkspace workspace,
+        IReadOnlyList<LanguageDescriptor> configuredLanguages,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(configuredLanguages);
+        return InitializeCoreAsync((workspace, configuredLanguages), cancellationToken);
+    }
+
+    private async Task InitializeCoreAsync(
+        (TableWorkspace Workspace, IReadOnlyList<LanguageDescriptor> Languages)? supplied,
+        CancellationToken cancellationToken)
     {
         IsBusy = true;
         StatusText = Strings.Get("EditorLoading");
@@ -392,31 +468,43 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         try
         {
             IReadOnlyList<LanguageDescriptor> configuredLanguages = Array.Empty<LanguageDescriptor>();
-            var languagesResult = await _session.GetLanguagesAsync(cancellationToken).ConfigureAwait(true);
-            if (languagesResult.IsSuccess)
+            if (supplied is null)
             {
-                configuredLanguages = languagesResult.Data!;
+                var languagesResult = await _session.GetLanguagesAsync(cancellationToken).ConfigureAwait(true);
+                if (languagesResult.IsSuccess)
+                {
+                    configuredLanguages = languagesResult.Data!;
+                }
+            }
+            else
+            {
+                configuredLanguages = supplied.Value.Languages;
             }
 
-            var result = await _session
-                .OpenTableAsync(Descriptor, _languageCode, cancellationToken)
-                .ConfigureAwait(true);
-            if (!result.IsSuccess)
+            TableWorkspace? loaded = supplied?.Workspace;
+            if (loaded is null)
             {
-                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
-                IsEditable = false;
-                return;
+                var result = await _session
+                    .OpenTableAsync(Descriptor, _languageCode, cancellationToken)
+                    .ConfigureAwait(true);
+                if (!result.IsSuccess)
+                {
+                    StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                    IsEditable = false;
+                    return;
+                }
+
+                loaded = result.Data!;
             }
 
-            Workspace = result.Data!;
+            Workspace = loaded;
             IsTranslationMode = Workspace.Language is not null;
             LanguageText = Workspace.Language is null
                 ? Strings.Get("EditorBaseLanguage")
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
             BuildLanguageOptions(configuredLanguages);
             IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
-            await LoadLookupsAsync(cancellationToken).ConfigureAwait(true);
-            await LoadRelationsAsync(cancellationToken).ConfigureAwait(true);
+            await LoadFieldSourcesAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
             RebuildRows(null);
@@ -449,6 +537,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     [RelayCommand]
     public async Task SaveAsync()
     {
+        if (IsEmbedded && EmbeddedSave is not null)
+        {
+            await EmbeddedSave().ConfigureAwait(true);
+            return;
+        }
+
         if (Workspace is null)
         {
             return;
@@ -493,17 +587,26 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     }
 
     /// <summary>
-    /// Appends a new record with the next primary key.
+    /// Appends a new record with the next primary key and the configured
+    /// <see cref="NewRowDefaults"/> values.
     /// </summary>
     [RelayCommand]
-    public void AddRow()
+    public void AddRow() => AddRowWithDefaults(NewRowDefaults);
+
+    /// <summary>
+    /// Appends a new record with the next primary key and the supplied initial values.
+    /// </summary>
+    /// <param name="defaults">
+    /// Direct child values written to the new record, for example the parent key of a child row.
+    /// </param>
+    public void AddRowWithDefaults(IReadOnlyDictionary<string, string>? defaults)
     {
         if (Workspace is null)
         {
             return;
         }
 
-        var result = Workspace.AddRecord();
+        var result = Workspace.AddRecord(defaults);
         if (!result.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
@@ -874,7 +977,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return OperationResult.Success();
         }
 
-        var column = Workspace.Schema.FindColumn(fieldName);
+        var column = Workspace.Schema.FindColumn(fieldName)
+            ?? (fieldName.IndexOf('/') >= 0
+                ? Workspace.Schema.FindColumn(FieldPath.Parse(fieldName).FieldName)
+                : null);
         if (column is not null && !IsValidValue(column, value))
         {
             StatusText = Strings.Format("EditorInvalidValue", value, fieldName);
@@ -937,6 +1043,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
     partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
 
+    partial void OnHasGraphicFieldsChanged(bool value) => OnPropertyChanged(nameof(ShowThumbnailColumn));
+
     partial void OnWorkspaceChanged(TableWorkspace? value) =>
         OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
 
@@ -998,7 +1106,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 
     private async Task ChangeLanguageAsync(LanguageOptionViewModel option)
     {
-        if (_isChangingLanguage || Workspace is null)
+        if (_isChangingLanguage || IsEmbedded || Workspace is null)
         {
             return;
         }
@@ -1110,59 +1218,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
     }
 
-    private async Task LoadLookupsAsync(CancellationToken cancellationToken)
+    private async Task LoadFieldSourcesAsync(CancellationToken cancellationToken)
     {
         _lookupByField.Clear();
-        if (Workspace is null)
-        {
-            return;
-        }
-
-        var columns = Workspace.Schema.Columns
-            .Where(static column => !string.IsNullOrWhiteSpace(column.LookupTable))
-            .ToArray();
-        if (columns.Length == 0)
-        {
-            return;
-        }
-
-        var valuesByField = columns.ToDictionary(
-            static column => column.XmlFieldName,
-            static _ => new List<string?>(),
-            StringComparer.Ordinal);
-        foreach (var row in Workspace.GetRows())
-        {
-            foreach (var column in columns)
-            {
-                valuesByField[column.XmlFieldName].Add(row.GetValue(column.XmlFieldName));
-            }
-        }
-
-        var cache = new Dictionary<string, OperationResult<IReadOnlyList<LookupEntry>>>(StringComparer.Ordinal);
-        foreach (var column in columns)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var lookupTable = column.LookupTable!;
-            var tableName = TableName.Parse(lookupTable);
-            if (!cache.TryGetValue(lookupTable, out var result))
-            {
-                result = await _session.Lookups
-                    .GetEntriesAsync(tableName, Workspace.Language?.Code, cancellationToken)
-                    .ConfigureAwait(true);
-                cache.Add(lookupTable, result);
-            }
-
-            _lookupByField[column.XmlFieldName] = result.IsSuccess
-                ? LookupColumnData.Create(tableName, result.Data!, valuesByField[column.XmlFieldName])
-                : LookupColumnData.Failed(
-                    tableName,
-                    result.ErrorCode ?? ErrorCodes.XmlInvalidLookupEntry,
-                    result.ErrorText ?? $"Lookup table '{lookupTable}' could not be loaded.");
-        }
-    }
-
-    private async Task LoadRelationsAsync(CancellationToken cancellationToken)
-    {
         _relationByField.Clear();
         _relationTargetValues = null;
         if (Workspace is null)
@@ -1170,77 +1228,20 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return;
         }
 
-        OperationResult<IReadOnlyList<TableRelation>> relations;
-        try
+        var sources = await FieldSourceSet
+            .LoadAsync(_session, Workspace, cancellationToken)
+            .ConfigureAwait(true);
+        foreach (var pair in sources.Lookups)
         {
-            relations = await _session
-                .GetRelationsAsync(Descriptor.TableName, cancellationToken)
-                .ConfigureAwait(true);
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception)
-        {
-            // Relation metadata must never prevent the table from opening.
-            return;
+            _lookupByField[pair.Key] = pair.Value;
         }
 
-        if (!relations.IsSuccess)
+        foreach (var pair in sources.Relations)
         {
-            return;
+            _relationByField[pair.Key] = pair.Value;
         }
 
-        var references = relations.Data!
-            .Where(static relation => relation.Kind == TableRelationKind.Reference)
-            .GroupBy(static relation => relation.SourceField, StringComparer.Ordinal)
-            .Select(static group => group.First())
-            .ToArray();
-        if (references.Length == 0)
-        {
-            return;
-        }
-
-        var valuesByField = references.ToDictionary(
-            static relation => relation.SourceField,
-            static _ => new List<string?>(),
-            StringComparer.Ordinal);
-        foreach (var row in Workspace.GetRows())
-        {
-            foreach (var relation in references)
-            {
-                valuesByField[relation.SourceField].Add(row.GetValue(relation.SourceField));
-            }
-        }
-
-        var targetValues = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal);
-        foreach (var relation in references)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var target = await _session.RelationResolver
-                .ResolveAsync(relation, Workspace.Language?.Code, cancellationToken)
-                .ConfigureAwait(true);
-            if (target.IsSuccess)
-            {
-                _relationByField[relation.SourceField] = RelationColumnData.Create(
-                    relation,
-                    target.Data!,
-                    valuesByField[relation.SourceField]);
-                targetValues[relation.SourceField] = target.Data!.Entries
-                    .Select(static entry => entry.Value)
-                    .ToHashSet(StringComparer.Ordinal);
-            }
-            else
-            {
-                _relationByField[relation.SourceField] = RelationColumnData.Failed(
-                    relation,
-                    target.ErrorCode ?? ErrorCodes.XmlInvalidLookupEntry,
-                    target.ErrorText ?? $"Relation target '{relation.TargetTable}' could not be loaded.");
-            }
-        }
-
-        _relationTargetValues = targetValues.Count == 0 ? null : targetValues;
+        _relationTargetValues = sources.RelationTargetValues;
     }
 
     private void BuildColumns()
@@ -1342,6 +1343,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             {
                 var viewModel = new TableRowViewModel(row, this);
                 viewModel.ConfigureTranslation(IsTranslationMode, translatableFields);
+                viewModel.ConfigureThumbnail(HasGraphicFields ? LoadThumbnailAsync : null);
                 _allRows.Add(viewModel);
             }
         }
@@ -1353,6 +1355,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     {
         var selectedKey = selectKey ?? SelectedRow?.Key;
         IEnumerable<TableRowViewModel> rows = _allRows;
+        if (ExternalRowFilter is not null)
+        {
+            rows = rows.Where(ExternalRowFilter);
+        }
+
         var term = SearchText.Trim();
         if (term.Length > 0)
         {
@@ -1385,15 +1392,24 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
     }
 
-    internal void SetDetailValue(DetailFieldViewModel field, string value)
+    /// <summary>
+    /// Applies an edited field value from a detail form.
+    /// </summary>
+    /// <param name="field">Field that was edited.</param>
+    /// <param name="value">New raw value.</param>
+    public void SetDetailValue(DetailFieldViewModel field, string value)
     {
         ArgumentNullException.ThrowIfNull(field);
         ArgumentNullException.ThrowIfNull(value);
 
-        SetCellValue(field.Row, field.Name, value);
+        SetCellValue(field.Row, field.PathText, value);
     }
 
-    internal void NavigateToRelation(DetailFieldViewModel field)
+    /// <summary>
+    /// Opens the record referenced by a relation field of the detail form.
+    /// </summary>
+    /// <param name="field">Relation field whose target should be opened.</param>
+    public void NavigateToRelation(DetailFieldViewModel field)
     {
         ArgumentNullException.ThrowIfNull(field);
         if (field.Relation is not { IsAvailable: true } relation
@@ -1444,7 +1460,41 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
     }
 
-    internal void EditBits(DetailFieldViewModel field)
+    /// <summary>
+    /// Rebuilds rows and re-reads detail values after an external edit of a shared table set.
+    /// </summary>
+    /// <param name="selectKey">Key to select; the current selection is kept when omitted.</param>
+    public void RefreshRows(string? selectKey = null)
+    {
+        RebuildRows(selectKey ?? SelectedRow?.Key);
+        RefreshFieldValues();
+    }
+
+    /// <summary>
+    /// Re-reads the value of every field shown in the detail panel and refreshes undo state.
+    /// </summary>
+    public void RefreshFieldValues()
+    {
+        foreach (var detailField in _allDetailFields)
+        {
+            detailField.Refresh();
+        }
+
+        IsDirty = Workspace?.IsDirty == true;
+        RefreshHistoryState();
+    }
+
+    /// <summary>
+    /// Reapplies the external row filter and search without rebuilding the rows.
+    /// </summary>
+    /// <param name="selectKey">Key to select; the current selection is kept when omitted.</param>
+    public void RefreshRowFilter(string? selectKey = null) => ApplyRowView(selectKey);
+
+    /// <summary>
+    /// Opens the bit editor for a flag field of the detail form.
+    /// </summary>
+    /// <param name="field">Flag field to edit.</param>
+    public void EditBits(DetailFieldViewModel field)
     {
         ArgumentNullException.ThrowIfNull(field);
         if (!field.CanEditBits)
@@ -1544,7 +1594,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             {
                 fields = new List<DetailFieldViewModel>();
                 grouped.Add(field.GroupKey, fields);
-                metadata.Add(field.GroupKey, (field.GroupOrder, field.Column.Order));
+                metadata.Add(field.GroupKey, (field.GroupOrder, field.Order));
             }
 
             fields.Add(field);
@@ -1676,23 +1726,29 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         return _imageCts.Token;
     }
 
-    private bool TryGetGraphic(out int graphicType, out int graphicIndex)
+    private bool TryGetGraphic(out int graphicType, out int graphicIndex) =>
+        TryGetGraphic(SelectedRow, out graphicType, out graphicIndex);
+
+    private static bool TryGetGraphic(
+        TableRowViewModel? row,
+        out int graphicType,
+        out int graphicIndex)
     {
         graphicType = 0;
         graphicIndex = -1;
-        if (SelectedRow is null)
+        if (row is null)
         {
             return false;
         }
 
-        var rawIndex = SelectedRow.GetStoredValue("ubGraphicNum");
+        var rawIndex = row.GetStoredValue("ubGraphicNum");
         if (!int.TryParse(rawIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out graphicIndex)
             || graphicIndex < 0)
         {
             return false;
         }
 
-        var rawType = SelectedRow.GetStoredValue("ubGraphicType");
+        var rawType = row.GetStoredValue("ubGraphicType");
         if (int.TryParse(rawType, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedType)
             && parsedType >= 0)
         {
@@ -1700,6 +1756,27 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
 
         return true;
+    }
+
+    private async Task<BitmapSource?> LoadThumbnailAsync(TableRowViewModel row)
+    {
+        var dataDirectory = _session.GameDataDirectory;
+        if (dataDirectory is null || !TryGetGraphic(row, out var graphicType, out var graphicIndex))
+        {
+            return null;
+        }
+
+        try
+        {
+            var result = await _itemImages
+                .GetImageAsync(dataDirectory, ImageSize.Small, graphicType, graphicIndex, CancellationToken.None)
+                .ConfigureAwait(true);
+            return result.Data;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     private static bool IsValidValue(TableSchemaColumn column, string value)

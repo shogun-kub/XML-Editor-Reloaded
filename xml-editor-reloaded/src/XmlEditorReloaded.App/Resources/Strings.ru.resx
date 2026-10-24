@@ -819,4 +819,181 @@
   <data name="EditorTableNotFound" xml:space="preserve">
     <value>Таблица '{0}' отсутствует в этом наборе данных.</value>
   </data>
+  <data name="ItemNewText" xml:space="preserve">
+    <value>Новый предмет</value>
+  </data>
+  <data name="ItemNewTitle" xml:space="preserve">
+    <value>Новый предмет</value>
+  </data>
+  <data name="ItemNewDefaultName" xml:space="preserve">
+    <value>Новый предмет</value>
+  </data>
+  <data name="ItemNewIdLabel" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ItemNewNameLabel" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="ItemNewClassLabel" xml:space="preserve">
+    <value>Класс</value>
+  </data>
+  <data name="ItemChangeIdText" xml:space="preserve">
+    <value>Изменить ID</value>
+  </data>
+  <data name="ItemGoToIdText" xml:space="preserve">
+    <value>Перейти к ID</value>
+  </data>
+  <data name="ItemSearchLabel" xml:space="preserve">
+    <value>Поиск предмета</value>
+  </data>
+  <data name="ItemIdLabel" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ItemNameLabel" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="ItemClassLabel" xml:space="preserve">
+    <value>Класс</value>
+  </data>
+  <data name="ItemGraphicTypeLabel" xml:space="preserve">
+    <value>Тип графики</value>
+  </data>
+  <data name="ItemCompatibleOnly" xml:space="preserve">
+    <value>Показываются только предметы, помеченные как вложения.</value>
+  </data>
+  <data name="ItemCountFormat" xml:space="preserve">
+    <value>{0} из {1} предметов</value>
+  </data>
+  <data name="ItemWorkspaceNoMetadata" xml:space="preserve">
+    <value>У таблицы Items нет метаданных, поэтому рабочее место предмета не может загрузить связанные таблицы.</value>
+  </data>
+  <data name="ItemNoClassIndex" xml:space="preserve">
+    <value>У предмета нет индекса класса; связанную строку нельзя создать.</value>
+  </data>
+  <data name="ItemNoSubTableRow" xml:space="preserve">
+    <value>Для этого предмета нет связанной записи.</value>
+  </data>
+  <data name="ItemCreateRow" xml:space="preserve">
+    <value>Создать строку</value>
+  </data>
+  <data name="ItemSharedClassRow" xml:space="preserve">
+    <value>Общая для всех предметов этого класса.</value>
+  </data>
+  <data name="ItemSubTableRowCreated" xml:space="preserve">
+    <value>Создана строка {0} для {1}.</value>
+  </data>
+  <data name="ItemChildRowCountFormat" xml:space="preserve">
+    <value>Строк: {0}</value>
+  </data>
+  <data name="ItemListAdd" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="ItemListRemove" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="ItemListSection.DefaultAttachment" xml:space="preserve">
+    <value>Вложения по умолчанию</value>
+  </data>
+  <data name="ItemStance.STAND_MODIFIERS" xml:space="preserve">
+    <value>Модификаторы стоя</value>
+  </data>
+  <data name="ItemStance.CROUCH_MODIFIERS" xml:space="preserve">
+    <value>Модификаторы на колене</value>
+  </data>
+  <data name="ItemStance.PRONE_MODIFIERS" xml:space="preserve">
+    <value>Модификаторы лёжа</value>
+  </data>
+  <data name="ItemSection.Items_Weapons" xml:space="preserve">
+    <value>Оружие</value>
+  </data>
+  <data name="ItemSection.Items_Magazines" xml:space="preserve">
+    <value>Магазин</value>
+  </data>
+  <data name="ItemSection.Items_Armours" xml:space="preserve">
+    <value>Броня</value>
+  </data>
+  <data name="ItemSection.Items_Explosives" xml:space="preserve">
+    <value>Взрывчатка</value>
+  </data>
+  <data name="ItemSection.Items_LoadBearingEquipment" xml:space="preserve">
+    <value>Разгрузка</value>
+  </data>
+  <data name="ItemSection.Items_Attachments" xml:space="preserve">
+    <value>Вложения</value>
+  </data>
+  <data name="ItemSection.Items_AttachmentInfo" xml:space="preserve">
+    <value>Сведения о вложениях</value>
+  </data>
+  <data name="ItemSection.Items_IncompatibleAttachments" xml:space="preserve">
+    <value>Несовместимые вложения</value>
+  </data>
+  <data name="ItemSection.Items_Launchables" xml:space="preserve">
+    <value>Запускаемые предметы</value>
+  </data>
+  <data name="ItemSection.Items_CompatibleFaceItems" xml:space="preserve">
+    <value>Совместимые лицевые предметы</value>
+  </data>
+  <data name="ItemSection.Items_Item_Transformations" xml:space="preserve">
+    <value>Преобразования</value>
+  </data>
+  <data name="ItemSection.Items_AttachmentComboMerges" xml:space="preserve">
+    <value>Слияния комбинаций вложений</value>
+  </data>
+  <data name="GraphicTypeGuns" xml:space="preserve">
+    <value>Оружие</value>
+  </data>
+  <data name="GraphicTypeFormat" xml:space="preserve">
+    <value>Предметы P{0}</value>
+  </data>
+  <data name="ItemIdConflict" xml:space="preserve">
+    <value>Предмет '{0}' уже существует.</value>
+  </data>
+  <data name="ItemConfirmDelete" xml:space="preserve">
+    <value>Удалить предмет {0}? Связанные строки, которые также будут удалены: {1}</value>
+  </data>
+  <data name="ItemDeleteTitle" xml:space="preserve">
+    <value>Удаление предмета</value>
+  </data>
+  <data name="ItemNoDependents" xml:space="preserve">
+    <value>нет</value>
+  </data>
+  <data name="ItemConfirmSwap" xml:space="preserve">
+    <value>ID предмета {0} уже занят. Поменять ID с предметом {1} и обновить связанные строки?</value>
+  </data>
+  <data name="ItemChangeIdTitle" xml:space="preserve">
+    <value>Изменение ID предмета</value>
+  </data>
+  <data name="ItemCreated" xml:space="preserve">
+    <value>Предмет {0} создан.</value>
+  </data>
+  <data name="ItemDuplicated" xml:space="preserve">
+    <value>Предмет {0} скопирован как {1}.</value>
+  </data>
+  <data name="ItemDeleted" xml:space="preserve">
+    <value>Предмет {0} удалён.</value>
+  </data>
+  <data name="ItemIdChanged" xml:space="preserve">
+    <value>ID предмета {0} изменён на {1}.</value>
+  </data>
+  <data name="ItemTabFields" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="ItemTabSubTables" xml:space="preserve">
+    <value>Подтаблицы</value>
+  </data>
+  <data name="ItemTabChildTables" xml:space="preserve">
+    <value>Дочерние таблицы</value>
+  </data>
+  <data name="ItemTabImages" xml:space="preserve">
+    <value>Изображения</value>
+  </data>
+  <data name="ItemNoSelection" xml:space="preserve">
+    <value>Выберите предмет.</value>
+  </data>
+  <data name="ItemFilterLabel" xml:space="preserve">
+    <value>Фильтр полей</value>
+  </data>
+  <data name="ItemTabNested" xml:space="preserve">
+    <value>Вложенные структуры</value>
+  </data>
 </root>

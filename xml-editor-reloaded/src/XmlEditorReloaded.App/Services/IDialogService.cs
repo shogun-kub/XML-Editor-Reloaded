@@ -1,5 +1,6 @@
 namespace XmlEditorReloaded.App.Services;
 
+using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -62,4 +63,20 @@ public interface IDialogService
     /// <returns>The request to apply, or <see langword="null"/> when the user cancels the dialog.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is null.</exception>
     BulkEditRequest? EditBulk(BulkEditContext context);
+
+    /// <summary>
+    /// Shows the new-item dialog: identifier, name, and item class.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="suggestedId">Initial identifier, usually the next free key.</param>
+    /// <param name="suggestedName">Initial item name.</param>
+    /// <param name="classes">Selectable item classes.</param>
+    /// <returns>The entered values, or <see langword="null"/> when the user cancels the dialog.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="title"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    ItemCreationRequest? CreateItem(
+        string title,
+        string suggestedId,
+        string suggestedName,
+        IReadOnlyList<LookupOption> classes);
 }

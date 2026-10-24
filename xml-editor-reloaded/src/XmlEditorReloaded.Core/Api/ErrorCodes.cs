@@ -68,6 +68,9 @@ public static class ErrorCodes
     /// <summary>The requested record key does not exist in the document.</summary>
     public const string KeyNotFound = "key.not_found";
 
+    /// <summary>The requested record key is already used by another record of the same table.</summary>
+    public const string KeyConflict = "key.conflict";
+
     /// <summary>The overlay record key could not be resolved from metadata.</summary>
     public const string OverlayUnresolvableKey = "overlay.unresolvable_key";
 

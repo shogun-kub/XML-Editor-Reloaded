@@ -100,4 +100,26 @@ public sealed class WpfDialogService : IDialogService
 
         return window.ShowDialog() == true ? window.Request : null;
     }
+
+    /// <inheritdoc />
+    public ItemCreationRequest? CreateItem(
+        string title,
+        string suggestedId,
+        string suggestedName,
+        IReadOnlyList<ViewModels.LookupOption> classes)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentNullException.ThrowIfNull(suggestedId);
+        ArgumentNullException.ThrowIfNull(suggestedName);
+        ArgumentNullException.ThrowIfNull(classes);
+
+        var window = new Views.ItemCreationWindow(
+            new ViewModels.ItemCreationViewModel(title, suggestedId, suggestedName, classes));
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        return window.ShowDialog() == true ? window.Request : null;
+    }
 }

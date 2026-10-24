@@ -1365,6 +1365,14 @@ public class TableEditorViewModelTests
             LastTranslationReportTitle = title;
         }
 
+        public ItemCreationRequest? CreateItemResult { get; set; }
+
+        public ItemCreationRequest? CreateItem(
+            string title,
+            string suggestedId,
+            string suggestedName,
+            IReadOnlyList<LookupOption> classes) => CreateItemResult;
+
         public BulkEditRequest? EditBulk(BulkEditContext context)
         {
             LastBulkContext = context;

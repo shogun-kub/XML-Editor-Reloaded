@@ -19,6 +19,19 @@ public interface ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode);
+
+    /// <summary>
+    /// Creates an uninitialized item master-detail workspace; call
+    /// <see cref="ViewModels.ItemWorkspaceViewModel.InitializeAsync"/> before displaying it.
+    /// </summary>
+    /// <param name="session">Data-set session that owns the table set.</param>
+    /// <param name="descriptor">Descriptor of the <c>Items.Items</c> table.</param>
+    /// <param name="languageCode">Optional language code for overlay editing.</param>
+    /// <returns>The item workspace view model.</returns>
+    ViewModels.ItemWorkspaceViewModel CreateItemWorkspace(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode);
 }
 
 /// <summary>
@@ -45,6 +58,13 @@ public sealed class TableEditorFactory : ITableEditorFactory
 
     /// <inheritdoc />
     public ViewModels.TableEditorViewModel Create(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode) =>
+        new(session, descriptor, languageCode, _dialogService, _itemImages);
+
+    /// <inheritdoc />
+    public ViewModels.ItemWorkspaceViewModel CreateItemWorkspace(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>

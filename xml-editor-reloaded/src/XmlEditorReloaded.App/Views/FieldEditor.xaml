@@ -1,0 +1,85 @@
+<UserControl x:Class="XmlEditorReloaded.App.Views.FieldEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
+             mc:Ignorable="d"
+             d:DesignWidth="320">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+    <Grid Margin="0,1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="14" />
+            <ColumnDefinition Width="105" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Foreground="#FFB8860B"
+                   Text="●"
+                   ToolTip="{Binding UntranslatedTooltip}"
+                   Visibility="{Binding IsUntranslated, Converter={StaticResource BoolToVisibility}}" />
+        <Grid Grid.Column="1"
+              VerticalAlignment="Center"
+              ToolTip="{Binding FieldTooltip}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding Name}" />
+            <TextBlock Grid.Column="1"
+                       Margin="3,0,0,0"
+                       VerticalAlignment="Center"
+                       Foreground="#FFB8860B"
+                       Text="⚠"
+                       Visibility="{Binding HasSourceError, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
+        <CheckBox Grid.Column="2"
+                  Margin="4,0,0,0"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding BooleanValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding IsEditable}"
+                  ToolTip="{Binding BooleanTooltip}"
+                  Visibility="{Binding IsBoolean, Converter={StaticResource BoolToVisibility}}" />
+        <ComboBox Grid.Column="2"
+                  Margin="4,0,0,0"
+                  VerticalAlignment="Center"
+                  ItemsSource="{Binding LookupOptions}"
+                  DisplayMemberPath="DropdownText"
+                  SelectedValuePath="IdText"
+                  SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding IsEditable}"
+                  Visibility="{Binding IsLookup, Converter={StaticResource BoolToVisibility}}" />
+        <TextBox Grid.Column="2"
+                 Margin="4,0,0,0"
+                 Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                 IsReadOnly="{Binding IsReadOnly}"
+                 Visibility="{Binding IsPlainText, Converter={StaticResource BoolToVisibility}}" />
+        <views:RelationPicker Grid.Column="2"
+                              Margin="4,0,0,0"
+                              VerticalAlignment="Center"
+                              RelationData="{Binding Relation}"
+                              SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsReadOnly="{Binding IsReadOnly}"
+                              Visibility="{Binding IsRelation, Converter={StaticResource BoolToVisibility}}" />
+        <Button Grid.Column="3"
+                Margin="4,0,0,0"
+                Padding="5,0"
+                Content="→"
+                Command="{Binding GoToTargetCommand}"
+                ToolTip="{Binding GoToTargetTooltip}"
+                Visibility="{Binding CanGoToTarget, Converter={StaticResource BoolToVisibility}}" />
+        <Button Grid.Column="4"
+                Margin="4,0,0,0"
+                Padding="5,0"
+                Content="{Binding EditBitsText}"
+                Command="{Binding EditBitsCommand}"
+                Visibility="{Binding CanEditBits, Converter={StaticResource BoolToVisibility}}" />
+    </Grid>
+</UserControl>

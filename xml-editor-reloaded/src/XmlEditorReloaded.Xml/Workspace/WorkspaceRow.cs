@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Overlays;
 
@@ -68,7 +69,14 @@ public sealed class WorkspaceRow
             return cells[0].Value;
         }
 
-        return Record?.GetRawValue(fieldPath);
+        if (Record is null)
+        {
+            return null;
+        }
+
+        return fieldPath.IndexOf('/') >= 0
+            ? Record.GetRawValue(FieldPath.Parse(fieldPath))
+            : Record.GetRawValue(fieldPath);
     }
 
     /// <summary>

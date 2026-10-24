@@ -15,6 +15,8 @@ namespace XmlEditorReloaded.App.ViewModels;
 /// </summary>
 public partial class MainViewModel : ObservableObject
 {
+    private static readonly TableName ItemsTableName = TableName.Parse("Items.Items");
+
     private readonly IDataSetSessionFactory _sessionFactory;
     private readonly ITableEditorFactory _editorFactory;
     private readonly ISettingsStore _settingsStore;
@@ -45,7 +47,7 @@ public partial class MainViewModel : ObservableObject
     private bool _isBusy;
 
     [ObservableProperty]
-    private TableEditorViewModel? _selectedEditor;
+    private IEditorTab? _selectedEditor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -140,9 +142,9 @@ public partial class MainViewModel : ObservableObject
     public string EditorPlaceholder { get; }
 
     /// <summary>
-    /// Gets the open table editors.
+    /// Gets the open editor tabs.
     /// </summary>
-    public ObservableCollection<TableEditorViewModel> Editors { get; } = new();
+    public ObservableCollection<IEditorTab> Editors { get; } = new();
 
     /// <summary>
     /// Gets a value indicating whether at least one table editor is open.
@@ -261,15 +263,14 @@ public partial class MainViewModel : ObservableObject
         await OpenEditorByNameAsync(SelectedTable.Descriptor.TableName).ConfigureAwait(true);
     }
 
-    private async Task<TableEditorViewModel?> OpenEditorByNameAsync(TableName tableName)
+    private async Task<IEditorTab?> OpenEditorByNameAsync(TableName tableName)
     {
         if (_dataSet is null)
         {
             return null;
         }
 
-        var existing = Editors.FirstOrDefault(editor =>
-            editor.Descriptor.TableName == tableName);
+        var existing = Editors.FirstOrDefault(editor => editor.TableName == tableName);
         if (existing is not null)
         {
             SelectedEditor = existing;
@@ -294,10 +295,10 @@ public partial class MainViewModel : ObservableObject
                 candidate.TableName == descriptor.TableName) ?? descriptor;
         }
 
-        var editor = _editorFactory.Create(
-            _dataSet,
-            descriptor,
-            ResolveLanguageCode(descriptor));
+        var language = ResolveLanguageCode(descriptor);
+        IEditorTab editor = descriptor.IsMapped && tableName == ItemsTableName
+            ? _editorFactory.CreateItemWorkspace(_dataSet, descriptor, language)
+            : _editorFactory.Create(_dataSet, descriptor, language);
         AttachEditor(editor);
         Editors.Add(editor);
         SelectedEditor = editor;
@@ -306,7 +307,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void CloseEditor(TableEditorViewModel? editor)
+    private void CloseEditor(IEditorTab? editor)
     {
         if (editor is null)
         {
@@ -546,13 +547,13 @@ public partial class MainViewModel : ObservableObject
         return true;
     }
 
-    private void AttachEditor(TableEditorViewModel editor)
+    private void AttachEditor(IEditorTab editor)
     {
         editor.LanguageChanged += OnEditorLanguageChanged;
         editor.TableNavigationRequested += OnTableNavigationRequested;
     }
 
-    private void DetachEditor(TableEditorViewModel editor)
+    private void DetachEditor(IEditorTab editor)
     {
         editor.LanguageChanged -= OnEditorLanguageChanged;
         editor.TableNavigationRequested -= OnTableNavigationRequested;

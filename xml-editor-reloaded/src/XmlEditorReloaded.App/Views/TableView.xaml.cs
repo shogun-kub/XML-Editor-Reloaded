@@ -68,6 +68,11 @@ public partial class TableView : UserControl
             return;
         }
 
+        if (_viewModel.ShowThumbnailColumn)
+        {
+            RowsGrid.Columns.Add(BuildThumbnailColumn());
+        }
+
         foreach (var column in _viewModel.VisibleColumns)
         {
             var isTranslationColumn = _viewModel.IsTranslationMode && column.IsTranslatable;
@@ -168,6 +173,33 @@ public partial class TableView : UserControl
             {
                 column.SortDirection = _viewModel.SortDirection;
             }
+        }
+    }
+
+    private static DataGridTemplateColumn BuildThumbnailColumn()
+    {
+        var image = new FrameworkElementFactory(typeof(Image));
+        image.SetValue(FrameworkElement.WidthProperty, 24.0);
+        image.SetValue(FrameworkElement.HeightProperty, 24.0);
+        image.SetValue(Image.StretchProperty, Stretch.Uniform);
+        image.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
+        image.SetBinding(Image.SourceProperty, new Binding(nameof(TableRowViewModel.Thumbnail)));
+        image.AddHandler(FrameworkElement.LoadedEvent, new RoutedEventHandler(OnThumbnailCellLoaded));
+        return new DataGridTemplateColumn
+        {
+            Header = string.Empty,
+            Width = new DataGridLength(30),
+            IsReadOnly = true,
+            CanUserSort = false,
+            CellTemplate = new DataTemplate { VisualTree = image },
+        };
+    }
+
+    private static void OnThumbnailCellLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: TableRowViewModel row })
+        {
+            row.RequestThumbnail();
         }
     }
 

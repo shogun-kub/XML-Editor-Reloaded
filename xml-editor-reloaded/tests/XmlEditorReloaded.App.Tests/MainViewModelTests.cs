@@ -141,11 +141,56 @@ public class MainViewModelTests
     }
 
     /// <summary>
-    /// Opening a table creates an editor tab, cells edit through the workspace, invalid values are
-    /// rejected, saving writes the file, and closing a clean tab removes it.
+    /// Opening a generic table creates an editor tab, cells edit through the workspace, invalid values
+    /// are rejected, saving writes the file, and closing a clean tab removes it.
     /// </summary>
     [Fact]
     public async Task OpenTable_EditsCellAndSaves()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var editor = Assert.Single(viewModel.Editors.OfType<TableEditorViewModel>());
+        Assert.Same(editor, viewModel.SelectedEditor);
+        Assert.True(viewModel.HasEditors);
+        Assert.Single(editor.Rows);
+        Assert.Equal("Custom.Notes", editor.DisplayName);
+        var row = editor.Rows[0];
+        Assert.Equal("Hello", row["text"]);
+
+        row["text"] = "Hello again";
+        Assert.True(editor.IsDirty);
+        Assert.EndsWith("*", editor.DisplayName, StringComparison.Ordinal);
+
+        row["id"] = "not a number";
+        Assert.Equal("1", row["id"]);
+        Assert.Contains("not a valid value", editor.StatusText, StringComparison.Ordinal);
+
+        await editor.SaveCommand.ExecuteAsync(null);
+
+        Assert.False(editor.IsDirty);
+        Assert.Equal("Custom.Notes", editor.DisplayName);
+        var saved = XDocument.Load(Path.Combine(data13, "TableData", "Custom", "Notes.xml"));
+        Assert.Equal("Hello again", saved.Root!.Element("NOTE")!.Element("text")!.Value);
+
+        viewModel.CloseEditorCommand.Execute(editor);
+        Assert.Empty(viewModel.Editors);
+        Assert.False(viewModel.HasEditors);
+    }
+
+    /// <summary>
+    /// Opening the Items table creates the item master-detail workspace instead of the generic grid.
+    /// </summary>
+    [Fact]
+    public async Task OpenItems_OpensItemWorkspace()
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
@@ -158,32 +203,13 @@ public class MainViewModelTests
 
         await viewModel.OpenTableCommand.ExecuteAsync(null);
 
-        var editor = Assert.Single(viewModel.Editors);
+        var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.Same(editor, viewModel.SelectedEditor);
-        Assert.True(viewModel.HasEditors);
-        Assert.Single(editor.Rows);
-        Assert.Equal("Items.Items", editor.DisplayName);
-        var row = editor.Rows[0];
-        Assert.Equal("Nothing", row["szItemName"]);
-
-        row["szItemName"] = "Glock 18";
-        Assert.True(editor.IsDirty);
-        Assert.EndsWith("*", editor.DisplayName, StringComparison.Ordinal);
-
-        row["ubWeight"] = "not a number";
-        Assert.Equal("10", row["ubWeight"]);
-        Assert.Contains("not a valid value", editor.StatusText, StringComparison.Ordinal);
-
-        await editor.SaveCommand.ExecuteAsync(null);
-
-        Assert.False(editor.IsDirty);
-        Assert.Equal("Items.Items", editor.DisplayName);
-        var saved = XDocument.Load(Path.Combine(data13, "TableData", "Items", "Items.xml"));
-        Assert.Equal("Glock 18", saved.Root!.Element("ITEM")!.Element("szItemName")!.Value);
-
-        viewModel.CloseEditorCommand.Execute(editor);
-        Assert.Empty(viewModel.Editors);
-        Assert.False(viewModel.HasEditors);
+        Assert.Equal("Items", editor.Title);
+        Assert.Single(editor.Items);
+        Assert.NotNull(editor.SelectedItem);
+        Assert.Equal("Nothing", editor.SelectedItem!.Name);
+        Assert.Contains(editor.ItemGroups, group => group.Key == "identity");
     }
 
     /// <summary>
@@ -236,9 +262,9 @@ public class MainViewModelTests
         await viewModel.InitializeAsync();
         viewModel.SelectedTable = Assert.Single(viewModel.Tables, item => item.TableName == "Items.Items");
         await viewModel.OpenTableCommand.ExecuteAsync(null);
-        var itemsEditor = Assert.Single(viewModel.Editors);
-        itemsEditor.SelectedRow = Assert.Single(itemsEditor.Rows, row => row.Key == "1");
-        var field = itemsEditor.DetailGroups
+        var itemsEditor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
+        itemsEditor.SelectRecord("1");
+        var field = itemsEditor.ItemGroups
             .SelectMany(group => group.Fields)
             .Single(candidate => candidate.Name == "TestAttachment");
         Assert.True(field.IsRelation, $"{field.FieldTooltip} / {itemsEditor.StatusText}");
@@ -254,8 +280,8 @@ public class MainViewModelTests
 
         await WaitUntilAsync(() => viewModel.Editors.Count == 2);
         var target = Assert.Single(
-            viewModel.Editors,
-            editor => editor.Descriptor.TableName.Value == "Items.Attachments");
+            viewModel.Editors.OfType<TableEditorViewModel>(),
+            editor => editor.TableName.Value == "Items.Attachments");
         await WaitUntilAsync(() => target.SelectedRow?.Key == "7");
         Assert.Same(target, viewModel.SelectedEditor);
     }
@@ -276,7 +302,7 @@ public class MainViewModelTests
         viewModel.SelectedTable = Assert.Single(viewModel.Tables);
 
         await viewModel.OpenTableCommand.ExecuteAsync(null);
-        var editor = Assert.Single(viewModel.Editors);
+        var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.True(editor.IsTranslationMode);
 
         editor.SelectedLanguageOption = editor.LanguageOptions[0];
@@ -314,7 +340,7 @@ public class MainViewModelTests
         viewModel.SelectedTable = Assert.Single(viewModel.Tables);
 
         await viewModel.OpenTableCommand.ExecuteAsync(null);
-        var editor = Assert.Single(viewModel.Editors);
+        var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.False(editor.IsTranslationMode);
         var russian = Assert.Single(editor.LanguageOptions, option => option.Code == "ru");
         Assert.False(russian.HasOverlay);
@@ -327,7 +353,7 @@ public class MainViewModelTests
         viewModel.CloseEditorCommand.Execute(editor);
         await viewModel.OpenTableCommand.ExecuteAsync(null);
 
-        var reopened = Assert.Single(viewModel.Editors);
+        var reopened = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.True(reopened.IsTranslationMode);
         Assert.True(Assert.Single(reopened.LanguageOptions, option => option.Code == "ru").HasOverlay);
     }
@@ -366,6 +392,19 @@ public class MainViewModelTests
             dialog,
             new FakeImageViewerService(),
             versionCompare ?? new FakeVersionCompareService());
+
+    private static string CreateNotesData(TestWorkspace workspace)
+    {
+        var data13 = workspace.PathOf("Data-1.13");
+        var directory = Path.Combine(data13, "TableData", "Custom");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(
+            Path.Combine(directory, "Notes.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><NOTES>"
+            + "<NOTE><id>1</id><text>Hello</text></NOTE>"
+            + "</NOTES>");
+        return data13;
+    }
 
     private static string CreateItemsData(
         TestWorkspace workspace,
@@ -457,6 +496,14 @@ public class MainViewModelTests
             LastTranslationReport = report;
 
         public BulkEditRequest? EditBulk(BulkEditContext context) => null;
+
+        public ItemCreationRequest? CreateItemResult { get; set; }
+
+        public ItemCreationRequest? CreateItem(
+            string title,
+            string suggestedId,
+            string suggestedName,
+            IReadOnlyList<LookupOption> classes) => CreateItemResult;
     }
 
     private sealed class FakeImageViewerService : IImageViewerService

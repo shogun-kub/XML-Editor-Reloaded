@@ -1,0 +1,575 @@
+<UserControl x:Class="XmlEditorReloaded.App.Views.ItemWorkspaceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="1100">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <views:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
+        <DrawingBrush x:Key="CheckerBrush"
+                      TileMode="Tile"
+                      Viewport="0,0,16,16"
+                      ViewportUnits="Absolute"
+                      Viewbox="0,0,16,16"
+                      ViewboxUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#FFF2F2F2">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,16,16" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFD8D8D8">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,8,8" />
+                                <RectangleGeometry Rect="8,8,8,8" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="Z" Modifiers="Control" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="Y" Modifiers="Control" Command="{Binding RedoCommand}" />
+        <KeyBinding Key="Z" Modifiers="Control+Shift" Command="{Binding RedoCommand}" />
+    </UserControl.InputBindings>
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel Grid.Row="0" Margin="0,0,0,6">
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
+                    Content="{Binding UndoText}"
+                    Command="{Binding UndoCommand}"
+                    ToolTip="{Binding UndoButtonTooltip}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding RedoText}"
+                    Command="{Binding RedoCommand}"
+                    ToolTip="{Binding RedoButtonTooltip}" />
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
+                    Content="{Binding NewItemText}"
+                    Command="{Binding NewItemCommand}"
+                    IsEnabled="{Binding IsEditable}" />
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
+                    Content="{Binding DuplicateItemText}"
+                    Command="{Binding DuplicateItemCommand}"
+                    IsEnabled="{Binding IsEditable}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding DeleteItemText}"
+                    Command="{Binding DeleteItemCommand}"
+                    IsEnabled="{Binding IsEditable}" />
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
+                    Content="{Binding SaveText}"
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding IsDirty}" />
+            <Button Padding="10,3"
+                    Margin="0,0,6,0"
+                    Content="{Binding ValidateText}"
+                    Command="{Binding ValidateCommand}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding ReloadText}"
+                    Command="{Binding ReloadCommand}" />
+            <TextBlock VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Text="{Binding LanguageLabel}" />
+            <ComboBox Width="190"
+                      Margin="0,0,12,0"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding LanguageOptions}"
+                      SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                      DisplayMemberPath="DisplayText"
+                      ToolTip="{Binding SelectedLanguageOption.Tooltip}"
+                      IsEnabled="{Binding IsLanguageSelectorEnabled}" />
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="#FF666666"
+                       Text="{Binding CountText}" />
+        </WrapPanel>
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,0,0,6"
+                   Foreground="#FF8B6F00"
+                   TextWrapping="Wrap"
+                   Text="{Binding WarningsText}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding WarningsText}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Header="{Binding Title}" Margin="0,0,8,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding SearchLabel}" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding GoToIdText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Grid.Column="1"
+                                Margin="6,0,0,0"
+                                Padding="10,2"
+                                Content="{Binding GoToIdLabel}"
+                                Command="{Binding GoToItemIdCommand}" />
+                    </Grid>
+
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding Items}"
+                             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                             VirtualizingStackPanel.IsVirtualizing="True"
+                             VirtualizingStackPanel.VirtualizationMode="Recycling"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="26"
+                                            Height="26"
+                                            Margin="0,0,4,0"
+                                            Background="{StaticResource CheckerBrush}"
+                                            BorderBrush="#FFD0D0D0"
+                                            BorderThickness="1">
+                                        <Image Source="{Binding Thumbnail}"
+                                               Stretch="Uniform"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Loaded="OnItemThumbnailLoaded" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding DisplayText}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock FontSize="10"
+                                                   Foreground="#FF777777"
+                                                   Text="{Binding ClassText}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel Grid.Row="3" Margin="0,6,0,0" Orientation="Horizontal">
+                        <Button Padding="10,3"
+                                Margin="0,0,6,0"
+                                Content="{Binding NewItemText}"
+                                Command="{Binding NewItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                        <Button Padding="10,3"
+                                Margin="0,0,6,0"
+                                Content="{Binding DuplicateItemText}"
+                                Command="{Binding DuplicateItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                        <Button Padding="10,3"
+                                Content="{Binding DeleteItemText}"
+                                Command="{Binding DeleteItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Text="{Binding DetailHeader}" />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding IdLabel}" />
+                        <TextBox Width="90"
+                                 Text="{Binding ItemIdText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Margin="6,0,12,0"
+                                Padding="10,2"
+                                Content="{Binding ChangeIdText}"
+                                Command="{Binding ChangeItemIdCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding ClassLabel}" />
+                        <TextBlock VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Text="{Binding ItemClassText}" />
+                    </StackPanel>
+                </Grid>
+
+                <TabControl Grid.Row="1">
+                    <TabItem Header="{Binding FieldsTabText}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="4">
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Center"
+                                               Margin="0,0,6,0"
+                                               Text="{Binding ItemFilterLabel}" />
+                                    <TextBox Grid.Column="1"
+                                             Width="240"
+                                             HorizontalAlignment="Left"
+                                             Text="{Binding FieldFilter, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+
+                                <ItemsControl ItemsSource="{Binding ItemGroups}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Expander Margin="0,2"
+                                                      IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                                <Expander.Header>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontWeight="SemiBold"
+                                                                   Text="{Binding Label}" />
+                                                        <TextBlock Margin="8,0,0,0"
+                                                                   Foreground="#FF777777"
+                                                                   Text="{Binding FieldCountText}" />
+                                                    </StackPanel>
+                                                </Expander.Header>
+                                                <ItemsControl ItemsSource="{Binding Fields}"
+                                                              Margin="4,2,0,2">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <views:FieldEditor />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Expander>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <ItemsControl ItemsSource="{Binding ListSections}" Margin="0,6,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <GroupBox Margin="0,4,0,0" Header="{Binding Label}">
+                                                <StackPanel Margin="4">
+                                                    <TextBlock Foreground="#FF777777"
+                                                               TextWrapping="Wrap"
+                                                               Text="{Binding CompatibleNote}" />
+                                                    <ItemsControl ItemsSource="{Binding Values}" Margin="0,4,0,0">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid Margin="0,1">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <views:RelationPicker Grid.Column="0"
+                                                                                          VerticalAlignment="Center"
+                                                                                          RelationData="{Binding Relation}"
+                                                                                          SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                                          Visibility="{Binding HasRelation, Converter={StaticResource BoolToVisibility}}" />
+                                                                    <TextBox Grid.Column="0"
+                                                                             VerticalAlignment="Center"
+                                                                             Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                                             Visibility="{Binding IsPlainValue, Converter={StaticResource BoolToVisibility}}" />
+                                                                    <Button Grid.Column="1"
+                                                                            Margin="6,0,0,0"
+                                                                            Padding="8,1"
+                                                                            Content="✕"
+                                                                            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                                                                            CommandParameter="{Binding}" />
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <Button Margin="0,6,0,0"
+                                                            Padding="10,2"
+                                                            HorizontalAlignment="Left"
+                                                            Content="{Binding AddText}"
+                                                            Command="{Binding AddCommand}" />
+                                                </StackPanel>
+                                            </GroupBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="{Binding SubTablesTabText}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding SubTableSections}" Margin="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Margin="0,2" IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Text="{Binding Label}" />
+                                                    <TextBlock Margin="8,0,0,0"
+                                                               Foreground="#FF777777"
+                                                               Text="{Binding StatusText}" />
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <StackPanel Margin="4,2,0,2">
+                                                <StackPanel Orientation="Horizontal"
+                                                            Margin="0,0,0,4"
+                                                            Visibility="{Binding HasRow, Converter={StaticResource InverseBoolToVisibility}}">
+                                                    <Button Padding="10,2"
+                                                            Content="{Binding CreateText}"
+                                                            Command="{Binding CreateCommand}" />
+                                                    <TextBlock Margin="8,0,0,0"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="#FF777777"
+                                                               Text="{Binding SharedNote}" />
+                                                </StackPanel>
+                                                <ItemsControl ItemsSource="{Binding Fields}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <UniformGrid Columns="2" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <views:FieldEditor Margin="0,0,12,0" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="{Binding ChildTablesTabText}">
+                        <TabControl ItemsSource="{Binding ChildSections}">
+                            <TabControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Label}" />
+                                        <TextBlock Margin="6,0,0,0"
+                                                   Foreground="#FF777777"
+                                                   Text="{Binding CountText}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </TabControl.ItemTemplate>
+                            <TabControl.ContentTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
+                                            <Button Padding="10,3"
+                                                    Margin="0,0,6,0"
+                                                    Content="{Binding AddText}"
+                                                    Command="{Binding Editor.AddRowCommand}"
+                                                    IsEnabled="{Binding Editor.IsEditable}" />
+                                            <Button Padding="10,3"
+                                                    Content="{Binding DeleteText}"
+                                                    Command="{Binding Editor.DeleteRowCommand}"
+                                                    IsEnabled="{Binding Editor.IsEditable}" />
+                                        </StackPanel>
+                                        <views:TableView Grid.Row="1" DataContext="{Binding Editor}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </TabControl.ContentTemplate>
+                        </TabControl>
+                    </TabItem>
+
+                    <TabItem Header="{Binding NestedTabText}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding NestedGroups}" Margin="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Margin="0,2"
+                                                  IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Text="{Binding Label}" />
+                                                    <TextBlock Margin="8,0,0,0"
+                                                               Foreground="#FF777777"
+                                                               Text="{Binding FieldCountText}" />
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsControl ItemsSource="{Binding Fields}"
+                                                          Margin="4,2,0,2">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="2" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <views:FieldEditor Margin="0,0,12,0" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="{Binding ImagesTabText}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="4">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock VerticalAlignment="Center"
+                                               Margin="0,0,6,0"
+                                               Text="{Binding GraphicTypeLabel}" />
+                                    <ComboBox Width="180"
+                                              VerticalAlignment="Center"
+                                              ItemsSource="{Binding GraphicTypes}"
+                                              SelectedItem="{Binding SelectedGraphicType, Mode=TwoWay}"
+                                              DisplayMemberPath="Text" />
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding DetailImages}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,6">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Text="{Binding Label}" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Margin="8,0,0,0"
+                                                               HorizontalAlignment="Right"
+                                                               Foreground="#FF666666"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               Text="{Binding InfoText}" />
+                                                </Grid>
+                                                <Border Grid.Row="1"
+                                                        Height="{Binding PanelHeight}"
+                                                        Margin="0,2,0,0"
+                                                        Background="{StaticResource CheckerBrush}"
+                                                        BorderBrush="#FFAFAFAF"
+                                                        BorderThickness="1">
+                                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                                  VerticalScrollBarVisibility="Auto">
+                                                        <Image Source="{Binding Image}"
+                                                               Stretch="None"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                               SnapsToDevicePixels="True" />
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+
+        <Expander Grid.Row="3"
+                  Margin="0,6,0,0"
+                  Header="{Binding ValidationLabel}"
+                  IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
+            <ListBox Height="110"
+                     Margin="4,4,0,0"
+                     ItemsSource="{Binding ValidationIssues}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Expander>
+
+        <Grid Grid.Row="4" Margin="0,6,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ProgressBar Grid.Row="0"
+                         Height="4"
+                         IsIndeterminate="True">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+            <TextBlock Grid.Row="1"
+                       Margin="0,4,0,0"
+                       TextWrapping="Wrap"
+                       Text="{Binding StatusText}" />
+        </Grid>
+    </Grid>
+</UserControl>

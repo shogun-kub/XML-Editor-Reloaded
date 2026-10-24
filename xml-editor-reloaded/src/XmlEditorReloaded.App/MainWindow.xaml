@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
+        xmlns:vm="clr-namespace:XmlEditorReloaded.App.ViewModels"
         mc:Ignorable="d"
         Title="{Binding Title}"
         Height="780"
@@ -159,11 +160,14 @@
                             </StackPanel>
                         </DataTemplate>
                     </TabControl.ItemTemplate>
-                    <TabControl.ContentTemplate>
-                        <DataTemplate>
+                    <TabControl.Resources>
+                        <DataTemplate DataType="{x:Type vm:TableEditorViewModel}">
                             <views:TableView />
                         </DataTemplate>
-                    </TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type vm:ItemWorkspaceViewModel}">
+                            <views:ItemWorkspaceView />
+                        </DataTemplate>
+                    </TabControl.Resources>
                 </TabControl>
 
                 <TextBlock HorizontalAlignment="Center"

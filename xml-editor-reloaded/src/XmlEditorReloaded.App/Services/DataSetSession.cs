@@ -136,6 +136,19 @@ public sealed class DataSetSession : IDataSetSession
         await _metadataProvider.GetLanguagesAsync(cancellationToken).ConfigureAwait(false);
 
     /// <inheritdoc />
+    public Task<OperationResult<TableSetWorkspace>> OpenTableSetAsync(
+        TableDescriptor descriptor,
+        string? languageCode = null,
+        CancellationToken cancellationToken = default) =>
+        TableSetWorkspace.LoadAsync(
+            descriptor,
+            Catalog,
+            _metadataProvider,
+            TableDataDirectory,
+            languageCode,
+            cancellationToken);
+
+    /// <inheritdoc />
     public async Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
         TableName sourceTable,
         CancellationToken cancellationToken = default) =>

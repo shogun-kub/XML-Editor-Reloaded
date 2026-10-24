@@ -1,0 +1,2167 @@
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Numerics;
+using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Imaging;
+using XmlEditorReloaded.Core.Localization;
+using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Core.Validation;
+using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Schema;
+using XmlEditorReloaded.Xml.Workspace;
+
+namespace XmlEditorReloaded.App.ViewModels;
+
+/// <summary>
+/// Item master-detail workspace: an item selector, the editable item form, its 1:1 sub-tables, its 1:N
+/// child tables, nested modifiers, repeated fields, localization, and item images, all over one shared
+/// document set with a single undo history and one save action.
+/// </summary>
+public sealed partial class ItemWorkspaceViewModel :
+    ObservableObject,
+    IEditorTab,
+    ITableCellEditor,
+    IDetailFieldHost
+{
+    private const string KeyField = "uiIndex";
+    private const string NameField = "szItemName";
+    private const string ClassField = "usItemClass";
+    private const string GraphicTypeField = "ubGraphicType";
+    private const string GraphicIndexField = "ubGraphicNum";
+    private const string ClassLookup = "Lookup.ItemClass";
+
+    private static readonly NumberStyles DecimalStyles =
+        NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
+        | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+
+    private readonly IDataSetSession _session;
+    private readonly IDialogService _dialogService;
+    private readonly IItemImageService _itemImages;
+    private readonly TableDescriptor _descriptor;
+    private readonly Dictionary<TableName, FieldSourceSet> _fieldSources = new();
+    private readonly Dictionary<TableRowViewModel, TableName> _rowOwners = new();
+    private readonly List<ItemListEntry> _allItems = new();
+    private readonly List<DetailFieldViewModel> _allFields = new();
+    private readonly Dictionary<long, string> _classNames = new();
+    private readonly Dictionary<long, string> _classExactNames = new();
+    private IReadOnlyList<LanguageDescriptor> _languages = Array.Empty<LanguageDescriptor>();
+    private TableSetWorkspace? _set;
+    private TableRowViewModel? _itemRow;
+    private string? _languageCode;
+    private bool _suppressLanguageChange;
+    private bool _suppressGraphicType;
+    private bool _suppressSelection;
+    private bool _isReloading;
+    private CancellationTokenSource? _imageCts;
+    private string? _pendingSelection;
+
+    [ObservableProperty]
+    private string _statusText;
+
+    [ObservableProperty]
+    private bool _isBusy;
+
+    private bool _isDirty;
+
+    [ObservableProperty]
+    private bool _isEditable;
+
+    [ObservableProperty]
+    private bool _canUndo;
+
+    [ObservableProperty]
+    private bool _canRedo;
+
+    [ObservableProperty]
+    private bool _isValidationVisible;
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _fieldFilter = string.Empty;
+
+    [ObservableProperty]
+    private string _itemIdText = string.Empty;
+
+    [ObservableProperty]
+    private string _goToIdText = string.Empty;
+
+    [ObservableProperty]
+    private string _countText = string.Empty;
+
+    [ObservableProperty]
+    private string _languageText = string.Empty;
+
+    [ObservableProperty]
+    private string _warningsText = string.Empty;
+
+    [ObservableProperty]
+    private string _detailHeader = string.Empty;
+
+    [ObservableProperty]
+    private string _itemClassText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isTranslationMode;
+
+    [ObservableProperty]
+    private ItemListEntry? _selectedItem;
+
+    [ObservableProperty]
+    private GraphicTypeOption? _selectedGraphicType;
+
+    [ObservableProperty]
+    private LanguageOptionViewModel? _selectedLanguageOption;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ItemWorkspaceViewModel"/> class.
+    /// </summary>
+    /// <param name="session">Data-set session that opens the item set.</param>
+    /// <param name="descriptor">Descriptor of the <c>Items.Items</c> table.</param>
+    /// <param name="languageCode">Optional language overlay code.</param>
+    /// <param name="dialogService">Dialog service used for confirmations and the bit editor.</param>
+    /// <param name="itemImages">Item image service used by the previews.</param>
+    /// <exception cref="ArgumentNullException">Thrown when a required service or descriptor is null.</exception>
+    public ItemWorkspaceViewModel(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode,
+        IDialogService dialogService,
+        IItemImageService itemImages)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(dialogService);
+        ArgumentNullException.ThrowIfNull(itemImages);
+
+        _session = session;
+        _descriptor = descriptor;
+        _languageCode = languageCode;
+        _dialogService = dialogService;
+        _itemImages = itemImages;
+
+        Title = descriptor.TableName.Value.Split('.').Last();
+        _statusText = Strings.Get("EditorLoading");
+
+        SaveText = Strings.Get("EditorSaveText");
+        UndoText = Strings.Get("EditorUndoText");
+        RedoText = Strings.Get("EditorRedoText");
+        UndoButtonTooltip = Strings.Get("EditorUndoButtonTooltip");
+        RedoButtonTooltip = Strings.Get("EditorRedoButtonTooltip");
+        ValidateText = Strings.Get("EditorValidateText");
+        ReloadText = Strings.Get("EditorReloadText");
+        NewItemText = Strings.Get("ItemNewText");
+        DuplicateItemText = Strings.Get("EditorDuplicateRowText");
+        DeleteItemText = Strings.Get("EditorDeleteRowText");
+        ChangeIdText = Strings.Get("ItemChangeIdText");
+        GoToIdLabel = Strings.Get("ItemGoToIdText");
+        SearchLabel = Strings.Get("ItemSearchLabel");
+        LanguageLabel = Strings.Get("EditorLanguageLabel");
+        DetailFilterLabel = Strings.Get("DetailFilterLabel");
+        ValidationLabel = Strings.Get("EditorValidationLabel");
+        IdLabel = Strings.Get("ItemIdLabel");
+        NameLabel = Strings.Get("ItemNameLabel");
+        ClassLabel = Strings.Get("ItemClassLabel");
+        GraphicTypeLabel = Strings.Get("ItemGraphicTypeLabel");
+        CompatibleItemText = Strings.Get("ItemCompatibleOnly");
+        FieldsTabText = Strings.Get("ItemTabFields");
+        SubTablesTabText = Strings.Get("ItemTabSubTables");
+        ChildTablesTabText = Strings.Get("ItemTabChildTables");
+        ImagesTabText = Strings.Get("ItemTabImages");
+        NestedTabText = Strings.Get("ItemTabNested");
+        ItemFilterLabel = Strings.Get("ItemFilterLabel");
+
+        DetailImages = new[]
+        {
+            new DetailImagePanelViewModel(ImageSize.Big, Strings.Get("ImageBigLabel"), 170),
+            new DetailImagePanelViewModel(ImageSize.Medium, Strings.Get("ImageMediumLabel"), 90),
+            new DetailImagePanelViewModel(ImageSize.Small, Strings.Get("ImageSmallLabel"), 50),
+        };
+    }
+
+    /// <inheritdoc />
+    public TableName TableName => _descriptor.TableName;
+
+    /// <inheritdoc />
+    public string Title { get; }
+
+    /// <inheritdoc />
+    public string DisplayName => IsDirty ? Title + " *" : Title;
+
+    /// <inheritdoc />
+    public bool IsDirty
+    {
+        get => _isDirty;
+        private set
+        {
+            if (SetProperty(ref _isDirty, value))
+            {
+                OnPropertyChanged(nameof(DisplayName));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the item set accepts edits.
+    /// </summary>
+    public bool CanEdit => IsEditable;
+
+    /// <summary>
+    /// Gets a value indicating whether the language selector can be used.
+    /// </summary>
+    public bool IsLanguageSelectorEnabled => !IsBusy && _set is not null;
+
+    /// <summary>
+    /// Gets the save button text.
+    /// </summary>
+    public string SaveText { get; }
+
+    /// <summary>
+    /// Gets the undo button text.
+    /// </summary>
+    public string UndoText { get; }
+
+    /// <summary>
+    /// Gets the redo button text.
+    /// </summary>
+    public string RedoText { get; }
+
+    /// <summary>
+    /// Gets the undo button tooltip.
+    /// </summary>
+    public string UndoButtonTooltip { get; }
+
+    /// <summary>
+    /// Gets the redo button tooltip.
+    /// </summary>
+    public string RedoButtonTooltip { get; }
+
+    /// <summary>
+    /// Gets the validate button text.
+    /// </summary>
+    public string ValidateText { get; }
+
+    /// <summary>
+    /// Gets the reload button text.
+    /// </summary>
+    public string ReloadText { get; }
+
+    /// <summary>
+    /// Gets the new-item button text.
+    /// </summary>
+    public string NewItemText { get; }
+
+    /// <summary>
+    /// Gets the duplicate-item button text.
+    /// </summary>
+    public string DuplicateItemText { get; }
+
+    /// <summary>
+    /// Gets the delete-item button text.
+    /// </summary>
+    public string DeleteItemText { get; }
+
+    /// <summary>
+    /// Gets the change-id button text.
+    /// </summary>
+    public string ChangeIdText { get; }
+
+    /// <summary>
+    /// Gets the go-to-id button text.
+    /// </summary>
+    public string GoToIdLabel { get; }
+
+    /// <summary>
+    /// Gets the item search label.
+    /// </summary>
+    public string SearchLabel { get; }
+
+    /// <summary>
+    /// Gets the language selector label.
+    /// </summary>
+    public string LanguageLabel { get; }
+
+    /// <summary>
+    /// Gets the field filter label.
+    /// </summary>
+    public string DetailFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the validation panel label.
+    /// </summary>
+    public string ValidationLabel { get; }
+
+    /// <summary>
+    /// Gets the item identifier label.
+    /// </summary>
+    public string IdLabel { get; }
+
+    /// <summary>
+    /// Gets the item name label.
+    /// </summary>
+    public string NameLabel { get; }
+
+    /// <summary>
+    /// Gets the item class label.
+    /// </summary>
+    public string ClassLabel { get; }
+
+    /// <summary>
+    /// Gets the graphic type label.
+    /// </summary>
+    public string GraphicTypeLabel { get; }
+
+    /// <summary>
+    /// Gets the note that list-field pickers show only attachment items.
+    /// </summary>
+    public string CompatibleItemText { get; }
+
+    /// <summary>
+    /// Gets the fields tab header.
+    /// </summary>
+    public string FieldsTabText { get; }
+
+    /// <summary>
+    /// Gets the sub-tables tab header.
+    /// </summary>
+    public string SubTablesTabText { get; }
+
+    /// <summary>
+    /// Gets the child-tables tab header.
+    /// </summary>
+    public string ChildTablesTabText { get; }
+
+    /// <summary>
+    /// Gets the images tab header.
+    /// </summary>
+    public string ImagesTabText { get; }
+
+    /// <summary>
+    /// Gets the nested-structures tab header.
+    /// </summary>
+    public string NestedTabText { get; }
+
+    /// <summary>
+    /// Gets the field filter label.
+    /// </summary>
+    public string ItemFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the big, medium, and small image preview panels.
+    /// </summary>
+    public IReadOnlyList<DetailImagePanelViewModel> DetailImages { get; }
+
+    /// <summary>
+    /// Gets the items shown in the selector, filtered by <see cref="SearchText"/>.
+    /// </summary>
+    public ObservableCollection<ItemListEntry> Items { get; } = new();
+
+    /// <summary>
+    /// Gets the item fields grouped by the schema group hints.
+    /// </summary>
+    public ObservableCollection<DetailFieldGroupViewModel> ItemGroups { get; } = new();
+
+    /// <summary>
+    /// Gets the editable nested structures of the item, for example the stance modifiers.
+    /// </summary>
+    public ObservableCollection<DetailFieldGroupViewModel> NestedGroups { get; } = new();
+
+    /// <summary>
+    /// Gets the 1:1 sub-table sections of the selected item.
+    /// </summary>
+    public ObservableCollection<ItemSubTableSectionViewModel> SubTableSections { get; } = new();
+
+    /// <summary>
+    /// Gets the repeated-field sections of the selected item.
+    /// </summary>
+    public ObservableCollection<ItemListSectionViewModel> ListSections { get; } = new();
+
+    /// <summary>
+    /// Gets the 1:N child-table sections of the item workspace.
+    /// </summary>
+    public ObservableCollection<ItemChildSectionViewModel> ChildSections { get; } = new();
+
+    /// <summary>
+    /// Gets the selectable item graphic types.
+    /// </summary>
+    public ObservableCollection<GraphicTypeOption> GraphicTypes { get; } = new();
+
+    /// <summary>
+    /// Gets the language selector options: the base table and existing overlays.
+    /// </summary>
+    public ObservableCollection<LanguageOptionViewModel> LanguageOptions { get; } = new();
+
+    /// <summary>
+    /// Gets validation issues from the last validation run of the whole item set.
+    /// </summary>
+    public ObservableCollection<ValidationIssueItem> ValidationIssues { get; } = new();
+
+    /// <summary>
+    /// Gets the field names offered by the selected item's class, for tests and diagnostics.
+    /// </summary>
+    public IReadOnlyList<string> ActiveSubTableNames =>
+        SubTableSections.Select(static section => section.Member.Relation.TargetTable.Value).ToArray();
+
+    /// <inheritdoc />
+    public event EventHandler<string?>? LanguageChanged;
+
+    /// <inheritdoc />
+    public event EventHandler<TableNavigationRequest>? TableNavigationRequested;
+
+    /// <inheritdoc />
+    public Task InitializeAsync(CancellationToken cancellationToken = default) =>
+        InitializeCoreAsync(cancellationToken);
+
+    /// <summary>
+    /// Loads the item set, its field sources, and the embedded child grids.
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <returns>A task that completes when the workspace is ready.</returns>
+    private async Task InitializeCoreAsync(CancellationToken cancellationToken)
+    {
+        IsBusy = true;
+        StatusText = Strings.Get("EditorLoading");
+        var selectedKey = _pendingSelection ?? _itemRow?.Key;
+        try
+        {
+            var languagesResult = await _session.GetLanguagesAsync(cancellationToken).ConfigureAwait(true);
+            if (languagesResult.IsSuccess)
+            {
+                _languages = languagesResult.Data!;
+            }
+
+            var load = await _session
+                .OpenTableSetAsync(_descriptor, _languageCode, cancellationToken)
+                .ConfigureAwait(true);
+            if (!load.IsSuccess)
+            {
+                StatusText = Strings.Format("StatusError", $"{load.ErrorCode}: {load.ErrorText}");
+                IsEditable = false;
+                return;
+            }
+
+            if (_set is not null)
+            {
+                _set.History.Changed -= OnHistoryChanged;
+            }
+
+            _set = load.Data!;
+            _set.History.Changed += OnHistoryChanged;
+            _languageCode = _set.Primary.Language?.Code;
+            IsTranslationMode = _set.Primary.Language is not null;
+            LanguageText = _set.Primary.Language is null
+                ? Strings.Get("EditorBaseLanguage")
+                : Strings.Format("EditorLanguageFormat", _set.Primary.Language.DisplayName);
+            WarningsText = string.Join(Environment.NewLine, _set.Warnings);
+            IsEditable = _set.CanEdit;
+
+            await LoadClassNamesAsync(cancellationToken).ConfigureAwait(true);
+            await LoadFieldSourcesAsync(cancellationToken).ConfigureAwait(true);
+            await InitializeChildEditorsAsync(cancellationToken).ConfigureAwait(true);
+            BuildGraphicTypes();
+            BuildLanguageOptions();
+            RebuildItemList(selectedKey);
+
+            if (_set.Primary.Metadata is null)
+            {
+                StatusText = Strings.Get("ItemWorkspaceNoMetadata");
+            }
+            else
+            {
+                StatusText = Strings.Get("EditorReady");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = Strings.Get("EditorLoadingCancelled");
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+            IsEditable = false;
+        }
+        finally
+        {
+            _pendingSelection = null;
+            RefreshHistoryState();
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Saves every dirty file of the item set.
+    /// </summary>
+    /// <returns>A task that completes when saving finishes.</returns>
+    [RelayCommand]
+    public async Task SaveAsync()
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        if (!_set.IsDirty)
+        {
+            IsDirty = false;
+            StatusText = Strings.Get("EditorNoChanges");
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var result = await _set.SaveAsync().ConfigureAwait(true);
+            if (result.IsSuccess)
+            {
+                foreach (var tableName in new[] { _descriptor.TableName }
+                             .Concat(_set.Members.Select(static member => member.Workspace.Descriptor.TableName)))
+                {
+                    _session.RelationResolver.Invalidate(tableName);
+                }
+
+                IsDirty = false;
+                StatusText = Strings.Get("EditorSaved");
+                foreach (var section in ChildSections)
+                {
+                    section.Editor.RefreshFieldValues();
+                }
+            }
+            else
+            {
+                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = Strings.Get("EditorLoadingCancelled");
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Reverses the most recent edit of the whole item set.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    public void Undo() => ApplyHistory(undo: true);
+
+    /// <summary>
+    /// Restores the most recently undone edit of the whole item set.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    public void Redo() => ApplyHistory(undo: false);
+
+    /// <summary>
+    /// Validates the item and every related table, and lists the issues.
+    /// </summary>
+    /// <returns>A task that completes when validation finishes.</returns>
+    [RelayCommand]
+    public async Task ValidateAsync()
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            ValidationIssues.Clear();
+            foreach (var workspace in AllWorkspaces())
+            {
+                var report = await workspace
+                    .ValidateAsync(_session.Lookups, workspace.Language?.Code)
+                    .ConfigureAwait(true);
+                foreach (var issue in report.Issues)
+                {
+                    ValidationIssues.Add(new ValidationIssueItem(
+                        issue.TableName is null
+                            ? issue with { TableName = workspace.Descriptor.TableName }
+                            : issue));
+                }
+            }
+
+            IsValidationVisible = true;
+            StatusText = Strings.Format("EditorValidationSummary", ValidationIssues.Count);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Discards unsaved changes after confirmation and reloads the item set.
+    /// </summary>
+    /// <returns>A task that completes when the workspace is reloaded.</returns>
+    [RelayCommand]
+    public async Task ReloadAsync()
+    {
+        if (IsDirty && !_dialogService.Confirm(
+                Strings.Format("EditorConfirmReload", Title),
+                Strings.Get("EditorReloadTitle")))
+        {
+            return;
+        }
+
+        await ReloadPreservingSelectionAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Creates a new item with the next identifier and asks for its class and name.
+    /// </summary>
+    [RelayCommand]
+    public void NewItem()
+    {
+        if (_set is null || !IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        var nextId = _set.Primary.BaseDocument
+            .GetNextPrimaryKey()
+            .ToString(CultureInfo.InvariantCulture);
+        var request = _dialogService.CreateItem(
+            Strings.Get("ItemNewTitle"),
+            nextId,
+            Strings.Get("ItemNewDefaultName"),
+            BuildClassOptions());
+        if (request is null)
+        {
+            return;
+        }
+
+        var id = request.Id.Trim();
+        if (!int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numericId)
+            || numericId < 0)
+        {
+            StatusText = Strings.Format("EditorInvalidValue", request.Id, KeyField);
+            return;
+        }
+
+        if (_set.Primary.FindRecord(id) is not null)
+        {
+            StatusText = Strings.Format("ItemIdConflict", id);
+            return;
+        }
+
+        var result = _set.AddRecord(
+            _descriptor.TableName,
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [KeyField] = id,
+                [NameField] = request.Name,
+                [ClassField] = request.ClassValue,
+            });
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = _set.IsDirty;
+        RebuildItemList(id);
+        StatusText = Strings.Format("ItemCreated", id);
+    }
+
+    /// <summary>
+    /// Duplicates the selected item and the dependent rows that store its identifier.
+    /// </summary>
+    [RelayCommand]
+    public void DuplicateItem()
+    {
+        if (_set is null || _itemRow?.Key is not { } key)
+        {
+            StatusText = Strings.Get("EditorSelectRow");
+            return;
+        }
+
+        var result = _set.DuplicateRecord(key);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = _set.IsDirty;
+        RefreshChildEditors();
+        RebuildItemList(result.Data);
+        StatusText = Strings.Format("ItemDuplicated", key, result.Data ?? string.Empty);
+    }
+
+    /// <summary>
+    /// Deletes the selected item and the dependent rows that store its identifier after confirmation.
+    /// </summary>
+    [RelayCommand]
+    public void DeleteItem()
+    {
+        if (_set is null || _itemRow?.Key is not { } key)
+        {
+            StatusText = Strings.Get("EditorSelectRow");
+            return;
+        }
+
+        var dependents = _set.DescribeDependents(key);
+        var summary = dependents.Count == 0
+            ? Strings.Get("ItemNoDependents")
+            : string.Join(
+                ", ",
+                dependents.Select(entry => $"{entry.Table.Value} ({entry.Keys.Count})"));
+        if (!_dialogService.Confirm(
+                Strings.Format("ItemConfirmDelete", key, summary),
+                Strings.Get("ItemDeleteTitle")))
+        {
+            return;
+        }
+
+        var result = _set.DeleteRecord(key);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = _set.IsDirty;
+        RefreshChildEditors();
+        RebuildItemList(null);
+        StatusText = Strings.Format("ItemDeleted", key);
+    }
+
+    /// <summary>
+    /// Renames the selected item, or swaps identifiers when the new key is already used by another item.
+    /// Related rows that store the identifier are rewritten in the same transaction.
+    /// </summary>
+    [RelayCommand]
+    public void ChangeItemId()
+    {
+        if (_set is null || _itemRow?.Key is not { } oldKey)
+        {
+            return;
+        }
+
+        var newKey = ItemIdText.Trim();
+        if (string.Equals(newKey, oldKey, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        if (!int.TryParse(newKey, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numericId)
+            || numericId < 0)
+        {
+            StatusText = Strings.Format("EditorInvalidValue", ItemIdText, KeyField);
+            ItemIdText = oldKey;
+            return;
+        }
+
+        OperationResult result;
+        if (_set.Primary.FindRecord(newKey) is not null)
+        {
+            if (!_dialogService.Confirm(
+                    Strings.Format("ItemConfirmSwap", oldKey, newKey),
+                    Strings.Get("ItemChangeIdTitle")))
+            {
+                ItemIdText = oldKey;
+                return;
+            }
+
+            result = _set.SwapRecords(oldKey, newKey);
+        }
+        else
+        {
+            result = _set.RenameRecord(oldKey, newKey);
+        }
+
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            ItemIdText = oldKey;
+            return;
+        }
+
+        IsDirty = _set.IsDirty;
+        RefreshChildEditors();
+        RebuildItemList(newKey);
+        StatusText = Strings.Format("ItemIdChanged", oldKey, newKey);
+    }
+
+    /// <summary>
+    /// Selects the item with the identifier typed in <see cref="GoToIdText"/>.
+    /// </summary>
+    [RelayCommand]
+    public void GoToItemId()
+    {
+        var key = GoToIdText.Trim();
+        if (key.Length == 0)
+        {
+            return;
+        }
+
+        var entry = _allItems.FirstOrDefault(candidate =>
+            string.Equals(candidate.Key, key, StringComparison.Ordinal));
+        if (entry is null)
+        {
+            StatusText = Strings.Format("EditorRecordNotFound", key);
+            return;
+        }
+
+        SearchText = string.Empty;
+        ApplyItemFilter(entry.Key);
+    }
+
+    /// <summary>
+    /// Selects the item with the supplied key.
+    /// </summary>
+    /// <param name="key">Primary item key.</param>
+    public void SelectRecord(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return;
+        }
+
+        if (_set is null || _allItems.Count == 0)
+        {
+            _pendingSelection = key.Trim();
+            return;
+        }
+
+        var entry = _allItems.FirstOrDefault(candidate =>
+            string.Equals(candidate.Key, key.Trim(), StringComparison.Ordinal));
+        if (entry is null)
+        {
+            StatusText = Strings.Format("EditorRecordNotFound", key);
+            return;
+        }
+
+        if (!Items.Contains(entry))
+        {
+            SearchText = string.Empty;
+            ApplyItemFilter(entry.Key);
+        }
+        else
+        {
+            SelectedItem = entry;
+        }
+    }
+
+    /// <inheritdoc />
+    OperationResult ITableCellEditor.SetCellValue(TableRowViewModel row, string fieldName, string value) =>
+        SetCellValue(row, fieldName, value);
+
+    /// <inheritdoc />
+    public void SetDetailValue(DetailFieldViewModel field, string value)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        ArgumentNullException.ThrowIfNull(value);
+        SetCellValue(field.Row, field.PathText, value);
+    }
+
+    /// <inheritdoc />
+    public void NavigateToRelation(DetailFieldViewModel field)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        if (field.Relation is not { IsAvailable: true } relation
+            || !relation.TryGetTargetValue(field.Value, out var value))
+        {
+            StatusText = Strings.Get("EditorRelationTargetMissing");
+            return;
+        }
+
+        if (relation.Relation.TargetTable == _descriptor.TableName)
+        {
+            SelectRecord(value);
+            return;
+        }
+
+        TableNavigationRequested?.Invoke(this, new TableNavigationRequest(relation.Relation.TargetTable, value));
+    }
+
+    /// <inheritdoc />
+    public void EditBits(DetailFieldViewModel field)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+        if (!field.CanEditBits)
+        {
+            return;
+        }
+
+        var currentText = field.Value;
+        var current = uint.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : 0u;
+        LookupColumnData? lookup = null;
+        if (_rowOwners.TryGetValue(field.Row, out var table)
+            && _fieldSources.TryGetValue(table, out var sources)
+            && sources.Lookups.TryGetValue(field.Name, out var found))
+        {
+            lookup = found;
+        }
+
+        var edited = _dialogService.EditBits(
+            Strings.Format("BitEditorTitleFormat", field.PathText),
+            current,
+            BuildBitLabels(lookup),
+            lookup?.GetExactEntryName(currentText));
+        if (edited is not { } value)
+        {
+            return;
+        }
+
+        field.Value = value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Creates the missing 1:1 row of a sub-table section.
+    /// </summary>
+    /// <param name="section">Section whose row should be created.</param>
+    internal void CreateSubTableRow(ItemSubTableSectionViewModel section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+        if (_set is null || section.SourceValue is not { Length: > 0 } sourceValue)
+        {
+            StatusText = Strings.Get("ItemNoClassIndex");
+            return;
+        }
+
+        var result = _set.EnsureSubTableRecord(section.Member.Relation, sourceValue);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        RebuildSections();
+        StatusText = Strings.Format("ItemSubTableRowCreated", section.Label, sourceValue);
+    }
+
+    /// <summary>
+    /// Writes a repeated field of the selected item.
+    /// </summary>
+    /// <param name="tableName">Table that stores the field.</param>
+    /// <param name="fieldName">Case-sensitive XML element name of the repeated field.</param>
+    /// <param name="values">New values in list order.</param>
+    internal void SetListValues(TableName tableName, string fieldName, IReadOnlyList<string> values)
+    {
+        if (_set is null || _itemRow?.Key is not { } key)
+        {
+            return;
+        }
+
+        var result = _set.SetListValues(tableName, key, fieldName, values);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+        }
+    }
+
+    /// <summary>
+    /// Applies a single cell edit to the item or one of its related records.
+    /// </summary>
+    /// <param name="row">Edited row.</param>
+    /// <param name="fieldName">Field name or slash-separated nested path.</param>
+    /// <param name="value">New raw value.</param>
+    /// <returns>The underlying edit result.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> or <paramref name="fieldName"/> is null.</exception>
+    public OperationResult SetCellValue(TableRowViewModel row, string fieldName, string value)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(fieldName);
+        ArgumentNullException.ThrowIfNull(value);
+
+        if (_set is null || !IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The item workspace is not editable.");
+        }
+
+        if (row.Key is null)
+        {
+            StatusText = Strings.Format("StatusError", ErrorCodes.KeyNotFound);
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, "The record has no primary key.");
+        }
+
+        var table = _rowOwners.TryGetValue(row, out var owner) ? owner : _descriptor.TableName;
+        var workspace = _set.GetWorkspace(table);
+        if (workspace is null)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.MetadataNotFound,
+                $"Table '{table}' is not part of the item set.");
+        }
+
+        var wasAbsent = row.GetStoredValue(fieldName) is null;
+        if (wasAbsent && value.Length == 0)
+        {
+            return OperationResult.Success();
+        }
+
+        var result = _set.SetValue(table, row.Key, fieldName, value, addIfMissing: wasAbsent);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return result;
+        }
+
+        var refreshed = workspace.GetRow(row.Key);
+        if (refreshed is not null)
+        {
+            row.Refresh(refreshed);
+        }
+
+        IsDirty = _set.IsDirty;
+        RefreshHistoryState();
+        if (table == _descriptor.TableName)
+        {
+            ItemClassText = ResolveClassText(row);
+            DetailHeader = BuildItemHeader(row);
+            if (string.Equals(fieldName, ClassField, StringComparison.Ordinal))
+            {
+                RebuildSections();
+            }
+            else if (fieldName is GraphicTypeField or GraphicIndexField)
+            {
+                _ = LoadImagesAsync();
+            }
+        }
+
+        StatusText = Strings.Format("EditorCellUpdated", fieldName, row.Key);
+        return result;
+    }
+
+    /// <summary>
+    /// Creates or updates a field of the selected item directly, which is used by tests and by commands
+    /// that are not bound to a form field.
+    /// </summary>
+    /// <param name="fieldName">Field name or slash-separated nested path.</param>
+    /// <param name="value">New raw value.</param>
+    /// <returns>The underlying edit result.</returns>
+    public OperationResult SetItemValue(string fieldName, string value)
+    {
+        if (_itemRow is null)
+        {
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, "No item is selected.");
+        }
+
+        return SetCellValue(_itemRow, fieldName, value);
+    }
+
+    partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+
+    partial void OnCanUndoChanged(bool value) => UndoCommand.NotifyCanExecuteChanged();
+
+    partial void OnCanRedoChanged(bool value) => RedoCommand.NotifyCanExecuteChanged();
+
+    partial void OnSearchTextChanged(string value) => ApplyItemFilter(_itemRow?.Key);
+
+    partial void OnFieldFilterChanged(string value)
+    {
+        if (_itemRow is not null)
+        {
+            RebuildSections();
+        }
+    }
+
+    partial void OnSelectedItemChanged(ItemListEntry? value)
+    {
+        if (_suppressSelection)
+        {
+            return;
+        }
+
+        LoadItemForm();
+    }
+
+    partial void OnSelectedGraphicTypeChanged(GraphicTypeOption? value)
+    {
+        if (_suppressGraphicType || value is null || _itemRow is null)
+        {
+            return;
+        }
+
+        var current = _itemRow.GetStoredValue(GraphicTypeField)?.Trim();
+        var text = value.Number.ToString(CultureInfo.InvariantCulture);
+        if (!string.Equals(current, text, StringComparison.Ordinal))
+        {
+            SetCellValue(_itemRow, GraphicTypeField, text);
+        }
+    }
+
+    partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)
+    {
+        if (_suppressLanguageChange || value is null || _isReloading)
+        {
+            return;
+        }
+
+        if (string.Equals(value.Code, _languageCode, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _ = ChangeLanguageAsync(value);
+    }
+
+    private async Task ChangeLanguageAsync(LanguageOptionViewModel option)
+    {
+        if (IsDirty && !_dialogService.Confirm(
+                Strings.Format("EditorConfirmLanguage", Title),
+                Strings.Get("EditorLanguageTitle")))
+        {
+            RestoreLanguageSelection();
+            return;
+        }
+
+        if (!option.HasOverlay && option.Language is not null)
+        {
+            if (!_dialogService.Confirm(
+                    Strings.Format(
+                        "EditorConfirmCreateOverlay",
+                        option.Language.DisplayName,
+                        _descriptor.TableName.Value),
+                    Strings.Get("EditorLanguageTitle")))
+            {
+                RestoreLanguageSelection();
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var ensured = await _session
+                    .EnsureOverlayAsync(_descriptor, option.Language)
+                    .ConfigureAwait(true);
+                if (!ensured.IsSuccess)
+                {
+                    StatusText = Strings.Format(
+                        "StatusError",
+                        $"{ensured.ErrorCode}: {ensured.ErrorText}");
+                    RestoreLanguageSelection();
+                    return;
+                }
+            }
+            catch (Exception exception)
+            {
+                StatusText = Strings.Format("StatusError", exception.Message);
+                RestoreLanguageSelection();
+                return;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        _languageCode = option.Code;
+        await ReloadPreservingSelectionAsync().ConfigureAwait(true);
+        LanguageChanged?.Invoke(this, _languageCode);
+    }
+
+    private void RestoreLanguageSelection()
+    {
+        _suppressLanguageChange = true;
+        try
+        {
+            SelectedLanguageOption = FindLanguageOption(_languageCode);
+        }
+        finally
+        {
+            _suppressLanguageChange = false;
+        }
+    }
+
+    private LanguageOptionViewModel? FindLanguageOption(string? code) =>
+        string.IsNullOrWhiteSpace(code)
+            ? LanguageOptions.FirstOrDefault(static option => option.Language is null)
+            : LanguageOptions.FirstOrDefault(option =>
+                string.Equals(option.Code, code, StringComparison.OrdinalIgnoreCase));
+
+    private async Task ReloadPreservingSelectionAsync()
+    {
+        if (_isReloading)
+        {
+            return;
+        }
+
+        _isReloading = true;
+        try
+        {
+            var key = _itemRow?.Key;
+            ClearAllSections();
+            await InitializeCoreAsync(CancellationToken.None).ConfigureAwait(true);
+            if (key is not null)
+            {
+                SelectRecord(key);
+            }
+        }
+        finally
+        {
+            _isReloading = false;
+        }
+    }
+
+    private void ClearAllSections()
+    {
+        Items.Clear();
+        ItemGroups.Clear();
+        NestedGroups.Clear();
+        SubTableSections.Clear();
+        ListSections.Clear();
+        ChildSections.Clear();
+        ValidationIssues.Clear();
+        _allItems.Clear();
+        _allFields.Clear();
+        _rowOwners.Clear();
+        _fieldSources.Clear();
+        _itemRow = null;
+    }
+
+    private async Task LoadClassNamesAsync(CancellationToken cancellationToken)
+    {
+        _classNames.Clear();
+        _classExactNames.Clear();
+        var entries = await _session.Lookups
+            .GetEntriesAsync(TableName.Parse(ClassLookup), _set?.Primary.Language?.Code, cancellationToken)
+            .ConfigureAwait(true);
+        if (!entries.IsSuccess)
+        {
+            return;
+        }
+
+        foreach (var entry in entries.Data!)
+        {
+            _classNames.TryAdd(entry.Id, entry.Name);
+            _classExactNames.TryAdd(entry.Id, entry.Name);
+        }
+    }
+
+    private async Task LoadFieldSourcesAsync(CancellationToken cancellationToken)
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        _fieldSources.Clear();
+        var workspaces = new[] { _set.Primary }
+            .Concat(_set.GetMembers(TableRelationKind.SubTable)
+                .Select(static member => member.Workspace))
+            .DistinctBy(static workspace => workspace.Descriptor.TableName);
+        foreach (var workspace in workspaces)
+        {
+            var sources = await FieldSourceSet
+                .LoadAsync(_session, workspace, cancellationToken)
+                .ConfigureAwait(true);
+            _fieldSources[workspace.Descriptor.TableName] = sources;
+        }
+    }
+
+    private async Task InitializeChildEditorsAsync(CancellationToken cancellationToken)
+    {
+        ChildSections.Clear();
+        if (_set is null)
+        {
+            return;
+        }
+
+        foreach (var member in _set.GetMembers(TableRelationKind.ChildRows))
+        {
+            var editor = new TableEditorViewModel(
+                _session,
+                member.Workspace.Descriptor,
+                member.Workspace.Language?.Code,
+                _dialogService,
+                _itemImages)
+            {
+                IsEmbedded = true,
+                ShowDetails = false,
+                EmbeddedSave = SaveAsync,
+            };
+            await editor
+                .InitializeFromWorkspaceAsync(member.Workspace, _languages, cancellationToken)
+                .ConfigureAwait(true);
+            editor.ExternalRowFilter = row => IsRowOfSelectedItem(member.Relation, row);
+            ChildSections.Add(new ItemChildSectionViewModel(this, member, LabelFor(member), editor));
+        }
+    }
+
+    private bool IsRowOfSelectedItem(TableRelation relation, TableRowViewModel row) =>
+        _itemRow?.Key is { } key
+        && string.Equals(row.GetStoredValue(relation.TargetValueField), key, StringComparison.Ordinal);
+
+    private void RefreshChildEditors()
+    {
+        foreach (var section in ChildSections)
+        {
+            section.Editor.RefreshRows();
+        }
+
+        RefreshChildSectionState();
+    }
+
+    private void RefreshChildSectionState()
+    {
+        var key = _itemRow?.Key;
+        foreach (var section in ChildSections)
+        {
+            section.Editor.NewRowDefaults = key is null
+                ? null
+                : new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [section.Member.Relation.TargetValueField] = key,
+                };
+            section.Editor.RefreshRowFilter();
+            section.RefreshCount();
+        }
+    }
+
+    private void RebuildItemList(string? selectKey)
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        _rowOwners.Clear();
+        _allItems.Clear();
+        foreach (var row in _set.Primary.GetRows())
+        {
+            var viewModel = new TableRowViewModel(row, this);
+            _rowOwners[viewModel] = _descriptor.TableName;
+            var entry = new ItemListEntry(viewModel, ResolveClassText);
+            entry.ConfigureThumbnail(LoadItemThumbnailAsync);
+            _allItems.Add(entry);
+        }
+
+        ApplyItemFilter(selectKey);
+    }
+
+    private void ApplyItemFilter(string? selectKey)
+    {
+        var term = SearchText.Trim();
+        var visible = term.Length == 0
+            ? _allItems
+            : _allItems.Where(entry =>
+                entry.Key.Contains(term, StringComparison.OrdinalIgnoreCase)
+                || entry.Name.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var wanted = selectKey ?? _itemRow?.Key;
+        _suppressSelection = true;
+        try
+        {
+            Items.Clear();
+            foreach (var entry in visible)
+            {
+                Items.Add(entry);
+            }
+
+            CountText = Strings.Format("ItemCountFormat", Items.Count, _allItems.Count);
+        }
+        finally
+        {
+            _suppressSelection = false;
+        }
+
+        var target = wanted is null
+            ? Items.FirstOrDefault()
+            : Items.FirstOrDefault(entry => string.Equals(entry.Key, wanted, StringComparison.Ordinal))
+                ?? Items.FirstOrDefault();
+        var same = ReferenceEquals(SelectedItem, target);
+        SelectedItem = target;
+        if (same)
+        {
+            LoadItemForm();
+        }
+
+        if (term.Length > 0 && Items.Count == 0)
+        {
+            StatusText = Strings.Get("EditorNoMatches");
+        }
+    }
+
+    private void LoadItemForm()
+    {
+        _itemRow = SelectedItem?.Row;
+        if (_itemRow is null || _set is null)
+        {
+            ItemIdText = string.Empty;
+            DetailHeader = Strings.Get("ItemNoSelection");
+            ItemClassText = string.Empty;
+            ClearAllSections(keepItems: true);
+            _rowOwners.Clear();
+            CancelImageLoads();
+            ClearImages();
+            return;
+        }
+
+        ItemIdText = _itemRow.Key ?? string.Empty;
+        DetailHeader = BuildItemHeader(_itemRow);
+        ItemClassText = ResolveClassText(_itemRow);
+        RebuildSections();
+        RefreshChildSectionState();
+        SyncGraphicType();
+        _ = LoadImagesAsync();
+    }
+
+    private void RebuildSections()
+    {
+        ItemGroups.Clear();
+        NestedGroups.Clear();
+        SubTableSections.Clear();
+        ListSections.Clear();
+        _allFields.Clear();
+        if (_set is null || _itemRow is null)
+        {
+            return;
+        }
+
+        var primary = _set.Primary;
+        var sources = _fieldSources.GetValueOrDefault(primary.Descriptor.TableName);
+        var fields = new List<DetailFieldViewModel>();
+        var nestedColumns = new List<TableSchemaColumn>();
+        var listColumns = new List<TableSchemaColumn>();
+        foreach (var column in primary.Schema.Columns)
+        {
+            if (column.IsKey)
+            {
+                continue;
+            }
+
+            if (column.IsNested)
+            {
+                nestedColumns.Add(column);
+                continue;
+            }
+
+            if (column.IsList && column.MaxOccurrences > 1)
+            {
+                listColumns.Add(column);
+                continue;
+            }
+
+            if (!MatchesFieldFilter(column.XmlFieldName, column.DataType))
+            {
+                continue;
+            }
+
+            LookupColumnData? lookup = null;
+            RelationColumnData? relation = null;
+            sources?.Lookups.TryGetValue(column.XmlFieldName, out lookup);
+            sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
+            fields.Add(new DetailFieldViewModel(this, _itemRow, column, lookup, relation));
+        }
+
+        AddFieldGroups(ItemGroups, fields);
+        _allFields.AddRange(fields);
+
+        foreach (var column in listColumns)
+        {
+            if (!MatchesFieldFilter(column.XmlFieldName, ColumnDataType.String))
+            {
+                continue;
+            }
+
+            RelationColumnData? relation = null;
+            sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
+            ListSections.Add(new ItemListSectionViewModel(
+                this,
+                primary.Descriptor.TableName,
+                column.XmlFieldName,
+                ListSectionLabel(column.XmlFieldName),
+                relation,
+                _itemRow.GetValues(column.XmlFieldName)));
+        }
+
+        foreach (var column in nestedColumns)
+        {
+            AddNestedGroup(column);
+        }
+
+        BuildSubTableSections();
+    }
+
+    private void AddFieldGroups(
+        ObservableCollection<DetailFieldGroupViewModel> target,
+        IEnumerable<DetailFieldViewModel> fields)
+    {
+        foreach (var group in fields
+                     .GroupBy(static field => field.GroupKey, StringComparer.Ordinal)
+                     .OrderBy(static group => group.First().GroupOrder))
+        {
+            var key = group.Key;
+            var label = Strings.Get("DetailGroup." + key);
+            if (string.Equals(label, "DetailGroup." + key, StringComparison.Ordinal))
+            {
+                label = key;
+            }
+
+            target.Add(new DetailFieldGroupViewModel(
+                key,
+                label,
+                group.First().GroupOrder,
+                IsGroupExpandedByDefault(key),
+                group.OrderBy(static field => field.Order)));
+        }
+    }
+
+    private bool MatchesFieldFilter(string fieldName, ColumnDataType dataType)
+    {
+        var term = FieldFilter.Trim();
+        return term.Length == 0
+            || fieldName.Contains(term, StringComparison.OrdinalIgnoreCase)
+            || dataType.ToString().Contains(term, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsGroupExpandedByDefault(string groupKey) =>
+        groupKey is "identity" or "classification" or "inventory" or "attachments" or "combat";
+
+    private static string ListSectionLabel(string fieldName)
+    {
+        var key = "ItemListSection." + fieldName;
+        var label = Strings.Get(key);
+        return string.Equals(label, key, StringComparison.Ordinal) ? fieldName : label;
+    }
+
+    private void AddNestedGroup(TableSchemaColumn container)
+    {
+        if (_set is null || _itemRow is null)
+        {
+            return;
+        }
+
+        var names = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var record in _set.Primary.BaseDocument.Records)
+        {
+            foreach (var name in record.GetChildFieldNames(container.XmlFieldName))
+            {
+                if (seen.Add(name))
+                {
+                    names.Add(name);
+                }
+            }
+        }
+
+        if (names.Count == 0)
+        {
+            return;
+        }
+
+        var fields = new List<DetailFieldViewModel>();
+        for (var index = 0; index < names.Count; index++)
+        {
+            var path = new FieldPath(new[] { container.XmlFieldName, names[index] });
+            if (!MatchesFieldFilter(path.Text, ColumnDataType.Integer))
+            {
+                continue;
+            }
+
+            fields.Add(new DetailFieldViewModel(
+                this,
+                _itemRow,
+                path,
+                InferNestedType(path),
+                index,
+                "nested:" + container.XmlFieldName,
+                container.GroupOrder,
+                isReadOnly: false,
+                isTranslatable: false));
+        }
+
+        _allFields.AddRange(fields);
+        var label = Strings.Get("ItemStance." + container.XmlFieldName);
+        if (string.Equals(label, "ItemStance." + container.XmlFieldName, StringComparison.Ordinal))
+        {
+            label = container.XmlFieldName;
+        }
+
+        NestedGroups.Add(new DetailFieldGroupViewModel(
+            "nested:" + container.XmlFieldName,
+            label,
+            container.GroupOrder,
+            isExpanded: false,
+            fields));
+    }
+
+    private void BuildSubTableSections()
+    {
+        SubTableSections.Clear();
+        if (_set is null || _itemRow is null)
+        {
+            return;
+        }
+
+        var classBits = ParseClassBits(_itemRow.GetStoredValue(ClassField));
+        foreach (var member in _set.GetMembers(TableRelationKind.SubTable))
+        {
+            if (!IsSubTableVisibleForClass(member.Relation.TargetTable, classBits))
+            {
+                continue;
+            }
+
+            var workspace = member.Workspace;
+            var sourceValue = _itemRow.GetStoredValue(member.Relation.SourceField)?.Trim();
+            var record = string.IsNullOrEmpty(sourceValue)
+                ? null
+                : FindRecordByValue(workspace, member.Relation.TargetValueField, sourceValue);
+            var row = record is null ? null : CreateRow(workspace, record.GetKey());
+            var fields = row is null
+                ? Array.Empty<DetailFieldViewModel>()
+                : BuildSubTableFields(member, row);
+            _allFields.AddRange(fields);
+            SubTableSections.Add(new ItemSubTableSectionViewModel(
+                this,
+                member,
+                LabelFor(member),
+                row,
+                sourceValue,
+                fields));
+        }
+    }
+
+    private IReadOnlyList<DetailFieldViewModel> BuildSubTableFields(
+        TableSetMember member,
+        TableRowViewModel row)
+    {
+        var sources = _fieldSources.GetValueOrDefault(member.Workspace.Descriptor.TableName);
+        var fields = new List<DetailFieldViewModel>();
+        foreach (var column in member.Workspace.Schema.Columns)
+        {
+            if (column.IsKey || column.IsNested || column.IsDict || (column.IsList && column.MaxOccurrences > 1))
+            {
+                continue;
+            }
+
+            if (!MatchesFieldFilter(column.XmlFieldName, column.DataType))
+            {
+                continue;
+            }
+
+            LookupColumnData? lookup = null;
+            RelationColumnData? relation = null;
+            sources?.Lookups.TryGetValue(column.XmlFieldName, out lookup);
+            sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
+            fields.Add(new DetailFieldViewModel(this, row, column, lookup, relation));
+        }
+
+        return fields
+            .OrderBy(static field => field.GroupOrder)
+            .ThenBy(static field => field.Order)
+            .ToArray();
+    }
+
+    private TableRowViewModel? CreateRow(TableWorkspace workspace, string? key)
+    {
+        if (key is null)
+        {
+            return null;
+        }
+
+        var row = workspace.GetRow(key);
+        if (row is null)
+        {
+            return null;
+        }
+
+        var viewModel = new TableRowViewModel(row, this);
+        _rowOwners[viewModel] = workspace.Descriptor.TableName;
+        return viewModel;
+    }
+
+    private static TableRecord? FindRecordByValue(
+        TableWorkspace workspace,
+        string field,
+        string value) =>
+        workspace.BaseDocument.Records.FirstOrDefault(candidate =>
+            string.Equals(candidate.GetRawValue(field)?.Trim(), value, StringComparison.Ordinal));
+
+    private ColumnDataType InferNestedType(FieldPath path)
+    {
+        var hasValue = false;
+        var allInteger = true;
+        var allDecimal = true;
+        if (_set is not null)
+        {
+            foreach (var record in _set.Primary.BaseDocument.Records)
+            {
+                var raw = record.GetRawValue(path);
+                if (string.IsNullOrEmpty(raw))
+                {
+                    continue;
+                }
+
+                hasValue = true;
+                if (!int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                {
+                    allInteger = false;
+                }
+
+                if (!decimal.TryParse(raw, DecimalStyles, CultureInfo.InvariantCulture, out _))
+                {
+                    allDecimal = false;
+                }
+            }
+        }
+
+        return !hasValue ? ColumnDataType.Integer
+            : allInteger ? ColumnDataType.Integer
+            : allDecimal ? ColumnDataType.Decimal
+            : ColumnDataType.String;
+    }
+
+    private uint ParseClassBits(string? raw) =>
+        uint.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0;
+
+    private string ResolveClassText(TableRowViewModel row)
+    {
+        var bits = ParseClassBits(row[ClassField]);
+        if (bits == 0 || _classNames.Count == 0)
+        {
+            return bits == 0 ? string.Empty : bits.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (_classExactNames.TryGetValue(bits, out var exact))
+        {
+            return exact;
+        }
+
+        var names = _classNames
+            .Where(pair => pair.Key > 0 && (bits & pair.Key) == pair.Key && IsPowerOfTwo(pair.Key))
+            .OrderBy(static pair => pair.Key)
+            .Select(static pair => pair.Value)
+            .ToArray();
+        return names.Length == 0 ? bits.ToString(CultureInfo.InvariantCulture) : string.Join(" | ", names);
+    }
+
+    private static bool IsPowerOfTwo(long value) => value > 0 && (value & (value - 1)) == 0;
+
+    private string BuildItemHeader(TableRowViewModel row)
+    {
+        var key = row.Key ?? string.Empty;
+        var name = row[NameField];
+        return name.Length == 0 ? key : $"{key}: {name}";
+    }
+
+    private static bool IsSubTableVisibleForClass(TableName table, uint classBits)
+    {
+        var required = table.Value switch
+        {
+            "Items.Weapons" => 254u,
+            "Items.Magazines" => 1024u,
+            "Items.Armours" => 2048u,
+            "Items.Explosives" => 768u,
+            "Items.LoadBearingEquipment" => 131072u,
+            _ => 0u,
+        };
+
+        return required == 0 || (classBits & required) != 0;
+    }
+
+    private string LabelFor(TableSetMember member)
+    {
+        var key = "ItemSection." + member.Relation.TargetTable.Value.Replace('.', '_');
+        var label = Strings.Get(key);
+        return string.Equals(label, key, StringComparison.Ordinal)
+            ? member.Relation.TargetTable.Value.Split('.').Last()
+            : label;
+    }
+
+    private IEnumerable<TableWorkspace> AllWorkspaces()
+    {
+        if (_set is null)
+        {
+            return Array.Empty<TableWorkspace>();
+        }
+
+        return new[] { _set.Primary }.Concat(_set.Members.Select(static member => member.Workspace));
+    }
+
+    private void OnHistoryChanged(object? sender, EventArgs e)
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        IsDirty = _set.IsDirty;
+        RefreshHistoryState();
+        foreach (var field in _allFields)
+        {
+            field.Refresh();
+        }
+
+        foreach (var section in ChildSections)
+        {
+            section.RefreshCount();
+        }
+
+        if (_itemRow?.Key is { } key && _set.Primary.FindRecord(key) is null)
+        {
+            RebuildItemList(null);
+            return;
+        }
+
+        if (_itemRow is not null)
+        {
+            DetailHeader = BuildItemHeader(_itemRow);
+        }
+    }
+
+    private void ApplyHistory(bool undo)
+    {
+        if (_set is null)
+        {
+            return;
+        }
+
+        var selectedKey = _itemRow?.Key;
+        try
+        {
+            var result = undo ? _set.Undo() : _set.Redo();
+            if (!result.IsSuccess)
+            {
+                StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+                RefreshHistoryState();
+                return;
+            }
+
+            IsDirty = _set.IsDirty;
+            foreach (var section in ChildSections)
+            {
+                section.Editor.RefreshRows();
+            }
+
+            RebuildItemList(selectedKey);
+            RebuildSections();
+            RefreshChildSectionState();
+            _ = LoadImagesAsync();
+            RefreshHistoryState();
+            StatusText = Strings.Get(undo ? "EditorUndone" : "EditorRedone");
+        }
+        catch (InvalidOperationException exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+            RefreshHistoryState();
+        }
+    }
+
+    private void RefreshHistoryState()
+    {
+        CanUndo = _set?.CanUndo == true;
+        CanRedo = _set?.CanRedo == true;
+    }
+
+    private void BuildLanguageOptions()
+    {
+        _suppressLanguageChange = true;
+        try
+        {
+            LanguageOptions.Clear();
+            LanguageOptions.Add(new LanguageOptionViewModel(null, false));
+            var overlays = _set?.Primary.Descriptor.Overlays ?? Array.Empty<OverlayDescriptor>();
+            var canCreateOverlay = _set?.Primary.Metadata is { TranslatableFieldPaths.Count: > 0 };
+            foreach (var language in _languages
+                         .Where(language =>
+                             canCreateOverlay
+                             || overlays.Any(overlay => string.Equals(
+                                 overlay.Language.Code,
+                                 language.Code,
+                                 StringComparison.OrdinalIgnoreCase)))
+                         .OrderBy(static language => language.Ordinal)
+                         .ThenBy(static language => language.DisplayName, StringComparer.Ordinal))
+            {
+                var hasOverlay = overlays.Any(overlay => string.Equals(
+                    overlay.Language.Code,
+                    language.Code,
+                    StringComparison.OrdinalIgnoreCase));
+                LanguageOptions.Add(new LanguageOptionViewModel(language, hasOverlay));
+            }
+
+            SelectedLanguageOption = FindLanguageOption(_languageCode)
+                ?? LanguageOptions.FirstOrDefault();
+        }
+        finally
+        {
+            _suppressLanguageChange = false;
+        }
+    }
+
+    private IReadOnlyList<LookupOption> BuildClassOptions()
+    {
+        var options = _classNames
+            .Where(static pair => IsPowerOfTwo(pair.Key))
+            .OrderBy(static pair => pair.Key)
+            .Select(static pair => new LookupOption(
+                pair.Key.ToString(CultureInfo.InvariantCulture),
+                pair.Value,
+                isUnknown: false))
+            .ToArray();
+        return options.Length > 0
+            ? options
+            : new[] { new LookupOption("0", string.Empty, isUnknown: false) };
+    }
+
+    private void BuildGraphicTypes()
+    {
+        GraphicTypes.Clear();
+        var numbers = new SortedSet<int> { 0 };
+        var gameDirectory = _session.GameDataDirectory;
+        if (gameDirectory is not null)
+        {
+            var interfaceDirectory = Path.Combine(gameDirectory, "Interface");
+            if (Directory.Exists(interfaceDirectory))
+            {
+                try
+                {
+                    foreach (var path in Directory.EnumerateFiles(
+                                 interfaceDirectory,
+                                 "mdp*.sti",
+                                 SearchOption.TopDirectoryOnly))
+                    {
+                        var name = Path.GetFileNameWithoutExtension(path);
+                        var middle = name[3..^"items".Length];
+                        if (int.TryParse(middle, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number)
+                            && number >= 0)
+                        {
+                            numbers.Add(number);
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    // A missing or unreadable image directory only limits the picker.
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // A missing or unreadable image directory only limits the picker.
+                }
+            }
+        }
+
+        foreach (var number in numbers)
+        {
+            GraphicTypes.Add(new GraphicTypeOption(
+                number,
+                number == 0 ? Strings.Get("GraphicTypeGuns") : Strings.Format("GraphicTypeFormat", number)));
+        }
+    }
+
+    private void SyncGraphicType()
+    {
+        _suppressGraphicType = true;
+        try
+        {
+            var raw = _itemRow?.GetStoredValue(GraphicTypeField);
+            var value = int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+                ? parsed
+                : 0;
+            SelectedGraphicType = GraphicTypes.FirstOrDefault(option => option.Number == value)
+                ?? GraphicTypes.FirstOrDefault();
+        }
+        finally
+        {
+            _suppressGraphicType = false;
+        }
+    }
+
+    private async Task LoadImagesAsync()
+    {
+        var token = BeginImageLoad();
+        var dataDirectory = _session.GameDataDirectory;
+        if (_itemRow is null || dataDirectory is null)
+        {
+            ClearImages();
+            return;
+        }
+
+        if (!TryGetGraphic(_itemRow, out var graphicType, out var graphicIndex))
+        {
+            foreach (var panel in DetailImages)
+            {
+                panel.Image = null;
+                panel.InfoText = Strings.Get("DetailNoImage");
+                panel.IsLoading = false;
+            }
+
+            return;
+        }
+
+        await Task.WhenAll(DetailImages
+                .Select(panel => LoadImageAsync(panel, dataDirectory, graphicType, graphicIndex, token)))
+            .ConfigureAwait(true);
+    }
+
+    private async Task LoadImageAsync(
+        DetailImagePanelViewModel panel,
+        string dataDirectory,
+        int graphicType,
+        int graphicIndex,
+        CancellationToken token)
+    {
+        panel.Image = null;
+        panel.InfoText = Strings.Get("EditorLoading");
+        panel.IsLoading = true;
+        try
+        {
+            var result = await _itemImages
+                .GetImageAsync(dataDirectory, panel.Size, graphicType, graphicIndex, token)
+                .ConfigureAwait(true);
+            token.ThrowIfCancellationRequested();
+            panel.Image = result.Data;
+            panel.InfoText = result.Data is null
+                ? Strings.Format("ImageNotAvailableFormat", result.ErrorCode ?? string.Empty)
+                : $"{result.Data.PixelWidth}×{result.Data.PixelHeight}";
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer selection replaced this image load.
+        }
+        catch (Exception exception)
+        {
+            if (!token.IsCancellationRequested)
+            {
+                panel.Image = null;
+                panel.InfoText = Strings.Format("StatusError", exception.Message);
+            }
+        }
+        finally
+        {
+            if (!token.IsCancellationRequested)
+            {
+                panel.IsLoading = false;
+            }
+        }
+    }
+
+    private async Task<BitmapSource?> LoadItemThumbnailAsync(TableRowViewModel row)
+    {
+        var dataDirectory = _session.GameDataDirectory;
+        if (dataDirectory is null || !TryGetGraphic(row, out var graphicType, out var graphicIndex))
+        {
+            return null;
+        }
+
+        try
+        {
+            var result = await _itemImages
+                .GetImageAsync(dataDirectory, ImageSize.Small, graphicType, graphicIndex, CancellationToken.None)
+                .ConfigureAwait(true);
+            return result.Data;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    private static bool TryGetGraphic(TableRowViewModel row, out int graphicType, out int graphicIndex)
+    {
+        graphicType = 0;
+        graphicIndex = -1;
+        var rawIndex = row.GetStoredValue(GraphicIndexField);
+        if (!int.TryParse(rawIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out graphicIndex)
+            || graphicIndex < 0)
+        {
+            return false;
+        }
+
+        var rawType = row.GetStoredValue(GraphicTypeField);
+        if (int.TryParse(rawType, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedType)
+            && parsedType >= 0)
+        {
+            graphicType = parsedType;
+        }
+
+        return true;
+    }
+
+    private void ClearImages()
+    {
+        foreach (var panel in DetailImages)
+        {
+            panel.Image = null;
+            panel.InfoText = string.Empty;
+            panel.IsLoading = false;
+        }
+    }
+
+    private void CancelImageLoads()
+    {
+        _imageCts?.Cancel();
+        _imageCts?.Dispose();
+        _imageCts = null;
+    }
+
+    private CancellationToken BeginImageLoad()
+    {
+        _imageCts?.Cancel();
+        _imageCts?.Dispose();
+        _imageCts = new CancellationTokenSource();
+        return _imageCts.Token;
+    }
+
+    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    {
+        if (lookup is not { IsAvailable: true })
+        {
+            return new Dictionary<int, string>();
+        }
+
+        var labels = new Dictionary<int, string>();
+        foreach (var entry in lookup.Entries)
+        {
+            if (entry.Id <= 0 || entry.Id > uint.MaxValue)
+            {
+                continue;
+            }
+
+            var mask = (uint)entry.Id;
+            if ((mask & (mask - 1)) != 0)
+            {
+                continue;
+            }
+
+            var bit = BitOperations.Log2(mask);
+            if (bit < 32)
+            {
+                labels.TryAdd(bit, entry.Name);
+            }
+        }
+
+        return labels;
+    }
+
+    private void ClearAllSections(bool keepItems)
+    {
+        if (!keepItems)
+        {
+            Items.Clear();
+            _allItems.Clear();
+        }
+
+        ItemGroups.Clear();
+        NestedGroups.Clear();
+        SubTableSections.Clear();
+        ListSections.Clear();
+        ValidationIssues.Clear();
+        _allFields.Clear();
+    }
+}

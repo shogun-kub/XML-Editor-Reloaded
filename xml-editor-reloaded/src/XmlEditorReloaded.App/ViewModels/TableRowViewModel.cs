@@ -1,3 +1,4 @@
+using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -14,6 +15,9 @@ public sealed partial class TableRowViewModel : ObservableObject
     private WorkspaceRow _row;
     private string[] _translatableFields = Array.Empty<string>();
     private bool _translationMode;
+    private Func<TableRowViewModel, Task<BitmapSource?>>? _thumbnailLoader;
+    private BitmapSource? _thumbnail;
+    private bool _thumbnailRequested;
 
     internal TableRowViewModel(WorkspaceRow row, ITableCellEditor editor)
     {
@@ -56,6 +60,14 @@ public sealed partial class TableRowViewModel : ObservableObject
     internal string? GetStoredValue(string fieldName) => _row.GetValue(fieldName);
 
     /// <summary>
+    /// Gets all values of a repeated field, in document order.
+    /// </summary>
+    /// <param name="fieldName">XML field name of the repeated field.</param>
+    /// <returns>The values; an empty list when the field is absent.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    public IReadOnlyList<string> GetValues(string fieldName) => _row.GetValues(fieldName);
+
+    /// <summary>
     /// Gets a value indicating whether the field value comes from the language overlay.
     /// </summary>
     /// <param name="fieldName">XML field name.</param>
@@ -69,6 +81,54 @@ public sealed partial class TableRowViewModel : ObservableObject
     /// is translatable and the current value still comes from the base table.
     /// </summary>
     public IReadOnlyDictionary<string, bool> TranslationState => _translationState;
+
+    /// <summary>
+    /// Gets the lazily loaded grid thumbnail, or <see langword="null"/> when thumbnails are not
+    /// configured or the image is unavailable. Bindings request the image when a cell becomes visible.
+    /// </summary>
+    public BitmapSource? Thumbnail
+    {
+        get => _thumbnail;
+        private set => SetProperty(ref _thumbnail, value);
+    }
+
+    /// <summary>
+    /// Starts the thumbnail load for the row at most once. Called when a thumbnail cell is created, so
+    /// virtualized rows that are never shown do not decode images.
+    /// </summary>
+    public void RequestThumbnail()
+    {
+        if (_thumbnailRequested || _thumbnailLoader is null)
+        {
+            return;
+        }
+
+        _thumbnailRequested = true;
+        _ = LoadThumbnailAsync();
+    }
+
+    internal void ConfigureThumbnail(Func<TableRowViewModel, Task<BitmapSource?>>? loader)
+    {
+        _thumbnailLoader = loader;
+    }
+
+    private async Task LoadThumbnailAsync()
+    {
+        var loader = _thumbnailLoader;
+        if (loader is null)
+        {
+            return;
+        }
+
+        try
+        {
+            Thumbnail = await loader(this).ConfigureAwait(true);
+        }
+        catch (Exception)
+        {
+            // A missing or undecodable image must not break the grid; the cell stays empty.
+        }
+    }
 
     /// <summary>
     /// Configures translation markers for this row. The state dictionary is rebuilt so the grid can

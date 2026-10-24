@@ -26,7 +26,8 @@ public sealed partial class TableWorkspace
         TableDocument baseDocument,
         TableMetadata? metadata,
         OverlayDocument? overlay,
-        TableFileSaver saver)
+        TableFileSaver saver,
+        TableEditHistory? history = null)
     {
         Descriptor = descriptor;
         BaseDocument = baseDocument;
@@ -35,6 +36,7 @@ public sealed partial class TableWorkspace
         Schema = new TableSchemaBuilder().Build(baseDocument);
         Session = metadata is null ? null : new TableEditSession(baseDocument, metadata, overlay);
         _saver = saver;
+        History = history ?? new TableEditHistory();
     }
 
     /// <summary>
@@ -74,9 +76,11 @@ public sealed partial class TableWorkspace
     public TableSchema Schema { get; }
 
     /// <summary>
-    /// Gets the undo and redo history of record edits applied through the workspace.
+    /// Gets the undo and redo history of record edits applied through the workspace. Workspaces that
+    /// belong to one <see cref="TableSetWorkspace"/> share the same history, so a multi-file edit is
+    /// undone and redone as a single step.
     /// </summary>
-    public TableEditHistory History { get; } = new();
+    public TableEditHistory History { get; }
 
     /// <summary>
     /// Gets a value indicating whether a record edit can be undone.
@@ -116,6 +120,9 @@ public sealed partial class TableWorkspace
     /// <param name="language">Language whose overlay should be loaded, or <see langword="null"/> for base-only editing.</param>
     /// <param name="loader">Optional table loader.</param>
     /// <param name="cancellationToken">Token to cancel the load.</param>
+    /// <param name="history">
+    /// Optional history shared with other workspaces. When omitted the workspace owns a private history.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the workspace.
     /// On failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>,
@@ -128,7 +135,8 @@ public sealed partial class TableWorkspace
         TableMetadata? metadata,
         LanguageDescriptor? language = null,
         TableFileLoader? loader = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        TableEditHistory? history = null)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -187,7 +195,7 @@ public sealed partial class TableWorkspace
         }
 
         return OperationResult<TableWorkspace>.Success(
-            new TableWorkspace(descriptor, baseDocument, metadata, overlay, new TableFileSaver()));
+            new TableWorkspace(descriptor, baseDocument, metadata, overlay, new TableFileSaver(), history));
     }
 
     /// <summary>
@@ -433,7 +441,21 @@ public sealed partial class TableWorkspace
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
     /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult<TableRecord> AddRecord()
+    public OperationResult<TableRecord> AddRecord() => AddRecord(null);
+
+    /// <summary>
+    /// Appends a record with the next primary key and the supplied initial field values. The record and
+    /// its values are recorded as one undoable transaction.
+    /// </summary>
+    /// <param name="initialValues">
+    /// Direct child values to set on the new record, keyed by case-sensitive XML element name. Values are
+    /// written without validation so a caller can prefill a key field with a non-numeric identity.
+    /// </param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
+    /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
+    /// </returns>
+    public OperationResult<TableRecord> AddRecord(IReadOnlyDictionary<string, string>? initialValues)
     {
         if (!CanEdit)
         {
@@ -443,15 +465,80 @@ public sealed partial class TableWorkspace
         }
 
         var result = BaseDocument.AddRecord();
+        if (!result.IsSuccess)
+        {
+            return result;
+        }
+
+        var record = result.Data!;
+        if (initialValues is not null)
+        {
+            foreach (var pair in initialValues)
+            {
+                if (string.IsNullOrEmpty(pair.Key))
+                {
+                    continue;
+                }
+
+                record.TrySetValue(pair.Key, pair.Value, addIfMissing: true);
+            }
+        }
+
+        var transaction = new TableEditTransaction();
+        transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, record.Element));
+        History.Record(transaction);
+        return result;
+    }
+
+    /// <summary>
+    /// Replaces all values of a repeated direct child field of one record as one undoable transaction.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="fieldName">Case-sensitive XML element name of the repeated field.</param>
+    /// <param name="values">New values in the desired order; an empty sequence removes the occurrences.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or
+    /// <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> or <paramref name="values"/> is null.</exception>
+    public OperationResult SetListValues(string recordKey, string fieldName, IReadOnlyList<string> values)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentNullException.ThrowIfNull(values);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.");
+        }
+
+        var before = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var result = record.SetListField(fieldName, values);
         if (result.IsSuccess)
         {
             var transaction = new TableEditTransaction();
-            transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, result.Data!.Element));
+            before.CompleteAfter(record.Element);
+            transaction.Add(before);
             History.Record(transaction);
         }
 
         return result;
     }
+
+    /// <summary>
+    /// Finds a loaded base record by its primary key.
+    /// </summary>
+    /// <param name="key">Primary key text.</param>
+    /// <returns>The record, or <see langword="null"/> when no record has that key.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>
+    public TableRecord? FindRecord(string key) => BaseDocument.FindRecord(key);
 
     /// <summary>
     /// Duplicates a record directly after its source and assigns the next primary key.
