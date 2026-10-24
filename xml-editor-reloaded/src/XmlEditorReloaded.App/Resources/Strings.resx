@@ -321,6 +321,12 @@
   <data name="DetailGroup.modifiers" xml:space="preserve">
     <value>Modifiers</value>
   </data>
+  <data name="DetailGroup.overheating" xml:space="preserve">
+    <value>Overheating</value>
+  </data>
+  <data name="DetailGroup.pockets" xml:space="preserve">
+    <value>Pockets</value>
+  </data>
   <data name="DetailGroup.stance" xml:space="preserve">
     <value>Stance modifiers</value>
   </data>
@@ -990,6 +996,87 @@
   <data name="ItemFilterLabel" xml:space="preserve">
     <value>Filter fields</value>
   </data>
+  <data name="ItemFilterClassLabel" xml:space="preserve">
+    <value>Class:</value>
+  </data>
+  <data name="ItemFilterFlagLabel" xml:space="preserve">
+    <value>Flags:</value>
+  </data>
+  <data name="ItemListFilterLabel" xml:space="preserve">
+    <value>Custom item filter</value>
+  </data>
+  <data name="ItemFilterClearText" xml:space="preserve">
+    <value>Clear filters</value>
+  </data>
+  <data name="ItemFilterAllClasses" xml:space="preserve">
+    <value>All classes</value>
+  </data>
+  <data name="ItemFilterClassGuns" xml:space="preserve">
+    <value>Guns</value>
+  </data>
+  <data name="ItemFilterClassAmmo" xml:space="preserve">
+    <value>Ammo</value>
+  </data>
+  <data name="ItemFilterClassLaunchers" xml:space="preserve">
+    <value>Launchers</value>
+  </data>
+  <data name="ItemFilterClassGrenades" xml:space="preserve">
+    <value>Grenades</value>
+  </data>
+  <data name="ItemFilterClassExplosives" xml:space="preserve">
+    <value>Explosives</value>
+  </data>
+  <data name="ItemFilterClassKnives" xml:space="preserve">
+    <value>Knives</value>
+  </data>
+  <data name="ItemFilterClassOtherWeapons" xml:space="preserve">
+    <value>Other weapons</value>
+  </data>
+  <data name="ItemFilterClassArmour" xml:space="preserve">
+    <value>Armour</value>
+  </data>
+  <data name="ItemFilterClassFace" xml:space="preserve">
+    <value>Facial gear</value>
+  </data>
+  <data name="ItemFilterClassKits" xml:space="preserve">
+    <value>Kits</value>
+  </data>
+  <data name="ItemFilterClassKeys" xml:space="preserve">
+    <value>Keys</value>
+  </data>
+  <data name="ItemFilterClassLoadBearing" xml:space="preserve">
+    <value>Load bearing</value>
+  </data>
+  <data name="ItemFilterClassMisc" xml:space="preserve">
+    <value>Misc</value>
+  </data>
+  <data name="ItemFilterClassNone" xml:space="preserve">
+    <value>Empty / none</value>
+  </data>
+  <data name="ItemFilterClassRandom" xml:space="preserve">
+    <value>Random items</value>
+  </data>
+  <data name="ItemFilterAllFlags" xml:space="preserve">
+    <value>All flags</value>
+  </data>
+  <data name="ItemFilterFlagAttachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="ItemFilterFlagDrugs" xml:space="preserve">
+    <value>Drugs</value>
+  </data>
+  <data name="ItemFilterFlagTonsOfGuns" xml:space="preserve">
+    <value>Tons of guns</value>
+  </data>
+  <data name="ItemFilterFlagNormalGuns" xml:space="preserve">
+    <value>Normal guns</value>
+  </data>
+  <data name="ItemFilterFlagSciFi" xml:space="preserve">
+    <value>Sci-Fi</value>
+  </data>
+  <data name="ItemFilterFlagRealistic" xml:space="preserve">
+    <value>Realistic</value>
+  </data>
   <data name="ItemTabNested" xml:space="preserve">
     <value>Nested structures</value>
   </data>
@@ -1223,6 +1310,9 @@
   </data>
   <data name="EditorFilterClear" xml:space="preserve">
     <value>Clear filter</value>
+  </data>
+  <data name="EditorFilterRemoveSymbol" xml:space="preserve">
+    <value>×</value>
   </data>
   <data name="EditorFilterSummaryEmpty" xml:space="preserve">
     <value>No filter</value>

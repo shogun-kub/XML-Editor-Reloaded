@@ -9,11 +9,13 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Filtering;
 using XmlEditorReloaded.Xml.Schema;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -58,6 +60,7 @@ public sealed partial class ItemWorkspaceViewModel :
     private bool _suppressLanguageChange;
     private bool _suppressGraphicType;
     private bool _suppressSelection;
+    private bool _suppressItemFilter;
     private bool _isReloading;
     private CancellationTokenSource? _imageCts;
     private string? _pendingSelection;
@@ -87,6 +90,18 @@ public sealed partial class ItemWorkspaceViewModel :
 
     [ObservableProperty]
     private string _fieldFilter = string.Empty;
+
+    [ObservableProperty]
+    private bool _isItemFilterVisible;
+
+    [ObservableProperty]
+    private ItemListFilterOption? _selectedClassFilter;
+
+    [ObservableProperty]
+    private ItemListFilterOption? _selectedFlagFilter;
+
+    [ObservableProperty]
+    private TableFilterViewModel? _customItemFilter;
 
     [ObservableProperty]
     private string _itemIdText = string.Empty;
@@ -182,6 +197,13 @@ public sealed partial class ItemWorkspaceViewModel :
         ShopkeeperQuantityColumn = Strings.Get("ShopkeeperQuantityColumn");
         ShopkeeperEmptyText = Strings.Get("ShopkeeperEmptyText");
         ItemFilterLabel = Strings.Get("ItemFilterLabel");
+        ClassFilterLabel = Strings.Get("ItemFilterClassLabel");
+        FlagFilterLabel = Strings.Get("ItemFilterFlagLabel");
+        ItemListFilterLabel = Strings.Get("ItemListFilterLabel");
+        ItemFilterClearText = Strings.Get("ItemFilterClearText");
+        FilterAddText = Strings.Get("EditorFilterAdd");
+        FilterClearText = Strings.Get("EditorFilterClear");
+        FilterRemoveText = Strings.Get("EditorFilterRemoveSymbol");
 
         DetailImages = new[]
         {
@@ -388,12 +410,66 @@ public sealed partial class ItemWorkspaceViewModel :
     public string ItemFilterLabel { get; }
 
     /// <summary>
+    /// Gets the item list class filter label.
+    /// </summary>
+    public string ClassFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the item list flag filter label.
+    /// </summary>
+    public string FlagFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the custom item filter expander header.
+    /// </summary>
+    public string ItemListFilterLabel { get; }
+
+    /// <summary>
+    /// Gets the text of the command that clears every item list filter.
+    /// </summary>
+    public string ItemFilterClearText { get; }
+
+    /// <summary>
+    /// Gets the add-criterion button text of the custom item filter.
+    /// </summary>
+    public string FilterAddText { get; }
+
+    /// <summary>
+    /// Gets the clear-criteria button text of the custom item filter.
+    /// </summary>
+    public string FilterClearText { get; }
+
+    /// <summary>
+    /// Gets the symbol shown on the button that removes one custom filter criterion.
+    /// </summary>
+    public string FilterRemoveText { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether any item list filter restricts the selector.
+    /// </summary>
+    public bool HasActiveItemFilters =>
+        SelectedClassFilter?.Filter.IsEmpty == false
+        || SelectedFlagFilter?.Filter.IsEmpty == false
+        || CustomItemFilter?.ToGroup().IsEmpty == false;
+
+    /// <summary>
+    /// Gets the class filter options in legacy menu order.
+    /// </summary>
+    public ObservableCollection<ItemListFilterOption> ClassFilterOptions { get; } = new();
+
+    /// <summary>
+    /// Gets the item-flag filter options in legacy menu order.
+    /// </summary>
+    public ObservableCollection<ItemListFilterOption> FlagFilterOptions { get; } = new();
+
+    /// <summary>
     /// Gets the big, medium, and small image preview panels.
     /// </summary>
     public IReadOnlyList<DetailImagePanelViewModel> DetailImages { get; }
 
     /// <summary>
-    /// Gets the items shown in the selector, filtered by <see cref="SearchText"/>.
+    /// Gets the items shown in the selector, filtered by <see cref="SearchText"/>, the class and flag
+    /// presets, and the custom structured filter.
     /// </summary>
     public ObservableCollection<ItemListEntry> Items { get; } = new();
 
@@ -421,6 +497,13 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Gets the 1:N child-table sections of the item workspace.
     /// </summary>
     public ObservableCollection<ItemChildSectionViewModel> ChildSections { get; } = new();
+
+    /// <summary>
+    /// Gets the child-table sections that the selected item class shows. Binding the tab control to
+    /// this collection instead of <see cref="ChildSections"/> prevents a hidden section from staying
+    /// selected and rendering its grid.
+    /// </summary>
+    public ObservableCollection<ItemChildSectionViewModel> VisibleChildSections { get; } = new();
 
     /// <summary>
     /// Gets the dealer inventory rows that stock the selected item, with their quantities.
@@ -816,7 +899,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
 
         IsDirty = _set.IsDirty;
-        RebuildItemList(id);
+        RevealItem(id);
         StatusText = Strings.Format("ItemCreated", id);
     }
 
@@ -841,7 +924,7 @@ public sealed partial class ItemWorkspaceViewModel :
 
         IsDirty = _set.IsDirty;
         RefreshChildEditors();
-        RebuildItemList(result.Data);
+        RevealItem(result.Data);
         StatusText = Strings.Format("ItemDuplicated", key, result.Data ?? string.Empty);
     }
 
@@ -936,7 +1019,7 @@ public sealed partial class ItemWorkspaceViewModel :
 
         IsDirty = _set.IsDirty;
         RefreshChildEditors();
-        RebuildItemList(newKey);
+        RevealItem(newKey);
         StatusText = Strings.Format("ItemIdChanged", oldKey, newKey);
     }
 
@@ -961,6 +1044,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
 
         SearchText = string.Empty;
+        ResetItemFilters();
         ApplyItemFilter(entry.Key);
     }
 
@@ -992,6 +1076,7 @@ public sealed partial class ItemWorkspaceViewModel :
         if (!Items.Contains(entry))
         {
             SearchText = string.Empty;
+            ResetItemFilters();
             ApplyItemFilter(entry.Key);
         }
         else
@@ -1226,6 +1311,7 @@ public sealed partial class ItemWorkspaceViewModel :
             if (string.Equals(fieldName, ClassField, StringComparison.Ordinal))
             {
                 RebuildSections();
+                RefreshChildSectionState();
             }
             else if (fieldName is GraphicTypeField or GraphicIndexField)
             {
@@ -1260,7 +1346,30 @@ public sealed partial class ItemWorkspaceViewModel :
 
     partial void OnCanRedoChanged(bool value) => RedoCommand.NotifyCanExecuteChanged();
 
-    partial void OnSearchTextChanged(string value) => ApplyItemFilter(_itemRow?.Key);
+    partial void OnSearchTextChanged(string value)
+    {
+        if (_suppressItemFilter)
+        {
+            return;
+        }
+
+        ApplyItemFilter(_itemRow?.Key);
+    }
+
+    partial void OnSelectedClassFilterChanged(ItemListFilterOption? value) => OnPresetFilterChanged();
+
+    partial void OnSelectedFlagFilterChanged(ItemListFilterOption? value) => OnPresetFilterChanged();
+
+    private void OnPresetFilterChanged()
+    {
+        if (_suppressItemFilter)
+        {
+            return;
+        }
+
+        OnPropertyChanged(nameof(HasActiveItemFilters));
+        ApplyItemFilter(_itemRow?.Key);
+    }
 
     partial void OnFieldFilterChanged(string value)
     {
@@ -1395,6 +1504,7 @@ public sealed partial class ItemWorkspaceViewModel :
         try
         {
             var key = _itemRow?.Key;
+            ResetItemFilterState();
             ClearAllSections();
             await InitializeCoreAsync(CancellationToken.None).ConfigureAwait(true);
             if (key is not null)
@@ -1416,6 +1526,7 @@ public sealed partial class ItemWorkspaceViewModel :
         SubTableSections.Clear();
         ListSections.Clear();
         ChildSections.Clear();
+        VisibleChildSections.Clear();
         ValidationIssues.Clear();
         ShopkeeperEntries.Clear();
         NotifyShopkeeperChanged();
@@ -1469,6 +1580,7 @@ public sealed partial class ItemWorkspaceViewModel :
     private async Task InitializeChildEditorsAsync(CancellationToken cancellationToken)
     {
         ChildSections.Clear();
+        VisibleChildSections.Clear();
         if (_set is null)
         {
             return;
@@ -1512,8 +1624,13 @@ public sealed partial class ItemWorkspaceViewModel :
     private void RefreshChildSectionState()
     {
         var key = _itemRow?.Key;
+        var classBits = ParseClassBits(_itemRow?.GetStoredValue(ClassField));
         foreach (var section in ChildSections)
         {
+            section.IsVisible = IsSectionVisibleForClass(
+                ClassVisibilitySectionKind.ChildTable,
+                section.TableName.Value,
+                classBits);
             section.Editor.NewRowDefaults = key is null
                 ? null
                 : new Dictionary<string, string>(StringComparer.Ordinal)
@@ -1522,6 +1639,24 @@ public sealed partial class ItemWorkspaceViewModel :
                 };
             section.Editor.RefreshRowFilter();
             section.RefreshCount();
+        }
+
+        RefreshVisibleChildSections();
+    }
+
+    private void RefreshVisibleChildSections()
+    {
+        var visible = ChildSections.Where(static section => section.IsVisible).ToArray();
+        if (visible.Length == VisibleChildSections.Count
+            && visible.SequenceEqual(VisibleChildSections))
+        {
+            return;
+        }
+
+        VisibleChildSections.Clear();
+        foreach (var section in visible)
+        {
+            VisibleChildSections.Add(section);
         }
     }
 
@@ -1543,18 +1678,76 @@ public sealed partial class ItemWorkspaceViewModel :
             _allItems.Add(entry);
         }
 
+        EnsureItemFilterOptions();
+        EnsureCustomItemFilter();
         ApplyItemFilter(selectKey);
+    }
+
+    private void EnsureItemFilterOptions()
+    {
+        if (ClassFilterOptions.Count > 0)
+        {
+            return;
+        }
+
+        var hasRocketLauncherField = _set?.Primary.Schema.FindColumn(
+            ItemListFilterPresets.RocketLauncherField) is not null;
+        _suppressItemFilter = true;
+        try
+        {
+            foreach (var option in ItemListFilterPresets.CreateClassOptions(hasRocketLauncherField))
+            {
+                ClassFilterOptions.Add(option);
+            }
+
+            foreach (var option in ItemListFilterPresets.CreateFlagOptions())
+            {
+                FlagFilterOptions.Add(option);
+            }
+
+            SelectedClassFilter = ClassFilterOptions[0];
+            SelectedFlagFilter = FlagFilterOptions[0];
+        }
+        finally
+        {
+            _suppressItemFilter = false;
+        }
+    }
+
+    private void EnsureCustomItemFilter()
+    {
+        if (CustomItemFilter is not null || _set is null)
+        {
+            return;
+        }
+
+        var columns = _set.Primary.Schema.Columns
+            .Where(static column => !column.IsList && !column.IsDict && !column.IsNested)
+            .Select(static column => new TableColumnViewModel(column))
+            .ToArray();
+        CustomItemFilter = new TableFilterViewModel(columns, OnCustomItemFilterChanged);
     }
 
     private void ApplyItemFilter(string? selectKey)
     {
         var term = SearchText.Trim();
-        var visible = term.Length == 0
-            ? _allItems
-            : _allItems.Where(entry =>
+        IEnumerable<ItemListEntry> query = _allItems;
+        if (term.Length > 0)
+        {
+            query = query.Where(entry =>
                 entry.Key.Contains(term, StringComparison.OrdinalIgnoreCase)
-                || entry.Name.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
+                || entry.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
 
+        var schema = _set?.Primary.Schema;
+        if (schema is not null)
+        {
+            query = ApplyFilterGroup(query, schema, SelectedClassFilter?.Filter);
+            query = ApplyFilterGroup(query, schema, SelectedFlagFilter?.Filter);
+            query = ApplyFilterGroup(query, schema, CustomItemFilter?.ToGroup());
+        }
+
+        var visible = query.ToList();
         var wanted = selectKey ?? _itemRow?.Key;
         _suppressSelection = true;
         try
@@ -1583,10 +1776,91 @@ public sealed partial class ItemWorkspaceViewModel :
             LoadItemForm();
         }
 
-        if (term.Length > 0 && Items.Count == 0)
+        if (Items.Count == 0 && (term.Length > 0 || HasActiveItemFilters))
         {
             StatusText = Strings.Get("EditorNoMatches");
         }
+        else if (string.Equals(StatusText, Strings.Get("EditorNoMatches"), StringComparison.Ordinal))
+        {
+            StatusText = Strings.Get("EditorReady");
+        }
+    }
+
+    private static IEnumerable<ItemListEntry> ApplyFilterGroup(
+        IEnumerable<ItemListEntry> entries,
+        TableSchema schema,
+        RowFilterGroup? filter) =>
+        filter is null || filter.IsEmpty
+            ? entries
+            : entries.Where(entry => TableRowFilterMatcher.Matches(entry.Row.Row, schema, filter));
+
+    private void OnCustomItemFilterChanged()
+    {
+        if (_suppressItemFilter || _set is null || CustomItemFilter is null)
+        {
+            return;
+        }
+
+        OnPropertyChanged(nameof(HasActiveItemFilters));
+        ApplyItemFilter(_itemRow?.Key);
+    }
+
+    private void ResetItemFilters(bool clearSearch = false)
+    {
+        _suppressItemFilter = true;
+        try
+        {
+            if (clearSearch)
+            {
+                SearchText = string.Empty;
+            }
+
+            SelectedClassFilter = ClassFilterOptions.FirstOrDefault();
+            SelectedFlagFilter = FlagFilterOptions.FirstOrDefault();
+            CustomItemFilter?.Clear();
+        }
+        finally
+        {
+            _suppressItemFilter = false;
+        }
+
+        OnPropertyChanged(nameof(HasActiveItemFilters));
+    }
+
+    private void ResetItemFilterState()
+    {
+        _suppressItemFilter = true;
+        try
+        {
+            SelectedClassFilter = null;
+            SelectedFlagFilter = null;
+            ClassFilterOptions.Clear();
+            FlagFilterOptions.Clear();
+            CustomItemFilter = null;
+        }
+        finally
+        {
+            _suppressItemFilter = false;
+        }
+
+        OnPropertyChanged(nameof(HasActiveItemFilters));
+    }
+
+    private void RevealItem(string? key)
+    {
+        ResetItemFilters(clearSearch: true);
+        RebuildItemList(key);
+    }
+
+    /// <summary>
+    /// Clears the class preset, the flag preset, and the custom structured filter, restoring the full
+    /// item list. The search term is kept.
+    /// </summary>
+    [RelayCommand]
+    public void ClearItemFilters()
+    {
+        ResetItemFilters();
+        ApplyItemFilter(_itemRow?.Key);
     }
 
     private void LoadItemForm()
@@ -1708,12 +1982,18 @@ public sealed partial class ItemWorkspaceViewModel :
 
         var primary = _set.Primary;
         var sources = _fieldSources.GetValueOrDefault(primary.Descriptor.TableName);
+        var classBits = ParseClassBits(_itemRow.GetStoredValue(ClassField));
         var fields = new List<DetailFieldViewModel>();
         var nestedColumns = new List<TableSchemaColumn>();
         var listColumns = new List<TableSchemaColumn>();
         foreach (var column in primary.Schema.Columns)
         {
             if (column.IsKey)
+            {
+                continue;
+            }
+
+            if (!IsGroupVisibleForClass(column.GroupKey, classBits))
             {
                 continue;
             }
@@ -1885,7 +2165,10 @@ public sealed partial class ItemWorkspaceViewModel :
         var classBits = ParseClassBits(_itemRow.GetStoredValue(ClassField));
         foreach (var member in _set.GetMembers(TableRelationKind.SubTable))
         {
-            if (!IsSubTableVisibleForClass(member.Relation.TargetTable, classBits))
+            if (!IsSectionVisibleForClass(
+                    ClassVisibilitySectionKind.SubTable,
+                    member.Relation.TargetTable.Value,
+                    classBits))
             {
                 continue;
             }
@@ -2033,19 +2316,19 @@ public sealed partial class ItemWorkspaceViewModel :
         return name.Length == 0 ? key : $"{key}: {name}";
     }
 
-    private static bool IsSubTableVisibleForClass(TableName table, uint classBits)
-    {
-        var required = table.Value switch
-        {
-            "Items.Weapons" => 254u,
-            "Items.Magazines" => 1024u,
-            "Items.Armours" => 2048u,
-            "Items.Explosives" => 768u,
-            "Items.LoadBearingEquipment" => 131072u,
-            _ => 0u,
-        };
+    private bool IsGroupVisibleForClass(string? groupKey, long classBits) =>
+        groupKey is null
+        || IsSectionVisibleForClass(ClassVisibilitySectionKind.Group, groupKey, classBits);
 
-        return required == 0 || (classBits & required) != 0;
+    private bool IsSectionVisibleForClass(
+        ClassVisibilitySectionKind kind,
+        string sectionKey,
+        long classBits)
+    {
+        var metadata = _set?.Primary.Metadata;
+        return metadata is null
+            || !metadata.TryGetClassVisibilityRule(kind, sectionKey, out var rule)
+            || rule!.IsVisible(classBits);
     }
 
     private string LabelFor(TableSetMember member)
@@ -2437,6 +2720,7 @@ public sealed partial class ItemWorkspaceViewModel :
         NestedGroups.Clear();
         SubTableSections.Clear();
         ListSections.Clear();
+        VisibleChildSections.Clear();
         ValidationIssues.Clear();
         ShopkeeperEntries.Clear();
         NotifyShopkeeperChanged();

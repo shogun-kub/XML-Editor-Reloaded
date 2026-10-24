@@ -321,6 +321,12 @@
   <data name="DetailGroup.modifiers" xml:space="preserve">
     <value>Модификаторы</value>
   </data>
+  <data name="DetailGroup.overheating" xml:space="preserve">
+    <value>Перегрев</value>
+  </data>
+  <data name="DetailGroup.pockets" xml:space="preserve">
+    <value>Карманы</value>
+  </data>
   <data name="DetailGroup.stance" xml:space="preserve">
     <value>Модификаторы стоек</value>
   </data>
@@ -990,6 +996,87 @@
   <data name="ItemFilterLabel" xml:space="preserve">
     <value>Фильтр полей</value>
   </data>
+  <data name="ItemFilterClassLabel" xml:space="preserve">
+    <value>Класс:</value>
+  </data>
+  <data name="ItemFilterFlagLabel" xml:space="preserve">
+    <value>Флаги:</value>
+  </data>
+  <data name="ItemListFilterLabel" xml:space="preserve">
+    <value>Произвольный фильтр предметов</value>
+  </data>
+  <data name="ItemFilterClearText" xml:space="preserve">
+    <value>Сбросить фильтры</value>
+  </data>
+  <data name="ItemFilterAllClasses" xml:space="preserve">
+    <value>Все классы</value>
+  </data>
+  <data name="ItemFilterClassGuns" xml:space="preserve">
+    <value>Оружие</value>
+  </data>
+  <data name="ItemFilterClassAmmo" xml:space="preserve">
+    <value>Боеприпасы</value>
+  </data>
+  <data name="ItemFilterClassLaunchers" xml:space="preserve">
+    <value>Пусковые</value>
+  </data>
+  <data name="ItemFilterClassGrenades" xml:space="preserve">
+    <value>Гранаты</value>
+  </data>
+  <data name="ItemFilterClassExplosives" xml:space="preserve">
+    <value>Взрывчатка</value>
+  </data>
+  <data name="ItemFilterClassKnives" xml:space="preserve">
+    <value>Ножи</value>
+  </data>
+  <data name="ItemFilterClassOtherWeapons" xml:space="preserve">
+    <value>Прочее оружие</value>
+  </data>
+  <data name="ItemFilterClassArmour" xml:space="preserve">
+    <value>Броня</value>
+  </data>
+  <data name="ItemFilterClassFace" xml:space="preserve">
+    <value>Лицевое снаряжение</value>
+  </data>
+  <data name="ItemFilterClassKits" xml:space="preserve">
+    <value>Наборы</value>
+  </data>
+  <data name="ItemFilterClassKeys" xml:space="preserve">
+    <value>Ключи</value>
+  </data>
+  <data name="ItemFilterClassLoadBearing" xml:space="preserve">
+    <value>Разгрузка</value>
+  </data>
+  <data name="ItemFilterClassMisc" xml:space="preserve">
+    <value>Разное</value>
+  </data>
+  <data name="ItemFilterClassNone" xml:space="preserve">
+    <value>Пусто / нет</value>
+  </data>
+  <data name="ItemFilterClassRandom" xml:space="preserve">
+    <value>Случайные предметы</value>
+  </data>
+  <data name="ItemFilterAllFlags" xml:space="preserve">
+    <value>Все флаги</value>
+  </data>
+  <data name="ItemFilterFlagAttachments" xml:space="preserve">
+    <value>Вложения</value>
+  </data>
+  <data name="ItemFilterFlagDrugs" xml:space="preserve">
+    <value>Наркотики</value>
+  </data>
+  <data name="ItemFilterFlagTonsOfGuns" xml:space="preserve">
+    <value>Много оружия</value>
+  </data>
+  <data name="ItemFilterFlagNormalGuns" xml:space="preserve">
+    <value>Обычное оружие</value>
+  </data>
+  <data name="ItemFilterFlagSciFi" xml:space="preserve">
+    <value>Sci-Fi</value>
+  </data>
+  <data name="ItemFilterFlagRealistic" xml:space="preserve">
+    <value>Реалистичное</value>
+  </data>
   <data name="ItemTabNested" xml:space="preserve">
     <value>Вложенные структуры</value>
   </data>
@@ -1223,6 +1310,9 @@
   </data>
   <data name="EditorFilterClear" xml:space="preserve">
     <value>Сбросить фильтр</value>
+  </data>
+  <data name="EditorFilterRemoveSymbol" xml:space="preserve">
+    <value>×</value>
   </data>
   <data name="EditorFilterSummaryEmpty" xml:space="preserve">
     <value>Фильтр не задан</value>

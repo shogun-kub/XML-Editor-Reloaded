@@ -132,6 +132,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -150,6 +153,34 @@
 
                     <Grid Grid.Row="1" Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding ClassFilterLabel}" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding ClassFilterOptions}"
+                                  SelectedItem="{Binding SelectedClassFilter, Mode=TwoWay}"
+                                  DisplayMemberPath="Label" />
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding FlagFilterLabel}" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding FlagFilterOptions}"
+                                  SelectedItem="{Binding SelectedFlagFilter, Mode=TwoWay}"
+                                  DisplayMemberPath="Label" />
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -161,7 +192,63 @@
                                 Command="{Binding GoToItemIdCommand}" />
                     </Grid>
 
-                    <ListBox Grid.Row="2"
+                    <Expander Grid.Row="4"
+                              Margin="0,0,0,4"
+                              Header="{Binding ItemListFilterLabel}"
+                              IsExpanded="{Binding IsItemFilterVisible, Mode=TwoWay}">
+                        <StackPanel Margin="4,4,0,0">
+                            <WrapPanel Margin="0,0,0,4">
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="#FF666666"
+                                           Text="{Binding CustomItemFilter.SummaryText}" />
+                                <ComboBox Width="60"
+                                          Margin="8,0,4,0"
+                                          VerticalAlignment="Center"
+                                          ItemsSource="{Binding CustomItemFilter.LogicalOperators}"
+                                          SelectedItem="{Binding CustomItemFilter.SelectedLogicalOperator, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayText"
+                                          Visibility="{Binding CustomItemFilter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
+                                <Button Padding="8,2"
+                                        Margin="0,0,4,0"
+                                        Content="{Binding FilterAddText}"
+                                        Command="{Binding CustomItemFilter.AddCriterionCommand}" />
+                                <Button Padding="8,2"
+                                        Content="{Binding FilterClearText}"
+                                        Command="{Binding CustomItemFilter.ClearCommand}" />
+                            </WrapPanel>
+                            <Button Padding="8,2"
+                                    Margin="0,0,0,4"
+                                    HorizontalAlignment="Left"
+                                    Content="{Binding ItemFilterClearText}"
+                                    Command="{Binding ClearItemFiltersCommand}" />
+                            <ItemsControl ItemsSource="{Binding CustomItemFilter.Criteria}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,1">
+                                            <ComboBox Width="105"
+                                                      ItemsSource="{Binding Columns}"
+                                                      SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" />
+                                            <ComboBox Width="70"
+                                                      Margin="4,0,0,0"
+                                                      ItemsSource="{Binding Operators}"
+                                                      SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
+                                                      DisplayMemberPath="DisplayText" />
+                                            <TextBox Width="65"
+                                                     Margin="4,0,0,0"
+                                                     Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Button Margin="4,0,0,0"
+                                                    Padding="6,0"
+                                                    Content="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    Command="{Binding RemoveCommand}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Expander>
+
+                    <ListBox Grid.Row="5"
                              ItemsSource="{Binding Items}"
                              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                              VirtualizingStackPanel.IsVirtualizing="True"
@@ -198,7 +285,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <StackPanel Grid.Row="3" Margin="0,6,0,0" Orientation="Horizontal">
+                    <StackPanel Grid.Row="6" Margin="0,6,0,0" Orientation="Horizontal">
                         <Button Padding="10,3"
                                 Margin="0,0,6,0"
                                 Content="{Binding NewItemText}"
@@ -396,7 +483,7 @@
                     </TabItem>
 
                     <TabItem Header="{Binding ChildTablesTabText}">
-                        <TabControl ItemsSource="{Binding ChildSections}">
+                        <TabControl ItemsSource="{Binding VisibleChildSections}">
                             <TabControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

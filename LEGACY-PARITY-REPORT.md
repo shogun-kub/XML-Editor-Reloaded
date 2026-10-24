@@ -742,7 +742,36 @@
 
 WPF-поведение в этой среде не автоматизируется. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
 
-Ограничение: при отсутствии env-переменных env-gated тесты делают early-return, поэтому базовые 415 включают их без ассертов; в corpus-, compare- и copy-прогонах они выполнялись.
+## M23b1 — фильтры item workspace и видимость полей
+
+**Дата:** 2026-10-24. **Статус:** выполнен. **Закрытые пробелы:** `L-SHELL-079…093` (15 классовых пресетов), `L-SHELL-095…101` (6 флаговых пресетов и произвольный фильтр), `L-ITEM-005` (class-aware видимость). Контейнеры `L-SHELL-078/094` остаются `superseded`: иерархия меню заменена селекторами фильтра в item workspace.
+
+**Реализация.**
+- `App/ViewModels/ItemListFilterPresets.cs`: пресеты классов и флагов ITEM с точными legacy-значениями (`Gun=2`…`RandomItem=1073741824`), `Guns` дополнительно исключает `RocketLauncher=1`, `Launchers` принимает класс 16 или флаг. `L-SHELL-079…101`.
+- `App/ViewModels/ItemWorkspaceViewModel.cs`: `ClassFilterOptions`, `FlagFilterOptions`, `CustomItemFilter`, `HasActiveItemFilters`, `ClearItemFilters`; `ApplyItemFilter` комбинирует поиск, класс, флаги и структурированные критерии через `TableRowFilterMatcher` (`AND`). Навигация `GoToItemId`/`SelectRecord` и команды создания/дублирования/переименования сбрасывают фильтры, чтобы целевая запись не оказалась скрытой. Reload пересоздаёт пресеты и колонки произвольного фильтра.
+- Произвольный фильтр переиспользует `TableFilterViewModel` generic grid (поля/операторы/операнды, AND/OR) вместо legacy `DataView.RowFilter`; `L-SHELL-101`.
+- `Data/Metadata/Migrations/0010_ItemClassVisibility.sql`: таблица `ClassVisibilityRules` (23 правила) для `Items.Items` — 13 групп, 5 подтаблиц, 5 дочерних секций. Правила задают маску классов и заменяют захардкоженную `IsSubTableVisibleForClass`.
+- `Core/Metadata/ClassVisibilityRule.cs`, `TableMetadata.ClassVisibilityRules/TryGetClassVisibilityRule`, `SqliteMetadataProvider.ReadClassVisibilityRulesAsync` — чтение правил из SQLite. Секция без правила видима, поэтому document-driven таблицы не меняются.
+- `App/Views/ItemWorkspaceView.xaml`: селекторы класса и флагов, expander произвольного фильтра, кнопка сброса; дочерние вкладки привязаны к `VisibleChildSections`, поэтому скрытая секция не остаётся выбранной и не показывает свой грид. Новые строки — `Strings.resx`/`Strings.ru.resx` (`ItemFilter*`, `DetailGroup.overheating`, `DetailGroup.pockets`).
+
+**Соответствие `DisplayTabs`.** `combat`/`stance` = страницы NCTH/Bonuses; `vision`/`food` = Abilities/Bonuses; `attachments` = Attachments + Attachment Data; `overheating` выделен из `modifiers`, `pockets` содержит `sBackpackWeightModifier`; Key/LBE/RandomItem/None-Money теряют соответствующие страницы. Подтаблицы: Weapons 254, Magazines 1024, Armours 2048, Explosives 768, LBE 131072; дочерние: Attachments 268614654, AttachmentInfo/IncompatibleAttachments 268484606, Launchables 768, CompatibleFaceItems 32768.
+
+**Осознанные отличия.** (1) Произвольный фильтр — структурированные критерии, а не текст `RowFilter`; невалидные выражения и их откат отсутствуют по построению. (2) Legacy-колонки `DataTable` имели `DefaultValue = 0`, поэтому отсутствующий `BigGunList`/`SciFi` считался нулём; rewrite выражает «выключено» как `NotEquals 1`, а `Guns` исключает `RocketLauncher = 1`, трактуя отсутствие поля как «не пусковая». (3) Группы — супермножества legacy-страниц: `attachments` остаётся для Ammo/LBE, где legacy сохранял Attachment Data или Attachment; смешанный `modifiers` разделён на `overheating` и `pockets`; отдельные поля смешанных страниц (`DirtIncreaseFactor`, `PercentNoiseReduction`, `Barrel`/`Crowbar` в `flags`) остаются видимыми шире, чем в legacy, чтобы ничего не потерять. (4) Вкладка Shopkeepers не скрывается для RandomItem/None-Money, хотя legacy убирал страницу Inventories; это известный суперсет. (5) `CompatibleFaceItems` показывается для класса Face; после исправления направления связи в M23b2 маска сохраняется.
+
+**Проверка M23b1.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 424/424: Core 37, Imaging 19, Xml 167, Data 64, App 137 |
+| Corpus v4 / v5 | 424/424 на каждом: `Corpus_ItemFiltersAndClassVisibility` сверяет все 22 пресета с сырым `Items.xml` и class-aware секции |
+| Тесты M23b1 | `ClassFilters_MatchLegacyPresets`, `FlagFilters_MatchLegacyPresets`, `ItemFilters_CombineWithSearchAndClear`, `ClassVisibility_HidesIrrelevantSections`, `ChangeClass_UpdatesClassVisibility`, `GoToItemIdAndSelectRecord_ClearItemFilters`, `NewItemAndRename_ClearFiltersThatWouldHideTheRecord`, `Reload_ResetsItemFiltersAndRebuildsOptions` |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| `References/` | не изменён |
+
+**Следующий подшаг:** M23b2 — item-связи, навигация и структурированные редакторы (`L-ITEM-027…032`, `L-TBL-124`, `L-DATA-008/009/011/013`).
+
+Ограничение: env-gated corpus/compare/copy-тесты делают early-return в базовом прогоне и выполняются с реальными ассертами при заданных `XER_*`-переменных.
 
 ## Вне паритета (осознанно)
 

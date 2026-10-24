@@ -12,6 +12,9 @@ namespace XmlEditorReloaded.App.ViewModels;
 /// </summary>
 public sealed partial class ItemChildSectionViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private bool _isVisible = true;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ItemChildSectionViewModel"/> class.
     /// </summary>

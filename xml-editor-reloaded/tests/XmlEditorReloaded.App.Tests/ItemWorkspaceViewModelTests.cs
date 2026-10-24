@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
@@ -20,7 +21,10 @@ public class ItemWorkspaceViewModelTests
 {
     private static readonly TableName Items = TableName.Parse("Items.Items");
     private static readonly TableName Weapons = TableName.Parse("Items.Weapons");
+    private static readonly TableName Magazines = TableName.Parse("Items.Magazines");
     private static readonly TableName Attachments = TableName.Parse("Items.Attachments");
+    private static readonly TableName CompatibleFaceItems = TableName.Parse("Items.CompatibleFaceItems");
+    private static readonly TableName Launchables = TableName.Parse("Items.Launchables");
 
     /// <summary>
     /// Loading builds the item list, the item field groups, the repeated-field section, the nested
@@ -246,6 +250,60 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// Creation and identifier changes clear the item filters and the search term so the affected
+    /// record is visible instead of falling back to an unrelated row.
+    /// </summary>
+    [Fact]
+    public async Task NewItemAndRename_ClearFiltersThatWouldHideTheRecord()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, dialog) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.keys");
+        dialog.CreateItemResult = new ItemCreationRequest("40", "New key", "65536");
+        viewModel.NewItemCommand.Execute(null);
+
+        Assert.Equal("40", viewModel.SelectedItem?.Key);
+        Assert.Equal("all", viewModel.SelectedClassFilter?.Key);
+
+        viewModel.SelectRecord("19");
+        viewModel.SearchText = "19";
+        Assert.Single(viewModel.Items);
+        viewModel.ItemIdText = "41";
+        viewModel.ChangeItemIdCommand.Execute(null);
+
+        Assert.Equal("41", viewModel.SelectedItem?.Key);
+        Assert.Equal(string.Empty, viewModel.SearchText);
+    }
+
+    /// <summary>
+    /// Reloading from disk rebuilds the filter options and the custom filter columns instead of keeping
+    /// criteria that refer to a schema which may have changed.
+    /// </summary>
+    [Fact]
+    public async Task Reload_ResetsItemFiltersAndRebuildsOptions()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.guns");
+        viewModel.CustomItemFilter!.AddCriterion();
+        viewModel.CustomItemFilter.Criteria[0].Operand = "2";
+
+        await viewModel.ReloadFromDiskAsync();
+
+        Assert.Equal(16, viewModel.ClassFilterOptions.Count);
+        Assert.Equal(7, viewModel.FlagFilterOptions.Count);
+        Assert.Equal("all", viewModel.SelectedClassFilter?.Key);
+        Assert.Equal("all", viewModel.SelectedFlagFilter?.Key);
+        Assert.NotNull(viewModel.CustomItemFilter);
+        Assert.Empty(viewModel.CustomItemFilter!.Criteria);
+        Assert.Equal(25, viewModel.Items.Count);
+    }
+
+    /// <summary>
     /// With a language overlay selected, item name edits go to the overlay and the base file stays
     /// untouched until saving, when only the overlay changes.
     /// </summary>
@@ -305,6 +363,210 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// Every class preset reproduces the legacy <c>Items &gt; Show &gt; By Class</c> selection.
+    /// </summary>
+    [Fact]
+    public async Task ClassFilters_MatchLegacyPresets()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        Assert.Equal(16, viewModel.ClassFilterOptions.Count);
+        var expected = new Dictionary<string, string[]>
+        {
+            ["class.guns"] = new[] { "1", "30", "31" },
+            ["class.ammo"] = new[] { "11" },
+            ["class.launchers"] = new[] { "10", "33", "34" },
+            ["class.grenades"] = new[] { "13" },
+            ["class.explosives"] = new[] { "14" },
+            ["class.knives"] = new[] { "15", "28" },
+            ["class.other-weapons"] = new[] { "16", "26", "27" },
+            ["class.armour"] = new[] { "12" },
+            ["class.face"] = new[] { "17" },
+            ["class.kits"] = new[] { "18", "25" },
+            ["class.keys"] = new[] { "19" },
+            ["class.lbe"] = new[] { "20" },
+            ["class.misc"] = new[] { "21", "22", "32" },
+            ["class.none"] = new[] { "23" },
+            ["class.random"] = new[] { "24" },
+        };
+
+        foreach (var pair in expected)
+        {
+            viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == pair.Key);
+            Assert.Equal(pair.Value, VisibleKeys(viewModel));
+        }
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "all");
+        Assert.Equal(25, viewModel.Items.Count);
+    }
+
+    /// <summary>
+    /// Every item-flag preset reproduces the legacy <c>Items &gt; Show &gt; By Other Filters</c> selection.
+    /// </summary>
+    [Fact]
+    public async Task FlagFilters_MatchLegacyPresets()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        Assert.Equal(7, viewModel.FlagFilterOptions.Count);
+        var allKeys = VisibleKeys(viewModel);
+        Assert.Equal(25, allKeys.Length);
+        var expected = new Dictionary<string, string[]>
+        {
+            ["flag.attachments"] = new[] { "19", "24", "30" },
+            ["flag.drugs"] = new[] { "32" },
+            ["flag.big-gun-list"] = new[] { "30" },
+            ["flag.normal-guns"] = allKeys.Where(key => key != "30").ToArray(),
+            ["flag.scifi"] = new[] { "30" },
+            ["flag.realistic"] = allKeys.Where(key => key != "30").ToArray(),
+        };
+
+        foreach (var pair in expected)
+        {
+            viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == pair.Key);
+            Assert.Equal(pair.Value, VisibleKeys(viewModel));
+        }
+
+        viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == "all");
+        Assert.Equal(25, viewModel.Items.Count);
+    }
+
+    /// <summary>
+    /// The class preset, the flag preset, the search term, and the custom structured filter are
+    /// combined with AND; clearing the filters restores the full list.
+    /// </summary>
+    [Fact]
+    public async Task ItemFilters_CombineWithSearchAndClear()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.guns");
+        viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == "flag.scifi");
+        viewModel.SearchText = "Sci-Fi";
+
+        Assert.Equal(new[] { "30" }, VisibleKeys(viewModel));
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.ammo");
+        Assert.Empty(viewModel.Items);
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "all");
+        viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == "all");
+        viewModel.SearchText = string.Empty;
+        Assert.Equal(25, viewModel.Items.Count);
+
+        Assert.NotNull(viewModel.CustomItemFilter);
+        viewModel.CustomItemFilter!.AddCriterion();
+        var criterion = Assert.Single(viewModel.CustomItemFilter.Criteria);
+        criterion.SelectedColumn = viewModel.CustomItemFilter.Columns
+            .Single(column => column.Name == "usItemClass");
+        criterion.SelectedOperator = criterion.Operators
+            .Single(option => option.Operator == RowFilterOperator.Equals);
+        criterion.Operand = "2048";
+
+        Assert.Equal(new[] { "12" }, VisibleKeys(viewModel));
+        Assert.True(viewModel.HasActiveItemFilters);
+
+        viewModel.ClearItemFiltersCommand.Execute(null);
+
+        Assert.Equal(25, viewModel.Items.Count);
+        Assert.Empty(viewModel.CustomItemFilter.Criteria);
+        Assert.Equal("all", viewModel.SelectedClassFilter?.Key);
+        Assert.Equal("all", viewModel.SelectedFlagFilter?.Key);
+        Assert.False(viewModel.HasActiveItemFilters);
+    }
+
+    /// <summary>
+    /// The legacy per-class page map hides irrelevant field groups, nested structures, list fields,
+    /// sub-tables, and child sections for the selected item class.
+    /// </summary>
+    [Fact]
+    public async Task ClassVisibility_HidesIrrelevantSections()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectRecord("1");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "combat");
+        Assert.Contains(viewModel.SubTableSections, section => section.TableName == Weapons);
+        Assert.Contains(viewModel.NestedGroups, group => group.Key == "nested:STAND_MODIFIERS");
+        Assert.Contains(viewModel.ListSections, section => section.FieldName == "DefaultAttachment");
+        Assert.Contains(viewModel.ChildSections, section => section.TableName == Attachments && section.IsVisible);
+        Assert.Contains(
+            viewModel.ChildSections,
+            section => section.TableName == CompatibleFaceItems && !section.IsVisible);
+        Assert.Contains(
+            viewModel.ChildSections,
+            section => section.TableName == Launchables && !section.IsVisible);
+        Assert.Contains(viewModel.VisibleChildSections, section => section.TableName == Attachments);
+        Assert.DoesNotContain(viewModel.VisibleChildSections, section => section.TableName == CompatibleFaceItems);
+
+        viewModel.SelectRecord("13");
+        Assert.Contains(
+            viewModel.ChildSections,
+            section => section.TableName == Launchables && section.IsVisible);
+        Assert.Contains(viewModel.VisibleChildSections, section => section.TableName == Launchables);
+
+        viewModel.SelectRecord("19");
+        Assert.DoesNotContain(
+            viewModel.ItemGroups,
+            group => group.Key is "combat" or "vision" or "food" or "stance" or "attachments" or "modifiers");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "identity");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "flags");
+        Assert.Empty(viewModel.NestedGroups);
+        Assert.Empty(viewModel.SubTableSections);
+        Assert.DoesNotContain(viewModel.ListSections, section => section.FieldName == "DefaultAttachment");
+        Assert.DoesNotContain(viewModel.VisibleChildSections, section => section.TableName == Attachments);
+        Assert.All(viewModel.VisibleChildSections, section => Assert.True(section.IsVisible));
+
+        viewModel.SelectRecord("11");
+        Assert.Contains(viewModel.SubTableSections, section => section.TableName == Magazines);
+        Assert.DoesNotContain(viewModel.SubTableSections, section => section.TableName == Weapons);
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "combat");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "vision");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "food");
+        Assert.Contains(viewModel.ChildSections, section => section.TableName == Attachments && !section.IsVisible);
+
+        viewModel.SelectRecord("24");
+        Assert.DoesNotContain(viewModel.ItemGroups, group => group.Key is "attachments" or "combat" or "stance" or "modifiers");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "vision");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "food");
+    }
+
+    /// <summary>
+    /// Changing <c>usItemClass</c> immediately rebuilds the class-aware groups and sub-tables.
+    /// </summary>
+    [Fact]
+    public async Task ChangeClass_UpdatesClassVisibility()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectRecord("1");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "combat");
+
+        var result = viewModel.SetItemValue("usItemClass", "65536");
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.DoesNotContain(viewModel.ItemGroups, group => group.Key == "combat");
+        Assert.DoesNotContain(viewModel.SubTableSections, section => section.TableName == Weapons);
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "identity");
+
+        result = viewModel.SetItemValue("usItemClass", "2");
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "combat");
+        Assert.Contains(viewModel.SubTableSections, section => section.TableName == Weapons);
+    }
+
+    /// <summary>
     /// The go-to-id command selects an item even when the search filter would hide it.
     /// </summary>
     [Fact]
@@ -325,6 +587,35 @@ public class ItemWorkspaceViewModelTests
         Assert.Equal(string.Empty, viewModel.SearchText);
         Assert.Equal("2", viewModel.SelectedItem?.Key);
         Assert.Equal("Glock 18", viewModel.SelectedItem?.Name);
+    }
+
+    /// <summary>
+    /// Navigational selection by key clears the class, flag, and custom filters that would otherwise
+    /// hide the requested item.
+    /// </summary>
+    [Fact]
+    public async Task GoToItemIdAndSelectRecord_ClearItemFilters()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFilterFixture(workspace));
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.guns");
+        viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == "flag.scifi");
+        Assert.DoesNotContain(viewModel.Items, entry => entry.Key == "19");
+
+        viewModel.GoToIdText = "19";
+        viewModel.GoToItemIdCommand.Execute(null);
+
+        Assert.Equal("19", viewModel.SelectedItem?.Key);
+        Assert.Equal("all", viewModel.SelectedClassFilter?.Key);
+        Assert.Equal("all", viewModel.SelectedFlagFilter?.Key);
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == "class.ammo");
+        viewModel.SelectRecord("12");
+
+        Assert.Equal("12", viewModel.SelectedItem?.Key);
+        Assert.Equal("all", viewModel.SelectedClassFilter?.Key);
     }
 
     /// <summary>
@@ -493,6 +784,208 @@ public class ItemWorkspaceViewModelTests
         Assert.True(rawCount > 0);
         Assert.Equal(rawCount, editor.Rows.Count);
         Assert.All(editor.Rows, row => Assert.Equal("12", row["itemIndex"]));
+    }
+
+    /// <summary>
+    /// With <c>XER_CORPUS_DIR</c> set, every item-list preset matches the class and flag values of the
+    /// raw items file, and class-aware sections hide the legacy pages that do not apply to the selected
+    /// item class.
+    /// </summary>
+    [Fact]
+    public async Task Corpus_ItemFiltersAndClassVisibility()
+    {
+        var corpus = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(corpus) || !Directory.Exists(corpus))
+        {
+            return;
+        }
+
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var session = new DataSetSession(corpus, provider, catalog, repository);
+        var descriptors = await catalog.GetTablesAsync(corpus);
+        Assert.True(descriptors.IsSuccess, descriptors.ErrorText);
+        var descriptor = descriptors.Data!.Single(candidate => candidate.TableName == Items);
+        var viewModel = new ItemWorkspaceViewModel(
+            session,
+            descriptor,
+            languageCode: null,
+            new FakeDialogService(),
+            new TestItemImageService());
+        await viewModel.InitializeAsync();
+
+        var records = XDocument
+            .Load(Path.Combine(corpus, "Items", "Items.xml"))
+            .Root!
+            .Elements("ITEM")
+            .ToArray();
+        var expected = new Dictionary<string, int>
+        {
+            ["all"] = records.Length,
+            ["class.guns"] = records.Count(record =>
+                ClassOf(record) == 2 && !string.Equals(FieldOf(record, "RocketLauncher"), "1", StringComparison.Ordinal)),
+            ["class.ammo"] = records.Count(record => ClassOf(record) == 1024),
+            ["class.launchers"] = records.Count(record =>
+                ClassOf(record) == 16 || string.Equals(FieldOf(record, "RocketLauncher"), "1", StringComparison.Ordinal)),
+            ["class.grenades"] = records.Count(record => ClassOf(record) == 256),
+            ["class.explosives"] = records.Count(record => ClassOf(record) == 512),
+            ["class.knives"] = records.Count(record => ClassOf(record) is 4 or 8),
+            ["class.other-weapons"] = records.Count(record => ClassOf(record) is 32 or 64 or 128),
+            ["class.armour"] = records.Count(record => ClassOf(record) == 2048),
+            ["class.face"] = records.Count(record => ClassOf(record) == 32768),
+            ["class.kits"] = records.Count(record => ClassOf(record) is 4096 or 8192),
+            ["class.keys"] = records.Count(record => ClassOf(record) == 65536),
+            ["class.lbe"] = records.Count(record => ClassOf(record) == 131072),
+            ["class.misc"] = records.Count(record => ClassOf(record) is 268435456 or 536870912),
+            ["class.none"] = records.Count(record => ClassOf(record) == 1),
+            ["class.random"] = records.Count(record => ClassOf(record) == 1073741824),
+            ["flag.attachments"] = records.Count(record => FieldOf(record, "Attachment") == "1"),
+            ["flag.drugs"] = records.Count(record => FieldOf(record, "Medical") == "1"),
+            ["flag.big-gun-list"] = records.Count(record => FieldOf(record, "BigGunList") == "1"),
+            ["flag.normal-guns"] = records.Count(record => FieldOf(record, "BigGunList") != "1"),
+            ["flag.scifi"] = records.Count(record => FieldOf(record, "SciFi") == "1"),
+            ["flag.realistic"] = records.Count(record => FieldOf(record, "SciFi") != "1"),
+        };
+
+        foreach (var pair in expected)
+        {
+            if (pair.Key.StartsWith("class.", StringComparison.Ordinal))
+            {
+                viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions[0];
+                viewModel.SelectedClassFilter = viewModel.ClassFilterOptions.Single(option => option.Key == pair.Key);
+            }
+            else
+            {
+                viewModel.SelectedClassFilter = viewModel.ClassFilterOptions[0];
+                viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions.Single(option => option.Key == pair.Key);
+            }
+
+            Assert.Equal(pair.Value, viewModel.Items.Count);
+        }
+
+        viewModel.SelectedClassFilter = viewModel.ClassFilterOptions[0];
+        viewModel.SelectedFlagFilter = viewModel.FlagFilterOptions[0];
+        Assert.Equal(records.Length, viewModel.Items.Count);
+
+        var keyRecord = records.First(record => ClassOf(record) == 65536);
+        viewModel.SelectRecord(FieldOf(keyRecord, "uiIndex")!);
+        Assert.DoesNotContain(viewModel.ItemGroups, group => group.Key == "combat");
+        Assert.DoesNotContain(viewModel.ItemGroups, group => group.Key == "attachments");
+        Assert.Contains(viewModel.ItemGroups, group => group.Key == "identity");
+
+        var gunRecord = records.First(record => ClassOf(record) == 2);
+        viewModel.SelectRecord(FieldOf(gunRecord, "uiIndex")!);
+        Assert.Contains(viewModel.SubTableSections, section => section.TableName == Weapons);
+
+        var ammoRecord = records.First(record => ClassOf(record) == 1024);
+        viewModel.SelectRecord(FieldOf(ammoRecord, "uiIndex")!);
+        Assert.Contains(viewModel.SubTableSections, section => section.TableName == Magazines);
+        Assert.DoesNotContain(viewModel.SubTableSections, section => section.TableName == Weapons);
+    }
+
+    private static long ClassOf(XElement record) =>
+        long.TryParse(FieldOf(record, "usItemClass"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : 0;
+
+    private static string? FieldOf(XElement record, string fieldName) =>
+        record.Element(fieldName)?.Value.Trim();
+
+    private static string[] VisibleKeys(ItemWorkspaceViewModel viewModel) =>
+        viewModel.Items
+            .Select(static entry => entry.Key)
+            .OrderBy(static key => key, StringComparer.Ordinal)
+            .ToArray();
+
+    /// <summary>
+    /// Builds a fixture with one item of every legacy item class and the flag combinations used by the
+    /// item list presets.
+    /// </summary>
+    private static Fixture CreateFilterFixture(TestWorkspace workspace)
+    {
+        var fixture = CreateFixture(workspace);
+        var lookupDirectory = Path.Combine(fixture.TableDataDirectory, "Lookup");
+        File.WriteAllText(
+            Path.Combine(lookupDirectory, "ItemClass.xml"),
+            """
+            <?xml version="1.0" encoding="utf-8"?><JA2Data>
+            <ItemClass><id>1</id><name>Nothing</name></ItemClass>
+            <ItemClass><id>2</id><name>Gun</name></ItemClass>
+            <ItemClass><id>4</id><name>Knife</name></ItemClass>
+            <ItemClass><id>8</id><name>Throwing Knife</name></ItemClass>
+            <ItemClass><id>16</id><name>Launcher</name></ItemClass>
+            <ItemClass><id>32</id><name>Tentacle</name></ItemClass>
+            <ItemClass><id>64</id><name>Thrown</name></ItemClass>
+            <ItemClass><id>128</id><name>Punch</name></ItemClass>
+            <ItemClass><id>256</id><name>Grenade</name></ItemClass>
+            <ItemClass><id>512</id><name>Bomb</name></ItemClass>
+            <ItemClass><id>1024</id><name>Ammo</name></ItemClass>
+            <ItemClass><id>2048</id><name>Armour</name></ItemClass>
+            <ItemClass><id>4096</id><name>Med Kit</name></ItemClass>
+            <ItemClass><id>8192</id><name>Kit</name></ItemClass>
+            <ItemClass><id>32768</id><name>Facial Gear</name></ItemClass>
+            <ItemClass><id>65536</id><name>Key</name></ItemClass>
+            <ItemClass><id>131072</id><name>LBE</name></ItemClass>
+            <ItemClass><id>268435456</id><name>Misc</name></ItemClass>
+            <ItemClass><id>536870912</id><name>Money</name></ItemClass>
+            <ItemClass><id>1073741824</id><name>Random Item</name></ItemClass>
+            </JA2Data>
+            """);
+
+        File.WriteAllText(
+            fixture.ItemsPath,
+            """
+            <?xml version="1.0" encoding="utf-8"?><ITEMLIST>
+            <ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><usItemClass>2</usItemClass><ubClassIndex>1</ubClassIndex><ProjectionFactor>1.0</ProjectionFactor><DefaultAttachment>7</DefaultAttachment><DefaultAttachment>6</DefaultAttachment><STAND_MODIFIERS><FlatBase>0</FlatBase></STAND_MODIFIERS><CustomUnknown>keep me</CustomUnknown></ITEM>
+            <ITEM><uiIndex>10</uiIndex><szItemName>RPG-7</szItemName><usItemClass>16</usItemClass><ubClassIndex>2</ubClassIndex><RocketLauncher>1</RocketLauncher></ITEM>
+            <ITEM><uiIndex>11</uiIndex><szItemName>5.56mm Magazine</szItemName><usItemClass>1024</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus><PercentNoiseReduction>0</PercentNoiseReduction><FoodType>0</FoodType></ITEM>
+            <ITEM><uiIndex>12</uiIndex><szItemName>Kevlar Vest</szItemName><usItemClass>2048</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>13</uiIndex><szItemName>Stun Grenade</szItemName><usItemClass>256</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>14</uiIndex><szItemName>TNT</szItemName><usItemClass>512</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>15</uiIndex><szItemName>Combat Knife</szItemName><usItemClass>4</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>16</uiIndex><szItemName>Rock</szItemName><usItemClass>64</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>17</uiIndex><szItemName>Extended Ear</szItemName><usItemClass>32768</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>18</uiIndex><szItemName>First Aid Kit</szItemName><usItemClass>4096</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>19</uiIndex><szItemName>Door Key</szItemName><usItemClass>65536</usItemClass><Attachment>1</Attachment><ToHitBonus>0</ToHitBonus><PercentNoiseReduction>0</PercentNoiseReduction><FoodType>0</FoodType><ProjectionFactor>1.5</ProjectionFactor><DefaultAttachment>5</DefaultAttachment><STAND_MODIFIERS><FlatBase>0</FlatBase></STAND_MODIFIERS></ITEM>
+            <ITEM><uiIndex>20</uiIndex><szItemName>Combat Pack</szItemName><usItemClass>131072</usItemClass><ToHitBonus>0</ToHitBonus><PercentNoiseReduction>0</PercentNoiseReduction><FoodType>0</FoodType></ITEM>
+            <ITEM><uiIndex>21</uiIndex><szItemName>Loose Wire</szItemName><usItemClass>268435456</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>22</uiIndex><szItemName>Money</szItemName><usItemClass>536870912</usItemClass></ITEM>
+            <ITEM><uiIndex>23</uiIndex><szItemName>Nothing</szItemName><usItemClass>1</usItemClass></ITEM>
+            <ITEM><uiIndex>24</uiIndex><szItemName>Random Loot</szItemName><usItemClass>1073741824</usItemClass><Attachment>1</Attachment><ToHitBonus>0</ToHitBonus><PercentNoiseReduction>10</PercentNoiseReduction><FoodType>2</FoodType><ProjectionFactor>1.0</ProjectionFactor></ITEM>
+            <ITEM><uiIndex>25</uiIndex><szItemName>Toolkit</szItemName><usItemClass>8192</usItemClass><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>26</uiIndex><szItemName>Punch</szItemName><usItemClass>128</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>27</uiIndex><szItemName>Tentacle</szItemName><usItemClass>32</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>28</uiIndex><szItemName>Throwing Knife</szItemName><usItemClass>8</usItemClass><ubClassIndex>1</ubClassIndex><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>30</uiIndex><szItemName>Sci-Fi Gun</szItemName><usItemClass>2</usItemClass><ubClassIndex>1</ubClassIndex><SciFi>1</SciFi><BigGunList>1</BigGunList><Attachment>1</Attachment><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>31</uiIndex><szItemName>Real Gun</szItemName><usItemClass>2</usItemClass><ubClassIndex>1</ubClassIndex><SciFi>0</SciFi><BigGunList>0</BigGunList><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>32</uiIndex><szItemName>Medical Misc</szItemName><usItemClass>268435456</usItemClass><Medical>1</Medical><ToHitBonus>0</ToHitBonus></ITEM>
+            <ITEM><uiIndex>33</uiIndex><szItemName>Rocket Gun</szItemName><usItemClass>2</usItemClass><ubClassIndex>1</ubClassIndex><RocketLauncher>1</RocketLauncher></ITEM>
+            <ITEM><uiIndex>34</uiIndex><szItemName>Mortar</szItemName><usItemClass>16</usItemClass><ubClassIndex>2</ubClassIndex><RocketLauncher>0</RocketLauncher></ITEM>
+            </ITEMLIST>
+            """);
+
+        File.WriteAllText(
+            Path.Combine(Path.GetDirectoryName(fixture.ItemsPath)!, "CompatibleFaceItems.xml"),
+            """
+            <?xml version="1.0" encoding="utf-8"?><COMPATIBLEFACEITEMLIST>
+            <COMPATIBLEFACEITEM><compatiblefaceitemIndex>17</compatiblefaceitemIndex><itemIndex>210</itemIndex></COMPATIBLEFACEITEM>
+            </COMPATIBLEFACEITEMLIST>
+            """);
+
+        File.WriteAllText(
+            Path.Combine(Path.GetDirectoryName(fixture.ItemsPath)!, "Launchables.xml"),
+            """
+            <?xml version="1.0" encoding="utf-8"?><LAUNCHABLELIST>
+            <LAUNCHABLE><launchableIndex>13</launchableIndex><itemIndex>10</itemIndex></LAUNCHABLE>
+            </LAUNCHABLELIST>
+            """);
+
+        return fixture;
     }
 
     private static async Task<(ItemWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
