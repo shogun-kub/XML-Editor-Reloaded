@@ -343,7 +343,11 @@ public class MainViewModelTests
 
         public bool Confirm(string message, string title) => ConfirmResult;
 
-        public uint? EditBits(string title, uint value) => EditBitsResult;
+        public uint? EditBits(
+            string title,
+            uint value,
+            IReadOnlyDictionary<int, string>? labels = null,
+            string? valueName = null) => EditBitsResult;
 
         public void ShowTranslationReport(TranslationReport report, string title) =>
             LastTranslationReport = report;

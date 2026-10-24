@@ -360,6 +360,27 @@
   <data name="BitEditorCancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="BitEditorValueFormat" xml:space="preserve">
+    <value>Value: {0}</value>
+  </data>
+  <data name="BitEditorValueWithNameFormat" xml:space="preserve">
+    <value>Value: {0} ({1})</value>
+  </data>
+  <data name="LookupUnknownFormat" xml:space="preserve">
+    <value>{0} (unknown)</value>
+  </data>
+  <data name="LookupValueTooltipFormat" xml:space="preserve">
+    <value>{0} (ID {1})</value>
+  </data>
+  <data name="LookupUnknownTooltipFormat" xml:space="preserve">
+    <value>Unknown lookup value: {0}</value>
+  </data>
+  <data name="LookupUnavailableFormat" xml:space="preserve">
+    <value>Lookup unavailable: {0}</value>
+  </data>
+  <data name="DetailNotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
   <data name="EditorBaseLanguageOption" xml:space="preserve">
     <value>Base table</value>
   </data>

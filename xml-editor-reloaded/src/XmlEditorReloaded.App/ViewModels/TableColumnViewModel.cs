@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Schema;
 
@@ -14,17 +15,25 @@ public sealed class TableColumnViewModel : ObservableObject
 
     internal TableColumnViewModel(
         TableSchemaColumn column,
-        Action<TableColumnViewModel, bool>? visibilityChanged = null)
+        Action<TableColumnViewModel, bool>? visibilityChanged = null,
+        LookupColumnData? lookup = null)
     {
         ArgumentNullException.ThrowIfNull(column);
         Column = column;
         _visibilityChanged = visibilityChanged;
+        Lookup = lookup;
     }
 
     /// <summary>
     /// Gets the underlying schema column.
     /// </summary>
     public TableSchemaColumn Column { get; }
+
+    /// <summary>
+    /// Gets the loaded lookup data of the column, or <see langword="null"/> when the column has no
+    /// lookup source.
+    /// </summary>
+    public LookupColumnData? Lookup { get; }
 
     /// <summary>
     /// Gets the XML field name used as the column header and binding path.
@@ -86,6 +95,37 @@ public sealed class TableColumnViewModel : ObservableObject
     /// nested structures are read-only until a dedicated editor is available.
     /// </summary>
     public bool IsReadOnly => Column.IsKey || Column.IsList || Column.IsDict || Column.IsNested;
+
+    /// <summary>
+    /// Gets a value indicating whether the grid can show a lookup combo for this column.
+    /// </summary>
+    public bool HasLookupCombo =>
+        Column.EditorKind == ColumnEditorKind.LookupCombo
+        && Lookup is { IsAvailable: true };
+
+    /// <summary>
+    /// Gets a value indicating whether a lookup source was configured but could not be loaded. Such a
+    /// column falls back to plain text editing and shows a warning in its header.
+    /// </summary>
+    public bool HasLookupError => Lookup is { IsAvailable: false };
+
+    /// <summary>
+    /// Gets a value indicating whether the grid uses a checkbox editor for this column.
+    /// </summary>
+    public bool IsBoolean => Column.DataType == ColumnDataType.Boolean;
+
+    /// <summary>
+    /// Gets the selectable lookup options, or an empty list when no lookup is available.
+    /// </summary>
+    public IReadOnlyList<LookupOption> LookupOptions =>
+        Lookup?.Options ?? Array.Empty<LookupOption>();
+
+    /// <summary>
+    /// Gets the column header tooltip, including a lookup load error when one occurred.
+    /// </summary>
+    public string HeaderTooltip => HasLookupError
+        ? $"{Tooltip}{Environment.NewLine}{Strings.Format("LookupUnavailableFormat", Lookup!.ErrorText ?? string.Empty)}"
+        : Tooltip;
 
     /// <summary>
     /// Gets the preferred grid width.

@@ -305,15 +305,44 @@
                                                                        Text="●"
                                                                        ToolTip="{Binding DataContext.DetailUntranslatedText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                        Visibility="{Binding IsUntranslated, Converter={StaticResource BoolToVisibility}}" />
-                                                            <TextBlock Grid.Column="1"
-                                                                       VerticalAlignment="Center"
-                                                                       TextTrimming="CharacterEllipsis"
-                                                                       ToolTip="{Binding TypeText}"
-                                                                       Text="{Binding Name}" />
+                                                            <Grid Grid.Column="1"
+                                                                  VerticalAlignment="Center"
+                                                                  ToolTip="{Binding FieldTooltip}">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock VerticalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Text="{Binding Name}" />
+                                                                <TextBlock Grid.Column="1"
+                                                                           Margin="3,0,0,0"
+                                                                           VerticalAlignment="Center"
+                                                                           Foreground="#FFB8860B"
+                                                                           Text="⚠"
+                                                                           Visibility="{Binding HasLookupError, Converter={StaticResource BoolToVisibility}}" />
+                                                            </Grid>
+                                                            <CheckBox Grid.Column="2"
+                                                                      Margin="4,0,0,0"
+                                                                      VerticalAlignment="Center"
+                                                                      IsChecked="{Binding BooleanValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                      IsEnabled="{Binding IsEditable}"
+                                                                      ToolTip="{Binding BooleanTooltip}"
+                                                                      Visibility="{Binding IsBoolean, Converter={StaticResource BoolToVisibility}}" />
+                                                            <ComboBox Grid.Column="2"
+                                                                      Margin="4,0,0,0"
+                                                                      VerticalAlignment="Center"
+                                                                      ItemsSource="{Binding LookupOptions}"
+                                                                      DisplayMemberPath="DropdownText"
+                                                                      SelectedValuePath="IdText"
+                                                                      SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                      IsEnabled="{Binding IsEditable}"
+                                                                      Visibility="{Binding IsLookup, Converter={StaticResource BoolToVisibility}}" />
                                                             <TextBox Grid.Column="2"
                                                                      Margin="4,0,0,0"
                                                                      Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                                                                     IsReadOnly="{Binding IsReadOnly}" />
+                                                                     IsReadOnly="{Binding IsReadOnly}"
+                                                                     Visibility="{Binding IsPlainText, Converter={StaticResource BoolToVisibility}}" />
                                                             <Button Grid.Column="3"
                                                                     Margin="4,0,0,0"
                                                                     Padding="5,0"

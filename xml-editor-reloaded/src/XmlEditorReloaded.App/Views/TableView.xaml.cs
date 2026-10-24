@@ -70,31 +70,76 @@ public partial class TableView : UserControl
 
         foreach (var column in _viewModel.VisibleColumns)
         {
-            var binding = new Binding($"[{column.Name}]")
-            {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-            };
             var isTranslationColumn = _viewModel.IsTranslationMode && column.IsTranslatable;
+            var headerText = isTranslationColumn
+                ? column.Name + _viewModel.TranslatableColumnSuffix
+                : column.Name;
+            if (column.HasLookupError)
+            {
+                headerText += " ⚠";
+            }
+
             var header = new TextBlock
             {
-                Text = isTranslationColumn
-                    ? column.Name + _viewModel.TranslatableColumnSuffix
-                    : column.Name,
-                ToolTip = column.Tooltip,
+                Text = headerText,
+                ToolTip = column.HeaderTooltip,
                 FontWeight = column.IsKey ? FontWeights.SemiBold : FontWeights.Normal,
             };
-            var gridColumn = new DataGridTextColumn
+
+            DataGridColumn gridColumn;
+            if (column.IsBoolean)
             {
-                Header = header,
-                Binding = binding,
-                IsReadOnly = column.IsReadOnly,
-                Width = new DataGridLength(column.Width),
-                SortMemberPath = column.Name,
-            };
-            if (isTranslationColumn)
+                gridColumn = new DataGridCheckBoxColumn
+                {
+                    Header = header,
+                    Binding = new Binding($"[{column.Name}]")
+                    {
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        Converter = BooleanValueConverter.Instance,
+                    },
+                    IsReadOnly = column.IsReadOnly,
+                    Width = new DataGridLength(column.Width),
+                    SortMemberPath = column.Name,
+                };
+            }
+            else if (column.HasLookupCombo && column.Lookup is { } lookup)
             {
-                gridColumn.ElementStyle = BuildTranslationCellStyle(column.Name);
+                var templateColumn = new DataGridTemplateColumn
+                {
+                    Header = header,
+                    CellTemplate = BuildLookupCellTemplate(column.Name, lookup),
+                    IsReadOnly = column.IsReadOnly,
+                    Width = new DataGridLength(column.Width),
+                    SortMemberPath = column.Name,
+                };
+                if (!column.IsReadOnly)
+                {
+                    templateColumn.CellEditingTemplate = BuildLookupEditingTemplate(column.Name, lookup);
+                }
+
+                gridColumn = templateColumn;
+            }
+            else
+            {
+                var textColumn = new DataGridTextColumn
+                {
+                    Header = header,
+                    Binding = new Binding($"[{column.Name}]")
+                    {
+                        Mode = BindingMode.TwoWay,
+                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
+                    },
+                    IsReadOnly = column.IsReadOnly,
+                    Width = new DataGridLength(column.Width),
+                    SortMemberPath = column.Name,
+                };
+                if (isTranslationColumn)
+                {
+                    textColumn.ElementStyle = BuildTranslationCellStyle(column.Name);
+                }
+
+                gridColumn = textColumn;
             }
 
             RowsGrid.Columns.Add(gridColumn);
@@ -112,6 +157,40 @@ public partial class TableView : UserControl
                 column.SortDirection = _viewModel.SortDirection;
             }
         }
+    }
+
+    private static DataTemplate BuildLookupCellTemplate(string fieldName, LookupColumnData lookup)
+    {
+        var text = new FrameworkElementFactory(typeof(TextBlock));
+        text.SetBinding(TextBlock.TextProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.OneWay,
+            Converter = new LookupDisplayConverter(lookup),
+        });
+        text.SetBinding(TextBlock.ToolTipProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.OneWay,
+            Converter = new LookupTooltipConverter(lookup),
+        });
+        text.SetValue(TextBlock.MarginProperty, new Thickness(4, 0, 4, 0));
+        text.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+        text.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+        return new DataTemplate { VisualTree = text };
+    }
+
+    private static DataTemplate BuildLookupEditingTemplate(string fieldName, LookupColumnData lookup)
+    {
+        var combo = new FrameworkElementFactory(typeof(ComboBox));
+        combo.SetValue(ItemsControl.ItemsSourceProperty, lookup.Options);
+        combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(LookupOption.DropdownText));
+        combo.SetValue(ComboBox.SelectedValuePathProperty, nameof(LookupOption.IdText));
+        combo.SetBinding(ComboBox.SelectedValueProperty, new Binding($"[{fieldName}]")
+        {
+            Mode = BindingMode.TwoWay,
+            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+        });
+        combo.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        return new DataTemplate { VisualTree = combo };
     }
 
     private Style BuildTranslationCellStyle(string fieldName)

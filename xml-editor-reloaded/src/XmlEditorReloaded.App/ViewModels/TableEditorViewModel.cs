@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Numerics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Localization;
@@ -28,6 +30,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     private readonly List<TableRowViewModel> _allRows = new();
     private readonly List<TableColumnViewModel> _allColumns = new();
     private readonly List<DetailFieldViewModel> _allDetailFields = new();
+    private readonly Dictionary<string, LookupColumnData> _lookupByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
     private CancellationTokenSource? _imageCts;
     private bool _suppressLanguageChange;
@@ -357,6 +360,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
             BuildLanguageOptions(configuredLanguages);
             IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
+            await LoadLookupsAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
             RebuildRows(null);
@@ -919,6 +923,57 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         }
     }
 
+    private async Task LoadLookupsAsync(CancellationToken cancellationToken)
+    {
+        _lookupByField.Clear();
+        if (Workspace is null)
+        {
+            return;
+        }
+
+        var columns = Workspace.Schema.Columns
+            .Where(static column => !string.IsNullOrWhiteSpace(column.LookupTable))
+            .ToArray();
+        if (columns.Length == 0)
+        {
+            return;
+        }
+
+        var valuesByField = columns.ToDictionary(
+            static column => column.XmlFieldName,
+            static _ => new List<string?>(),
+            StringComparer.Ordinal);
+        foreach (var row in Workspace.GetRows())
+        {
+            foreach (var column in columns)
+            {
+                valuesByField[column.XmlFieldName].Add(row.GetValue(column.XmlFieldName));
+            }
+        }
+
+        var cache = new Dictionary<string, OperationResult<IReadOnlyList<LookupEntry>>>(StringComparer.Ordinal);
+        foreach (var column in columns)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var lookupTable = column.LookupTable!;
+            var tableName = TableName.Parse(lookupTable);
+            if (!cache.TryGetValue(lookupTable, out var result))
+            {
+                result = await _session.Lookups
+                    .GetEntriesAsync(tableName, Workspace.Language?.Code, cancellationToken)
+                    .ConfigureAwait(true);
+                cache.Add(lookupTable, result);
+            }
+
+            _lookupByField[column.XmlFieldName] = result.IsSuccess
+                ? LookupColumnData.Create(tableName, result.Data!, valuesByField[column.XmlFieldName])
+                : LookupColumnData.Failed(
+                    tableName,
+                    result.ErrorCode ?? ErrorCodes.XmlInvalidLookupEntry,
+                    result.ErrorText ?? $"Lookup table '{lookupTable}' could not be loaded.");
+        }
+    }
+
     private void BuildColumns()
     {
         _allColumns.Clear();
@@ -927,7 +982,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         {
             foreach (var column in Workspace.Schema.Columns)
             {
-                _allColumns.Add(new TableColumnViewModel(column, OnColumnVisibilityChanged));
+                _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
+                _allColumns.Add(new TableColumnViewModel(column, OnColumnVisibilityChanged, lookup));
             }
         }
 
@@ -1075,18 +1131,53 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return;
         }
 
-        var current = uint.TryParse(field.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+        var currentText = field.Value;
+        var current = uint.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
             : 0u;
+        _lookupByField.TryGetValue(field.Name, out var lookup);
         var edited = _dialogService.EditBits(
             Strings.Format("BitEditorTitleFormat", field.Name),
-            current);
+            current,
+            BuildBitLabels(lookup),
+            lookup?.GetExactEntryName(currentText));
         if (edited is not { } value)
         {
             return;
         }
 
         field.Value = value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    {
+        if (lookup is not { IsAvailable: true })
+        {
+            return new Dictionary<int, string>();
+        }
+
+        var labels = new Dictionary<int, string>();
+        foreach (var entry in lookup.Entries)
+        {
+            if (entry.Id <= 0 || entry.Id > uint.MaxValue)
+            {
+                continue;
+            }
+
+            var mask = (uint)entry.Id;
+            if ((mask & (mask - 1)) != 0)
+            {
+                continue;
+            }
+
+            var bit = BitOperations.Log2(mask);
+            if (bit < 32)
+            {
+                labels.TryAdd(bit, entry.Name);
+            }
+        }
+
+        return labels;
     }
 
     private void RefreshDetails()
@@ -1104,7 +1195,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         DetailHeader = Strings.Format("DetailHeaderFormat", SelectedRow.Key ?? string.Empty);
         foreach (var column in Workspace.Schema.Columns)
         {
-            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column));
+            _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
+            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column, lookup));
         }
 
         ApplyDetailFilter();

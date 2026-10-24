@@ -28,8 +28,14 @@ public interface IDialogService
     /// </summary>
     /// <param name="title">Dialog title.</param>
     /// <param name="value">Initial value.</param>
+    /// <param name="labels">Optional names for individual bits, keyed by bit number.</param>
+    /// <param name="valueName">Optional name of the exact value, for example a lookup combination entry.</param>
     /// <returns>The edited value, or <see langword="null"/> when cancelled.</returns>
-    uint? EditBits(string title, uint value);
+    uint? EditBits(
+        string title,
+        uint value,
+        IReadOnlyDictionary<int, string>? labels = null,
+        string? valueName = null);
 
     /// <summary>
     /// Shows the read-only translation report for the current overlay.

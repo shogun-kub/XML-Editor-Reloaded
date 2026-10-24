@@ -360,6 +360,27 @@
   <data name="BitEditorCancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="BitEditorValueFormat" xml:space="preserve">
+    <value>Значение: {0}</value>
+  </data>
+  <data name="BitEditorValueWithNameFormat" xml:space="preserve">
+    <value>Значение: {0} ({1})</value>
+  </data>
+  <data name="LookupUnknownFormat" xml:space="preserve">
+    <value>{0} (не найдено)</value>
+  </data>
+  <data name="LookupValueTooltipFormat" xml:space="preserve">
+    <value>{0} (ID {1})</value>
+  </data>
+  <data name="LookupUnknownTooltipFormat" xml:space="preserve">
+    <value>Неизвестное значение справочника: {0}</value>
+  </data>
+  <data name="LookupUnavailableFormat" xml:space="preserve">
+    <value>Справочник недоступен: {0}</value>
+  </data>
+  <data name="DetailNotSet" xml:space="preserve">
+    <value>Не задано</value>
+  </data>
   <data name="EditorBaseLanguageOption" xml:space="preserve">
     <value>Базовая таблица</value>
   </data>

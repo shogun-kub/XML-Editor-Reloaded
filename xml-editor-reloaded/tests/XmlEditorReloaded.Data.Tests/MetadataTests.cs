@@ -23,7 +23,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(5, migration.Data);
+        Assert.Equal(6, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -44,9 +44,11 @@ public class MetadataTests
         Assert.True(metadata.TryGetColumnHint("usItemClass", out var classHint));
         Assert.Equal(ColumnDataType.Flags, classHint!.DataType);
         Assert.Equal(ColumnEditorKind.FlagEditor, classHint.EditorKind);
+        Assert.Equal("Lookup.ItemClass", classHint.LookupTable);
         Assert.Equal("classification", classHint.GroupKey);
         Assert.True(metadata.TryGetColumnHint("AttachmentClass", out var attachmentHint));
-        Assert.Equal("attachments", attachmentHint!.GroupKey);
+        Assert.Equal("Lookup.AttachmentClass", attachmentHint!.LookupTable);
+        Assert.Equal("attachments", attachmentHint.GroupKey);
         Assert.True(metadata.TryGetColumnHint("STAND_MODIFIERS", out var stanceHint));
         Assert.Equal("stance", stanceHint!.GroupKey);
         Assert.True(metadata.TryGetColumnHint("szItemName", out var nameHint));
@@ -55,10 +57,12 @@ public class MetadataTests
         Assert.True(metadata.TryGetColumnHint("DrugType", out var drugHint));
         Assert.Equal(ColumnDataType.Flags, drugHint!.DataType);
         Assert.Equal(ColumnEditorKind.FlagEditor, drugHint.EditorKind);
+        Assert.Equal("Lookup.DrugType", drugHint.LookupTable);
         Assert.True(metadata.TryGetColumnHint("DefaultAttachment", out var defaultAttachmentHint));
         Assert.Equal(ColumnDataType.Integer, defaultAttachmentHint!.DataType);
         Assert.True(metadata.TryGetColumnHint("AvailableAttachmentPoint", out var availablePointHint));
         Assert.Equal(ColumnDataType.Flags, availablePointHint!.DataType);
+        Assert.Equal("Lookup.AttachmentPoint", availablePointHint.LookupTable);
         Assert.True(metadata.TryGetColumnHint("Inseparable", out var inseparableHint));
         Assert.Equal(ColumnDataType.Lookup, inseparableHint!.DataType);
         Assert.Equal("Lookup.Separability", inseparableHint.LookupTable);
@@ -74,6 +78,18 @@ public class MetadataTests
         Assert.True(disease.IsSuccess, disease.ErrorText);
         Assert.True(disease.Data!.TryGetColumnHint("InfectionChance_BADFOOD", out var chanceHint));
         Assert.Equal(ColumnDataType.Decimal, chanceHint!.DataType);
+
+        var slots = await provider.GetTableAsync(TableName.Parse("Items.AttachmentSlots"));
+        Assert.True(slots.IsSuccess, slots.ErrorText);
+        Assert.True(slots.Data!.TryGetColumnHint("nasAttachmentClass", out var slotClassHint));
+        Assert.Equal("Lookup.NasAttachmentClass", slotClassHint!.LookupTable);
+        Assert.True(slots.Data.TryGetColumnHint("nasLayoutClass", out var slotLayoutHint));
+        Assert.Equal("Lookup.NasLayoutClass", slotLayoutHint!.LookupTable);
+
+        var pockets = await provider.GetTableAsync(TableName.Parse("Items.Pockets"));
+        Assert.True(pockets.IsSuccess, pockets.ErrorText);
+        Assert.True(pockets.Data!.TryGetColumnHint("pRestriction", out var restrictionHint));
+        Assert.Equal("Lookup.ItemClass", restrictionHint!.LookupTable);
 
         var languages = await provider.GetLanguagesAsync();
         Assert.True(languages.IsSuccess, languages.ErrorText);

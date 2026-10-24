@@ -39,9 +39,14 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
-    public uint? EditBits(string title, uint value)
+    public uint? EditBits(
+        string title,
+        uint value,
+        IReadOnlyDictionary<int, string>? labels = null,
+        string? valueName = null)
     {
-        var window = new Views.BitEditorWindow(new ViewModels.BitEditorViewModel(title, value));
+        var window = new Views.BitEditorWindow(
+            new ViewModels.BitEditorViewModel(title, value, labels, valueName));
         if (System.Windows.Application.Current?.MainWindow is { } owner)
         {
             window.Owner = owner;

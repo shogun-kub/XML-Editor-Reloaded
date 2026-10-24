@@ -107,6 +107,59 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// The grid uses a combo template for lookup columns, a checkbox for Boolean columns, and a text
+    /// editor when a configured lookup cannot be loaded.
+    /// </summary>
+    [Fact]
+    public async Task View_BuildsLookupAndBooleanEditors()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            includeLookups: true,
+            includeBooleans: true);
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var view = new TableView { DataContext = editor };
+                var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
+
+                var lookup = Assert.Single(
+                    grid.Columns,
+                    column => column.SortMemberPath == "ubCursor");
+                Assert.IsType<DataGridTemplateColumn>(lookup);
+
+                var boolean = Assert.Single(
+                    grid.Columns,
+                    column => column.SortMemberPath == "AllowClimbing");
+                Assert.IsType<DataGridCheckBoxColumn>(boolean);
+
+                var fallback = Assert.Single(
+                    grid.Columns,
+                    column => column.SortMemberPath == "Inseparable");
+                Assert.IsType<DataGridTextColumn>(fallback);
+                var header = Assert.IsType<TextBlock>(fallback.Header);
+                Assert.Contains("⚠", header.Text, StringComparison.Ordinal);
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The grid editor test did not finish in time.");
+        Assert.Null(failure);
+    }
+
+    /// <summary>
     /// Add, duplicate, and delete operate on the selected row and respect confirmation.
     /// </summary>
     [Fact]
@@ -386,6 +439,62 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// The real Items table loads lookup names and bit labels, and a malformed lookup file degrades to
+    /// a text editor without preventing the table from opening.
+    /// </summary>
+    [Fact]
+    public async Task Editor_RealItemsData_LoadsLookupsAndBitLabels()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var tableData = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(tableData) || !Directory.Exists(tableData))
+        {
+            return;
+        }
+
+        var data13 = Directory.GetParent(tableData)?.FullName;
+        Assert.NotNull(data13);
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, new TableRepository(provider))
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
+        var dialog = new FakeDialogService();
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            null,
+            dialog,
+            new TestItemImageService());
+
+        await editor.InitializeAsync();
+
+        Assert.True(editor.IsEditable);
+        Assert.True(editor.Rows.Count > 1000, $"Only {editor.Rows.Count} rows were loaded.");
+        var cursor = Assert.Single(editor.Columns, column => column.Name == "ubCursor");
+        Assert.True(cursor.HasLookupCombo);
+        Assert.NotEmpty(cursor.Lookup!.Entries);
+
+        var attachmentPoint = Assert.Single(editor.Columns, column => column.Name == "AttachmentPoint");
+        var attachmentLookup = await session.Lookups.GetEntriesAsync(
+            TableName.Parse("Lookup.AttachmentPoint"));
+        Assert.Equal(!attachmentLookup.IsSuccess, attachmentPoint.HasLookupError);
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        var classField = Assert.Single(FlattenDetailFields(editor), field => field.Name == "usItemClass");
+        Assert.True(classField.CanEditBits);
+        dialog.EditBitsResult = null;
+        classField.EditBitsCommand.Execute(null);
+        Assert.NotNull(dialog.LastBitLabels);
+        Assert.NotEmpty(dialog.LastBitLabels!);
+        Assert.Contains(dialog.LastBitLabels!, pair => pair.Key == 0);
+    }
+
+    /// <summary>
     /// The detail form groups fields, filters them, and edits values through the workspace.
     /// </summary>
     [Fact]
@@ -479,6 +588,102 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Lookup columns show names, keep unknown identifiers editable as raw values, and fall back to
+    /// text when the lookup file cannot be loaded.
+    /// </summary>
+    [Fact]
+    public async Task Lookups_LoadNamesUnknownValuesAndFallback()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeLookups: true);
+
+        var cursor = Assert.Single(editor.Columns, column => column.Name == "ubCursor");
+        Assert.True(cursor.HasLookupCombo);
+        Assert.NotNull(cursor.Lookup);
+        Assert.Equal("Hand", cursor.Lookup!.GetName("2"));
+        Assert.Equal("99 (unknown)", cursor.Lookup.Display("99"));
+        Assert.Contains(cursor.Lookup.Options, option => option.IdText == "99" && option.IsUnknown);
+        Assert.Contains(cursor.Lookup.Options, option => option.IdText == "2" && !option.IsUnknown);
+
+        var inseparable = Assert.Single(editor.Columns, column => column.Name == "Inseparable");
+        Assert.True(inseparable.HasLookupError);
+        Assert.False(inseparable.HasLookupCombo);
+        Assert.Contains("Lookup unavailable", inseparable.HeaderTooltip, StringComparison.Ordinal);
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        var cursorField = Assert.Single(FlattenDetailFields(editor), field => field.Name == "ubCursor");
+        Assert.True(cursorField.IsLookup);
+        Assert.Contains(cursorField.LookupOptions, option => option.IdText == "99" && option.IsUnknown);
+        cursorField.Value = "3";
+        Assert.Equal("3", editor.Workspace!.BaseDocument.Records[0].GetRawValue("ubCursor"));
+
+        var inseparableField = Assert.Single(FlattenDetailFields(editor), field => field.Name == "Inseparable");
+        Assert.True(inseparableField.HasLookupError);
+        Assert.True(inseparableField.IsPlainText);
+        Assert.Contains("Lookup unavailable", inseparableField.FieldTooltip, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Boolean fields use checkboxes and preserve the sparse distinction between an absent field and
+    /// an explicit zero.
+    /// </summary>
+    [Fact]
+    public async Task BooleanCheckbox_TogglesSparseValues()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeBooleans: true);
+
+        var column = Assert.Single(editor.Columns, candidate => candidate.Name == "AllowClimbing");
+        Assert.True(column.IsBoolean);
+        Assert.False(column.HasLookupCombo);
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        var field = Assert.Single(FlattenDetailFields(editor), candidate => candidate.Name == "AllowClimbing");
+        Assert.True(field.IsBoolean);
+        Assert.True(field.BooleanValue);
+        field.BooleanValue = false;
+        Assert.Equal("0", field.Value);
+        Assert.Equal("0", editor.Workspace!.BaseDocument.Records[0].GetRawValue("AllowClimbing"));
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "2");
+        var absent = Assert.Single(FlattenDetailFields(editor), candidate => candidate.Name == "AllowClimbing");
+        Assert.False(absent.BooleanValue);
+        Assert.Equal("Not set", absent.BooleanTooltip);
+        absent.BooleanValue = true;
+        Assert.Equal("1", absent.Value);
+        Assert.Equal("1", editor.Workspace!.BaseDocument.Records[2].GetRawValue("AllowClimbing"));
+    }
+
+    /// <summary>
+    /// Flag masks receive bit labels from the lookup file mapped to the field, including exact names
+    /// for combination values.
+    /// </summary>
+    [Fact]
+    public async Task LookupMasks_ProvideNamedBits()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace, includeLookups: true);
+        dialog.EditBitsResult = 5;
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        var field = Assert.Single(FlattenDetailFields(editor), candidate => candidate.Name == "AttachmentClass");
+        Assert.True(field.CanEditBits);
+
+        field.EditBitsCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastBitLabels);
+        Assert.Equal(3, dialog.LastBitLabels!.Count);
+        Assert.Equal("A", dialog.LastBitLabels[0]);
+        Assert.Equal("B", dialog.LastBitLabels[1]);
+        Assert.Equal("C", dialog.LastBitLabels[2]);
+        Assert.Equal("A", dialog.LastBitValueName);
+        Assert.Equal("5", field.Value);
+    }
+
+    /// <summary>
     /// Nested structures are read-only in the detail form and cannot be overwritten as scalar text.
     /// </summary>
     [Fact]
@@ -518,6 +723,16 @@ public class TableEditorViewModelTests
         var maxValue = new BitEditorViewModel("bits", uint.MaxValue);
         Assert.All(maxValue.Bits, bit => Assert.True(bit.IsSet));
         Assert.Equal(uint.MaxValue, maxValue.ComposeValue());
+
+        var named = new BitEditorViewModel(
+            "bits",
+            5,
+            new Dictionary<int, string> { [0] = "Gun", [2] = "Knife" },
+            "Gun + Knife");
+        Assert.Equal("Value: 5 (Gun + Knife)", named.ValueSummary);
+        Assert.Equal("Gun (0)", named.Bits[0].DisplayText);
+        Assert.Equal("1", named.Bits[1].DisplayText);
+        Assert.Equal("Knife (2)", named.Bits[2].DisplayText);
 
         Exception? failure = null;
         var thread = new Thread(() =>
@@ -746,7 +961,9 @@ public class TableEditorViewModelTests
         TestItemImageService? images = null,
         bool includeGraphics = false,
         bool includeNested = false,
-        bool includeOverlay = true)
+        bool includeOverlay = true,
+        bool includeLookups = false,
+        bool includeBooleans = false)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -759,13 +976,18 @@ public class TableEditorViewModelTests
         var nested = includeNested
             ? "<MODIFIERS><FlatBase>1</FlatBase></MODIFIERS>"
             : string.Empty;
+        var lookups = includeLookups
+            ? "<ubCursor>2</ubCursor><Inseparable>1</Inseparable><AttachmentSystem>2</AttachmentSystem>"
+            : string.Empty;
+        var boolean = includeBooleans ? "<AllowClimbing>1</AllowClimbing>" : string.Empty;
+        var unknownLookup = includeLookups ? "<ubCursor>99</ubCursor>" : string.Empty;
         await File.WriteAllTextAsync(
             Path.Combine(itemsDirectory, "Items.xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
             + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName><ubWeight>0</ubWeight>"
-            + "<AttachmentClass>1</AttachmentClass></ITEM>"
+            + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + "</ITEM>"
             + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>10</ubWeight>"
-            + graphics + nested + "</ITEM>"
+            + graphics + nested + unknownLookup + "</ITEM>"
             + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
             + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass></ITEM>"
             + "</ITEMLIST>");
@@ -776,6 +998,34 @@ public class TableEditorViewModelTests
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
                 + "<ITEM><uiIndex>1</uiIndex><szItemName>Глок 17</szItemName></ITEM>"
                 + "</ITEMLIST>");
+        }
+
+        if (includeLookups)
+        {
+            var lookupDirectory = Path.Combine(tableData, "Lookup");
+            Directory.CreateDirectory(lookupDirectory);
+            await File.WriteAllTextAsync(
+                Path.Combine(lookupDirectory, "Cursor.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+                + "<Cursor><id>1</id><name>Default</name></Cursor>"
+                + "<Cursor><id>2</id><name>Hand</name></Cursor>"
+                + "<Cursor><id>3</id><name>Use</name></Cursor>"
+                + "</JA2Data>");
+            await File.WriteAllTextAsync(
+                Path.Combine(lookupDirectory, "AttachmentSystem.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+                + "<AttachmentSystem><id>1</id><name>None</name></AttachmentSystem>"
+                + "<AttachmentSystem><id>2</id><name>NAS</name></AttachmentSystem>"
+                + "</JA2Data>");
+            await File.WriteAllTextAsync(
+                Path.Combine(lookupDirectory, "AttachmentClass.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+                + "<AttachmentClass><id>1</id><name>A</name></AttachmentClass>"
+                + "<AttachmentClass><id>2</id><name>B</name></AttachmentClass>"
+                + "<AttachmentClass><id>3</id><name>AB</name></AttachmentClass>"
+                + "<AttachmentClass><id>4</id><name>C</name></AttachmentClass>"
+                + "</JA2Data>");
+            // Separability.xml is intentionally absent so the editor must fall back to text.
         }
 
         var databasePath = workspace.PathOf("metadata.sqlite");
@@ -800,6 +1050,10 @@ public class TableEditorViewModelTests
 
         public uint? EditBitsResult { get; set; }
 
+        public IReadOnlyDictionary<int, string>? LastBitLabels { get; private set; }
+
+        public string? LastBitValueName { get; private set; }
+
         public TranslationReport? LastTranslationReport { get; private set; }
 
         public string? LastTranslationReportTitle { get; private set; }
@@ -808,7 +1062,16 @@ public class TableEditorViewModelTests
 
         public bool Confirm(string message, string title) => ConfirmResult;
 
-        public uint? EditBits(string title, uint value) => EditBitsResult;
+        public uint? EditBits(
+            string title,
+            uint value,
+            IReadOnlyDictionary<int, string>? labels = null,
+            string? valueName = null)
+        {
+            LastBitLabels = labels;
+            LastBitValueName = valueName;
+            return EditBitsResult;
+        }
 
         public void ShowTranslationReport(TranslationReport report, string title)
         {

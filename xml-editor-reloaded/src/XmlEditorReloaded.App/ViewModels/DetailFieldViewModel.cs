@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Schema;
 
@@ -15,7 +16,8 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     internal DetailFieldViewModel(
         TableEditorViewModel editor,
         TableRowViewModel row,
-        TableSchemaColumn column)
+        TableSchemaColumn column,
+        LookupColumnData? lookup = null)
     {
         ArgumentNullException.ThrowIfNull(editor);
         ArgumentNullException.ThrowIfNull(row);
@@ -24,6 +26,7 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         _editor = editor;
         Row = row;
         Column = column;
+        Lookup = lookup;
         Name = column.XmlFieldName;
         TypeText = column.DataType.ToString();
         IsReadOnly = column.IsKey
@@ -32,6 +35,12 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             || column.IsNested
             || !editor.IsEditable
             || row.Key is null;
+        IsEditable = !IsReadOnly;
+        IsBoolean = column.DataType == ColumnDataType.Boolean;
+        IsLookup = column.EditorKind == ColumnEditorKind.LookupCombo
+            && lookup is { IsAvailable: true };
+        HasLookupError = lookup is { IsAvailable: false };
+        IsPlainText = !IsBoolean && !IsLookup;
         CanEditBits = !IsReadOnly
             && (column.DataType == ColumnDataType.Flags
                 || column.EditorKind == ColumnEditorKind.FlagEditor);
@@ -46,6 +55,11 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     /// Gets the schema column of the field.
     /// </summary>
     internal TableSchemaColumn Column { get; }
+
+    /// <summary>
+    /// Gets the loaded lookup data of the field, or <see langword="null"/> when the field has no lookup.
+    /// </summary>
+    internal LookupColumnData? Lookup { get; }
 
     /// <summary>
     /// Gets the XML field name.
@@ -74,6 +88,49 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     public bool IsReadOnly { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the field accepts input.
+    /// </summary>
+    public bool IsEditable { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field uses a checkbox editor.
+    /// </summary>
+    public bool IsBoolean { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field uses a lookup combo.
+    /// </summary>
+    public bool IsLookup { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field uses a plain text box.
+    /// </summary>
+    public bool IsPlainText { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether a configured lookup source could not be loaded.
+    /// </summary>
+    public bool HasLookupError { get; }
+
+    /// <summary>
+    /// Gets the lookup load error text, or an empty string when the lookup is available.
+    /// </summary>
+    public string LookupErrorText => HasLookupError && Lookup?.ErrorText is { } error
+        ? Strings.Format("LookupUnavailableFormat", error)
+        : string.Empty;
+
+    /// <summary>
+    /// Gets the tooltip shown on the field name, including lookup and type information.
+    /// </summary>
+    public string FieldTooltip => HasLookupError ? LookupErrorText : TypeText;
+
+    /// <summary>
+    /// Gets the selectable lookup options, or an empty list when the field has no lookup.
+    /// </summary>
+    public IReadOnlyList<LookupOption> LookupOptions =>
+        Lookup?.Options ?? Array.Empty<LookupOption>();
+
+    /// <summary>
     /// Gets a value indicating whether the bit editor is available for this field.
     /// </summary>
     public bool CanEditBits { get; }
@@ -95,8 +152,39 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsTranslated));
             OnPropertyChanged(nameof(IsUntranslated));
+            OnPropertyChanged(nameof(BooleanValue));
+            OnPropertyChanged(nameof(BooleanTooltip));
         }
     }
+
+    /// <summary>
+    /// Gets or sets the checkbox state of a Boolean field. Unchecking an existing field writes
+    /// <c>0</c>; checking an absent field appends <c>1</c> without changing other sparse fields.
+    /// </summary>
+    public bool BooleanValue
+    {
+        get => Value.Trim() is "1" or "true" or "True";
+        set
+        {
+            if (!IsBoolean || IsReadOnly)
+            {
+                return;
+            }
+
+            var normalized = value ? "1" : "0";
+            if (string.Equals(Value, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            Value = normalized;
+        }
+    }
+
+    /// <summary>
+    /// Gets the tooltip of the boolean checkbox, which explains that an absent field is not stored.
+    /// </summary>
+    public string BooleanTooltip => Value.Length == 0 ? Strings.Get("DetailNotSet") : string.Empty;
 
     /// <summary>
     /// Gets a value indicating whether the value comes from the language overlay.
@@ -123,6 +211,8 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         OnPropertyChanged(nameof(Value));
         OnPropertyChanged(nameof(IsTranslated));
         OnPropertyChanged(nameof(IsUntranslated));
+        OnPropertyChanged(nameof(BooleanValue));
+        OnPropertyChanged(nameof(BooleanTooltip));
     }
 
     [RelayCommand]
