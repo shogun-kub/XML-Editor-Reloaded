@@ -7,15 +7,15 @@
 
 ## Сводка
 
-| Вердикт | Кол-во |
+| Вердикт | Кол-во ID |
 |---|---|
 | реализовано | 3 |
-| superseded | 28 |
+| superseded | 40 |
 | исключено | 4 |
 | пробел | 1 |
-| **Итого** | **36** |
+| **Итого ID** | **48** |
 
-Строк 36: 34 новых ID `L-STO-001…034` и 2 групповые строки, закрывающие 14 ID инвентаря (`L-TBL-023…029`, `L-TBL-030…036`). Backend-хранение в инвентаре было представлено неId-строками («DefaultTable», «Контракт колонки», «Trim-запись», «Автоинкремент», «Inline-fallback») и разделом «Language and overlay surfaces», поэтому почти все аспекты получили новые ID. Преобладание `superseded` закономерно: legacy-хранилище — типизированный `DataSet`, который при записи нормализует, сортирует и обрезает данные, а rewrite обязан сохранять лексику и структуру (AGENTS, `PLAN.md:106`). Один реальный пробел — редактирование пустой таблицы после перезагрузки (`L-STO-034`). Item-специфика закрыта секцией 21, merc/aux-таблицы — секцией 30, настройки/меню — секцией 10; здесь они не дублируются.
+Строк матрицы 36, ID 48: 34 новых ID `L-STO-001…034` и 2 групповые строки, закрывающие 14 ID инвентаря (`L-TBL-023…029`, `L-TBL-030…036`). Backend-хранение в инвентаре было представлено неId-строками («DefaultTable», «Контракт колонки», «Trim-запись», «Автоинкремент», «Inline-fallback») и разделом «Language and overlay surfaces», поэтому почти все аспекты получили новые ID. Преобладание `superseded` закономерно: legacy-хранилище — типизированный `DataSet`, который при записи нормализует, сортирует и обрезает данные, а rewrite обязан сохранять лексику и структуру (AGENTS, `PLAN.md:106`). Один реальный пробел — редактирование пустой таблицы после перезагрузки (`L-STO-034`). Item-специфика закрыта секцией 21, merc/aux-таблицы — секцией 30, настройки/меню — секцией 10; здесь они не дублируются.
 
 ## Пробелы
 
@@ -29,7 +29,7 @@
 |---|---|---|---|---|---|---|
 | L-STO-001 | Загрузка XML-таблицы целиком в `DataTable` | `References/xml-editor/BackEnd/Data Access/Tables/DefaultTable.vb:30-92` (ReadXml — :47); `References/xml-editor/BackEnd/Data Access/XmlDB.vb:197-220` | `XDocument` с сохранением whitespace, комментариев и порядка; фасады записей поверх элементов | `xml-editor-reloaded/src/XmlEditorReloaded.Xml/Loading/TableFileLoader.cs:104-121`; `Documents/TableDocument.cs:35-51` | superseded | Legacy приводил файл к объявленным колонкам и терял остальное; rewrite не нормализует документ (PLAN.md:106). |
 | L-STO-002 | Ошибки файла: malformed, отсутствие файла, отказ доступа | `DefaultTable.vb:47` (чтение без проверки); `XmlDB.vb:203-216` (пропуск только языковых файлов) | Malformed + диагностика; `io.file_not_found`, `io.access_denied`, `io.error` | `TableFileLoader.cs:69-121,174-195`; `tests/XmlEditorReloaded.Xml.Tests/TableFileLoaderTests.cs:55-99` | superseded | v5 `Lookup/AttachmentPoint.xml` (лишний `</AttachmentPoint>` на строке 31) даёт `xml.parse_error`, файл не перезаписывается; legacy бросал исключение (30, L-TBL-058). |
-| L-STO-003 | Проверка корня и наличия записей при загрузке | Нет в legacy: `DataTable.ReadXml` не сверяет корень с ожидаемым именем и не сообщает об отсутствии записей | `xml.unexpected_root`/`xml.record_element_missing` → `LoadedReadOnly`, запись запрещена | `TableFileLoader.cs:134-153`; `Core/Abstractions/ITableRepository.cs:9-19`; `Repository/TableRepository.cs:72-79` | superseded | Новая защита: документ с чужим корнем нельзя сохранить (legacy такой файл читал и мог записать обратно в изменённом виде). Цена строгости — пустая таблица (L-STO-034). |
+| L-STO-003 | Проверка корня и наличия записей при загрузке | Нет в legacy: `DataTable.ReadXml` не сверяет корень с ожидаемым именем и не сообщает об отсутствии записей | `xml.unexpected_root`/`xml.record_element_missing` → `LoadedReadOnly`, запись запрещена | `TableFileLoader.cs:134-153`; `Core/Abstractions/ITableRepository.cs:9-19`; `Saving/TableFileSaver.cs:53-58`; `Repository/TableRepository.cs:85-99` | superseded | Новая защита: документ с чужим корнем нельзя сохранить (legacy такой файл читал и мог записать обратно в изменённом виде). Цена строгости — пустая таблица (L-STO-034). |
 | L-STO-004 | Схема таблицы: колонки объявляются кодом | `References/xml-editor/BackEnd/DatabaseCode.vb:803-835`; 51 объявление `DataSetName` | Объединение полей документа + не-declaring hints + document-driven режим | `Schema/TableSchemaBuilder.cs:26-190`; `Metadata/Migrations/0003_ColumnHints.sql:3-20`; `Repository/TableRepository.cs:45-64` | superseded | В `Items.xml` v4 655 различных наборов полей (11–233), v5 — 654; фиксированная схема невозможна. |
 | L-STO-005 | Разреженные записи и отсутствующие поля | typed `DataColumn` с `DefaultValue` 0/"" (`DatabaseCode.vb:815-819`); запись всех колонок | Отсутствие поля сохраняется, значение не подставляется | `TableDocument.cs:45-51`; `Documents/TableRecord.cs:60-130` | superseded | Legacy не различает «поля нет» и «поле = 0»; rewrite различает, включая разреженность оверлея (`Russian.Items.xml`: 1740 записей из 6 полей, 2 — из 5). |
 | L-STO-006 | Неизвестные элементы, атрибуты и комментарии при round-trip | `DataTable.ReadXml` + `WriteXml` из колонок (`DefaultTable.vb:158-223`) | Дерево сохраняется; патч меняет только диапазон значения | `TableDocument.cs:10-13`; `Saving/LosslessDocumentPatcher.cs:27-126`; `tests/XmlEditorReloaded.Xml.Tests/StructuralPatchTests.cs:141` | superseded | `Items/Merges.xml:3` — комментарий внутри `MERGE`; legacy удалял его при любом сохранении, rewrite сохраняет. Деструктивная потеря unknown-тегов — `PLAN.md:106`. |

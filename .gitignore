@@ -5,6 +5,7 @@ References/
 # ===== Local agent tooling =====
 .mimocode/
 .zcode/
+__pycache__/
 
 # ===== Build results =====
 [Bb]in/
