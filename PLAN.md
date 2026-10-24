@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4/M5/M8 завершены. Backend собран в рабочую композицию: Core, SQLite-метаданные, каталог, настройки, XML loader/save, редактирование, оверлеи и DI-wiring. `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий шаг — выбрать M9 (минимальная WPF-оболочка), M7 (Imaging), M6 (валидация) или R1 (lossless structural patcher).
+**Текущее состояние:** M0/M1/M2/M3/M4/M5/M7/M8 завершены. Backend полностью собран: Core, SQLite-метаданные, каталог, настройки, XML load/edit/overlays/save, DI-wiring и STI/ETRLE imaging. `App` — шаблонная WPF-заглушка. Следующий шаг — M9 (минимальная WPF-оболочка); опционально M6 (валидация) или R1 (lossless structural patcher).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -52,9 +52,10 @@
 **Фактический результат:** миграции применяются идемпотентно, downgrade блокируется; свежая БД содержит 73 таблицы; провайдер читает ключи (включая `CITYLIST/CITY` и `GEARKIT`), list/dict-поля, переводимые пути и языки. Каталог на temp-фикстуре различает базу и оверлеи; на реальных данных v4 найдено 238 базовых таблиц и 25 оверлеев, v5 — 239 базовых и 0 оверлеев. Настройки сохраняются атомарно.
 **Готово:** 14 Data-тестов зелёные; `PROJECT-STRUCTURE.md` содержит `Data.Tests`; следующий — M5, M7 можно вести параллельно.
 
-### M7 — Imaging (~2–3 дн; параллельно с M2)
+### M7 — Imaging (~2–3 дн; параллельно с M2) — **выполнен**
 `StciHeader`/`StciFlags`/`SubImageDescriptor`/`StciImage`/`StciParser` (ошибки `sti.bad_magic/truncated/unsupported_flags`); `EtrleDecoder` (control-byte семантика, overrun = diagnostic); `ItemImageCatalog` (Big: `BigItems/gun{NN}.sti`/`p{t}item{NN}.sti`, паддинг до 2 цифр только для <10, case-insensitive; Medium: `Interface/mdguns.sti`/`mdp{t}items.sti` frame=index; Small: `tilesets/0/smguns.sti`/`smp{t}items.sti`; прозрачность: индекс 0 везде, зелёный 0,255,0 — medium/small); `DecodedFrameCache` (LRU ~64–128 МБ, invalidation по mtime). Фикстуры: 2–3 маленьких реальных STI, скопированных в тест-проект.
-**Готово:** все edge-кейсы покрыты, zero WPF-ссылок.
+**Фактический результат:** реализованы парсер STCI (canvas 640×480, palette RGB×3, directory 16 байт, `appDataSize` @48), ETRLE-декодер (0 = EOL, >127 = transparent run, 1..127 = literal; overrun/truncated диагностируются), каталог big/medium/small изображений, зелёный ключ для medium/small и LRU-кэш с invalidation по mtime. Фикстуры: реальные `P2ITEM35.STI`, `MDP3ITEMS.STI`, `SMP3ITEMS.STI`.
+**Готово:** 18 Imaging-тестов, всего 110 тестов; нулевые ссылки на WPF/System.Drawing; build 0 warnings/errors.
 
 ### M3 — Xml: загрузка, round-trip, диагностика (~4–6 дн; самое сложное) — **выполнен**
 `FileFormatInfo`, `TableFileLoader` (`XmlReaderSettings` + `PreserveWhitespace`, `XmlException` → `xml.parse_error` + line/position), `DocumentSerializer`, `TableFileSaver`, `TableDocument`, `TableRecord`, `LexicalValue`, `TableLoadResult` (`Loaded|LoadedReadOnly|Malformed`), `XmlFileLookupRepository`.

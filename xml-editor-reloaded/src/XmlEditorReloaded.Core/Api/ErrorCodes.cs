@@ -59,6 +59,9 @@ public static class ErrorCodes
     /// <summary>The STI file uses compression or flags that the decoder does not support.</summary>
     public const string StiUnsupportedFlags = "sti.unsupported_flags";
 
+    /// <summary>An ETRLE run would write outside the frame boundaries.</summary>
+    public const string StiEtrleOverrun = "sti.etrle_overrun";
+
     /// <summary>The requested item image file or frame could not be found.</summary>
     public const string ImageNotFound = "image.not_found";
 

@@ -1,2 +1,4 @@
 # XML fixtures are checked byte-exactly: BOM, CRLF, and LF variants are part of the tests.
 xml-editor-reloaded/tests/XmlEditorReloaded.Xml.Tests/Fixtures/** -text
+# STI fixtures are binary and must never be line-ending converted.
+xml-editor-reloaded/tests/XmlEditorReloaded.Imaging.Tests/Fixtures/** -text -diff
