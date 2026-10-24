@@ -28,6 +28,7 @@ public interface ILookupRepository
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the entries in file order;
     /// on failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>, or <c>io.error</c>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<LookupEntry>>> GetEntriesAsync(
         Metadata.TableName lookupName,
         string? languageCode = null,

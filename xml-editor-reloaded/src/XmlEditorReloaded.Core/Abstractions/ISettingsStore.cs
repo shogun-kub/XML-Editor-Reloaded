@@ -41,6 +41,7 @@ public interface ISettingsStore
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the settings;
     /// on failure, <c>error_code</c> is <c>io.error</c>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<AppSettings>> LoadAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -52,5 +53,6 @@ public interface ISettingsStore
     /// On success, <c>error_code</c> is <see langword="null"/>;
     /// on failure, <c>error_code</c> is <c>io.access_denied</c> or <c>io.error</c>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult> SaveAsync(AppSettings settings, CancellationToken cancellationToken = default);
 }

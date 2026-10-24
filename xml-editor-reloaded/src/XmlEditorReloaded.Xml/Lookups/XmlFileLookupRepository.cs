@@ -47,6 +47,7 @@ public sealed class XmlFileLookupRepository : ILookupRepository
     /// <c>xml.invalid_lookup_entry</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="lookupName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<IReadOnlyList<LookupEntry>>> GetEntriesAsync(
         TableName lookupName,
         string? languageCode = null,

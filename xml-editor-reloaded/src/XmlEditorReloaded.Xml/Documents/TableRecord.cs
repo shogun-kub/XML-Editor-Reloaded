@@ -12,6 +12,14 @@ namespace XmlEditorReloaded.Xml.Documents;
 /// </summary>
 public sealed class TableRecord
 {
+    /// <summary>
+    /// Numeric styles accepted for decimal table values: an invariant decimal point, a sign, and
+    /// surrounding whitespace, but no culture-specific group or decimal separators.
+    /// </summary>
+    private const NumberStyles DecimalStyles =
+        NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
+        | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+
     private readonly TableDocument _owner;
     private readonly XElement _element;
 
@@ -371,7 +379,7 @@ public sealed class TableRecord
             ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
                 int.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Decimal =>
-                decimal.TryParse(rawText, NumberStyles.Number, CultureInfo.InvariantCulture, out _),
+                decimal.TryParse(rawText, DecimalStyles, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Boolean => rawText is "0" or "1",
             _ => true,
         };

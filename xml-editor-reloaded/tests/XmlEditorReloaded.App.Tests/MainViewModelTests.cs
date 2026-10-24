@@ -3,6 +3,8 @@ using System.IO;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
@@ -61,6 +63,101 @@ public class MainViewModelTests
         Assert.Equal("Loaded", viewModel.DetailsText);
     }
 
+    /// <summary>
+    /// An invalid data directory clears the table list and reports the problem without throwing.
+    /// </summary>
+    [Fact]
+    public async Task Initialize_MissingDataDirectory_ShowsInvalidDirectory()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var missing = workspace.PathOf("missing");
+        var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
+        Assert.True((await settingsStore.SaveAsync(new AppSettings(
+            new[] { missing },
+            missing,
+            "ru",
+            "en",
+            new[] { missing }))).IsSuccess);
+        var viewModel = new MainViewModel(
+            new FileSystemTableCatalog(),
+            new TableRepository(),
+            settingsStore,
+            new FakeDialogService());
+
+        await viewModel.InitializeAsync();
+
+        Assert.Empty(viewModel.Tables);
+        Assert.Equal(
+            "The selected folder does not contain TableData or Data-1.13\\TableData.",
+            viewModel.StatusText);
+    }
+
+    /// <summary>
+    /// Selecting a table without metadata loads it in document-driven mode and surfaces the diagnostic.
+    /// </summary>
+    [Fact]
+    public async Task SelectUnmappedTable_ShowsMetadataUnmappedDiagnostic()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = workspace.PathOf("Data-1.13");
+        Directory.CreateDirectory(Path.Combine(data13, "TableData", "Custom"));
+        await File.WriteAllTextAsync(
+            Path.Combine(data13, "TableData", "Custom", "Notes.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><NOTES>"
+            + "<NOTE><id>1</id><text>Hello</text></NOTE>"
+            + "</NOTES>");
+        var settingsStore = new JsonSettingsStore(workspace.PathOf("settings.json"));
+        Assert.True((await settingsStore.SaveAsync(new AppSettings(
+            new[] { data13 },
+            data13,
+            "en",
+            "en",
+            new[] { data13 }))).IsSuccess);
+        var viewModel = new MainViewModel(
+            new FileSystemTableCatalog(),
+            new TableRepository(),
+            settingsStore,
+            new FakeDialogService());
+
+        await viewModel.InitializeAsync();
+        var table = Assert.Single(viewModel.Tables);
+        Assert.False(table.Descriptor.IsMapped);
+
+        viewModel.SelectedTable = table;
+        await WaitUntilAsync(() => viewModel.Diagnostics.Count > 0);
+
+        Assert.Contains(viewModel.Diagnostics, line => line.StartsWith("metadata.unmapped:", StringComparison.Ordinal));
+        Assert.Equal("Loaded", viewModel.DetailsText);
+        Assert.False(viewModel.IsBusy);
+    }
+
+    /// <summary>
+    /// An unexpected catalog failure is reported through the status text instead of escaping the command.
+    /// </summary>
+    [Fact]
+    public async Task Refresh_CatalogThrows_SetsErrorStatus()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = workspace.PathOf("Data-1.13");
+        Directory.CreateDirectory(Path.Combine(data13, "TableData"));
+        var viewModel = new MainViewModel(
+            new ThrowingCatalog(),
+            new TableRepository(),
+            new JsonSettingsStore(workspace.PathOf("settings.json")),
+            new FakeDialogService())
+        {
+            DataDirectory = data13,
+        };
+
+        await viewModel.RefreshCommand.ExecuteAsync(null);
+
+        Assert.Equal("Error: boom", viewModel.StatusText);
+        Assert.False(viewModel.IsBusy);
+    }
+
     private static async Task WaitUntilAsync(Func<bool> predicate)
     {
         for (var attempt = 0; attempt < 100; attempt++)
@@ -79,5 +176,13 @@ public class MainViewModelTests
     private sealed class FakeDialogService : IDialogService
     {
         public string? PickFolder(string title, string? initialDirectory = null) => null;
+    }
+
+    private sealed class ThrowingCatalog : ITableCatalog
+    {
+        public Task<OperationResult<IReadOnlyList<TableDescriptor>>> GetTablesAsync(
+            string tableDataDirectory,
+            CancellationToken cancellationToken = default) =>
+            throw new InvalidOperationException("boom");
     }
 }

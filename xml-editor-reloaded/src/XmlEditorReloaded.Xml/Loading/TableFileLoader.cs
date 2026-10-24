@@ -27,6 +27,7 @@ public sealed class TableFileLoader
     /// On I/O failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public Task<OperationResult<TableLoadResult>> LoadAsync(
         TableDescriptor descriptor,
         TableMetadata? metadata = null,
@@ -46,6 +47,7 @@ public sealed class TableFileLoader
     /// On I/O failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> or <paramref name="metadata"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public Task<OperationResult<TableLoadResult>> LoadOverlayAsync(
         TableDescriptor descriptor,
         TableMetadata metadata,
@@ -96,6 +98,8 @@ public sealed class TableFileLoader
 
         var format = FileFormatInfo.Detect(bytes);
         var diagnostics = new List<LoadDiagnostic>();
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         XDocument document;
         try

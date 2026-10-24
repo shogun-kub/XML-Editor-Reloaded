@@ -18,6 +18,7 @@ public interface ITranslationCatalog
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the overlays;
     /// on failure, <c>error_code</c> and <c>error_text</c> describe the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<OverlayDescriptor>>> GetOverlayDescriptorsAsync(TableDescriptor descriptor, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -29,6 +30,7 @@ public interface ITranslationCatalog
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the field paths;
     /// on failure, <c>error_code</c> is <c>metadata.not_found</c>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<string>>> GetTranslatableFieldsAsync(TableName tableName, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -40,5 +42,6 @@ public interface ITranslationCatalog
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the languages;
     /// on failure, <c>error_code</c> and <c>error_text</c> describe the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesForAsync(TableName tableName, CancellationToken cancellationToken = default);
 }

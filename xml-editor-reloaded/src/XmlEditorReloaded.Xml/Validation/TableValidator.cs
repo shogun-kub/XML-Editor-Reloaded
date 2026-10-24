@@ -25,6 +25,7 @@ public sealed class TableValidator
     /// A validation report. Unknown fields are informational; type, lookup, key, and mask issues are warnings.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="document"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<ValidationReport> ValidateAsync(
         TableDocument document,
         ILookupRepository? lookupRepository = null,

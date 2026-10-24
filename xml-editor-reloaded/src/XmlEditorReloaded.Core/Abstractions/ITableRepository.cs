@@ -67,6 +67,7 @@ public interface ITableRepository
     /// A malformed file is reported as a successful load result with
     /// <see cref="TableDocumentStatus.Malformed"/> and diagnostics, not as an operation failure.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<TableLoadResult>> LoadTableAsync(TableDescriptor descriptor, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -78,5 +79,6 @@ public interface ITableRepository
     /// On success, <c>error_code</c> is <see langword="null"/>;
     /// on failure, <c>error_code</c> is <c>xml.not_saveable</c>, <c>xml.file_changed_externally</c>, or <c>io.error</c>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult> SaveTableAsync(TableLoadResult loadResult, CancellationToken cancellationToken = default);
 }

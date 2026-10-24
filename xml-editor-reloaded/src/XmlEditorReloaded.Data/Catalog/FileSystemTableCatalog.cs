@@ -27,11 +27,14 @@ public sealed class FileSystemTableCatalog : ITableCatalog
     }
 
     /// <inheritdoc />
+    /// <exception cref="ArgumentException">Thrown when <paramref name="tableDataDirectory"/> is empty.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<IReadOnlyList<TableDescriptor>>> GetTablesAsync(
         string tableDataDirectory,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tableDataDirectory);
+        cancellationToken.ThrowIfCancellationRequested();
 
         if (!Directory.Exists(tableDataDirectory))
         {

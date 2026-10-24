@@ -22,6 +22,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IDialogService _dialogService;
     private AppSettings _settings = AppSettings.Default;
     private CancellationTokenSource? _operationCts;
+    private int _operationGeneration;
 
     [ObservableProperty]
     private string _dataDirectory = string.Empty;
@@ -193,13 +194,11 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        CancelOperation();
-        _operationCts = new CancellationTokenSource();
-        IsBusy = true;
+        var (source, generation) = BeginOperation();
         StatusText = Strings.Get("StatusLoading");
         try
         {
-            var result = await _catalog.GetTablesAsync(tableDataDirectory, _operationCts.Token).ConfigureAwait(true);
+            var result = await _catalog.GetTablesAsync(tableDataDirectory, source.Token).ConfigureAwait(true);
             if (!result.IsSuccess)
             {
                 Tables.Clear();
@@ -224,9 +223,16 @@ public partial class MainViewModel : ObservableObject
         {
             // A newer refresh or selection replaced this operation.
         }
+        catch (Exception exception)
+        {
+            if (generation == _operationGeneration)
+            {
+                StatusText = Strings.Format("StatusError", exception.Message);
+            }
+        }
         finally
         {
-            IsBusy = false;
+            CompleteOperation(generation);
         }
     }
 
@@ -245,15 +251,13 @@ public partial class MainViewModel : ObservableObject
 
     private async Task LoadSelectedTableAsync(TableListItem item)
     {
-        CancelOperation();
-        _operationCts = new CancellationTokenSource();
-        IsBusy = true;
+        var (source, generation) = BeginOperation();
         Diagnostics.Clear();
         RecordCountText = string.Empty;
         DetailsText = item.TableName;
         try
         {
-            var result = await _repository.LoadTableAsync(item.Descriptor, _operationCts.Token).ConfigureAwait(true);
+            var result = await _repository.LoadTableAsync(item.Descriptor, source.Token).ConfigureAwait(true);
             if (!result.IsSuccess)
             {
                 StatusText = Strings.Format("StatusError", result.ErrorText ?? string.Empty);
@@ -285,7 +289,32 @@ public partial class MainViewModel : ObservableObject
         {
             // A newer selection replaced this load.
         }
+        catch (Exception exception)
+        {
+            if (generation == _operationGeneration)
+            {
+                StatusText = Strings.Format("StatusError", exception.Message);
+            }
+        }
         finally
+        {
+            CompleteOperation(generation);
+        }
+    }
+
+    private (CancellationTokenSource Source, int Generation) BeginOperation()
+    {
+        CancelOperation();
+        var source = new CancellationTokenSource();
+        _operationCts = source;
+        var generation = ++_operationGeneration;
+        IsBusy = true;
+        return (source, generation);
+    }
+
+    private void CompleteOperation(int generation)
+    {
+        if (generation == _operationGeneration)
         {
             IsBusy = false;
         }

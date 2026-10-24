@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI, and the minimal WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, and persist settings. Editing grids/forms, item image UI, and the lossless structural patcher remain future work. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M10 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI, and the minimal WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, load a table, display record counts and diagnostics, and persist settings. M10 added environment-gated performance gates (Items.xml loads in ~75 ms, Attachments.xml in ~27 ms, load+edit+save in ~380 ms), cancellation checks across all I/O services, culture-independent numeric editing, and shell robustness (operation generation and error surfacing). Editing grids/forms, item image UI, and the lossless structural patcher remain future work (M11–M15). This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -383,14 +383,15 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 
 ## 10. Roadmap
 
-1. Scaffold the solution, shared build props, and empty projects; verify the build.
-2. Implement `Core` metadata abstractions and the standard result type.
-3. Implement `Data` SQLite metadata repository; import the prototype schema.
-4. Implement `Imaging` STI parser and ETRLE decoder with golden-file tests.
-5. Implement `Xml` table loading and round-trip saving with metadata validation; add byte-level round-trip tests against copies of v4/v5 `TableData`.
-6. Build the WPF shell: settings, data directory selection, table list.
-7. Add grid editing (sorting, filtering, row operations).
-8. Add item detail form with images and flag editors.
-9. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization.
-10. Add merc gear editor and lookup management.
-11. Add save/validation workflows, cache, error reporting, and a cross-version field report.
+1. Scaffold the solution, shared build props, and empty projects; verify the build. **Done (M0).**
+2. Implement `Core` metadata abstractions and the standard result type. **Done (M1).**
+3. Implement `Data` SQLite metadata repository; import the prototype schema. **Done (M2).**
+4. Implement `Imaging` STI parser and ETRLE decoder with golden-file tests. **Done (M7).**
+5. Implement `Xml` table loading and round-trip saving with metadata validation; add byte-level round-trip tests against copies of v4/v5 `TableData`. **Done (M3–M6).**
+6. Build the WPF shell: settings, data directory selection, table list. **Done (M9).**
+7. Harden the backend: performance gates, cancellation contract, culture-independent numerics, documentation audit. **Done (M10).**
+8. Add schema discovery, the table workspace (base + overlay, unified save), runtime data-set binding, and the lossless structural patcher (M11).
+9. Add grid editing (sorting, filtering, row operations, column selection) (M12).
+10. Add the item detail form with STI images and flag editors (M13).
+11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization (M14).
+12. Add merc gear editor, lookup management, bulk operations, and a cross-version field report (M15).

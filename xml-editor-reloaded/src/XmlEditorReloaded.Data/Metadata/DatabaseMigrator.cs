@@ -25,6 +25,7 @@ public sealed class DatabaseMigrator
     /// <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="databasePath"/> is empty.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<int>> MigrateAsync(string databasePath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);

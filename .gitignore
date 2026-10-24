@@ -4,6 +4,7 @@ References/
 
 # ===== Local agent tooling =====
 .mimocode/
+.zcode/
 
 # ===== Build results =====
 [Bb]in/

@@ -18,6 +18,7 @@ public interface ITableMetadataProvider
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the metadata;
     /// on failure, <c>error_code</c> is <c>metadata.not_found</c> and <c>error_text</c> describes the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<TableMetadata>> GetTableAsync(TableName tableName, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -28,6 +29,7 @@ public interface ITableMetadataProvider
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the metadata list;
     /// on failure, <c>error_code</c> and <c>error_text</c> describe the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<TableMetadata>>> GetAllTablesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -38,5 +40,6 @@ public interface ITableMetadataProvider
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the language list;
     /// on failure, <c>error_code</c> and <c>error_text</c> describe the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(CancellationToken cancellationToken = default);
 }

@@ -30,6 +30,7 @@ public sealed class StiDecoder
     /// <param name="path">Absolute path of the STI file.</param>
     /// <param name="cancellationToken">Token to cancel the read.</param>
     /// <returns>Parsed STI image or an error with the usual <c>error_code</c>/<c>error_text</c> fields.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public Task<OperationResult<StciImage>> ParseAsync(
         string path,
         CancellationToken cancellationToken = default) =>
@@ -51,6 +52,7 @@ public sealed class StiDecoder
     /// <param name="frameIndex">Zero-based frame index.</param>
     /// <param name="cancellationToken">Token to cancel the read.</param>
     /// <returns>RGBA frame or an error with the usual <c>error_code</c>/<c>error_text</c> fields.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<RgbaBuffer>> LoadFrameAsync(
         string path,
         int frameIndex,

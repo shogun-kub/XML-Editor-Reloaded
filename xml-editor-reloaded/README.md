@@ -14,10 +14,16 @@ dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx
 dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
 ```
 
-Optional full-corpus round-trip tests (runs against a copy, never writes to the source):
+Optional full-corpus round-trip tests (runs against a temporary copy, never writes to the source):
 
 ```
 XER_CORPUS_DIR="<GameDir>\Data-1.13\TableData" dotnet test
+```
+
+Optional performance gates (read-only; each operation must stay under 2 seconds):
+
+```
+XER_CORPUS_DIR="<GameDir>\Data-1.13\TableData" dotnet test --filter "Category=Performance"
 ```
 
 ## Layout

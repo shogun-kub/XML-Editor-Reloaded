@@ -30,10 +30,12 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
     }
 
     /// <inheritdoc />
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<TableMetadata>> GetTableAsync(
         TableName tableName,
         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         try
         {
             await using var connection = new SqliteConnection(_connectionString);
@@ -55,9 +57,11 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
     }
 
     /// <inheritdoc />
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<IReadOnlyList<TableMetadata>>> GetAllTablesAsync(
         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         try
         {
             await using var connection = new SqliteConnection(_connectionString);
@@ -82,6 +86,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
 
             foreach (var row in rows)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await ReadTableDetailsAsync(connection, row, cancellationToken).ConfigureAwait(false);
                 tables.Add(metadata);
             }
@@ -97,9 +102,11 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
     }
 
     /// <inheritdoc />
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(
         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         try
         {
             await using var connection = new SqliteConnection(_connectionString);

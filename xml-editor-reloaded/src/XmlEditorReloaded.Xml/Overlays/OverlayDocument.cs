@@ -58,6 +58,8 @@ public sealed class OverlayDocument
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the overlay.
     /// On failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>, or <c>xml.not_saveable</c>.
     /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> or <paramref name="metadata"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public static async Task<OperationResult<OverlayDocument>> LoadAsync(
         OverlayDescriptor descriptor,
         TableMetadata metadata,
@@ -105,6 +107,7 @@ public sealed class OverlayDocument
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is the same as for <see cref="TableFileSaver.SaveAsync"/>.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the file is left unchanged.</exception>
     public Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default) =>
         new TableFileSaver().SaveAsync(_document, cancellationToken);
 }

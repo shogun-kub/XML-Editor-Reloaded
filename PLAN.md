@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M2/M3/M4/M5/M6/M7/M8/M9 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. Редакторы сеток/форм, image UI и R1 structural patcher остаются следующими задачами.
+**Текущее состояние:** M0–M10 завершены. Backend и минимальная WPF-оболочка работают: выбор каталога, список таблиц, mapped/unmapped/языки, record count, malformed-диагностика, настройки и RESX-локализация. M10 добавил perf-гейты, контракт отмены, culture-тесты и устойчивость shell. Дальше — M11 (schema discovery, table workspace, lossless structural patcher), M12 (grid UI), M13 (item form + STI), M14 (локализация), M15 (lookup/flag/bulk).
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -89,10 +89,35 @@
 **Фактический результат:** `App` собирает DI, применяет миграции, читает настройки и применяет `UiLanguageCode` до создания окна; `WpfDialogService` использует `OpenFolderDialog`; `MainViewModel` загружает каталог, показывает mapped/unmapped и языки, по выбору таблицы загружает документ, record count и диагностику, поддерживает отмену операций; UI-строки в RESX с английским и русским ресурсами и satellite-сборкой. Настройки хранятся через `JsonSettingsStore`; выбранный каталог сохраняется. Отдельный `AppSettingsViewModel` не понадобился: настройки ведёт `MainViewModel` + `ISettingsStore`.
 **Готово:** приложение запускается (проверено), создаёт окно и остаётся работоспособным; добавлен `App.Tests` с проверкой реального каталога и загрузки записи. Всего 119 тестов.
 
-### M10 — Hardening (~1–2 дн)
-Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк), cancellation-тесты, аудит XML-доков (CS1591), обновление `PROJECT-STRUCTURE.md` и `README.md`, финальные `dotnet build` + `dotnet test` + оба корпусных прогона.
+### M10 — Hardening — **выполнен**
+Perf-тесты (env-gated), cancellation-тесты, аудит XML-доков (CS1591), обновление документации, финальные `dotnet build`/`dotnet test` и оба корпусных прогона.
+**Фактический результат:**
+- Perf-гейты (`XER_CORPUS_DIR`, порог 2 с, `[Trait("Category","Performance")]`): `Items/Items.xml` — 1775 записей за 75 мс; `Items/Attachments.xml` — 6023 записи за 27 мс; load + правка + save `Items.xml` — 380 мс; каталог — 239 таблиц за 30 мс; метаданные — 73 таблицы за 32 мс.
+- Отмена: pre-cancelled token проверяется в loader (до парсинга), saver (до сериализации, до записи и перед `File.Move`), catalog, metadata provider и `ItemImageCatalog`. Saver при отмене не оставляет ни изменённого файла, ни temp-файла; добавлены `<exception cref="OperationCanceledException">` в контракты Core и реализаций.
+- Культура: decimal-правка хранит invariant-текст (`1.5`), запятая как разделитель отклоняется (`xml.invalid_number`, документ не меняется), `AddRecord` под `ar-SA` пишет ASCII-ключ.
+- UI: generation-счётчик не даёт старой отменённой операции сбросить `IsBusy`/`StatusText` новой; неожиданные исключения каталога/загрузки выводятся в статус. Добавлены тесты на неверный каталог, unmapped-таблицу и падающий каталог.
+- Build 0 warnings (`-warnaserror`), 135 тестов зелёные, корпуса v4 (263 файла) и v5 (239 + 1 malformed) без перезаписи.
+- Ограничение: `Columns` в метабазе по-прежнему пуста; типизированные редакторы появятся с discovery в M11.
 
-**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10. Corpus harness запустить в конце первого дня M3 — риск round-trip надо снять до всего, что строится на `TableDocument`. Итого ≈ 17–24 implementer-дней.
+### M11 — Schema discovery, table workspace, lossless structural patcher (~2–3 дн)
+- `TableSchema`/`TableSchemaBuilder`: объединение полей всех записей в порядке первого появления, presence count, вывод типа по значениям (Integer/Decimal/Boolean/String), признаки key/list/dict/translatable; курируемые overrides из `Columns` применяются поверх.
+- `TableWorkspace`: base + optional overlay, merged rows, маршрутизация правок (`TableEditSession`), add/duplicate/delete, unified save (base + overlay), validation, translation report, reload.
+- Runtime-биндинг датасета в App: lookup/translation/imaging создаются под выбранный каталог (сейчас они либо не регистрируются, либо прибиты на старте).
+- `LosslessDocumentPatcher`: вставка/удаление записи байтовым splice с имитацией отступов соседей; fallback на serializer только при невозможности.
+
+### M12 — Grid editor UI (~3–4 дн)
+Виртуализированная сетка, динамические колонки (default subset + column chooser), sparse-ячейки (ввод в пустую ячейку добавляет поле при commit), add/dup/delete, поиск/фильтр/сортировка, dirty-индикатор, Ctrl+S/save all, validation panel, вкладки таблиц, RESX en/ru.
+
+### M13 — Item detail form + STI (~2–3 дн)
+Форма предмета с группировкой полей, панель big/medium/small по `ubGraphicType`/`ubGraphicNum`, flag editor.
+
+### M14 — Localization UI (~2–3 дн)
+Выбор языка, merged-значения, пометка «не переведено», правка только оверлея, отчёт о переводах, создание оверлея.
+
+### M15 — Lookup/flag editors, bulk operations, cross-version compare (~2–3 дн)
+Редакторы lookup-таблиц, массовые операции над колонкой, сравнение наборов полей между версиями.
+
+**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 (→ M15). Corpus harness запускается на каждом milestone; perf-гейты — на M10 и перед релизом.
 
 ---
 
@@ -111,21 +136,23 @@ Perf-тесты (env-gated: `Items.xml` < 2 с, `Attachments.xml` 6k строк)
 
 ## Основные риски
 
-- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher`; тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — форматирование нормализуется; lossless-патчер структурных операций остаётся follow-up.
-- **R2 большие файлы**: lazy-парсинг значений, key-index, async; perf-гейт M10.
+- **R1 writer quirks → byte-identity на edited-файлах**: для скалярных правок закрыт через `LosslessDocumentPatcher`; тест `quirky.xml` подтверждает сохранение declaration casing, атрибутов, `&gt;`, `&#10;` и `<Empty/>`. Для структурных изменений (add/delete/duplicate) пока используется обычный serializer — форматирование нормализуется; lossless structural patcher входит в M11.
+- **R2 большие файлы**: закрыт perf-гейтами M10 (`Items.xml` 75 мс, `Attachments.xml` 27 мс, load+edit+save 380 мс); порог 2 с с запасом.
 - **R3 случайная «починка» битого файла**: non-saveable malformed + тесты.
 - **R4 dict/list маски**: целевые тесты, правки только по конкретному имени элемента.
 - **R5 вложенные ключи оверлеев**: сегментированные `RecordKeySpec` + реальные фикстуры v4.
 - **R6 53/263 таблицы в метаданных**: document-driven fallback, миграции растут итеративно.
 - **R7 запись в References/ из тестов**: только temp-копии, проверка в done-when M3.
 - **R9 внешние изменения**: fingerprint (length, mtime) до записи.
+- **R10 культура и отмена**: invariant-числа с запретом запятой/групп, pre-cancelled token во всех I/O-сервисах; проверено тестами M10.
 
 ---
 
 ## Проверка (verification)
 
-1. На каждом milestone: `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx` — 0 ошибок.
+1. На каждом milestone: `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx` — 0 ошибок (на M10 дополнительно `-warnaserror` — 0 предупреждений).
 2. `dotnet test` — все юнит-тесты зелёные.
-3. M3/M10: `XER_CORPUS_DIR="…/References/JA 2 1.13 v4/Data-1.13/TableData" dotnet test` (и v5) — corpus harness проходит на копии; в `References/` нет изменений (проверка git-статуса невозможно — папка в .gitignore; проверять отсутствием новых `bin/`/`obj/`).
-4. M9: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Items.Items` → 1775 записей; правка поля в тестовой копии → сохранение меняет только это поле.
-5. `Get-ChildItem References -Recurse -Include bin,obj` — пусто.
+3. M3/M10/M11+: `XER_CORPUS_DIR="…/References/JA 2 1.13 v4/Data-1.13/TableData" dotnet test` (и v5) — corpus harness проходит на копии; в `References/` нет изменений (проверять отсутствием новых `bin/`/`obj/`).
+4. M10+: perf-гейты — `XER_CORPUS_DIR="…v5/Data-1.13/TableData" dotnet test --filter "Category=Performance"`; порог 2 с, фактические значения фиксируются в этом файле.
+5. M9: вручную — запуск приложения, выбор каталога v5, открытие `Lookup.AttachmentPoint` → диагностика без записи; открытие `Items.Items` → 1775 записей; правка поля в тестовой копии → сохранение меняет только это поле.
+6. `find References -type d \( -name bin -o -name obj \)` — пусто.

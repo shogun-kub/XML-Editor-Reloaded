@@ -45,6 +45,7 @@ public sealed class ItemImageCatalog
     /// <c>sti.unsupported_flags</c>, or <c>sti.etrle_overrun</c>.
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when a graphic type or index is negative.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<RgbaBuffer>> GetImageAsync(
         ImageSize size,
         int graphicType,
@@ -53,6 +54,7 @@ public sealed class ItemImageCatalog
     {
         ArgumentOutOfRangeException.ThrowIfNegative(graphicType);
         ArgumentOutOfRangeException.ThrowIfNegative(graphicIndex);
+        cancellationToken.ThrowIfCancellationRequested();
 
         var (directory, fileName, frameIndex) = Resolve(size, graphicType, graphicIndex);
         var path = FindFile(directory, fileName);

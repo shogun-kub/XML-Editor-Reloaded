@@ -134,6 +134,7 @@ public sealed class FileFormatInfo
     /// <returns>Detected encoding, BOM, newline, and declaration information.</returns>
     /// <exception cref="IOException">Thrown when the file cannot be read.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown when access to the file is denied.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public static async Task<FileFormatInfo> DetectAsync(string path, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

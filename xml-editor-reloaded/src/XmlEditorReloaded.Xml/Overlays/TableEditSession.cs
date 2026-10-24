@@ -124,6 +124,7 @@ public sealed class TableEditSession
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, the error from the base or overlay saver is returned.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the current file is left unchanged.</exception>
     public async Task<OperationResult> SaveAsync(CancellationToken cancellationToken = default)
     {
         var saver = new TableFileSaver();

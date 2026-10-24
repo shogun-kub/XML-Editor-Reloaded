@@ -25,6 +25,7 @@ public sealed class StciParser
     /// <c>sti.bad_magic</c>, <c>sti.truncated</c>, or <c>sti.unsupported_flags</c>.
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<OperationResult<StciImage>> ParseAsync(
         string path,
         CancellationToken cancellationToken = default)

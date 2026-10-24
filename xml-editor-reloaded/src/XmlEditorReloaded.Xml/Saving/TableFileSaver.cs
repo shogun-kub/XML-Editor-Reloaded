@@ -35,9 +35,11 @@ public sealed class TableFileSaver
     /// <c>xml.serialization_error</c>, <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="document"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled; the target file is left unchanged.</exception>
     public async Task<OperationResult> SaveAsync(TableDocument document, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(document);
+        cancellationToken.ThrowIfCancellationRequested();
 
         if (document.Status != TableDocumentStatus.Loaded)
         {
@@ -57,6 +59,8 @@ public sealed class TableFileSaver
         {
             return externalChange;
         }
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         byte[] bytes;
         try
@@ -93,12 +97,15 @@ public sealed class TableFileSaver
             return secondCheck;
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         var directory = Path.GetDirectoryName(path) ?? ".";
         var tempPath = Path.Combine(directory, $".{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
 
         try
         {
             await File.WriteAllBytesAsync(tempPath, bytes, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             File.Move(tempPath, path, overwrite: true);
         }
         catch (OperationCanceledException)

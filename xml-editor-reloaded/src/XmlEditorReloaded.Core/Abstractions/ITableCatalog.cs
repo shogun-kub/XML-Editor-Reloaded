@@ -17,5 +17,6 @@ public interface ITableCatalog
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the discovered tables;
     /// on failure, <c>error_code</c> is <c>io.file_not_found</c> or <c>io.error</c> and <c>error_text</c> describes the problem.
     /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     Task<OperationResult<IReadOnlyList<TableDescriptor>>> GetTablesAsync(string tableDataDirectory, CancellationToken cancellationToken = default);
 }
