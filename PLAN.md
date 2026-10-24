@@ -6,7 +6,7 @@
 
 **Решения по стеку (согласовано):** .NET 10; тесты — xUnit; shell — CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Текущее состояние:** M0/M1/M3/M4 завершены. Реализованы Core-примитивы, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование полей, list/dict-поля, add/duplicate/delete записей и журнал изменений. `Data` и `Imaging` пока пустые class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M5 (оверлеи); M2 и M7 можно вести параллельно.
+**Текущее состояние:** M0/M1/M2/M3/M4 завершены. Реализованы Core-примитивы, SQLite-метаданные с миграциями и seed, каталог таблиц и оверлеев, настройки, XML loader/document/save-gate, lossless-патчер скалярных правок, валидируемое редактирование полей, list/dict-поля, add/duplicate/delete записей и журнал изменений. `Imaging` пока пустая class library, `App` — шаблонная WPF-заглушка. Следующий milestone — M5 (оверлеи); M7 можно вести параллельно.
 
 **Ключевые правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0` остаётся `1.0`), порядок элементов, регистр имён, XML-декларацию. BOM/переводы строк сохранять необязательно, но **файл с неизменённым содержимым не перезаписывается вообще**. Повреждённые файлы — диагностика без автопочинки.
@@ -45,11 +45,12 @@
 Типы: `OperationResult`/`OperationResult<T>`/`ErrorCodes`; `TableName`, `TableMetadata`, `ColumnMetadata`, `FieldPath`, `RecordKeySpec`/`RecordKeySegment`, `ListFieldDefinition`, `DictFieldDefinition`; абстракции `ITableMetadataProvider`, `ITableCatalog`, `ITableRepository`, `ILookupRepository`, `ITranslationCatalog`, `ISettingsStore`; `LanguageDescriptor`, `OverlayDescriptor`, `TranslationReport`; `ValidationIssue`/`ValidationReport`; `RgbaBuffer`, `ImageSize`. Без I/O.
 **Готово:** XML-доки на всех public-членах, тесты `TableName`/`FieldPath`/`RecordKeySpec`/`OperationResult` зелёные.
 
-### M2 — Data (~2–3 дн; параллельно с M7)
+### M2 — Data (~2–3 дн; параллельно с M7) — **выполнен**
 - DDL: `SchemaMigrations`, `Tables` (superset `TableMappings`), `TableKeys`, `Columns`, `ListFields`, `DictFields`, `Languages`, `TranslatableFields`. Embedded-миграции `Metadata/Migrations/000N_*.sql` + `DatabaseMigrator` (транзакция, downgrade = error).
-- Seed: генерация `Seed/0001_PrototypeSeed.sql` из прототипной БД (одноразовый dev-шаг, результат коммитится) + вручную: ключи оверлеев (`uiIndex/mIndex/pIndex/ubIndex/uiSlotIndex/SectorGrid`, nested/positional), `ru`→`Russian`, переводимые пути 25 оверлеев.
-- `SqliteMetadataProvider`, `FileSystemTableCatalog` (обход `TableData/**/*.xml`, исключение оверлеев по префиксу из `Languages`), `TranslationCatalog`, `JsonSettingsStore` (`%AppData%/XmlEditorReloaded/settings.json`, atomic write).
-**Готово:** свежая БД мигрирует, ≥53 таблицы, каталог на temp-фикстуре различает базу и оверлеи; `PROJECT-STRUCTURE.md` дополнен `Data.Tests`.
+- Seed: `0002_PrototypeSeed.sql` сгенерирован из прототипной БД + вручную: 73 таблицы (53 прототипных + 20 с оверлеями), 76 key-сегментов (nested/positional), `ru`→`Russian`, 61 переводимый путь 25 оверлеев, 12 list/dict полей.
+- `SqliteMetadataProvider`, `FileSystemTableCatalog` (обход `TableData/**/*.xml`, исключение оверлеев по префиксу из `Languages`, optional metadata для `IsMapped`), `TranslationCatalog`, `JsonSettingsStore` (`%AppData%/XmlEditorReloaded/settings.json`, atomic write).
+**Фактический результат:** миграции применяются идемпотентно, downgrade блокируется; свежая БД содержит 73 таблицы; провайдер читает ключи (включая `CITYLIST/CITY` и `GEARKIT`), list/dict-поля, переводимые пути и языки. Каталог на temp-фикстуре различает базу и оверлеи; на реальных данных v4 найдено 238 базовых таблиц и 25 оверлеев, v5 — 239 базовых и 0 оверлеев. Настройки сохраняются атомарно.
+**Готово:** 14 Data-тестов зелёные; `PROJECT-STRUCTURE.md` содержит `Data.Tests`; следующий — M5, M7 можно вести параллельно.
 
 ### M7 — Imaging (~2–3 дн; параллельно с M2)
 `StciHeader`/`StciFlags`/`SubImageDescriptor`/`StciImage`/`StciParser` (ошибки `sti.bad_magic/truncated/unsupported_flags`); `EtrleDecoder` (control-byte семантика, overrun = diagnostic); `ItemImageCatalog` (Big: `BigItems/gun{NN}.sti`/`p{t}item{NN}.sti`, паддинг до 2 цифр только для <10, case-insensitive; Medium: `Interface/mdguns.sti`/`mdp{t}items.sti` frame=index; Small: `tilesets/0/smguns.sti`/`smp{t}items.sti`; прозрачность: индекс 0 везде, зелёный 0,255,0 — medium/small); `DecodedFrameCache` (LRU ~64–128 МБ, invalidation по mtime). Фикстуры: 2–3 маленьких реальных STI, скопированных в тест-проект.

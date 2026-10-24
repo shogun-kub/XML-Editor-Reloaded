@@ -14,4 +14,8 @@
     <ProjectReference Include="..\XmlEditorReloaded.Core\XmlEditorReloaded.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Metadata\Migrations\*.sql" />
+  </ItemGroup>
+
 </Project>

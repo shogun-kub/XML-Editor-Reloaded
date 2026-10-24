@@ -32,6 +32,12 @@ public static class ErrorCodes
     /// <summary>The requested table is not present in the metadata store.</summary>
     public const string MetadataNotFound = "metadata.not_found";
 
+    /// <summary>A metadata schema migration failed.</summary>
+    public const string MetadataMigrationError = "metadata.migration_error";
+
+    /// <summary>The metadata database has a newer schema version than this application supports.</summary>
+    public const string MetadataDowngradeUnsupported = "metadata.downgrade_unsupported";
+
     /// <summary>The file or directory does not exist.</summary>
     public const string IoFileNotFound = "io.file_not_found";
 
