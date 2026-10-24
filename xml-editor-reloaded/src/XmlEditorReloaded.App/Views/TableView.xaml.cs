@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using XmlEditorReloaded.App.ViewModels;
 
@@ -13,8 +14,12 @@ namespace XmlEditorReloaded.App.Views;
 /// </summary>
 public partial class TableView : UserControl
 {
+    private static readonly DependencyPropertyDescriptor? ColumnWidthDescriptor =
+        DependencyPropertyDescriptor.FromProperty(DataGridColumn.WidthProperty, typeof(DataGridColumn));
+
     private TableEditorViewModel? _viewModel;
     private bool _subscribed;
+    private bool _buildingColumns;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableView"/> class.
@@ -24,7 +29,12 @@ public partial class TableView : UserControl
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) => AttachToViewModel();
-        Unloaded += (_, _) => DetachFromViewModel();
+        Unloaded += (_, _) =>
+        {
+            PushColumnWidths();
+            _ = _viewModel?.FlushLayoutAsync();
+            DetachFromViewModel();
+        };
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -62,117 +72,131 @@ public partial class TableView : UserControl
 
     private void BuildColumns()
     {
-        RowsGrid.Columns.Clear();
-        if (_viewModel is null)
+        _buildingColumns = true;
+        try
         {
-            return;
-        }
-
-        if (_viewModel.ShowThumbnailColumn)
-        {
-            RowsGrid.Columns.Add(BuildThumbnailColumn());
-        }
-
-        foreach (var column in _viewModel.VisibleColumns)
-        {
-            var isTranslationColumn = _viewModel.IsTranslationMode && column.IsTranslatable;
-            var headerText = isTranslationColumn
-                ? column.Name + _viewModel.TranslatableColumnSuffix
-                : column.Name;
-            if (column.HasLookupError || column.HasRelationError)
+            foreach (var column in RowsGrid.Columns)
             {
-                headerText += " ⚠";
+                ColumnWidthDescriptor?.RemoveValueChanged(column, OnColumnWidthChanged);
             }
 
-            var header = new TextBlock
+            RowsGrid.Columns.Clear();
+            if (_viewModel is null)
             {
-                Text = headerText,
-                ToolTip = column.HeaderTooltip,
-                FontWeight = column.IsKey ? FontWeights.SemiBold : FontWeights.Normal,
-            };
+                return;
+            }
 
-            DataGridColumn gridColumn;
-            if (column.IsBoolean)
+            if (_viewModel.ShowThumbnailColumn)
             {
-                gridColumn = new DataGridCheckBoxColumn
-                {
-                    Header = header,
-                    Binding = new Binding($"[{column.Name}]")
-                    {
-                        Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                        Converter = BooleanValueConverter.Instance,
-                    },
-                    IsReadOnly = column.IsReadOnly,
-                    Width = new DataGridLength(column.Width),
-                    SortMemberPath = column.Name,
-                };
+                RowsGrid.Columns.Add(BuildThumbnailColumn());
             }
-            else if (column.HasRelationPicker && column.Relation is { } relation)
+
+            foreach (var column in _viewModel.VisibleColumns)
             {
-                gridColumn = new DataGridTemplateColumn
+                var isTranslationColumn = _viewModel.IsTranslationMode && column.IsTranslatable;
+                var headerText = isTranslationColumn
+                    ? column.Name + _viewModel.TranslatableColumnSuffix
+                    : column.Name;
+                if (column.HasLookupError || column.HasRelationError)
                 {
-                    Header = header,
-                    CellTemplate = BuildRelationCellTemplate(column.Name, relation),
-                    CellEditingTemplate = BuildRelationEditingTemplate(column.Name, relation),
-                    IsReadOnly = column.IsReadOnly,
-                    Width = new DataGridLength(column.Width),
-                    SortMemberPath = column.Name,
-                };
-            }
-            else if (column.HasLookupCombo && column.Lookup is { } lookup)
-            {
-                var templateColumn = new DataGridTemplateColumn
-                {
-                    Header = header,
-                    CellTemplate = BuildLookupCellTemplate(column.Name, lookup),
-                    IsReadOnly = column.IsReadOnly,
-                    Width = new DataGridLength(column.Width),
-                    SortMemberPath = column.Name,
-                };
-                if (!column.IsReadOnly)
-                {
-                    templateColumn.CellEditingTemplate = BuildLookupEditingTemplate(column.Name, lookup);
+                    headerText += " ⚠";
                 }
 
-                gridColumn = templateColumn;
-            }
-            else
-            {
-                var textColumn = new DataGridTextColumn
+                var header = new TextBlock
                 {
-                    Header = header,
-                    Binding = new Binding($"[{column.Name}]")
-                    {
-                        Mode = BindingMode.TwoWay,
-                        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
-                    },
-                    IsReadOnly = column.IsReadOnly,
-                    Width = new DataGridLength(column.Width),
-                    SortMemberPath = column.Name,
+                    Text = headerText,
+                    ToolTip = column.HeaderTooltip,
+                    FontWeight = column.IsKey ? FontWeights.SemiBold : FontWeights.Normal,
                 };
-                if (isTranslationColumn)
+
+                DataGridColumn gridColumn;
+                if (column.IsBoolean)
                 {
-                    textColumn.ElementStyle = BuildTranslationCellStyle(column.Name);
+                    gridColumn = new DataGridCheckBoxColumn
+                    {
+                        Header = header,
+                        Binding = new Binding($"[{column.Name}]")
+                        {
+                            Mode = BindingMode.TwoWay,
+                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                            Converter = BooleanValueConverter.Instance,
+                        },
+                        IsReadOnly = column.IsReadOnly,
+                        Width = new DataGridLength(column.Width),
+                        SortMemberPath = column.Name,
+                    };
+                }
+                else if (column.HasRelationPicker && column.Relation is { } relation)
+                {
+                    gridColumn = new DataGridTemplateColumn
+                    {
+                        Header = header,
+                        CellTemplate = BuildRelationCellTemplate(column.Name, relation),
+                        CellEditingTemplate = BuildRelationEditingTemplate(column.Name, relation),
+                        IsReadOnly = column.IsReadOnly,
+                        Width = new DataGridLength(column.Width),
+                        SortMemberPath = column.Name,
+                    };
+                }
+                else if (column.HasLookupCombo && column.Lookup is { } lookup)
+                {
+                    var templateColumn = new DataGridTemplateColumn
+                    {
+                        Header = header,
+                        CellTemplate = BuildLookupCellTemplate(column.Name, lookup),
+                        IsReadOnly = column.IsReadOnly,
+                        Width = new DataGridLength(column.Width),
+                        SortMemberPath = column.Name,
+                    };
+                    if (!column.IsReadOnly)
+                    {
+                        templateColumn.CellEditingTemplate = BuildLookupEditingTemplate(column.Name, lookup);
+                    }
+
+                    gridColumn = templateColumn;
+                }
+                else
+                {
+                    var textColumn = new DataGridTextColumn
+                    {
+                        Header = header,
+                        Binding = new Binding($"[{column.Name}]")
+                        {
+                            Mode = BindingMode.TwoWay,
+                            UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
+                        },
+                        IsReadOnly = column.IsReadOnly,
+                        Width = new DataGridLength(column.Width),
+                        SortMemberPath = column.Name,
+                    };
+                    if (isTranslationColumn)
+                    {
+                        textColumn.ElementStyle = BuildTranslationCellStyle(column.Name);
+                    }
+
+                    gridColumn = textColumn;
                 }
 
-                gridColumn = textColumn;
+                RowsGrid.Columns.Add(gridColumn);
+                ColumnWidthDescriptor?.AddValueChanged(gridColumn, OnColumnWidthChanged);
             }
 
-            RowsGrid.Columns.Add(gridColumn);
-        }
-
-        if (_viewModel.SortField.Length == 0)
-        {
-            return;
-        }
-
-        foreach (var column in RowsGrid.Columns)
-        {
-            if (string.Equals(column.SortMemberPath, _viewModel.SortField, StringComparison.Ordinal))
+            if (_viewModel.SortField.Length == 0)
             {
-                column.SortDirection = _viewModel.SortDirection;
+                return;
             }
+
+            foreach (var column in RowsGrid.Columns)
+            {
+                if (string.Equals(column.SortMemberPath, _viewModel.SortField, StringComparison.Ordinal))
+                {
+                    column.SortDirection = _viewModel.SortDirection;
+                }
+            }
+        }
+        finally
+        {
+            _buildingColumns = false;
         }
     }
 
@@ -310,5 +334,103 @@ public partial class TableView : UserControl
 
         e.Column.SortDirection = direction;
         _viewModel.SortBy(e.Column.SortMemberPath, direction);
+    }
+
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        _viewModel?.UpdateSelectedRows(RowsGrid.SelectedItems.OfType<TableRowViewModel>());
+    }
+
+    private void OnCurrentCellChanged(object? sender, EventArgs e)
+    {
+        if (_viewModel is not null)
+        {
+            _viewModel.CurrentCellField = RowsGrid.CurrentCell.Column?.SortMemberPath;
+        }
+    }
+
+    private void OnColumnReordered(object? sender, DataGridColumnEventArgs e)
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        var fields = RowsGrid.Columns
+            .OrderBy(static column => column.DisplayIndex)
+            .Select(static column => column.SortMemberPath)
+            .Where(static field => !string.IsNullOrEmpty(field))
+            .ToArray();
+        _viewModel.ApplyColumnOrder(fields);
+        PushColumnWidths();
+    }
+
+    private void OnColumnWidthChanged(object? sender, EventArgs e) => PushColumnWidths();
+
+    private void PushColumnWidths()
+    {
+        if (_viewModel is null || _buildingColumns)
+        {
+            return;
+        }
+
+        var widths = new List<(string Field, double Width)>();
+        foreach (var column in RowsGrid.Columns)
+        {
+            var field = column.SortMemberPath;
+            if (string.IsNullOrEmpty(field))
+            {
+                continue;
+            }
+
+            var width = column.ActualWidth > 0 ? column.ActualWidth : column.Width.Value;
+            if (width > 0)
+            {
+                widths.Add((field, width));
+            }
+        }
+
+        if (widths.Count > 0)
+        {
+            _viewModel.ApplyColumnWidths(widths);
+        }
+    }
+
+    private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        var cell = FindAncestor<DataGridCell>(e.OriginalSource as DependencyObject);
+        if (cell is null)
+        {
+            _viewModel.CurrentCellField = null;
+            return;
+        }
+
+        cell.IsSelected = true;
+        cell.Focus();
+        if (!string.IsNullOrEmpty(cell.Column.SortMemberPath))
+        {
+            _viewModel.CurrentCellField = cell.Column.SortMemberPath;
+        }
+    }
+
+    private static T? FindAncestor<T>(DependencyObject? current)
+        where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T match)
+            {
+                return match;
+            }
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 }

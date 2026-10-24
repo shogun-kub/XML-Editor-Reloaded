@@ -528,6 +528,9 @@
   <data name="BulkEditTargetFormat" xml:space="preserve">
     <value>Строк в текущем виде: {0}</value>
   </data>
+  <data name="BulkEditTargetSelectedFormat" xml:space="preserve">
+    <value>Выделено строк: {0}</value>
+  </data>
   <data name="BulkEditEnterValue" xml:space="preserve">
     <value>Введите значение для предпросмотра изменений.</value>
   </data>
@@ -1217,5 +1220,80 @@
   </data>
   <data name="CopyChooseTarget" xml:space="preserve">
     <value>Выберите каталог данных-назначения</value>
+  </data>
+  <data name="EditorFilterLabel" xml:space="preserve">
+    <value>Фильтр</value>
+  </data>
+  <data name="EditorFilterAdd" xml:space="preserve">
+    <value>Добавить условие</value>
+  </data>
+  <data name="EditorFilterClear" xml:space="preserve">
+    <value>Сбросить фильтр</value>
+  </data>
+  <data name="EditorFilterSummaryEmpty" xml:space="preserve">
+    <value>Фильтр не задан</value>
+  </data>
+  <data name="EditorFilterSummaryFormat" xml:space="preserve">
+    <value>Условий: {0}</value>
+  </data>
+  <data name="EditorFilterByValue" xml:space="preserve">
+    <value>Фильтровать по значению</value>
+  </data>
+  <data name="EditorFilterExcludeValue" xml:space="preserve">
+    <value>Исключить значение</value>
+  </data>
+  <data name="EditorFilterNoCell" xml:space="preserve">
+    <value>Сначала выберите ячейку.</value>
+  </data>
+  <data name="EditorFilterNoValue" xml:space="preserve">
+    <value>В выбранной ячейке нет сохранённого значения.</value>
+  </data>
+  <data name="EditorSelectedRowsFormat" xml:space="preserve">
+    <value>Выделено строк: {0}</value>
+  </data>
+  <data name="EditorResetLayoutText" xml:space="preserve">
+    <value>Сбросить раскладку</value>
+  </data>
+  <data name="EditorResetLayoutTooltip" xml:space="preserve">
+    <value>Вернуть колонки, сортировку и фильтр по умолчанию</value>
+  </data>
+  <data name="EditorLayoutResetDone" xml:space="preserve">
+    <value>Раскладка сброшена.</value>
+  </data>
+  <data name="FilterAnd" xml:space="preserve">
+    <value>Все (И)</value>
+  </data>
+  <data name="FilterOr" xml:space="preserve">
+    <value>Любое (ИЛИ)</value>
+  </data>
+  <data name="FilterOperatorEquals" xml:space="preserve">
+    <value>равно</value>
+  </data>
+  <data name="FilterOperatorNotEquals" xml:space="preserve">
+    <value>не равно</value>
+  </data>
+  <data name="FilterOperatorContains" xml:space="preserve">
+    <value>содержит</value>
+  </data>
+  <data name="FilterOperatorGreaterThan" xml:space="preserve">
+    <value>больше</value>
+  </data>
+  <data name="FilterOperatorGreaterOrEqual" xml:space="preserve">
+    <value>больше или равно</value>
+  </data>
+  <data name="FilterOperatorLessThan" xml:space="preserve">
+    <value>меньше</value>
+  </data>
+  <data name="FilterOperatorLessOrEqual" xml:space="preserve">
+    <value>меньше или равно</value>
+  </data>
+  <data name="BulkEditTitleSelectedFormat" xml:space="preserve">
+    <value>Массовая правка — {0} (выделено строк: {1})</value>
+  </data>
+  <data name="BulkEditEmptyValueHint" xml:space="preserve">
+    <value>Включите «Очистить значение», чтобы записать пустое значение.</value>
+  </data>
+  <data name="BulkEditClearValueText" xml:space="preserve">
+    <value>Очистить значение</value>
   </data>
 </root>

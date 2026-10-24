@@ -1,3 +1,4 @@
+using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
 
 namespace XmlEditorReloaded.App.Services;
@@ -54,19 +55,26 @@ public sealed class TableEditorFactory : ITableEditorFactory
 {
     private readonly IDialogService _dialogService;
     private readonly IItemImageService _itemImages;
+    private readonly ITableLayoutStore _layoutStore;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableEditorFactory"/> class.
     /// </summary>
     /// <param name="dialogService">Dialog service used for editor confirmations and bit editing.</param>
     /// <param name="itemImages">Item image service used by the detail panel.</param>
+    /// <param name="layoutStore">Per-table layout store used by generic grid tabs.</param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency is null.</exception>
-    public TableEditorFactory(IDialogService dialogService, IItemImageService itemImages)
+    public TableEditorFactory(
+        IDialogService dialogService,
+        IItemImageService itemImages,
+        ITableLayoutStore layoutStore)
     {
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(itemImages);
+        ArgumentNullException.ThrowIfNull(layoutStore);
         _dialogService = dialogService;
         _itemImages = itemImages;
+        _layoutStore = layoutStore;
     }
 
     /// <inheritdoc />
@@ -74,7 +82,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>
-        new(session, descriptor, languageCode, _dialogService, _itemImages);
+        new(session, descriptor, languageCode, _dialogService, _itemImages, _layoutStore);
 
     /// <inheritdoc />
     public ViewModels.ItemWorkspaceViewModel CreateItemWorkspace(

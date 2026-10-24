@@ -9,10 +9,13 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Imaging;
+using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
+using XmlEditorReloaded.Xml.Filtering;
 using XmlEditorReloaded.Xml.Schema;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -26,20 +29,29 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 {
     private readonly IDataSetSession _session;
     private readonly IItemImageService _itemImages;
+    private readonly ITableLayoutStore? _layoutStore;
     private string? _languageCode;
     private readonly IDialogService _dialogService;
     private readonly List<TableRowViewModel> _allRows = new();
     private readonly List<TableColumnViewModel> _allColumns = new();
+    private readonly List<TableRowViewModel> _selectedRows = new();
     private readonly List<DetailFieldViewModel> _allDetailFields = new();
     private readonly Dictionary<string, LookupColumnData> _lookupByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, RelationColumnData> _relationByField = new(StringComparer.Ordinal);
     private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
     private IReadOnlyDictionary<string, IReadOnlySet<string>>? _relationTargetValues;
     private CancellationTokenSource? _imageCts;
+    private CancellationTokenSource? _layoutSaveCts;
+    private RowFilterGroup _filterGroup = RowFilterGroup.Empty;
     private bool _suppressLanguageChange;
     private bool _isChangingLanguage;
     private bool _isEmbedded;
+    private bool _suppressSelectionSync;
+    private bool _suppressLayoutPersistence;
+    private bool _layoutChangesReady;
+    private bool _layoutDirty;
     private const int DefaultColumnBudget = 8;
+    private const int LayoutSaveDelayMilliseconds = 500;
     private const NumberStyles DecimalStyles =
         NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
         | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
@@ -90,6 +102,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private TableRowViewModel? _selectedRow;
 
     [ObservableProperty]
+    private TableFilterViewModel? _filter;
+
+    [ObservableProperty]
+    private string? _currentCellField;
+
+    [ObservableProperty]
+    private bool _isFilterVisible;
+
+    [ObservableProperty]
     private string _sortField = string.Empty;
 
     [ObservableProperty]
@@ -121,12 +142,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// <param name="languageCode">Optional language code for overlay editing.</param>
     /// <param name="dialogService">Dialog service used for confirmations and bit editing.</param>
     /// <param name="itemImages">Item image service used by the detail panel.</param>
+    /// <param name="layoutStore">
+    /// Optional per-table layout store; when omitted, the editor keeps its layout in memory only.
+    /// </param>
     public TableEditorViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode,
         IDialogService dialogService,
-        IItemImageService itemImages)
+        IItemImageService itemImages,
+        ITableLayoutStore? layoutStore = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -138,6 +163,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         _languageCode = languageCode;
         _dialogService = dialogService;
         _itemImages = itemImages;
+        _layoutStore = layoutStore;
 
         DetailImages = new[]
         {
@@ -177,6 +203,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         RedoButtonTooltip = Strings.Get("EditorRedoButtonTooltip");
         BulkEditText = Strings.Get("EditorBulkEditText");
         BulkEditTooltip = Strings.Get("EditorBulkEditTooltip");
+        FilterLabel = Strings.Get("EditorFilterLabel");
+        FilterAddText = Strings.Get("EditorFilterAdd");
+        FilterClearText = Strings.Get("EditorFilterClear");
+        FilterByValueText = Strings.Get("EditorFilterByValue");
+        FilterExcludeValueText = Strings.Get("EditorFilterExcludeValue");
+        ResetLayoutText = Strings.Get("EditorResetLayoutText");
+        ResetLayoutTooltip = Strings.Get("EditorResetLayoutTooltip");
     }
 
     /// <summary>
@@ -398,6 +431,64 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     public string BulkEditTooltip { get; }
 
     /// <summary>
+    /// Gets the filter panel label.
+    /// </summary>
+    public string FilterLabel { get; }
+
+    /// <summary>
+    /// Gets the add-condition button text.
+    /// </summary>
+    public string FilterAddText { get; }
+
+    /// <summary>
+    /// Gets the clear-filter button text.
+    /// </summary>
+    public string FilterClearText { get; }
+
+    /// <summary>
+    /// Gets the context menu text that filters by the current cell value.
+    /// </summary>
+    public string FilterByValueText { get; }
+
+    /// <summary>
+    /// Gets the context menu text that excludes the current cell value.
+    /// </summary>
+    public string FilterExcludeValueText { get; }
+
+    /// <summary>
+    /// Gets the reset-layout command text.
+    /// </summary>
+    public string ResetLayoutText { get; }
+
+    /// <summary>
+    /// Gets the reset-layout command tooltip.
+    /// </summary>
+    public string ResetLayoutTooltip { get; }
+
+    /// <summary>
+    /// Gets the rows explicitly selected by the user in the grid. The grid auto-selects the first row
+    /// for the detail panel, but that selection is not reported here.
+    /// </summary>
+    public IReadOnlyList<TableRowViewModel> SelectedRows => _selectedRows;
+
+    /// <summary>
+    /// Gets the number of explicitly selected rows.
+    /// </summary>
+    public int SelectedRowCount => _selectedRows.Count;
+
+    /// <summary>
+    /// Gets the localized selected-row count, or an empty string when no rows are selected.
+    /// </summary>
+    public string SelectedRowCountText => _selectedRows.Count == 0
+        ? string.Empty
+        : Strings.Format("EditorSelectedRowsFormat", _selectedRows.Count);
+
+    /// <summary>
+    /// Gets a value indicating whether a structured filter is applied to the grid.
+    /// </summary>
+    public bool HasActiveFilter => !_filterGroup.IsEmpty;
+
+    /// <summary>
     /// Gets a value indicating whether the language selector can be used.
     /// </summary>
     public bool IsLanguageSelectorEnabled => !IsBusy && !IsEmbedded && Workspace is not null;
@@ -516,12 +607,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             await LoadFieldSourcesAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
+            _layoutChangesReady = false;
+            var layoutError = await LoadLayoutAsync(cancellationToken).ConfigureAwait(true);
             RebuildRows(null);
-            StatusText = IsEditable
+            _layoutChangesReady = true;
+            StatusText = layoutError ?? (IsEditable
                 ? Strings.Get("EditorReady")
                 : Workspace.BaseDocument.Records.Count == 0
                     ? Strings.Get("EditorReadOnlyNested")
-                    : Strings.Get("EditorReadOnly");
+                    : Strings.Get("EditorReadOnly"));
         }
         catch (OperationCanceledException)
         {
@@ -728,9 +822,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
-        var keys = Rows
+        var targetRows = _selectedRows.Count > 0
+            ? _selectedRows.Where(row => Rows.Contains(row)).ToArray()
+            : Rows.ToArray();
+        var keys = targetRows
             .Where(static row => row.Key is not null)
             .Select(static row => row.Key!)
+            .Distinct(StringComparer.Ordinal)
             .ToArray();
         if (keys.Length == 0)
         {
@@ -748,11 +846,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
+        var title = _selectedRows.Count > 0
+            ? Strings.Format("BulkEditTitleSelectedFormat", Title, keys.Length)
+            : Strings.Format("BulkEditTitleFormat", Title);
         var context = new BulkEditContext(
-            Strings.Format("BulkEditTitleFormat", Title),
+            title,
             columns,
             keys,
-            request => Workspace.PreviewBulk(request));
+            request => Workspace.PreviewBulk(request),
+            isSelectionScope: _selectedRows.Count > 0);
         var request = _dialogService.EditBulk(context);
         if (request is null)
         {
@@ -835,6 +937,369 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     }
 
     /// <summary>
+    /// Clears the structured filter and shows every row that passes search again.
+    /// </summary>
+    [RelayCommand]
+    public void ClearFilter()
+    {
+        if (_filterGroup.IsEmpty && Filter?.Criteria.Count is not > 0)
+        {
+            return;
+        }
+
+        _filterGroup = RowFilterGroup.Empty;
+        Filter?.Load(_filterGroup);
+        OnPropertyChanged(nameof(HasActiveFilter));
+        ApplyRowView(SelectedRow?.Key);
+        ScheduleLayoutSave();
+    }
+
+    /// <summary>
+    /// Adds an equality filter for the value of the current cell.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanFilterByValue))]
+    public void FilterByValue() => ApplyValueFilter(RowFilterOperator.Equals);
+
+    /// <summary>
+    /// Adds an inequality filter that hides rows with the current cell value.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanFilterByValue))]
+    public void ExcludeValue() => ApplyValueFilter(RowFilterOperator.NotEquals);
+
+    /// <summary>
+    /// Removes the stored layout of the table and restores default columns, sorting, and filter.
+    /// </summary>
+    /// <returns>A task that completes when the layout is reset.</returns>
+    [RelayCommand]
+    public async Task ResetLayoutAsync()
+    {
+        _layoutSaveCts?.Cancel();
+        _layoutSaveCts?.Dispose();
+        _layoutSaveCts = null;
+        _layoutDirty = false;
+
+        if (_layoutStore is not null && !IsEmbedded)
+        {
+            var removed = await _layoutStore
+                .RemoveAsync(TableDataDirectory, TableName.Value)
+                .ConfigureAwait(true);
+            if (!removed.IsSuccess)
+            {
+                StatusText = Strings.Format(
+                    "StatusError",
+                    $"{removed.ErrorCode}: {removed.ErrorText}");
+                return;
+            }
+        }
+
+        _suppressLayoutPersistence = true;
+        try
+        {
+            SortField = string.Empty;
+            SortDirection = ListSortDirection.Ascending;
+            _filterGroup = RowFilterGroup.Empty;
+            Filter?.Load(_filterGroup);
+            foreach (var column in _allColumns)
+            {
+                column.SetDisplayWidth(0);
+                column.DisplayOrder = column.Column.Order;
+            }
+
+            ApplyDefaultColumns();
+        }
+        finally
+        {
+            _suppressLayoutPersistence = false;
+        }
+
+        OnPropertyChanged(nameof(HasActiveFilter));
+        ApplyRowView(SelectedRow?.Key);
+        StatusText = Strings.Get("EditorLayoutResetDone");
+    }
+
+    /// <summary>
+    /// Replaces the explicitly selected rows after the grid selection changed.
+    /// </summary>
+    /// <param name="rows">Rows selected by the user.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="rows"/> is null.</exception>
+    public void UpdateSelectedRows(IEnumerable<TableRowViewModel> rows)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+
+        if (_suppressSelectionSync)
+        {
+            return;
+        }
+
+        var candidates = new HashSet<TableRowViewModel>(rows);
+        var selected = Rows.Where(candidates.Contains).ToArray();
+        if (selected.SequenceEqual(_selectedRows))
+        {
+            return;
+        }
+
+        _selectedRows.Clear();
+        _selectedRows.AddRange(selected);
+        OnPropertyChanged(nameof(SelectedRowCount));
+        OnPropertyChanged(nameof(SelectedRowCountText));
+    }
+
+    /// <summary>
+    /// Applies the column order reported by the grid after the user dragged a column.
+    /// </summary>
+    /// <param name="fieldsInDisplayOrder">Visible field names in their new display order.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fieldsInDisplayOrder"/> is null.</exception>
+    public void ApplyColumnOrder(IReadOnlyList<string> fieldsInDisplayOrder)
+    {
+        ArgumentNullException.ThrowIfNull(fieldsInDisplayOrder);
+
+        var byName = _allColumns.ToDictionary(static column => column.Name, StringComparer.Ordinal);
+        var changed = false;
+        for (var index = 0; index < fieldsInDisplayOrder.Count; index++)
+        {
+            if (byName.TryGetValue(fieldsInDisplayOrder[index], out var column)
+                && column.DisplayOrder != index)
+            {
+                column.DisplayOrder = index;
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            ScheduleLayoutSave();
+        }
+    }
+
+    /// <summary>
+    /// Applies column widths reported by the grid after the user resized a column.
+    /// </summary>
+    /// <param name="widths">Field names with their new widths in device-independent pixels.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="widths"/> is null.</exception>
+    public void ApplyColumnWidths(IReadOnlyList<(string Field, double Width)> widths)
+    {
+        ArgumentNullException.ThrowIfNull(widths);
+
+        var byName = _allColumns.ToDictionary(static column => column.Name, StringComparer.Ordinal);
+        var changed = false;
+        foreach (var (field, width) in widths)
+        {
+            if (!byName.TryGetValue(field, out var column))
+            {
+                continue;
+            }
+
+            var previous = column.PersistedWidth;
+            column.SetDisplayWidth(width);
+            changed |= Math.Abs(previous - column.PersistedWidth) > 0.5;
+        }
+
+        if (changed)
+        {
+            ScheduleLayoutSave();
+        }
+    }
+
+    /// <summary>
+    /// Writes the pending layout immediately. Called before a tab is closed or the application exits.
+    /// </summary>
+    /// <returns>A task that completes when the layout is stored.</returns>
+    public async Task FlushLayoutAsync()
+    {
+        if (!_layoutDirty
+            || !_layoutChangesReady
+            || _layoutStore is null
+            || IsEmbedded)
+        {
+            return;
+        }
+
+        _layoutSaveCts?.Cancel();
+        _layoutSaveCts?.Dispose();
+        _layoutSaveCts = null;
+        try
+        {
+            await SaveLayoutAsync(CancellationToken.None).ConfigureAwait(true);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+    }
+
+    private bool CanFilterByValue() =>
+        SelectedRow is not null && !string.IsNullOrWhiteSpace(CurrentCellField);
+
+    private void ApplyValueFilter(RowFilterOperator @operator)
+    {
+        var field = CurrentCellField;
+        if (SelectedRow is null || string.IsNullOrWhiteSpace(field))
+        {
+            StatusText = Strings.Get("EditorFilterNoCell");
+            return;
+        }
+
+        var value = SelectedRow.GetStoredValue(field);
+        if (value is null)
+        {
+            StatusText = Strings.Get("EditorFilterNoValue");
+            return;
+        }
+
+        var criteria = _filterGroup.Criteria.ToList();
+        if (!criteria.Any(criterion =>
+                string.Equals(criterion.Field, field, StringComparison.Ordinal)
+                && criterion.Operator == @operator
+                && string.Equals(criterion.Operand, value, StringComparison.Ordinal)))
+        {
+            criteria.Add(new RowFilterCriterion(field, @operator, value));
+        }
+
+        _filterGroup = new RowFilterGroup(_filterGroup.Operator, criteria);
+        Filter?.Load(_filterGroup);
+        IsFilterVisible = true;
+        OnPropertyChanged(nameof(HasActiveFilter));
+        ApplyRowView(SelectedRow.Key);
+        ScheduleLayoutSave();
+    }
+
+    private void OnFilterChanged()
+    {
+        if (Filter is null)
+        {
+            return;
+        }
+
+        _filterGroup = Filter.ToGroup();
+        OnPropertyChanged(nameof(HasActiveFilter));
+        ApplyRowView(SelectedRow?.Key);
+        ScheduleLayoutSave();
+    }
+
+    private async Task<string?> LoadLayoutAsync(CancellationToken cancellationToken)
+    {
+        if (_layoutStore is null || IsEmbedded)
+        {
+            return null;
+        }
+
+        _suppressLayoutPersistence = true;
+        try
+        {
+            var result = await _layoutStore
+                .LoadAsync(TableDataDirectory, TableName.Value, cancellationToken)
+                .ConfigureAwait(true);
+            if (!result.IsSuccess)
+            {
+                return Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            }
+
+            ApplyLayout(result.Data!);
+            return null;
+        }
+        finally
+        {
+            _suppressLayoutPersistence = false;
+        }
+    }
+
+    private void ApplyLayout(TableLayout layout)
+    {
+        SortField = layout.SortField ?? string.Empty;
+        SortDirection = layout.SortDirection == TableSortDirection.Descending
+            ? ListSortDirection.Descending
+            : ListSortDirection.Ascending;
+        _filterGroup = layout.Filter;
+        Filter?.Load(_filterGroup);
+        OnPropertyChanged(nameof(HasActiveFilter));
+
+        if (layout.Columns.Count > 0)
+        {
+            var byName = _allColumns.ToDictionary(static column => column.Name, StringComparer.Ordinal);
+            foreach (var entry in layout.Columns)
+            {
+                if (!byName.TryGetValue(entry.Name, out var column))
+                {
+                    continue;
+                }
+
+                column.SetDisplayWidth(entry.Width);
+                column.DisplayOrder = entry.DisplayOrder >= 0
+                    ? entry.DisplayOrder
+                    : column.Column.Order;
+                column.SetVisibleWithoutNotification(entry.IsVisible);
+            }
+        }
+
+        RefreshVisibleColumns();
+    }
+
+    private TableLayout CaptureLayout() => new(
+        _allColumns
+            .Select(static column => new ColumnLayout(
+                column.Name,
+                column.IsVisible,
+                column.PersistedWidth,
+                column.DisplayOrder))
+            .ToArray(),
+        SortField.Length > 0 ? SortField : null,
+        SortDirection == ListSortDirection.Descending
+            ? TableSortDirection.Descending
+            : TableSortDirection.Ascending,
+        _filterGroup);
+
+    private void ScheduleLayoutSave()
+    {
+        if (!_layoutChangesReady
+            || _suppressLayoutPersistence
+            || IsEmbedded
+            || _layoutStore is null)
+        {
+            return;
+        }
+
+        _layoutDirty = true;
+        _layoutSaveCts?.Cancel();
+        _layoutSaveCts?.Dispose();
+        _layoutSaveCts = new CancellationTokenSource();
+        _ = SaveLayoutAfterDelayAsync(_layoutSaveCts.Token);
+    }
+
+    private async Task SaveLayoutAfterDelayAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(LayoutSaveDelayMilliseconds, cancellationToken).ConfigureAwait(true);
+            cancellationToken.ThrowIfCancellationRequested();
+            await SaveLayoutAsync(cancellationToken).ConfigureAwait(true);
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer layout change replaced this write.
+        }
+    }
+
+    private async Task SaveLayoutAsync(CancellationToken cancellationToken)
+    {
+        if (_layoutStore is null)
+        {
+            return;
+        }
+
+        var result = await _layoutStore
+            .SaveAsync(TableDataDirectory, TableName.Value, CaptureLayout(), cancellationToken)
+            .ConfigureAwait(true);
+        if (result.IsSuccess)
+        {
+            _layoutDirty = false;
+        }
+        else
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+        }
+    }
+
+    /// <summary>
     /// Shows the translation report for the current language overlay.
     /// </summary>
     [RelayCommand]
@@ -862,17 +1327,22 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
     private async Task ReloadForLanguageAsync()
     {
+        await FlushLayoutAsync().ConfigureAwait(true);
+        _layoutChangesReady = false;
         Workspace = null;
         IsDirty = false;
         IsValidationVisible = false;
         _allRows.Clear();
         _allColumns.Clear();
+        _selectedRows.Clear();
         _allDetailFields.Clear();
         Rows.Clear();
         Columns.Clear();
         VisibleColumns.Clear();
         DetailGroups.Clear();
         ValidationIssues.Clear();
+        OnPropertyChanged(nameof(SelectedRowCount));
+        OnPropertyChanged(nameof(SelectedRowCountText));
         await InitializeAsync().ConfigureAwait(true);
     }
 
@@ -916,7 +1386,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Restores the default visible column set.
     /// </summary>
     [RelayCommand]
-    public void ShowDefaultColumns() => ApplyDefaultColumns();
+    public void ShowDefaultColumns()
+    {
+        ApplyDefaultColumns();
+        ScheduleLayoutSave();
+    }
 
     /// <summary>
     /// Shows every schema column.
@@ -924,14 +1398,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     [RelayCommand]
     public void ShowAllColumns()
     {
-        VisibleColumns.Clear();
         foreach (var column in _allColumns)
         {
             column.SetVisibleWithoutNotification(true);
-            VisibleColumns.Add(column);
         }
 
-        UpdateVisibleColumnCount();
+        RefreshVisibleColumns();
+        ScheduleLayoutSave();
     }
 
     /// <summary>
@@ -945,8 +1418,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             column.SetVisibleWithoutNotification(false);
         }
 
-        VisibleColumns.Clear();
-        UpdateVisibleColumnCount();
+        RefreshVisibleColumns();
+        ScheduleLayoutSave();
     }
 
     /// <summary>
@@ -959,6 +1432,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         SortField = fieldName;
         SortDirection = direction;
         ApplyRowView();
+        ScheduleLayoutSave();
     }
 
     /// <inheritdoc />
@@ -1048,7 +1522,18 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
     partial void OnDetailFilterChanged(string value) => ApplyDetailFilter();
 
-    partial void OnSelectedRowChanged(TableRowViewModel? value) => RefreshDetails();
+    partial void OnSelectedRowChanged(TableRowViewModel? value)
+    {
+        RefreshDetails();
+        FilterByValueCommand.NotifyCanExecuteChanged();
+        ExcludeValueCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnCurrentCellFieldChanged(string? value)
+    {
+        FilterByValueCommand.NotifyCanExecuteChanged();
+        ExcludeValueCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
 
@@ -1267,13 +1752,18 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             }
         }
 
+        Filter = new TableFilterViewModel(GetFilterColumns(), OnFilterChanged);
+        Filter.Load(_filterGroup);
         ApplyDefaultColumns();
         ApplyColumnFilter();
     }
 
+    private TableColumnViewModel[] GetFilterColumns() => _allColumns
+        .Where(static column => !column.IsList && !column.IsDict && !column.Column.IsNested)
+        .ToArray();
+
     private void ApplyDefaultColumns()
     {
-        VisibleColumns.Clear();
         var budget = DefaultColumnBudget;
         foreach (var column in _allColumns)
         {
@@ -1285,10 +1775,20 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             }
 
             column.SetVisibleWithoutNotification(visible);
-            if (visible)
-            {
-                VisibleColumns.Add(column);
-            }
+        }
+
+        RefreshVisibleColumns();
+    }
+
+    private void RefreshVisibleColumns()
+    {
+        VisibleColumns.Clear();
+        foreach (var column in _allColumns
+                     .Where(static column => column.IsVisible)
+                     .OrderBy(static column => column.DisplayOrder)
+                     .ThenBy(static column => column.Column.Order))
+        {
+            VisibleColumns.Add(column);
         }
 
         UpdateVisibleColumnCount();
@@ -1296,26 +1796,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
     private void OnColumnVisibilityChanged(TableColumnViewModel column, bool visible)
     {
-        if (visible)
-        {
-            if (!VisibleColumns.Contains(column))
-            {
-                var index = 0;
-                while (index < VisibleColumns.Count
-                       && VisibleColumns[index].Column.Order < column.Column.Order)
-                {
-                    index++;
-                }
-
-                VisibleColumns.Insert(index, column);
-            }
-        }
-        else
-        {
-            VisibleColumns.Remove(column);
-        }
-
-        UpdateVisibleColumnCount();
+        RefreshVisibleColumns();
+        ScheduleLayoutSave();
     }
 
     private void UpdateVisibleColumnCount() =>
@@ -1376,6 +1858,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             rows = rows.Where(row => Matches(row, term, fields));
         }
 
+        if (!_filterGroup.IsEmpty && Workspace is not null)
+        {
+            rows = rows.Where(row => TableRowFilterMatcher.Matches(row.Row, Workspace.Schema, _filterGroup));
+        }
+
         if (SortField.Length > 0)
         {
             var column = Workspace?.Schema.FindColumn(SortField);
@@ -1390,10 +1877,22 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             Rows.Add(row);
         }
 
-        SelectedRow = null;
-        SelectedRow = selectedKey is null
-            ? Rows.FirstOrDefault()
-            : Rows.FirstOrDefault(row => string.Equals(row.Key, selectedKey, StringComparison.Ordinal));
+        _suppressSelectionSync = true;
+        try
+        {
+            _selectedRows.Clear();
+            OnPropertyChanged(nameof(SelectedRowCount));
+            OnPropertyChanged(nameof(SelectedRowCountText));
+            SelectedRow = null;
+            SelectedRow = selectedKey is null
+                ? Rows.FirstOrDefault()
+                : Rows.FirstOrDefault(row => string.Equals(row.Key, selectedKey, StringComparison.Ordinal));
+        }
+        finally
+        {
+            _suppressSelectionSync = false;
+        }
+
         UpdateRecordCount();
         if (term.Length > 0 && Rows.Count == 0)
         {

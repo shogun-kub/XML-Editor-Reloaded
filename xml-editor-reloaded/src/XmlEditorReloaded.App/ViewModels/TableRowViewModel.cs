@@ -53,6 +53,11 @@ public sealed partial class TableRowViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Gets the underlying workspace row used by type-aware filters.
+    /// </summary>
+    internal WorkspaceRow Row => _row;
+
+    /// <summary>
     /// Gets the stored value of a field, distinguishing an absent field from an empty one.
     /// </summary>
     /// <param name="fieldName">XML field name.</param>

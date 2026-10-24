@@ -12,6 +12,8 @@ public sealed class TableColumnViewModel : ObservableObject
 {
     private readonly Action<TableColumnViewModel, bool>? _visibilityChanged;
     private bool _isVisible;
+    private double _displayWidth;
+    private int _displayOrder;
 
     internal TableColumnViewModel(
         TableSchemaColumn column,
@@ -22,6 +24,7 @@ public sealed class TableColumnViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(column);
         Column = column;
         _visibilityChanged = visibilityChanged;
+        _displayOrder = column.Order;
         Lookup = lookup;
         Relation = relation;
     }
@@ -159,9 +162,47 @@ public sealed class TableColumnViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Gets the preferred grid width.
+    /// Gets the preferred grid width. A width chosen by the user takes precedence over the schema
+    /// suggestion and is clamped to a readable range.
     /// </summary>
-    public double Width => Math.Clamp(Column.DisplayWidth ?? 120, 60, 320);
+    public double Width => Math.Clamp(
+        _displayWidth > 0 ? _displayWidth : Column.DisplayWidth ?? 120,
+        60,
+        320);
+
+    /// <summary>
+    /// Gets the zero-based display order of the column in the grid.
+    /// </summary>
+    public int DisplayOrder
+    {
+        get => _displayOrder;
+        internal set => _displayOrder = value;
+    }
+
+    /// <summary>
+    /// Gets the width persisted in a layout; zero means that the schema width is still in use.
+    /// </summary>
+    internal double PersistedWidth => _displayWidth > 0 ? _displayWidth : Width;
+
+    /// <summary>
+    /// Applies a user-resized width. The schema width is used again when <paramref name="width"/> is
+    /// zero or invalid.
+    /// </summary>
+    /// <param name="width">Width in device-independent pixels.</param>
+    internal void SetDisplayWidth(double width)
+    {
+        var normalized = double.IsFinite(width) && width > 0
+            ? Math.Clamp(width, 60, 320)
+            : 0;
+        if (Math.Abs(_displayWidth - normalized) < 0.5)
+        {
+            return;
+        }
+
+        _displayWidth = normalized;
+        OnPropertyChanged(nameof(Width));
+        OnPropertyChanged(nameof(PersistedWidth));
+    }
 
     /// <summary>
     /// Gets the tooltip text for the column header.

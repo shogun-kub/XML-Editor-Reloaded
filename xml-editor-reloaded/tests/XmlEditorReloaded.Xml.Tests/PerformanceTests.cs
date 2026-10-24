@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Filtering;
 using XmlEditorReloaded.Xml.Loading;
 using XmlEditorReloaded.Xml.Saving;
 using XmlEditorReloaded.Xml.Workspace;
@@ -304,6 +306,54 @@ public class PerformanceTests
         Assert.True(
             elapsed < GateMilliseconds,
             $"Loading {relativePath} took {elapsed} ms, exceeding the {GateMilliseconds} ms gate.");
+    }
+
+    /// <summary>
+    /// Evaluating a structured filter over every item row stays within the interactive gate.
+    /// </summary>
+    [Fact]
+    public async Task Filter_ItemsXml_RespondsWithinGate()
+    {
+        var corpusPath = FindCorpusFile("Items/Items.xml");
+        if (corpusPath is null)
+        {
+            return;
+        }
+
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Items.xml");
+        File.Copy(corpusPath, path, overwrite: true);
+        var metadata = CreateMetadata("Items.Items", "ITEMLIST", "ITEM", "uiIndex");
+        var descriptor = new TableDescriptor(
+            TableName.Parse("Items.Items"),
+            path,
+            "Items/Items.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata);
+        Assert.True(load.IsSuccess, load.ErrorText);
+        var table = load.Data!;
+        var rows = table.GetRows();
+        var filter = new RowFilterGroup(
+            RowFilterLogicalOperator.And,
+            new[]
+            {
+                new RowFilterCriterion("ubWeight", RowFilterOperator.GreaterThan, "0"),
+                new RowFilterCriterion("szItemName", RowFilterOperator.Contains, "Gun"),
+            });
+
+        var stopwatch = Stopwatch.StartNew();
+        var matched = rows
+            .Where(row => TableRowFilterMatcher.Matches(row, table.Schema, filter))
+            .ToArray();
+        stopwatch.Stop();
+
+        var elapsed = stopwatch.ElapsedMilliseconds;
+        _output.WriteLine(
+            $"Items/Items.xml: filtered {rows.Count} rows to {matched.Length} in {elapsed} ms.");
+        Assert.True(
+            elapsed < GateMilliseconds,
+            $"Filtering Items/Items.xml took {elapsed} ms, exceeding the {GateMilliseconds} ms gate.");
     }
 
     private string? FindCorpusFile(string relativePath)

@@ -68,7 +68,7 @@ public class MainViewModelTests
         var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
             new FailingSessionFactory(),
-            new TableEditorFactory(dialog, new TestItemImageService()),
+            new TableEditorFactory(dialog, new TestItemImageService(), new FakeTableLayoutStore()),
             settingsStore,
             dialog,
             new FakeImageViewerService(),
@@ -127,7 +127,7 @@ public class MainViewModelTests
         var dialog = new FakeDialogService();
         var viewModel = new MainViewModel(
             new ThrowingSessionFactory(),
-            new TableEditorFactory(dialog, new TestItemImageService()),
+            new TableEditorFactory(dialog, new TestItemImageService(), new FakeTableLayoutStore()),
             new JsonSettingsStore(workspace.PathOf("settings.json")),
             dialog,
             new FakeImageViewerService(),
@@ -524,7 +524,7 @@ public class MainViewModelTests
         FakeTableCopyDialogService? copyDialog = null) =>
         new(
             new DataSetSessionFactory(provider, catalog, repository),
-            new TableEditorFactory(dialog, new TestItemImageService()),
+            new TableEditorFactory(dialog, new TestItemImageService(), new FakeTableLayoutStore()),
             settingsStore,
             dialog,
             new FakeImageViewerService(),

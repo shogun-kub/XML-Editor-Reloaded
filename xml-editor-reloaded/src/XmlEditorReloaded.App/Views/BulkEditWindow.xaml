@@ -57,16 +57,30 @@
                        VerticalAlignment="Center"
                        Margin="0,0,6,0"
                        Text="{Binding ValueLabel}" />
-            <TextBox Grid.Column="5"
-                     VerticalAlignment="Center"
-                     Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Grid.Column="5" VerticalAlignment="Center">
+                <TextBox Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{Binding IsOperandEnabled}" />
+                <TextBlock Margin="0,2,0,0"
+                           FontSize="11"
+                           Foreground="#FF666666"
+                           TextWrapping="Wrap"
+                           Text="{Binding OperandHintText}"
+                           Visibility="{Binding HasOperandHint, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
         </Grid>
 
-        <CheckBox Grid.Row="1"
-                  Margin="0,0,0,4"
-                  Content="{Binding IncludeMissingText}"
-                  ToolTip="{Binding IncludeMissingTooltip}"
-                  IsChecked="{Binding IncludeMissingFields, Mode=TwoWay}" />
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,4">
+            <CheckBox Margin="0,0,18,0"
+                      Content="{Binding IncludeMissingText}"
+                      ToolTip="{Binding IncludeMissingTooltip}"
+                      IsChecked="{Binding IncludeMissingFields, Mode=TwoWay}" />
+            <CheckBox Content="{Binding ClearValueText}"
+                      ToolTip="{Binding ClearValueTooltip}"
+                      IsChecked="{Binding ClearValue, Mode=TwoWay}"
+                      IsEnabled="{Binding CanClearValue}" />
+        </StackPanel>
 
         <TextBlock Grid.Row="2"
                    Margin="0,0,0,2"

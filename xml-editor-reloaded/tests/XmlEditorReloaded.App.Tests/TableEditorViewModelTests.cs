@@ -5,7 +5,9 @@ using System.Windows.Controls;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.App.Views;
+using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Imaging;
+using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
@@ -344,6 +346,201 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Structured filters apply type-aware criteria and combine with search using AND semantics.
+    /// </summary>
+    [Fact]
+    public async Task Filter_AppliesCriteriaAndCombinesWithSearch()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+        var filter = Assert.IsType<TableFilterViewModel>(editor.Filter);
+
+        filter.AddCriterionCommand.Execute(null);
+        var criterion = Assert.Single(filter.Criteria);
+
+        Assert.False(editor.HasActiveFilter);
+        Assert.Equal(3, editor.Rows.Count);
+
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "ubWeight");
+        criterion.SelectedOperator = Assert.Single(
+            criterion.Operators,
+            option => option.Operator == RowFilterOperator.GreaterThan);
+        criterion.Operand = "5";
+
+        Assert.True(editor.HasActiveFilter);
+        Assert.Equal(new[] { "1" }, editor.Rows.Select(row => row.Key));
+
+        editor.SearchText = "Knife";
+        Assert.Empty(editor.Rows);
+
+        editor.SearchText = string.Empty;
+        Assert.Equal(new[] { "1" }, editor.Rows.Select(row => row.Key));
+
+        filter.AddCriterionCommand.Execute(null);
+        var second = filter.Criteria[1];
+        second.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "szItemName");
+        second.SelectedOperator = Assert.Single(
+            second.Operators,
+            option => option.Operator == RowFilterOperator.Equals);
+        second.Operand = "Knife";
+        Assert.Empty(editor.Rows);
+
+        filter.SelectedLogicalOperator = Assert.Single(
+            filter.LogicalOperators,
+            option => option.Operator == RowFilterLogicalOperator.Or);
+        Assert.Equal(new[] { "1", "2" }, editor.Rows.Select(row => row.Key));
+
+        editor.ClearFilterCommand.Execute(null);
+
+        Assert.False(editor.HasActiveFilter);
+        Assert.Empty(filter.Criteria);
+        Assert.Equal(3, editor.Rows.Count);
+    }
+
+    /// <summary>
+    /// Filtering by the current cell value adds an equality or exclusion condition.
+    /// </summary>
+    [Fact]
+    public async Task FilterByValueAndExclude_UseCurrentCell()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+
+        Assert.False(editor.FilterByValueCommand.CanExecute(null));
+
+        editor.CurrentCellField = "szItemName";
+        Assert.True(editor.FilterByValueCommand.CanExecute(null));
+
+        editor.FilterByValueCommand.Execute(null);
+
+        Assert.True(editor.IsFilterVisible);
+        Assert.Equal(new[] { "1" }, editor.Rows.Select(row => row.Key));
+        Assert.Equal(
+            RowFilterOperator.Equals,
+            Assert.Single(editor.Filter!.Criteria).SelectedOperator!.Operator);
+
+        editor.ClearFilterCommand.Execute(null);
+        editor.ExcludeValueCommand.Execute(null);
+
+        Assert.Equal(new[] { "0", "2" }, editor.Rows.Select(row => row.Key));
+    }
+
+    /// <summary>
+    /// Bulk edit targets explicitly selected rows and falls back to the whole current view.
+    /// </summary>
+    [Fact]
+    public async Task BulkEdit_UsesSelectedRowsAndFallsBackToCurrentView()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        dialog.BulkEditHandler = _ => null;
+        editor.UpdateSelectedRows(Array.Empty<TableRowViewModel>());
+
+        editor.BulkEditCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastBulkContext);
+        Assert.Equal(3, dialog.LastBulkContext!.RecordKeys.Count);
+
+        dialog.BulkEditHandler = context => new BulkEditRequest(
+            "ubWeight",
+            BulkEditOperation.Set,
+            "7",
+            IncludeMissingFields: false,
+            context.RecordKeys);
+        editor.UpdateSelectedRows(editor.Rows.Where(row => row.Key is "0" or "2"));
+        Assert.Equal(2, editor.SelectedRowCount);
+        Assert.Contains("2", editor.SelectedRowCountText, StringComparison.Ordinal);
+
+        editor.BulkEditCommand.Execute(null);
+
+        Assert.Equal(new[] { "0", "2" }, dialog.LastBulkContext!.RecordKeys);
+        Assert.Equal("7", Assert.Single(editor.Rows, row => row.Key == "0")["ubWeight"]);
+        Assert.Equal("10", Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+        Assert.Equal("7", Assert.Single(editor.Rows, row => row.Key == "2")["ubWeight"]);
+
+        editor.UndoCommand.Execute(null);
+        Assert.Equal("0", Assert.Single(editor.Rows, row => row.Key == "0")["ubWeight"]);
+    }
+
+    /// <summary>
+    /// An empty Set operand clears the field value instead of being rejected by the dialog.
+    /// </summary>
+    [Fact]
+    public async Task BulkEdit_EmptySet_ClearsValue()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        editor.UpdateSelectedRows(editor.Rows.Where(row => row.Key == "1"));
+        dialog.BulkEditHandler = context => new BulkEditRequest(
+            "ubWeight",
+            BulkEditOperation.Set,
+            string.Empty,
+            IncludeMissingFields: false,
+            context.RecordKeys);
+
+        editor.BulkEditCommand.Execute(null);
+
+        Assert.Equal(string.Empty, Assert.Single(editor.Rows, row => row.Key == "1")["ubWeight"]);
+        Assert.True(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// Column visibility, width, order, sorting, and filter persist and can be reset.
+    /// </summary>
+    [Fact]
+    public async Task Layout_PersistsRestoresAndResets()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var store = new FakeTableLayoutStore();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, layoutStore: store);
+
+        Assert.Single(editor.Columns, column => column.Name == "ubWeight").IsVisible = false;
+        editor.ApplyColumnOrder(new[] { "szItemName", "uiIndex", "ItemClass", "AttachmentClass" });
+        editor.ApplyColumnWidths(new[] { ("szItemName", 200d) });
+        editor.SortBy("ubWeight", ListSortDirection.Descending);
+        var filter = Assert.IsType<TableFilterViewModel>(editor.Filter);
+        filter.AddCriterionCommand.Execute(null);
+        var criterion = Assert.Single(filter.Criteria);
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "szItemName");
+        criterion.SelectedOperator = Assert.Single(
+            criterion.Operators,
+            option => option.Operator == RowFilterOperator.Contains);
+        criterion.Operand = "i";
+        Assert.Equal(new[] { "2", "0" }, editor.Rows.Select(row => row.Key));
+
+        await editor.FlushLayoutAsync();
+
+        Assert.NotEmpty(store.Saved);
+        var saved = store.Saved[^1];
+        Assert.Equal("ubWeight", saved.SortField);
+        Assert.Equal(TableSortDirection.Descending, saved.SortDirection);
+        Assert.Single(saved.Filter.Criteria);
+        Assert.Equal(200, saved.Columns.Single(column => column.Name == "szItemName").Width);
+
+        var (restored, _, _, _, _) = await CreateEditorAsync(workspace, layoutStore: store);
+
+        Assert.DoesNotContain(restored.VisibleColumns, column => column.Name == "ubWeight");
+        Assert.Equal("szItemName", restored.VisibleColumns[0].Name);
+        Assert.Equal("ubWeight", restored.SortField);
+        Assert.Equal(ListSortDirection.Descending, restored.SortDirection);
+        Assert.Equal(new[] { "2", "0" }, restored.Rows.Select(row => row.Key));
+        Assert.Equal(200, Assert.Single(restored.Columns, column => column.Name == "szItemName").Width);
+
+        await restored.ResetLayoutCommand.ExecuteAsync(null);
+
+        Assert.Empty(store.Layouts);
+        Assert.Empty(restored.SortField);
+        Assert.False(restored.HasActiveFilter);
+        Assert.Equal(5, restored.VisibleColumns.Count);
+    }
+
+    /// <summary>
     /// Duplicate keys are reported by validation.
     /// </summary>
     [Fact]
@@ -378,6 +575,8 @@ public class TableEditorViewModelTests
                 var view = new TableView { DataContext = editor };
                 var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
                 Assert.Equal(DataGridSelectionUnit.FullRow, grid.SelectionUnit);
+                Assert.Equal(DataGridSelectionMode.Extended, grid.SelectionMode);
+                Assert.NotNull(grid.ContextMenu);
                 Assert.Equal(editor.VisibleColumns.Count, grid.Columns.Count);
 
                 Assert.Single(editor.Columns, column => column.Name == "ubWeight").IsVisible = false;
@@ -1233,7 +1432,8 @@ public class TableEditorViewModelTests
         bool includeOverlay = true,
         bool includeLookups = false,
         bool includeBooleans = false,
-        bool includeRelations = false)
+        bool includeRelations = false,
+        FakeTableLayoutStore? layoutStore = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -1320,7 +1520,7 @@ public class TableEditorViewModelTests
         var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
         var dialog = new FakeDialogService();
         images ??= new TestItemImageService();
-        var editor = new TableEditorViewModel(session, descriptor, language, dialog, images);
+        var editor = new TableEditorViewModel(session, descriptor, language, dialog, images, layoutStore);
         await editor.InitializeAsync();
         return (editor, descriptor, data13, dialog, images);
     }

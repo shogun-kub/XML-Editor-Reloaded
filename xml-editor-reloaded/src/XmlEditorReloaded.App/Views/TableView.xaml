@@ -46,6 +46,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -123,6 +124,10 @@
                     Content="{Binding SaveText}"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding IsDirty}" />
+            <TextBlock VerticalAlignment="Center"
+                       Margin="0,0,12,0"
+                       Foreground="#FF666666"
+                       Text="{Binding SelectedRowCountText}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
                     Content="{Binding ValidateText}"
@@ -153,6 +158,63 @@
         </WrapPanel>
 
         <Expander Grid.Row="2"
+                  Margin="0,0,0,6"
+                  Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
+                  Header="{Binding FilterLabel}"
+                  IsExpanded="{Binding IsFilterVisible, Mode=TwoWay}">
+            <StackPanel Margin="4,4,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="#FF666666"
+                               Text="{Binding Filter.SummaryText}" />
+                    <ComboBox Width="150"
+                              Margin="12,0,6,0"
+                              VerticalAlignment="Center"
+                              ItemsSource="{Binding Filter.LogicalOperators}"
+                              SelectedItem="{Binding Filter.SelectedLogicalOperator, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayText"
+                              Visibility="{Binding Filter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
+                    <Button Padding="10,2"
+                            Margin="0,0,6,0"
+                            Content="{Binding FilterAddText}"
+                            Command="{Binding Filter.AddCriterionCommand}" />
+                    <Button Padding="10,2"
+                            Margin="0,0,12,0"
+                            Content="{Binding FilterClearText}"
+                            Command="{Binding ClearFilterCommand}" />
+                    <Button Padding="10,2"
+                            Content="{Binding ResetLayoutText}"
+                            ToolTip="{Binding ResetLayoutTooltip}"
+                            Command="{Binding ResetLayoutCommand}" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Filter.Criteria}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,1">
+                                <ComboBox Width="230"
+                                          ItemsSource="{Binding Columns}"
+                                          SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"
+                                          DisplayMemberPath="Name" />
+                                <ComboBox Width="150"
+                                          Margin="6,0,0,0"
+                                          ItemsSource="{Binding Operators}"
+                                          SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayText" />
+                                <TextBox Width="180"
+                                         Margin="6,0,0,0"
+                                         Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Margin="6,0,0,0"
+                                        Padding="8,0"
+                                        Content="×"
+                                        Command="{Binding RemoveCommand}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Expander>
+
+        <Expander Grid.Row="3"
                   Margin="0,0,0,6"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
                   Header="{Binding ColumnsLabel}">
@@ -203,7 +265,7 @@
             </Grid>
         </Expander>
 
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -216,7 +278,7 @@
                   CanUserReorderColumns="True"
                   CanUserResizeColumns="True"
                   CanUserSortColumns="True"
-                  SelectionMode="Single"
+                  SelectionMode="Extended"
                   SelectionUnit="FullRow"
                   HeadersVisibility="Column"
                   RowHeaderWidth="0"
@@ -231,7 +293,23 @@
                   VirtualizingPanel.IsVirtualizing="True"
                   VirtualizingPanel.VirtualizationMode="Recycling"
                   VirtualizingPanel.ScrollUnit="Pixel"
-                  Sorting="OnSorting" />
+                  Sorting="OnSorting"
+                  SelectionChanged="OnSelectionChanged"
+                  CurrentCellChanged="OnCurrentCellChanged"
+                  ColumnReordered="OnColumnReordered"
+                  PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
+                <DataGrid.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Header="{Binding FilterByValueText}"
+                                  Command="{Binding FilterByValueCommand}" />
+                        <MenuItem Header="{Binding FilterExcludeValueText}"
+                                  Command="{Binding ExcludeValueCommand}" />
+                        <Separator />
+                        <MenuItem Header="{Binding ResetLayoutText}"
+                                  Command="{Binding ResetLayoutCommand}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
 
             <Border Grid.Column="1"
                     Width="340"
@@ -331,7 +409,7 @@
             </Border>
         </Grid>
 
-        <Expander Grid.Row="4"
+        <Expander Grid.Row="5"
                   Margin="0,6,0,0"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
                   Header="{Binding ValidationLabel}"
@@ -347,7 +425,7 @@
             </ListBox>
         </Expander>
 
-        <Grid Grid.Row="5"
+        <Grid Grid.Row="6"
               Margin="0,6,0,0"
               Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
             <Grid.RowDefinitions>

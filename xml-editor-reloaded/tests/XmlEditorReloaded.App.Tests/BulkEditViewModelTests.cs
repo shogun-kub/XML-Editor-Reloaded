@@ -47,10 +47,24 @@ public class BulkEditViewModelTests
         Assert.Equal("ubWeight", viewModel.SelectedColumn!.FieldName);
         Assert.False(viewModel.CanApply);
         Assert.Null(viewModel.CreateRequest());
+        Assert.Equal(0, calls);
+        Assert.True(viewModel.IsOperandEnabled);
+
+        viewModel.ClearValue = true;
+
+        Assert.False(viewModel.IsOperandEnabled);
+        Assert.True(viewModel.CanApply);
+        Assert.Equal(string.Empty, viewModel.CreateRequest()!.Operand);
+        Assert.Equal(1, calls);
+
+        viewModel.ClearValue = false;
+
+        Assert.True(viewModel.IsOperandEnabled);
+        Assert.False(viewModel.CanApply);
 
         viewModel.Operand = "5";
 
-        Assert.Equal(1, calls);
+        Assert.Equal(2, calls);
         Assert.True(viewModel.CanApply);
         Assert.False(viewModel.HasError);
         Assert.Single(viewModel.PreviewRows);

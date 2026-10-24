@@ -16,12 +16,16 @@ public sealed class BulkEditContext
     /// <param name="columns">Columns that can be edited in bulk.</param>
     /// <param name="recordKeys">Primary keys of the rows in the current view.</param>
     /// <param name="preview">Callback that evaluates a request against the table without mutating it.</param>
+    /// <param name="isSelectionScope">
+    /// Whether the target keys are explicitly selected rows rather than the whole current view.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when an argument is null.</exception>
     public BulkEditContext(
         string title,
         IReadOnlyList<BulkEditColumnOption> columns,
         IReadOnlyList<string> recordKeys,
-        Func<BulkEditRequest, OperationResult<BulkEditPreview>> preview)
+        Func<BulkEditRequest, OperationResult<BulkEditPreview>> preview,
+        bool isSelectionScope = false)
     {
         ArgumentNullException.ThrowIfNull(title);
         ArgumentNullException.ThrowIfNull(columns);
@@ -32,6 +36,7 @@ public sealed class BulkEditContext
         Columns = columns.ToArray();
         RecordKeys = recordKeys.ToArray();
         Preview = preview;
+        IsSelectionScope = isSelectionScope;
     }
 
     /// <summary>
@@ -53,6 +58,12 @@ public sealed class BulkEditContext
     /// Gets the callback that evaluates a bulk request without mutating the table.
     /// </summary>
     public Func<BulkEditRequest, OperationResult<BulkEditPreview>> Preview { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the target keys are explicitly selected rows rather than the
+    /// whole current view.
+    /// </summary>
+    public bool IsSelectionScope { get; }
 }
 
 /// <summary>

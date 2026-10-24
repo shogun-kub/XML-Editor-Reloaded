@@ -48,10 +48,11 @@ xml-editor-reloaded/
 
 Shared contracts and domain primitives: table/column identifiers, metadata abstractions, localization
 keys and translatable paths, lookup and validation primitives, image data contracts, application
-settings contracts, and the standard `OperationResult` (`error_code`, `error_text`, `data`).
+settings contracts, structured row-filter contracts, per-table grid layout contracts, and the standard
+`OperationResult` (`error_code`, `error_text`, `data`).
 
-Folders: `Abstractions`, `Api`, `Imaging`, `Localization`, `Metadata`, `Validation`. No file I/O, no
-SQLite, no WPF.
+Folders: `Abstractions`, `Api`, `Filtering`, `Imaging`, `Layout`, `Localization`, `Metadata`,
+`Validation`. No file I/O, no SQLite, no WPF.
 
 ### XmlEditorReloaded.Xml (`net10.0`)
 
@@ -66,13 +67,14 @@ XML-table engine:
   optional related rows, and rollback of already replaced files on failure;
 - cross-version comparison and report formatting.
 
-Folders: `Comparison`, `Copy`, `Documents`, `IO`, `Loading`, `Lookups`, `Overlays`, `Relations`,
-`Repository`, `Saving`, `Schema`, `Validation`, `Values`, `Workspace`.
+Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Lookups`, `Overlays`,
+`Relations`, `Repository`, `Saving`, `Schema`, `Validation`, `Values`, `Workspace`.
 
 ### XmlEditorReloaded.Data (`net10.0`)
 
-SQLite metadata, table catalog, lookup access, language catalog, and settings persistence. Embedded,
-versioned migrations (`Metadata/Migrations/0001`–`0008`) create and seed the database automatically.
+SQLite metadata, table catalog, lookup access, language catalog, settings persistence, and per-table
+grid layouts. Embedded, versioned migrations (`Metadata/Migrations/0001`–`0008`) create and seed the
+database automatically.
 
 Folders: `Catalog`, `Localization`, `Metadata`, `Settings`.
 
@@ -86,9 +88,10 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 ### XmlEditorReloaded.App (`net10.0-windows`)
 
 WPF shell and MVVM layer: data-directory selector across several data sets, table browser and tabs keyed
-by data set and table, generic grid editor, item workspace, mercenary gear workspace, detail panel, STI
-image viewer, cross-version comparison window, cross-data-set copy dialog, dialogs, settings, and RESX
-localization (English and Russian).
+by data set and table, generic grid editor with structured filters, multi-row selection, per-table layout
+persistence, item workspace, mercenary gear workspace, detail panel, STI image viewer, cross-version
+comparison window, cross-data-set copy dialog, dialogs, settings, and RESX localization (English and
+Russian).
 
 Folders: `Imaging`, `Resources`, `Services`, `ViewModels`, `Views`. All UI strings come from RESX;
 views contain no business logic.
@@ -135,6 +138,15 @@ Stored outside the game directory. `SchemaMigrations` tracks embedded SQL migrat
 `TranslatableFields`, and `TableRelations`. `Columns` is declaring metadata (it can expose an absent
 field); `ColumnHints` only refines fields found in the document. Relations model references, 1:1 and
 1:N sub-tables, child rows, and reverse views.
+
+### Grid layouts
+
+Presentation state of each standalone grid tab is stored outside the game data in
+`%AppData%\XmlEditorReloaded\layouts.json`. The versioned JSON file is keyed by the normalized
+`TableData` directory and table name and stores column visibility, width and order, sorting, and the
+structured filter. Writes are atomic and UTF-8 without BOM; an unreadable file is reported and backed up
+as `layouts.json.bad` before a fresh file is written. Embedded grids and the item/gear workspaces keep
+their layout in memory only.
 
 ### STI images
 

@@ -29,6 +29,10 @@ public partial class BulkEditViewModel : ObservableObject
     private bool _includeMissingFields;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsOperandEnabled))]
+    private bool _clearValue;
+
+    [ObservableProperty]
     private string _summaryText;
 
     [ObservableProperty]
@@ -58,13 +62,17 @@ public partial class BulkEditViewModel : ObservableObject
             new BulkOperationOption(BulkEditOperation.Multiply, Strings.Get("BulkEditOperationMultiply")),
         };
 
-        TargetText = Strings.Format("BulkEditTargetFormat", _recordKeys.Count);
+        TargetText = context.IsSelectionScope
+            ? Strings.Format("BulkEditTargetSelectedFormat", _recordKeys.Count)
+            : Strings.Format("BulkEditTargetFormat", _recordKeys.Count);
         SummaryText = Strings.Get("BulkEditEnterValue");
         ColumnLabel = Strings.Get("BulkEditColumnLabel");
         OperationLabel = Strings.Get("BulkEditOperationLabel");
         ValueLabel = Strings.Get("BulkEditValueLabel");
         IncludeMissingText = Strings.Get("BulkEditIncludeMissingText");
         IncludeMissingTooltip = Strings.Get("BulkEditIncludeMissingTooltip");
+        ClearValueText = Strings.Get("BulkEditClearValueText");
+        ClearValueTooltip = Strings.Get("BulkEditEmptyValueHint");
         ApplyText = Strings.Get("BulkEditApplyText");
         CancelText = Strings.Get("BulkEditCancelText");
         KeyHeader = Strings.Get("BulkEditKeyHeader");
@@ -127,6 +135,26 @@ public partial class BulkEditViewModel : ObservableObject
     public string IncludeMissingTooltip { get; }
 
     /// <summary>
+    /// Gets the clear-value checkbox text.
+    /// </summary>
+    public string ClearValueText { get; }
+
+    /// <summary>
+    /// Gets the clear-value checkbox tooltip.
+    /// </summary>
+    public string ClearValueTooltip { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the operand text box is editable.
+    /// </summary>
+    public bool IsOperandEnabled => !ClearValue;
+
+    /// <summary>
+    /// Gets a value indicating whether the clear-value option is available for the current operation.
+    /// </summary>
+    public bool CanClearValue => SelectedOperation?.Kind == BulkEditOperation.Set;
+
+    /// <summary>
     /// Gets the apply button text.
     /// </summary>
     public string ApplyText { get; }
@@ -162,6 +190,18 @@ public partial class BulkEditViewModel : ObservableObject
     public bool HasError => ErrorText.Length > 0;
 
     /// <summary>
+    /// Gets a hint that explains the meaning of an empty operand for the current operation.
+    /// </summary>
+    public string OperandHintText => SelectedOperation?.Kind == BulkEditOperation.Set
+        ? Strings.Get("BulkEditEmptyValueHint")
+        : string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether <see cref="OperandHintText"/> has content.
+    /// </summary>
+    public bool HasOperandHint => OperandHintText.Length > 0;
+
+    /// <summary>
     /// Creates the request to apply when the preview is valid.
     /// </summary>
     /// <returns>The request, or <see langword="null"/> when the preview cannot be applied.</returns>
@@ -170,10 +210,12 @@ public partial class BulkEditViewModel : ObservableObject
             ? new BulkEditRequest(
                 SelectedColumn.FieldName,
                 SelectedOperation.Kind,
-                Operand,
+                EffectiveOperand,
                 IncludeMissingFields,
                 _recordKeys)
             : null;
+
+    private string EffectiveOperand => ClearValue ? string.Empty : Operand;
 
     partial void OnSelectedColumnChanged(BulkEditColumnOption? value)
     {
@@ -187,7 +229,29 @@ public partial class BulkEditViewModel : ObservableObject
         RefreshPreview();
     }
 
-    partial void OnSelectedOperationChanged(BulkOperationOption? value) => RefreshPreview();
+    partial void OnSelectedOperationChanged(BulkOperationOption? value)
+    {
+        if (value is { Kind: not BulkEditOperation.Set })
+        {
+            ClearValue = false;
+        }
+
+        OnPropertyChanged(nameof(OperandHintText));
+        OnPropertyChanged(nameof(HasOperandHint));
+        OnPropertyChanged(nameof(CanClearValue));
+        RefreshPreview();
+    }
+
+    partial void OnClearValueChanged(bool value)
+    {
+        if (value && Operand.Length > 0)
+        {
+            Operand = string.Empty;
+            return;
+        }
+
+        RefreshPreview();
+    }
 
     partial void OnOperandChanged(string value) => RefreshPreview();
 
@@ -196,7 +260,8 @@ public partial class BulkEditViewModel : ObservableObject
     private void RefreshPreview()
     {
         PreviewRows.Clear();
-        if (SelectedColumn is null || SelectedOperation is null || Operand.Length == 0)
+        if (SelectedColumn is null || SelectedOperation is null
+            || (!ClearValue && Operand.Length == 0))
         {
             SummaryText = Strings.Get("BulkEditEnterValue");
             ErrorText = string.Empty;
@@ -207,7 +272,7 @@ public partial class BulkEditViewModel : ObservableObject
         var request = new BulkEditRequest(
             SelectedColumn.FieldName,
             SelectedOperation.Kind,
-            Operand,
+            EffectiveOperand,
             IncludeMissingFields,
             _recordKeys);
         var result = _preview(request);

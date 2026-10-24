@@ -4,7 +4,7 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M21 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы, multi-dataset с селектором каталогов и кэшем сессий, cross-dataset copy с preview, политиками конфликтов, allocation ключей, remap по display-тексту и копированием связанных строк. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; multi-dataset/copy — M21; full legacy parity — конец M23. **Проверка текущего состояния:** build `-warnaserror` (0/0), 346 тестов (Core 28, Imaging 19, Xml 144, Data 52, App 103), corpus v4/v5, сравнение v4↔v5 и copy v4→v5 зелёные.
+**Состояние:** M0–M21 завершены. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, схема из документа + hints, grid-редактор (sparse-правка, поиск/сортировка, chooser колонок, bulk), панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи (merged-значения, маркеры, отчёт, создание), read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace для `Items.Items` со всеми 1:1/1:N таблицами и единым undo/save, merc gear workspace, обратная вкладка shopkeeper inventory и 104 вспомогательные таблицы, multi-dataset с селектором каталогов и кэшем сессий, cross-dataset copy с preview, политиками конфликтов, allocation ключей, remap по display-тексту и копированием связанных строк. Метаданные: 173 таблицы, 176 key segments, 1923 `ColumnHints` (224 у `Items.Items`), 46 declaring-колонок (23 lookup-таблицы), 11 flag-lookup-связей, 1020 `TableRelations` (924 `Reference`, 5 `SubTable`, 7 `ChildRows`, 84 `Reverse`), 7 языков (`ru`, `de`, `pl`, `fr`, `it`, `nl`, `zh`), 64-битные lookup ID. **M22 разбит на подшаги:** M22a — фильтры, multi-select/bulk и per-table layout — выполнен; M22b — settings dialog, close safety и external-change recovery — текущий подшаг. M23 также разбит: M23a — аудит паритета, M23b — исправления и gate. **Паритет:** item-workflow parity достигнут в M19; merc gear, shopkeeper/enemy/militia/IMP/sounds и language catalog — M20; multi-dataset/copy — M21; full legacy parity — M23b. **Проверка текущего состояния:** build `-warnaserror` (0/0), 370 тестов (Core 28, Imaging 19, Xml 155, Data 60, App 108), corpus v4/v5, сравнение v4↔v5, copy v4→v5 и perf-гейты зелёные.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается вообще; повреждённый — только диагностика.
@@ -74,28 +74,39 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 - **UI:** кнопка «Копировать данные…» открывает явный диалог: source/target (с browse и нормализацией до `TableData`), пересечение таблиц, фильтр ключей (пусто = все), политика, режим ключей, related rows, предпросмотр с remap/related/warnings; apply возвращает результат, после чего чистые вкладки target перезагружаются, а dirty-вкладки помечаются как не перезагруженные.
 - **Тесты/acceptance:** unit-тесты копирования (skip/overwrite/merge, allocation, sub-tables, missing target, read-only source), тесты диалога и multi-dataset во вкладках, env-gated corpus copy v4→v5 на temp-копиях: предмет с Weapon и Attachments копируется с новыми ключами, `ubCalibre` remap-ится по `AmmoStrings`, source побайтно неизменён, target читается.
 
-### M22 — Grid/workflow parity polish
-- **Фильтры:** структурированный конструктор (`=`, `<>`, `contains`, числовые сравнения, AND/OR), фильтр по выбранному значению и исключение; без произвольного кода.
-- **Выделение и bulk:** multi-select; bulk по выделению, при пустом — по всему текущему виду (как в legacy); пустой Set.
-- **Persistence:** per `(dataset, table)` видимость/ширина/порядок колонок, сортировка, фильтр; versioned `layouts.json` в `%AppData%` и сброс.
-- **Settings:** каталоги, активный датасет, UI-язык en/ru, recent dirs; при необходимости смена языка после перезапуска.
-- **Safety:** prompt при закрытии с несохранёнными вкладками; при внешнем изменении — reload/discard/overwrite с подтверждением.
-- **Тесты/acceptance:** семантика фильтров, bulk по выделению, settings/layout round-trip; layout восстанавливается, закрытие не теряет данные молча.
+### M22a — Grid: фильтры, multi-select/bulk, layout — выполнен
+- **Фильтры:** модель `RowFilterOperator`/`RowFilterCriterion`/`RowFilterGroup` в Core, вычислитель `TableRowFilterMatcher` в Xml, UI-конструктор (`=`, `<>`, `contains`, числовые сравнения, AND/OR), фильтр по выбранной ячейке и исключение; без произвольного кода. Отсутствующее поле не проходит `=`, но проходит `<>`; числа — invariant culture; пустой операнд не применяется, пока пользователь не введёт значение.
+- **Выделение и bulk:** `SelectionMode=Extended`, bulk по выделению, при пустом — по всему текущему виду (как в legacy); пустой Set через явный чекбокс «Очистить значение» (Add/Multiply по-прежнему требуют число); undo одной транзакцией.
+- **Persistence:** per `(dataset, table)` видимость/ширина/порядок колонок, сортировка, фильтр; versioned `layouts.json` в `%AppData%`, tolerant load, backup `.bad` и сброс layout. Персистятся только standalone generic-вкладки.
+- **Ограничения:** фильтр сравнивает эффективные raw-значения (display-текст lookup/relation не фильтруется); embedded-гриды и item/merc workspaces не персистят layout; delete/duplicate строк остаются однострочными.
+- **Тесты:** matcher (типы, missing, AND/OR, культура), VM-фильтры, bulk по выделению и пустой Set, layout round-trip/restore/reset, XAML smoke; 370 тестов, corpus v4/v5 и perf-гейт фильтра `Items` зелёные.
+- **Коммит:** `M22a: grid filters, multi-select, layout persistence`.
 
-### M23 — Аудит и gate паритета
+### M22b — Shell: настройки и безопасность
+- **Settings dialog:** каталоги данных (добавить/удалить/активный), recent dirs, UI-язык en/ru с пометкой «после перезапуска», сброс всех layout; сохранение через `ISettingsStore`, применение активного датасета без закрытия вкладок.
+- **Safety:** закрытие вкладки и приложения с несохранёнными изменениями — Save/Discard/Cancel; Save-ошибка не закрывает вкладку; перед выходом flush layout.
+- **External change:** при `xml.file_changed_externally` — Reload (отбросить правки и перечитать) / Overwrite (записать поверх через `forceOverwrite`) / Cancel; обычный save-gate не ослабляется, multi-file ошибки агрегируются.
+- **Тесты/acceptance:** settings round-trip, close-сценарии, force-overwrite и rebase baseline, внешние изменения для grid/item/merc; закрытие не теряет данные молча.
+- **Коммит:** `M22b: settings, close safety, external-change recovery`.
+
+### M23a — Аудит паритета
 - `LEGACY-PARITY-REPORT.md`: построчная матрица «функция legacy → реализация / superseded / исключено» с файлами-доказательствами.
 - Ручная проверка на v4 и v5: item workspace и sub-tables, merc gear, shopkeeper, pickers, copy, фильтры, изображения, локализация, настройки.
-- Исправляются только найденные пробелы; крупный пробел сдвигает маркер. **Маркер: full functional parity**, коммит `M23: legacy functional parity gate`.
+- Только документ и список пробелов, без изменения поведения. **Коммит:** `M23a: legacy parity audit`.
+
+### M23b — Исправления и gate паритета
+- Исправляются только найденные пробелы, каждый с тестом; крупный пробел фиксируется в отчёте и выносится в отдельный подшаг после согласования.
+- Повторный полный прогон и обновление матрицы. **Маркер: full functional parity**, коммит `M23: legacy functional parity gate`.
 
 ### После паритета — M24–M27
 Эти функции не нужны для паритета (в legacy их нет), они закрывают собственные пробелы rewrite.
 
-- **M24 — Nested/list/dict editor (4–5 дн):** `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`), `FacilityTypes/ASSIGNMENT`, root singleton cells, list/dict-поля; nested overlay-переводы. Опирается на base nested write M19 и gear-редактор M20.
-- **M25 — Comparison v2 и dataset-wide validation (3–4 дн):** дифф значений, содержимое оверлеев, root singleton; валидация всего датасета одним отчётом; глобальный поиск.
-- **M26 — Lookup management и reference protection (3–4 дн):** CRUD lookup-таблиц, bitmask allocation ID, free-form ID, «где используется», защита используемых значений, валидация flag-lookup.
-- **M27 — Packaging/release (2 дн):** self-contained publish, иконка/версия/changelog, README и user guide, portable zip, CI-гейты сборки/тестов/корпуса.
+- **M24a — Nested city/facility editors:** `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`) и `FacilityTypes/ASSIGNMENT`. **M24b — Root/list/dict:** root singleton cells, list/dict-поля, nested overlay-переводы.
+- **M25a — Comparison v2:** дифф значений, содержимое оверлеев, root singleton. **M25b — Dataset-wide:** валидация всего датасета одним отчётом, глобальный поиск.
+- **M26a — Lookup CRUD:** создание/изменение/удаление lookup-таблиц, bitmask allocation ID, free-form ID. **M26b — Protection:** «где используется», защита используемых значений, валидация flag-lookup.
+- **M27a — Packaging:** self-contained publish, portable zip, CI-гейты сборки/тестов/корпуса. **M27b — Release:** иконка/версия/changelog, README и user guide.
 
-**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17 → M18 → **M19 (item parity)** → M20 → M21 → M22 → **M23 (full legacy parity)** → M24 → M25 → M26 → M27. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
+**Критический путь:** M0 → M1 → M3 → M4 → M5 → M8 → M9 → M10 → M11 → M12 → M13 → M14 → M14.5 → M15 → M16 → M17 → M18 → **M19 (item parity)** → M20 → M21 → M22a → M22b → M23a → **M23b (full legacy parity)** → M24a → M24b → M25a → M25b → M26a → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22 и перед релизом.
 
 ---
 
@@ -119,17 +130,17 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 | Область legacy | Текущее состояние | Milestone |
 |---|---|---|
 | XML round-trip, undo, overlays, compare, валидация | сильнее legacy | — |
-| Grid: sort/search/chooser/bulk/add/delete | частично; нет фильтров и multi-select | M22 |
+| Grid: sort/search/chooser/bulk/add/delete | частично; фильтры, multi-select и layout persistence — M22a | M22a |
 | Item master-detail и sub-tables | реализованы в item workspace, включая nested/list | M19 |
 | Main-table pickers (`ITEM`, `AMMO`, `ITEMTOEXPLOSIVE`) | searchable pickers, имена, переход, unknown raw | M18 |
 | Merc gear | редактор пяти комплектов, item pickers, base + overlay | выполнен (M20) |
 | Shopkeeper/enemy/militia/IMP/sounds | 104 таблицы с типами, ключами, pickers и shopkeeper-вкладкой | выполнен (M20) |
-| Lookup-таблицы | редактируются generic grid; метаданные auxiliary-таблиц | M20; CRUD — M26 |
+| Lookup-таблицы | редактируются generic grid; метаданные auxiliary-таблиц | M20; CRUD — M26a |
 | Локализация | 7 языковых кодов с autodiscovery; в v4/v5 есть только `ru` | выполнен (M20) |
 | Multi-dataset и copy строк | селектор датасетов, вкладки по датасетам, явный copy-диалог с preview и remap | выполнен (M21) |
 | Item images | превью Big/Medium/Small, picker типа, миниатюры в списке | M19 |
-| Settings/layout | частично; нет settings dialog и persistence | M22 |
-| Packaging | нет у обоих | M27 |
+| Settings/layout | layout — M22a; settings dialog и safety — M22b | M22a–M22b |
+| Packaging | нет у обоих | M27a–M27b |
 
 ---
 
@@ -165,4 +176,6 @@ Scaffolding решения и тестов; Core-контракты (`OperationR
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` копирует предмет с Weapon/Attachments на temp-копиях, проверяет remap и неизменность source.
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с (фактические значения см. раздел M0–M10).
 7. Ручной smoke текущего состояния: v5 `Lookup/AttachmentPoint` открывается с диагностикой и без записи; v4 переключение на Russian показывает merged-значения, правка `szItemName` меняет только `Russian.Items.xml`; `Items.Items` открывается как item workspace, правка предмета и Weapon сохраняется одной кнопкой, duplicate/delete отменяются целиком; `Inventory.MercStartingGear` открывается как merc gear workspace, правка любого из пяти комплектов и kit name в Russian сохраняется одной кнопкой; вкладка «Торговцы» показывает дилеров выбранного предмета и пишет количество только в dealer-файл; `Sounds.Sounds` редактируется как text-only таблица; сравнение v4↔v5 экспортирует .md/.csv и не меняет файлы; селектор каталогов переключает v4/v5 без закрытия вкладок, а copy-диалог показывает preview и пишет только target; отсутствующие изображения показывают код ошибки, а не ломают редактор.
-8. `References/` не изменён; `bin`/`obj` в `References/JA 2 1.13 v4|v5` не появляются (в vendored `References/JA 2 1.13 Image viewer` они поставляются вместе с исходниками и не считаются нарушением).
+8. M22a smoke: фильтр по значению и исключение через контекстное меню; AND/OR и числовые операторы; bulk по выделенным строкам и по всему виду; пустой Set; после переоткрытия вкладки восстанавливаются колонки/ширина/сортировка/фильтр, reset возвращает дефолты.
+9. M22b smoke: settings dialog меняет каталоги/активный датасет/recent, UI-язык применяется после перезапуска; закрытие вкладки и приложения с несохранёнными правками предлагает Save/Discard/Cancel; внешнее изменение файла при сохранении предлагает Reload/Overwrite/Cancel, Cancel оставляет вкладку dirty.
+10. `References/` не изменён; `bin`/`obj` в `References/JA 2 1.13 v4|v5` не появляются (в vendored `References/JA 2 1.13 Image viewer` они поставляются вместе с исходниками и не считаются нарушением).
