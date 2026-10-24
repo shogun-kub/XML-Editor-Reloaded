@@ -219,6 +219,9 @@
   <data name="EditorCellUpdated" xml:space="preserve">
     <value>{0} updated in record {1}.</value>
   </data>
+  <data name="EditorBaseCellUpdated" xml:space="preserve">
+    <value>Base-table field {0} updated in record {1} (not a translation).</value>
+  </data>
   <data name="EditorRowAdded" xml:space="preserve">
     <value>Record {0} added.</value>
   </data>
@@ -356,5 +359,98 @@
   </data>
   <data name="BitEditorCancel" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="EditorBaseLanguageOption" xml:space="preserve">
+    <value>Base table</value>
+  </data>
+  <data name="EditorBaseLanguageTooltip" xml:space="preserve">
+    <value>Edit the base table; language overlays are not used.</value>
+  </data>
+  <data name="EditorLanguageOverlayTooltip" xml:space="preserve">
+    <value>Edit translations in the {0} overlay.</value>
+  </data>
+  <data name="EditorLanguageCreateFormat" xml:space="preserve">
+    <value>{0} (create overlay)</value>
+  </data>
+  <data name="EditorLanguageCreateTooltip" xml:space="preserve">
+    <value>No {0} overlay exists yet; selecting this language creates one.</value>
+  </data>
+  <data name="EditorLanguageLabel" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="EditorConfirmLanguage" xml:space="preserve">
+    <value>Discard unsaved changes and switch the language of '{0}'?</value>
+  </data>
+  <data name="EditorLanguageTitle" xml:space="preserve">
+    <value>Change language</value>
+  </data>
+  <data name="EditorConfirmCreateOverlay" xml:space="preserve">
+    <value>No {0} overlay exists for '{1}'. Create it now?</value>
+  </data>
+  <data name="EditorLanguageChanged" xml:space="preserve">
+    <value>Language: {0}</value>
+  </data>
+  <data name="EditorLanguageBaseChanged" xml:space="preserve">
+    <value>Language: base table</value>
+  </data>
+  <data name="EditorOverlayCreated" xml:space="preserve">
+    <value>Created the {0} overlay.</value>
+  </data>
+  <data name="EditorNoLanguageSelected" xml:space="preserve">
+    <value>Select a language overlay first.</value>
+  </data>
+  <data name="EditorUntranslated" xml:space="preserve">
+    <value>Not translated: the value comes from the base table.</value>
+  </data>
+  <data name="EditorTranslatableSuffix" xml:space="preserve">
+    <value> *</value>
+  </data>
+  <data name="EditorTranslationReportText" xml:space="preserve">
+    <value>Translations</value>
+  </data>
+  <data name="TranslationReportTitleFormat" xml:space="preserve">
+    <value>Translations: {0} ({1})</value>
+  </data>
+  <data name="TranslationReportSummary" xml:space="preserve">
+    <value>Total issues: {0}</value>
+  </data>
+  <data name="TranslationReportEmpty" xml:space="preserve">
+    <value>No translation issues found.</value>
+  </data>
+  <data name="TranslationReportClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TranslationReportKind" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="TranslationReportRecord" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="TranslationReportField" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="TranslationReportMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="TranslationIssue.MissingTranslation" xml:space="preserve">
+    <value>Missing translation</value>
+  </data>
+  <data name="TranslationIssue.OrphanKey" xml:space="preserve">
+    <value>Orphan key</value>
+  </data>
+  <data name="TranslationIssue.DuplicateKey" xml:space="preserve">
+    <value>Duplicate key</value>
+  </data>
+  <data name="TranslationIssue.EmptyValue" xml:space="preserve">
+    <value>Empty value</value>
+  </data>
+  <data name="TranslationIssue.IdenticalToBase" xml:space="preserve">
+    <value>Identical to base</value>
+  </data>
+  <data name="TranslationIssue.KeyCountMismatch" xml:space="preserve">
+    <value>Key count mismatch</value>
+  </data>
+  <data name="TranslationIssue.UnresolvableKey" xml:space="preserve">
+    <value>Unresolvable key</value>
   </data>
 </root>

@@ -219,6 +219,9 @@
   <data name="EditorCellUpdated" xml:space="preserve">
     <value>{0} обновлено в записи {1}.</value>
   </data>
+  <data name="EditorBaseCellUpdated" xml:space="preserve">
+    <value>Поле базовой таблицы {0} обновлено в записи {1} (это не перевод).</value>
+  </data>
   <data name="EditorRowAdded" xml:space="preserve">
     <value>Запись {0} добавлена.</value>
   </data>
@@ -356,5 +359,98 @@
   </data>
   <data name="BitEditorCancel" xml:space="preserve">
     <value>Отмена</value>
+  </data>
+  <data name="EditorBaseLanguageOption" xml:space="preserve">
+    <value>Базовая таблица</value>
+  </data>
+  <data name="EditorBaseLanguageTooltip" xml:space="preserve">
+    <value>Редактирование базовой таблицы без языковых оверлеев.</value>
+  </data>
+  <data name="EditorLanguageOverlayTooltip" xml:space="preserve">
+    <value>Редактирование переводов в оверлее {0}.</value>
+  </data>
+  <data name="EditorLanguageCreateFormat" xml:space="preserve">
+    <value>{0} (создать оверлей)</value>
+  </data>
+  <data name="EditorLanguageCreateTooltip" xml:space="preserve">
+    <value>Оверлея {0} ещё нет; при выборе он будет создан.</value>
+  </data>
+  <data name="EditorLanguageLabel" xml:space="preserve">
+    <value>Язык:</value>
+  </data>
+  <data name="EditorConfirmLanguage" xml:space="preserve">
+    <value>Отменить несохранённые изменения и переключить язык таблицы '{0}'?</value>
+  </data>
+  <data name="EditorLanguageTitle" xml:space="preserve">
+    <value>Смена языка</value>
+  </data>
+  <data name="EditorConfirmCreateOverlay" xml:space="preserve">
+    <value>Оверлей {0} для таблицы '{1}' отсутствует. Создать его сейчас?</value>
+  </data>
+  <data name="EditorLanguageChanged" xml:space="preserve">
+    <value>Язык: {0}</value>
+  </data>
+  <data name="EditorLanguageBaseChanged" xml:space="preserve">
+    <value>Язык: базовая таблица</value>
+  </data>
+  <data name="EditorOverlayCreated" xml:space="preserve">
+    <value>Создан оверлей {0}.</value>
+  </data>
+  <data name="EditorNoLanguageSelected" xml:space="preserve">
+    <value>Сначала выберите язык оверлея.</value>
+  </data>
+  <data name="EditorUntranslated" xml:space="preserve">
+    <value>Не переведено: значение взято из базовой таблицы.</value>
+  </data>
+  <data name="EditorTranslatableSuffix" xml:space="preserve">
+    <value> *</value>
+  </data>
+  <data name="EditorTranslationReportText" xml:space="preserve">
+    <value>Переводы</value>
+  </data>
+  <data name="TranslationReportTitleFormat" xml:space="preserve">
+    <value>Переводы: {0} ({1})</value>
+  </data>
+  <data name="TranslationReportSummary" xml:space="preserve">
+    <value>Всего замечаний: {0}</value>
+  </data>
+  <data name="TranslationReportEmpty" xml:space="preserve">
+    <value>Замечаний по переводам нет.</value>
+  </data>
+  <data name="TranslationReportClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="TranslationReportKind" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="TranslationReportRecord" xml:space="preserve">
+    <value>Запись</value>
+  </data>
+  <data name="TranslationReportField" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="TranslationReportMessage" xml:space="preserve">
+    <value>Сообщение</value>
+  </data>
+  <data name="TranslationIssue.MissingTranslation" xml:space="preserve">
+    <value>Нет перевода</value>
+  </data>
+  <data name="TranslationIssue.OrphanKey" xml:space="preserve">
+    <value>Лишний ключ</value>
+  </data>
+  <data name="TranslationIssue.DuplicateKey" xml:space="preserve">
+    <value>Дубликат ключа</value>
+  </data>
+  <data name="TranslationIssue.EmptyValue" xml:space="preserve">
+    <value>Пустое значение</value>
+  </data>
+  <data name="TranslationIssue.IdenticalToBase" xml:space="preserve">
+    <value>Совпадает с базой</value>
+  </data>
+  <data name="TranslationIssue.KeyCountMismatch" xml:space="preserve">
+    <value>Несовпадение числа ключей</value>
+  </data>
+  <data name="TranslationIssue.UnresolvableKey" xml:space="preserve">
+    <value>Неразрешимый ключ</value>
   </data>
 </root>

@@ -73,4 +73,7 @@ public static class ErrorCodes
 
     /// <summary>The requested language overlay does not exist for the table.</summary>
     public const string OverlayNotFound = "overlay.not_found";
+
+    /// <summary>A language overlay already exists at the requested path and must not be overwritten.</summary>
+    public const string OverlayExists = "overlay.exists";
 }

@@ -1,5 +1,6 @@
 using System.IO;
 using Microsoft.Win32;
+using XmlEditorReloaded.Core.Localization;
 
 namespace XmlEditorReloaded.App.Services;
 
@@ -47,5 +48,21 @@ public sealed class WpfDialogService : IDialogService
         }
 
         return window.ShowDialog() == true ? window.Value : null;
+    }
+
+    /// <inheritdoc />
+    public void ShowTranslationReport(TranslationReport report, string title)
+    {
+        ArgumentNullException.ThrowIfNull(report);
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+
+        var window = new Views.TranslationReportWindow(
+            new ViewModels.TranslationReportViewModel(report, title));
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
     }
 }

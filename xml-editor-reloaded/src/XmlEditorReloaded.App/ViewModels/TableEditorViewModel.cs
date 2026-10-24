@@ -7,6 +7,7 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Imaging;
+using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Xml.Schema;
@@ -22,13 +23,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
 {
     private readonly IDataSetSession _session;
     private readonly IItemImageService _itemImages;
-    private readonly string? _languageCode;
+    private string? _languageCode;
     private readonly IDialogService _dialogService;
     private readonly List<TableRowViewModel> _allRows = new();
     private readonly List<TableColumnViewModel> _allColumns = new();
     private readonly List<DetailFieldViewModel> _allDetailFields = new();
     private readonly Dictionary<string, bool> _groupExpansion = new(StringComparer.Ordinal);
     private CancellationTokenSource? _imageCts;
+    private bool _suppressLanguageChange;
+    private bool _isChangingLanguage;
     private const int DefaultColumnBudget = 8;
     private const NumberStyles DecimalStyles =
         NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
@@ -91,6 +94,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     [ObservableProperty]
     private bool _hasGraphicFields;
 
+    [ObservableProperty]
+    private LanguageOptionViewModel? _selectedLanguageOption;
+
+    [ObservableProperty]
+    private bool _isTranslationMode;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TableEditorViewModel"/> class.
     /// </summary>
@@ -144,12 +153,21 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         DetailLabel = Strings.Get("DetailLabel");
         DetailFilterLabel = Strings.Get("DetailFilterLabel");
         DetailBitsText = Strings.Get("DetailBitsText");
+        DetailUntranslatedText = Strings.Get("EditorUntranslated");
+        LanguageLabel = Strings.Get("EditorLanguageLabel");
+        TranslationReportText = Strings.Get("EditorTranslationReportText");
+        TranslatableColumnSuffix = Strings.Get("EditorTranslatableSuffix");
     }
 
     /// <summary>
-    /// Gets the table descriptor.
+    /// Occurs after the editor successfully switches to another language or the base table.
     /// </summary>
-    public TableDescriptor Descriptor { get; }
+    public event EventHandler<string?>? LanguageChanged;
+
+    /// <summary>
+    /// Gets the table descriptor. It is replaced when a new language overlay is created.
+    /// </summary>
+    public TableDescriptor Descriptor { get; private set; }
 
     /// <summary>
     /// Gets the table title.
@@ -242,6 +260,36 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     public string DetailBitsText { get; }
 
     /// <summary>
+    /// Gets the tooltip shown for a translatable field that still uses its base value.
+    /// </summary>
+    public string DetailUntranslatedText { get; }
+
+    /// <summary>
+    /// Gets the language selector label.
+    /// </summary>
+    public string LanguageLabel { get; }
+
+    /// <summary>
+    /// Gets the translation report button text.
+    /// </summary>
+    public string TranslationReportText { get; }
+
+    /// <summary>
+    /// Gets the suffix appended to translatable grid column headers in translation mode.
+    /// </summary>
+    public string TranslatableColumnSuffix { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the language selector can be used.
+    /// </summary>
+    public bool IsLanguageSelectorEnabled => !IsBusy && Workspace is not null;
+
+    /// <summary>
+    /// Gets the language selector options: the base table and every configured language.
+    /// </summary>
+    public ObservableCollection<LanguageOptionViewModel> LanguageOptions { get; } = new();
+
+    /// <summary>
     /// Gets the big, medium, and small image preview panels.
     /// </summary>
     public IReadOnlyList<DetailImagePanelViewModel> DetailImages { get; }
@@ -282,8 +330,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         IsBusy = true;
         StatusText = Strings.Get("EditorLoading");
         HasGraphicFields = false;
+        IsTranslationMode = false;
         try
         {
+            IReadOnlyList<LanguageDescriptor> configuredLanguages = Array.Empty<LanguageDescriptor>();
+            var languagesResult = await _session.GetLanguagesAsync(cancellationToken).ConfigureAwait(true);
+            if (languagesResult.IsSuccess)
+            {
+                configuredLanguages = languagesResult.Data!;
+            }
+
             var result = await _session
                 .OpenTableAsync(Descriptor, _languageCode, cancellationToken)
                 .ConfigureAwait(true);
@@ -295,9 +351,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             }
 
             Workspace = result.Data!;
+            IsTranslationMode = Workspace.Language is not null;
             LanguageText = Workspace.Language is null
                 ? Strings.Get("EditorBaseLanguage")
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
+            BuildLanguageOptions(configuredLanguages);
             IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
@@ -511,17 +569,48 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             return;
         }
 
+        await ReloadForLanguageAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Shows the translation report for the current language overlay.
+    /// </summary>
+    [RelayCommand]
+    public void ShowTranslationReport()
+    {
+        if (Workspace is null)
+        {
+            return;
+        }
+
+        var report = Workspace.AnalyzeTranslations();
+        if (report is null)
+        {
+            StatusText = Strings.Get("EditorNoLanguageSelected");
+            return;
+        }
+
+        _dialogService.ShowTranslationReport(
+            report,
+            Strings.Format(
+                "TranslationReportTitleFormat",
+                Title,
+                Workspace.Language?.DisplayName ?? string.Empty));
+    }
+
+    private async Task ReloadForLanguageAsync()
+    {
         Workspace = null;
         IsDirty = false;
+        IsValidationVisible = false;
         _allRows.Clear();
         _allColumns.Clear();
+        _allDetailFields.Clear();
         Rows.Clear();
         Columns.Clear();
         VisibleColumns.Clear();
         DetailGroups.Clear();
-        _allDetailFields.Clear();
         ValidationIssues.Clear();
-        IsValidationVisible = false;
         await InitializeAsync().ConfigureAwait(true);
     }
 
@@ -630,7 +719,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
             }
 
             IsDirty = Workspace.IsDirty;
-            StatusText = Strings.Format("EditorCellUpdated", fieldName, row.Key);
+            StatusText = Workspace.Language is not null && column?.IsTranslatable != true
+                ? Strings.Format("EditorBaseCellUpdated", fieldName, row.Key)
+                : Strings.Format("EditorCellUpdated", fieldName, row.Key);
         }
         else
         {
@@ -652,6 +743,181 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
     partial void OnDetailFilterChanged(string value) => ApplyDetailFilter();
 
     partial void OnSelectedRowChanged(TableRowViewModel? value) => RefreshDetails();
+
+    partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+
+    partial void OnWorkspaceChanged(TableWorkspace? value) =>
+        OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+
+    partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)
+    {
+        if (_suppressLanguageChange || value is null)
+        {
+            return;
+        }
+
+        if (string.Equals(value.Code, _languageCode, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _ = ChangeLanguageAsync(value);
+    }
+
+    private void BuildLanguageOptions(IReadOnlyList<LanguageDescriptor> configuredLanguages)
+    {
+        _suppressLanguageChange = true;
+        try
+        {
+            LanguageOptions.Clear();
+            LanguageOptions.Add(new LanguageOptionViewModel(null, false));
+            var canCreateOverlay = Workspace?.Metadata is { TranslatableFieldPaths.Count: > 0 };
+            var languages = configuredLanguages
+                .Concat(Descriptor.Overlays.Select(static overlay => overlay.Language))
+                .GroupBy(static language => language.Code, StringComparer.OrdinalIgnoreCase)
+                .Select(static group => group.First())
+                .OrderBy(static language => language.Ordinal)
+                .ThenBy(static language => language.DisplayName, StringComparer.Ordinal);
+            foreach (var language in languages)
+            {
+                var hasOverlay = Descriptor.Overlays.Any(overlay =>
+                    string.Equals(
+                        overlay.Language.Code,
+                        language.Code,
+                        StringComparison.OrdinalIgnoreCase));
+                if (hasOverlay || canCreateOverlay)
+                {
+                    LanguageOptions.Add(new LanguageOptionViewModel(language, hasOverlay));
+                }
+            }
+
+            SelectedLanguageOption = FindLanguageOption(_languageCode) ?? LanguageOptions[0];
+        }
+        finally
+        {
+            _suppressLanguageChange = false;
+        }
+    }
+
+    private LanguageOptionViewModel? FindLanguageOption(string? code) =>
+        string.IsNullOrWhiteSpace(code)
+            ? LanguageOptions.FirstOrDefault(static option => option.Language is null)
+            : LanguageOptions.FirstOrDefault(option =>
+                string.Equals(option.Code, code, StringComparison.OrdinalIgnoreCase));
+
+    private async Task ChangeLanguageAsync(LanguageOptionViewModel option)
+    {
+        if (_isChangingLanguage || Workspace is null)
+        {
+            return;
+        }
+
+        var previous = FindLanguageOption(_languageCode);
+        if (IsDirty && !_dialogService.Confirm(
+                Strings.Format("EditorConfirmLanguage", Title),
+                Strings.Get("EditorLanguageTitle")))
+        {
+            RestoreLanguageSelection(previous);
+            return;
+        }
+
+        var createdOverlay = false;
+        if (!option.HasOverlay && option.Language is not null)
+        {
+            if (!_dialogService.Confirm(
+                    Strings.Format(
+                        "EditorConfirmCreateOverlay",
+                        option.Language.DisplayName,
+                        Descriptor.TableName.Value),
+                    Strings.Get("EditorLanguageTitle")))
+            {
+                RestoreLanguageSelection(previous);
+                return;
+            }
+
+            _isChangingLanguage = true;
+            IsBusy = true;
+            try
+            {
+                var ensured = await _session
+                    .EnsureOverlayAsync(Descriptor, option.Language)
+                    .ConfigureAwait(true);
+                if (!ensured.IsSuccess)
+                {
+                    StatusText = Strings.Format(
+                        "StatusError",
+                        $"{ensured.ErrorCode}: {ensured.ErrorText}");
+                    RestoreLanguageSelection(previous);
+                    return;
+                }
+
+                Descriptor = ensured.Data!;
+                createdOverlay = true;
+            }
+            catch (OperationCanceledException)
+            {
+                StatusText = Strings.Get("EditorLoadingCancelled");
+                RestoreLanguageSelection(previous);
+                return;
+            }
+            catch (Exception exception)
+            {
+                StatusText = Strings.Format("StatusError", exception.Message);
+                RestoreLanguageSelection(previous);
+                return;
+            }
+            finally
+            {
+                IsBusy = false;
+                _isChangingLanguage = false;
+            }
+        }
+
+        _isChangingLanguage = true;
+        IsBusy = true;
+        try
+        {
+            _languageCode = option.Code;
+            await ReloadForLanguageAsync().ConfigureAwait(true);
+            StatusText = createdOverlay
+                ? Strings.Format("EditorOverlayCreated", option.Language!.DisplayName)
+                : option.Code is null
+                    ? Strings.Get("EditorLanguageBaseChanged")
+                    : Strings.Format("EditorLanguageChanged", option.DisplayText);
+            LanguageChanged?.Invoke(this, _languageCode);
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = Strings.Get("EditorLoadingCancelled");
+            _languageCode = previous?.Code;
+            RestoreLanguageSelection(previous);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+            _languageCode = previous?.Code;
+            RestoreLanguageSelection(previous);
+        }
+        finally
+        {
+            IsBusy = false;
+            _isChangingLanguage = false;
+        }
+    }
+
+    private void RestoreLanguageSelection(LanguageOptionViewModel? option)
+    {
+        _suppressLanguageChange = true;
+        try
+        {
+            SelectedLanguageOption = option
+                ?? (LanguageOptions.Count > 0 ? LanguageOptions[0] : null);
+        }
+        finally
+        {
+            _suppressLanguageChange = false;
+        }
+    }
 
     private void BuildColumns()
     {
@@ -742,9 +1008,15 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor
         _allRows.Clear();
         if (Workspace is not null)
         {
+            var translatableFields = Workspace.Schema.Columns
+                .Where(static column => column.IsTranslatable)
+                .Select(static column => column.XmlFieldName)
+                .ToArray();
             foreach (var row in Workspace.GetRows())
             {
-                _allRows.Add(new TableRowViewModel(row, this));
+                var viewModel = new TableRowViewModel(row, this);
+                viewModel.ConfigureTranslation(IsTranslationMode, translatableFields);
+                _allRows.Add(viewModel);
             }
         }
 

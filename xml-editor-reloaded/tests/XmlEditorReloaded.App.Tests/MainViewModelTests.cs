@@ -5,6 +5,7 @@ using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
@@ -181,6 +182,78 @@ public class MainViewModelTests
         Assert.False(viewModel.HasEditors);
     }
 
+    /// <summary>
+    /// Switching an editor's language persists the choice for future table tabs.
+    /// </summary>
+    [Fact]
+    public async Task SwitchLanguage_PersistsActiveLanguageCode()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateItemsData(workspace, includeOverlay: true);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.Single(viewModel.Editors);
+        Assert.True(editor.IsTranslationMode);
+
+        editor.SelectedLanguageOption = editor.LanguageOptions[0];
+        await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+
+        AppSettings? persisted = null;
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            persisted = (await settingsStore.LoadAsync()).Data;
+            if (persisted?.ActiveLanguageCode is null)
+            {
+                break;
+            }
+
+            await Task.Delay(25);
+        }
+
+        Assert.NotNull(persisted);
+        Assert.Null(persisted!.ActiveLanguageCode);
+    }
+
+    /// <summary>
+    /// Reopening a table after creating an overlay re-reads the catalog and uses the new overlay.
+    /// </summary>
+    [Fact]
+    public async Task ReopenTable_AfterOverlayCreation_UsesNewOverlay()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateItemsData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.Single(viewModel.Editors);
+        Assert.False(editor.IsTranslationMode);
+        var russian = Assert.Single(editor.LanguageOptions, option => option.Code == "ru");
+        Assert.False(russian.HasOverlay);
+
+        editor.SelectedLanguageOption = russian;
+        await WaitUntilAsync(() => editor.IsTranslationMode && !editor.IsBusy);
+        var overlayPath = Path.Combine(data13, "TableData", "Items", "Russian.Items.xml");
+        Assert.True(File.Exists(overlayPath));
+
+        viewModel.CloseEditorCommand.Execute(editor);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var reopened = Assert.Single(viewModel.Editors);
+        Assert.True(reopened.IsTranslationMode);
+        Assert.True(Assert.Single(reopened.LanguageOptions, option => option.Code == "ru").HasOverlay);
+    }
+
     private static MainViewModel CreateShell(
         SqliteMetadataProvider provider,
         FileSystemTableCatalog catalog,
@@ -196,7 +269,8 @@ public class MainViewModelTests
 
     private static string CreateItemsData(
         TestWorkspace workspace,
-        bool includeWeight = false)
+        bool includeWeight = false,
+        bool includeOverlay = false)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var itemsDirectory = Path.Combine(data13, "TableData", "Items");
@@ -207,6 +281,15 @@ public class MainViewModelTests
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
             + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + weight + "</ITEM>"
             + "</ITEMLIST>");
+        if (includeOverlay)
+        {
+            File.WriteAllText(
+                Path.Combine(itemsDirectory, "Russian.Items.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+                + "<ITEM><uiIndex>0</uiIndex><szItemName>Ничто</szItemName></ITEM>"
+                + "</ITEMLIST>");
+        }
+
         return data13;
     }
 
@@ -254,11 +337,16 @@ public class MainViewModelTests
 
         public uint? EditBitsResult { get; set; }
 
+        public TranslationReport? LastTranslationReport { get; private set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
 
         public uint? EditBits(string title, uint value) => EditBitsResult;
+
+        public void ShowTranslationReport(TranslationReport report, string title) =>
+            LastTranslationReport = report;
     }
 
     private sealed class FakeImageViewerService : IImageViewerService

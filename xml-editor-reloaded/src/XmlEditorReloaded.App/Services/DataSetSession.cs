@@ -6,6 +6,7 @@ using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Localization;
 using XmlEditorReloaded.Xml.Lookups;
+using XmlEditorReloaded.Xml.Overlays;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Services;
@@ -118,6 +119,64 @@ public sealed class DataSetSession : IDataSetSession
         return await TableWorkspace
             .LoadAsync(effectiveDescriptor, metadata, language, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(
+        CancellationToken cancellationToken = default) =>
+        await _metadataProvider.GetLanguagesAsync(cancellationToken).ConfigureAwait(false);
+
+    /// <inheritdoc />
+    public async Task<OperationResult<TableDescriptor>> EnsureOverlayAsync(
+        TableDescriptor descriptor,
+        LanguageDescriptor language,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(language);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var existing = descriptor.Overlays.FirstOrDefault(overlay =>
+            string.Equals(overlay.Language.Code, language.Code, StringComparison.OrdinalIgnoreCase));
+        if (existing is not null)
+        {
+            return OperationResult<TableDescriptor>.Success(descriptor);
+        }
+
+        var metadataResult = await _metadataProvider
+            .GetTableAsync(descriptor.TableName, cancellationToken)
+            .ConfigureAwait(false);
+        if (!metadataResult.IsSuccess)
+        {
+            return OperationResult<TableDescriptor>.Failure(metadataResult);
+        }
+
+        var directory = Path.GetDirectoryName(descriptor.FilePath);
+        if (string.IsNullOrEmpty(directory))
+        {
+            return OperationResult<TableDescriptor>.Failure(
+                ErrorCodes.IoFileNotFound,
+                $"The directory of table file '{descriptor.FilePath}' could not be resolved.");
+        }
+
+        var overlayPath = Path.Combine(
+            directory,
+            language.ToOverlayFileName(Path.GetFileName(descriptor.FilePath)));
+        var overlayDescriptor = new OverlayDescriptor(language, descriptor.FilePath, overlayPath);
+        var overlay = File.Exists(overlayPath)
+            ? await OverlayDocument
+                .LoadAsync(overlayDescriptor, metadataResult.Data!, cancellationToken: cancellationToken)
+                .ConfigureAwait(false)
+            : await OverlayDocument
+                .CreateAsync(overlayDescriptor, metadataResult.Data!, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        if (!overlay.IsSuccess)
+        {
+            return OperationResult<TableDescriptor>.Failure(overlay);
+        }
+
+        return OperationResult<TableDescriptor>.Success(
+            descriptor with { Overlays = descriptor.Overlays.Append(overlayDescriptor).ToArray() });
     }
 }
 

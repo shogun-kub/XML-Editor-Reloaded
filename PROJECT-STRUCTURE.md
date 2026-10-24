@@ -1,6 +1,6 @@
 # XML Editor Reloaded — Project Structure
 
-> **Status:** M0–M13 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. The localization UI (M14) and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
+> **Status:** M0–M14 complete. `XmlEditorReloaded.slnx` contains the 5 source projects and 5 test projects; the backend is fully implemented and wired through DI. The WPF shell can select a data directory, list tables, show mapped/unmapped and overlay languages, inspect table details, persist settings, open a standalone STI image viewer, and open tables in editable tabs. M10 added performance gates, cancellation contracts, culture-independent numerics, and shell robustness. M11 added schema discovery, the `TableWorkspace` (base + overlay, merged rows, add/duplicate/delete, unified save, validation, translation reports), runtime data-set sessions, and lossless structural patches. M12 added the virtualized schema-driven grid: tabs, sparse cell editing, row operations, search, sorting, a column chooser, dirty tracking, save/save-all, reload, and a validation panel. M13 added a per-row detail panel with curated non-declaring column hints, field grouping and filtering, three STI preview panels, and a 32-bit flag editor. M14 added per-tab language selection, merged translation display with untranslated markers, a translation report window, and creation of new overlay files. Metadata seeding (M14.5) and lookup/bulk tools (M15) remain future work. This document defines the intended layout and must be updated when the structure changes.
 
 ## 1. Overview
 
@@ -88,6 +88,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - Handling of repeated fields (lists) and indexed fields (dictionaries), as used by tables such as `Items.Items`, `Items.Drugs`, and `Items.Pockets`.
 - Serialization of nested elements (e.g. weapon position modifiers) and unknown elements (kept for round-tripping).
 - Localized overlay support: reading `<Language>.<BaseFile>.xml` files, merging them with the base table by record key, and writing only the edited translation fields back to the overlay.
+- Overlay creation: a new file contains only the root element declared by metadata (UTF-8 without BOM); records and translated fields are added lazily by the writer. Existing files are never overwritten and the base table is never copied.
 - Schema discovery (`TableSchemaBuilder`): the union of sparse record fields in first-appearance order, inferred types, presence counts, key/list/dict/translatable flags, and curated column overrides.
 - Non-declaring column hints (`ColumnHints`): type, editor, display width, lookup, tooltip, flags, and detail-form group/order refine fields that are present in the document; hints never add absent fields. Nested elements are detected from child nodes and marked read-only with a dedicated subtype.
 - `TableWorkspace`: a loaded base document plus optional overlay, merged rows, routed edits, add/duplicate/delete, unified saving, validation, and translation reports.
@@ -125,7 +126,7 @@ Project names, folder names, and the exact split are preliminary. The hard const
 - WPF application shell: main window, table browser, grids, detail forms, dialogs, settings.
 - MVVM view models, commands, and UI services (dialogs, navigation, notifications).
 - UI localization from RESX resources (English and Russian initially), with a language switch in settings.
-- Translation workflow: language selector, merged base/translation display, untranslated markers, and a missing-translation report.
+- Translation workflow: per-tab language selector, merged base/translation display, untranslated cell and detail markers, a translation report window, and creation of a missing overlay. Edits to translatable fields go to the overlay only; edits to other fields go to the base table with a status warning.
 - Conversion of backend pixel buffers to `BitmapSource` and image display.
 - Dependency injection composition root and application configuration.
 - Runtime data-set session (`IDataSetSessionFactory`/`DataSetSession`) that binds lookup and translation services to the selected data directory and opens tables through `TableWorkspace`.
@@ -401,5 +402,6 @@ See `REFERENCE-PROJECTS-STRUCTURE.md` for detailed structures and file-level not
 8. Add schema discovery, the table workspace (base + overlay, unified save), runtime data-set binding, and the lossless structural patcher. **Done (M11).**
 9. Add grid editing (sorting, filtering, row operations, column selection). **Done (M12).**
 10. Add the item detail form with STI images and flag editors. **Done (M13).**
-11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization (M14).
-12. Add merc gear editor, lookup management, bulk operations, and a cross-version field report (M15).
+11. Add localization support: overlay discovery, merged display, translation editing, validation reports, and RESX-based UI localization. **Done (M14).**
+12. Seed column metadata from verified legacy definitions and activate type/lookup validation (M14.5).
+13. Add merc gear editor, lookup management, bulk operations, and a cross-version field report (M15).

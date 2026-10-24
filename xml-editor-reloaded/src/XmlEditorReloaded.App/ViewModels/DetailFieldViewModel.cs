@@ -94,6 +94,7 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             _editor.SetDetailValue(this, value);
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsTranslated));
+            OnPropertyChanged(nameof(IsUntranslated));
         }
     }
 
@@ -102,10 +103,26 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     /// </summary>
     public bool IsTranslated => Row.IsTranslated(Name);
 
+    /// <summary>
+    /// Gets a value indicating whether the field can be translated through an overlay.
+    /// </summary>
+    public bool IsTranslatable => Column.IsTranslatable;
+
+    /// <summary>
+    /// Gets a value indicating whether a translation is expected but the value still comes from the
+    /// base table.
+    /// </summary>
+    public bool IsUntranslated =>
+        _editor.IsTranslationMode
+        && Column.IsTranslatable
+        && !Row.IsTranslated(Name)
+        && !string.IsNullOrEmpty(Row[Name]);
+
     internal void Refresh()
     {
         OnPropertyChanged(nameof(Value));
         OnPropertyChanged(nameof(IsTranslated));
+        OnPropertyChanged(nameof(IsUntranslated));
     }
 
     [RelayCommand]

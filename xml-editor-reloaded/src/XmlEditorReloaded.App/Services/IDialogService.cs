@@ -1,5 +1,7 @@
 namespace XmlEditorReloaded.App.Services;
 
+using XmlEditorReloaded.Core.Localization;
+
 /// <summary>
 /// UI dialog abstraction used by view models.
 /// </summary>
@@ -28,4 +30,12 @@ public interface IDialogService
     /// <param name="value">Initial value.</param>
     /// <returns>The edited value, or <see langword="null"/> when cancelled.</returns>
     uint? EditBits(string title, uint value);
+
+    /// <summary>
+    /// Shows the read-only translation report for the current overlay.
+    /// </summary>
+    /// <param name="report">Translation report to display.</param>
+    /// <param name="title">Window title, including the table and language names.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="report"/> is null.</exception>
+    void ShowTranslationReport(TranslationReport report, string title);
 }

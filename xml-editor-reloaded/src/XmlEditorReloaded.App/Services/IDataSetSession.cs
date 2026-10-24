@@ -1,5 +1,6 @@
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -57,6 +58,39 @@ public interface IDataSetSession
     Task<OperationResult<TableWorkspace>> OpenTableAsync(
         TableDescriptor descriptor,
         string? languageCode = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns every language configured in the metadata database, ordered for display.
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the configured languages.
+    /// On failure, <c>error_code</c> is <c>metadata.not_found</c> or a metadata I/O error.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Ensures that a language overlay exists for the table and returns an updated descriptor that
+    /// includes it. An existing overlay is loaded but never overwritten; a missing one is created as
+    /// an empty overlay containing only the root element declared by metadata.
+    /// </summary>
+    /// <param name="descriptor">Base table descriptor discovered by <see cref="Catalog"/>.</param>
+    /// <param name="language">Language whose overlay should be created or reused.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the descriptor
+    /// with the overlay appended. On failure, <c>error_code</c> is <c>metadata.not_found</c>,
+    /// <c>io.file_not_found</c>, <c>io.access_denied</c>, <c>io.error</c>, <c>xml.parse_error</c>, or
+    /// <c>xml.unexpected_root</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> or <paramref name="language"/> is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<TableDescriptor>> EnsureOverlayAsync(
+        TableDescriptor descriptor,
+        LanguageDescriptor language,
         CancellationToken cancellationToken = default);
 }
 

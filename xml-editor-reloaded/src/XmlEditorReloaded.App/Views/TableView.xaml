@@ -77,9 +77,8 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,6">
+        <WrapPanel Grid.Row="1"
+                   Margin="0,0,0,6">
             <Button Padding="10,3"
                     Margin="0,0,6,0"
                     Content="{Binding AddRowText}"
@@ -105,13 +104,29 @@
                     Content="{Binding ValidateText}"
                     Command="{Binding ValidateCommand}" />
             <Button Padding="10,3"
+                    Margin="0,0,12,0"
                     Content="{Binding ReloadText}"
                     Command="{Binding ReloadCommand}" />
-            <CheckBox Margin="14,0,0,0"
+            <TextBlock VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Text="{Binding LanguageLabel}" />
+            <ComboBox Width="210"
+                      Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      ItemsSource="{Binding LanguageOptions}"
+                      SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                      DisplayMemberPath="DisplayText"
+                      ToolTip="{Binding SelectedLanguageOption.Tooltip}"
+                      IsEnabled="{Binding IsLanguageSelectorEnabled}" />
+            <Button Padding="10,3"
+                    Margin="0,0,12,0"
+                    Content="{Binding TranslationReportText}"
+                    Command="{Binding ShowTranslationReportCommand}"
+                    IsEnabled="{Binding IsTranslationMode}" />
+            <CheckBox VerticalAlignment="Center"
                       Content="{Binding DetailLabel}"
                       IsChecked="{Binding ShowDetails, Mode=TwoWay}" />
-        </StackPanel>
+        </WrapPanel>
 
         <Expander Grid.Row="2"
                   Margin="0,0,0,6"
@@ -279,20 +294,27 @@
                                                     <DataTemplate>
                                                         <Grid Margin="0,1">
                                                             <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="14" />
                                                                 <ColumnDefinition Width="105" />
                                                                 <ColumnDefinition Width="*" />
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0"
                                                                        VerticalAlignment="Center"
+                                                                       Foreground="#FFB8860B"
+                                                                       Text="●"
+                                                                       ToolTip="{Binding DataContext.DetailUntranslatedText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                       Visibility="{Binding IsUntranslated, Converter={StaticResource BoolToVisibility}}" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       VerticalAlignment="Center"
                                                                        TextTrimming="CharacterEllipsis"
                                                                        ToolTip="{Binding TypeText}"
                                                                        Text="{Binding Name}" />
-                                                            <TextBox Grid.Column="1"
+                                                            <TextBox Grid.Column="2"
                                                                      Margin="4,0,0,0"
                                                                      Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                                                      IsReadOnly="{Binding IsReadOnly}" />
-                                                            <Button Grid.Column="2"
+                                                            <Button Grid.Column="3"
                                                                     Margin="4,0,0,0"
                                                                     Padding="5,0"
                                                                     Content="{Binding DataContext.DetailBitsText, RelativeSource={RelativeSource AncestorType=UserControl}}"

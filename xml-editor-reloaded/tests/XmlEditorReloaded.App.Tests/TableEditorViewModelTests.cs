@@ -6,6 +6,7 @@ using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.App.Views;
 using XmlEditorReloaded.Core.Imaging;
+using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
@@ -248,6 +249,44 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// In translation mode, translatable grid columns get a marker header and an untranslated cell style.
+    /// </summary>
+    [Fact]
+    public async Task View_TranslationMode_MarksTranslatableColumns()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, language: "ru");
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var view = new TableView { DataContext = editor };
+                var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
+                var column = Assert.Single(
+                    grid.Columns.OfType<DataGridTextColumn>(),
+                    candidate => candidate.SortMemberPath == "szItemName");
+                Assert.NotNull(column.ElementStyle);
+                var header = Assert.IsType<TextBlock>(column.Header);
+                Assert.Contains("*", header.Text, StringComparison.Ordinal);
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The grid translation test did not finish in time.");
+        Assert.Null(failure);
+    }
+
+    /// <summary>
     /// With <c>XER_CORPUS_DIR</c> set, the editor loads the real Items table with schema columns.
     /// </summary>
     [Fact]
@@ -294,6 +333,56 @@ public class TableEditorViewModelTests
         Assert.False(Assert.Single(fields, field => field.Name == "ubWeight").CanEditBits);
         Assert.True(Assert.Single(fields, field => field.Name == "STAND_MODIFIERS").IsReadOnly);
         Assert.False(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// With <c>XER_CORPUS_DIR</c> pointing at v4, the Russian overlay is merged into the real Items table.
+    /// </summary>
+    [Fact]
+    public async Task Editor_RealItemsData_RussianOverlay_ShowsTranslations()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var tableData = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(tableData) || !Directory.Exists(tableData))
+        {
+            return;
+        }
+
+        var data13 = Directory.GetParent(tableData)?.FullName;
+        Assert.NotNull(data13);
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, new TableRepository(provider))
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
+        if (!descriptor.Overlays.Any(overlay => overlay.Language.Code == "ru"))
+        {
+            return;
+        }
+
+        var dialog = new FakeDialogService();
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            "ru",
+            dialog,
+            new TestItemImageService());
+
+        await editor.InitializeAsync();
+
+        Assert.True(editor.IsTranslationMode);
+        Assert.True(editor.Rows.Count > 1000, $"Only {editor.Rows.Count} rows were loaded.");
+        var translated = editor.Rows.Count(row =>
+            row.TranslationState.TryGetValue("szItemName", out var untranslated) && !untranslated);
+        Assert.True(translated > 1000, $"Only {translated} rows have a translated short name.");
+
+        editor.ShowTranslationReportCommand.Execute(null);
+        Assert.NotNull(dialog.LastTranslationReport);
+        Assert.NotEmpty(dialog.LastTranslationReport!.Issues);
     }
 
     /// <summary>
@@ -454,6 +543,179 @@ public class TableEditorViewModelTests
         Assert.Null(failure);
     }
 
+    /// <summary>
+    /// The language selector lists the base table and every configured language, marking missing overlays.
+    /// </summary>
+    [Fact]
+    public async Task LanguageOptions_ListExistingAndCreatableLanguages()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var withOverlay = new TestWorkspace();
+        var (existingEditor, _, _, _, _) = await CreateEditorAsync(withOverlay);
+        Assert.False(existingEditor.IsTranslationMode);
+        Assert.Equal(2, existingEditor.LanguageOptions.Count);
+        var existingRussian = Assert.Single(existingEditor.LanguageOptions, option => option.Code == "ru");
+        Assert.True(existingRussian.HasOverlay);
+        Assert.Equal("Russian", existingRussian.DisplayText);
+        Assert.Null(existingEditor.LanguageOptions[0].Language);
+
+        using var withoutOverlay = new TestWorkspace();
+        var (missingEditor, _, _, _, _) = await CreateEditorAsync(withoutOverlay, includeOverlay: false);
+        var missingRussian = Assert.Single(missingEditor.LanguageOptions, option => option.Code == "ru");
+        Assert.False(missingRussian.HasOverlay);
+        Assert.Contains("create overlay", missingRussian.DisplayText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Switching to an existing overlay reloads merged values and exposes untranslated markers.
+    /// </summary>
+    [Fact]
+    public async Task SwitchLanguage_ReloadsMergedValuesAndMarkers()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+        var russian = Assert.Single(editor.LanguageOptions, option => option.Code == "ru");
+
+        editor.SelectedLanguageOption = russian;
+        await WaitUntilAsync(() => editor.IsTranslationMode && !editor.IsBusy);
+
+        Assert.Contains("Russian", editor.LanguageText, StringComparison.Ordinal);
+        Assert.Equal("Глок 17", Assert.Single(editor.Rows, row => row.Key == "1")["szItemName"]);
+        var untranslated = Assert.Single(editor.Rows, row => row.Key == "0");
+        Assert.True(untranslated.TranslationState["szItemName"]);
+
+        editor.SelectedRow = untranslated;
+        var detailName = Assert.Single(FlattenDetailFields(editor), field => field.Name == "szItemName");
+        Assert.True(detailName.IsUntranslated);
+
+        editor.SelectedLanguageOption = editor.LanguageOptions[0];
+        await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+        Assert.All(editor.Rows, row => Assert.Empty(row.TranslationState));
+    }
+
+    /// <summary>
+    /// Selecting a language without an overlay creates an empty overlay, then saves only translations.
+    /// </summary>
+    [Fact]
+    public async Task CreateOverlay_WritesEmptyFileAndKeepsBaseUntouched()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, descriptor, _, _, _) = await CreateEditorAsync(workspace, includeOverlay: false);
+        var overlayPath = Path.Combine(Path.GetDirectoryName(descriptor.FilePath)!, "Russian.Items.xml");
+        var baseBefore = await File.ReadAllBytesAsync(descriptor.FilePath);
+        Assert.False(File.Exists(overlayPath));
+
+        var russian = Assert.Single(editor.LanguageOptions, option => option.Code == "ru");
+        Assert.False(russian.HasOverlay);
+        editor.SelectedLanguageOption = russian;
+        await WaitUntilAsync(() => File.Exists(overlayPath) && editor.IsTranslationMode && !editor.IsBusy);
+
+        Assert.Equal(baseBefore, await File.ReadAllBytesAsync(descriptor.FilePath));
+        Assert.Contains(editor.Descriptor.Overlays, overlay => overlay.Language.Code == "ru");
+        Assert.True(Assert.Single(editor.LanguageOptions, option => option.Code == "ru").HasOverlay);
+        var created = System.Xml.Linq.XDocument.Load(overlayPath);
+        Assert.Equal("ITEMLIST", created.Root!.Name.LocalName);
+        Assert.Empty(created.Root.Elements());
+
+        var translated = Assert.Single(editor.Rows, row => row.Key == "1");
+        translated["szItemName"] = "Глок 18";
+        await editor.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(baseBefore, await File.ReadAllBytesAsync(descriptor.FilePath));
+        var saved = System.Xml.Linq.XDocument.Load(overlayPath);
+        var item = Assert.Single(saved.Root!.Elements("ITEM"));
+        Assert.Equal("1", item.Element("uiIndex")?.Value);
+        Assert.Equal("Глок 18", item.Element("szItemName")?.Value);
+        Assert.Equal(2, item.Elements().Count());
+    }
+
+    /// <summary>
+    /// Switching language with unsaved changes asks first and keeps the edits when the user declines.
+    /// </summary>
+    [Fact]
+    public async Task SwitchLanguage_WithDirtyChanges_RespectsConfirmation()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace);
+        var row = Assert.Single(editor.Rows, candidate => candidate.Key == "1");
+        row["szItemName"] = "Changed";
+        Assert.True(editor.IsDirty);
+
+        dialog.ConfirmResult = false;
+        editor.SelectedLanguageOption = Assert.Single(editor.LanguageOptions, option => option.Code == "ru");
+
+        Assert.False(editor.IsTranslationMode);
+        Assert.Equal("Changed", row["szItemName"]);
+        Assert.Null(editor.SelectedLanguageOption?.Language);
+    }
+
+    /// <summary>
+    /// The translation report command passes the analyzer output to the dialog.
+    /// </summary>
+    [Fact]
+    public async Task ShowTranslationReport_WithOverlay_InvokesDialog()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(workspace, language: "ru");
+
+        editor.ShowTranslationReportCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastTranslationReport);
+        Assert.NotEmpty(dialog.LastTranslationReport!.Issues);
+        Assert.Contains("Items.Items", dialog.LastTranslationReportTitle, StringComparison.Ordinal);
+        Assert.Contains("Russian", dialog.LastTranslationReportTitle, StringComparison.Ordinal);
+
+        var viewModel = new TranslationReportViewModel(dialog.LastTranslationReport, "report");
+        Assert.NotEmpty(viewModel.Groups);
+        Assert.Contains(viewModel.Issues, issue => issue.KindLabel == "Missing translation");
+    }
+
+    /// <summary>
+    /// The translation report window loads its XAML and binds the report view model.
+    /// </summary>
+    [Fact]
+    public void TranslationReportWindow_LoadsXaml()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var report = new TranslationReport(new[]
+        {
+            new TranslationIssue(
+                TranslationIssueKind.MissingTranslation,
+                "1",
+                null,
+                "Base record '1' has no overlay translation."),
+        });
+        var viewModel = new TranslationReportViewModel(report, "Translations: Items.Items (Russian)");
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var window = new TranslationReportWindow(viewModel);
+                Assert.Same(viewModel, window.DataContext);
+                window.Close();
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(
+            thread.Join(TimeSpan.FromSeconds(10)),
+            "The translation report window test did not finish in time.");
+        Assert.Null(failure);
+    }
+
     private static List<DetailFieldViewModel> FlattenDetailFields(TableEditorViewModel editor) =>
         editor.DetailGroups.SelectMany(static group => group.Fields).ToList();
 
@@ -483,7 +745,8 @@ public class TableEditorViewModelTests
         bool duplicateKeys = false,
         TestItemImageService? images = null,
         bool includeGraphics = false,
-        bool includeNested = false)
+        bool includeNested = false,
+        bool includeOverlay = true)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -506,11 +769,14 @@ public class TableEditorViewModelTests
             + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
             + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass></ITEM>"
             + "</ITEMLIST>");
-        await File.WriteAllTextAsync(
-            Path.Combine(itemsDirectory, "Russian.Items.xml"),
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>1</uiIndex><szItemName>Глок 17</szItemName></ITEM>"
-            + "</ITEMLIST>");
+        if (includeOverlay)
+        {
+            await File.WriteAllTextAsync(
+                Path.Combine(itemsDirectory, "Russian.Items.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+                + "<ITEM><uiIndex>1</uiIndex><szItemName>Глок 17</szItemName></ITEM>"
+                + "</ITEMLIST>");
+        }
 
         var databasePath = workspace.PathOf("metadata.sqlite");
         Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
@@ -534,10 +800,20 @@ public class TableEditorViewModelTests
 
         public uint? EditBitsResult { get; set; }
 
+        public TranslationReport? LastTranslationReport { get; private set; }
+
+        public string? LastTranslationReportTitle { get; private set; }
+
         public string? PickFolder(string title, string? initialDirectory = null) => null;
 
         public bool Confirm(string message, string title) => ConfirmResult;
 
         public uint? EditBits(string title, uint value) => EditBitsResult;
+
+        public void ShowTranslationReport(TranslationReport report, string title)
+        {
+            LastTranslationReport = report;
+            LastTranslationReportTitle = title;
+        }
     }
 }

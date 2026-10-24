@@ -10,7 +10,10 @@ namespace XmlEditorReloaded.App.ViewModels;
 public sealed partial class TableRowViewModel : ObservableObject
 {
     private readonly ITableCellEditor _editor;
+    private readonly Dictionary<string, bool> _translationState = new(StringComparer.Ordinal);
     private WorkspaceRow _row;
+    private string[] _translatableFields = Array.Empty<string>();
+    private bool _translationMode;
 
     internal TableRowViewModel(WorkspaceRow row, ITableCellEditor editor)
     {
@@ -60,10 +63,48 @@ public sealed partial class TableRowViewModel : ObservableObject
     /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
     public bool IsTranslated(string fieldName) => _row.IsTranslated(fieldName);
 
+    /// <summary>
+    /// Gets the untranslated state of translatable fields, keyed by XML field name. The dictionary is
+    /// empty when no language overlay is selected. The value is <see langword="true"/> when the field
+    /// is translatable and the current value still comes from the base table.
+    /// </summary>
+    public IReadOnlyDictionary<string, bool> TranslationState => _translationState;
+
+    /// <summary>
+    /// Configures translation markers for this row. The state dictionary is rebuilt so the grid can
+    /// highlight fields that still fall back to the base table.
+    /// </summary>
+    /// <param name="enabled">Whether a language overlay is selected.</param>
+    /// <param name="translatableFields">XML field names that can be translated.</param>
+    internal void ConfigureTranslation(bool enabled, IEnumerable<string> translatableFields)
+    {
+        ArgumentNullException.ThrowIfNull(translatableFields);
+        _translationMode = enabled;
+        _translatableFields = translatableFields.ToArray();
+        RecomputeTranslationState();
+        OnPropertyChanged(nameof(TranslationState));
+    }
+
     internal void Refresh(WorkspaceRow row)
     {
         ArgumentNullException.ThrowIfNull(row);
         _row = row;
+        RecomputeTranslationState();
+        OnPropertyChanged(nameof(TranslationState));
         OnPropertyChanged("Item[]");
+    }
+
+    private void RecomputeTranslationState()
+    {
+        _translationState.Clear();
+        if (!_translationMode)
+        {
+            return;
+        }
+
+        foreach (var field in _translatableFields)
+        {
+            _translationState[field] = !_row.IsTranslated(field) && _row.GetValue(field) is not null;
+        }
     }
 }

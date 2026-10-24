@@ -252,10 +252,21 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
+        var descriptor = SelectedTable.Descriptor;
+        var tables = await _dataSet.Catalog
+            .GetTablesAsync(_dataSet.TableDataDirectory)
+            .ConfigureAwait(true);
+        if (tables.IsSuccess)
+        {
+            descriptor = tables.Data!.FirstOrDefault(candidate =>
+                candidate.TableName == descriptor.TableName) ?? descriptor;
+        }
+
         var editor = _editorFactory.Create(
             _dataSet,
-            SelectedTable.Descriptor,
-            ResolveLanguageCode(SelectedTable.Descriptor));
+            descriptor,
+            ResolveLanguageCode(descriptor));
+        AttachEditor(editor);
         Editors.Add(editor);
         SelectedEditor = editor;
         await editor.InitializeAsync().ConfigureAwait(true);
@@ -278,6 +289,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         var wasSelected = ReferenceEquals(SelectedEditor, editor);
+        DetachEditor(editor);
         Editors.Remove(editor);
         if (wasSelected)
         {
@@ -491,9 +503,42 @@ public partial class MainViewModel : ObservableObject
             return false;
         }
 
+        foreach (var editor in Editors)
+        {
+            DetachEditor(editor);
+        }
+
         Editors.Clear();
         SelectedEditor = null;
         return true;
+    }
+
+    private void AttachEditor(TableEditorViewModel editor) =>
+        editor.LanguageChanged += OnEditorLanguageChanged;
+
+    private void DetachEditor(TableEditorViewModel editor) =>
+        editor.LanguageChanged -= OnEditorLanguageChanged;
+
+    private void OnEditorLanguageChanged(object? sender, string? languageCode)
+    {
+        _settings = _settings with { ActiveLanguageCode = languageCode };
+        _ = PersistLanguageAsync();
+    }
+
+    private async Task PersistLanguageAsync()
+    {
+        try
+        {
+            var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+            if (!save.IsSuccess)
+            {
+                StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
+            }
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
     }
 
     private (CancellationTokenSource Source, int Generation) BeginOperation()
