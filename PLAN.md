@@ -4,13 +4,13 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M22c и M23a завершены; M23b2 и M23b3 выполнены 2026-10-25, следующий подшаг — M23b4. Ожидается ручной smoke M23a по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`. Работают: выбор датасета и список таблиц, lossless round-trip и атомарное сохранение, schema-driven grid с фильтрами/выделением/bulk/layout, панель деталей, STI-превью и браузер, lookup/Boolean/flag-редакторы, undo/redo, языковые оверлеи, read-only сравнение v4↔v5 с экспортом, relation-модель с pickers и навигацией, item workspace со всеми 1:1 и 1:N таблицами, merc gear workspace, shopkeeper inventory, 104 вспомогательные таблицы, multi-dataset, cross-dataset copy с preview и remap, settings dialog, безопасное закрытие и external-change recovery. В item workspace добавлены фильтры списка по классу и флагам ITEM, произвольный структурированный фильтр, class-aware видимость групп/подтаблиц/дочерних секций, обе legacy-направления relation-гридов (`Attachable items`, `Ammunition`), переход к связанному предмету из дочерней строки, list-редактор `BarrelConfiguration`, редактируемые dict-колонки и симметричные пары вложений. M23b3 добавил источники значений: 7 звуковых полей `Items.Weapons` и 2 поля `Items.ExplosionData` через позиционный ключ `Sounds.Sounds`/`Sounds.BurstSounds`, `Explosives.ubAnimationID` → `Items.ExplosionData.name`, 12 `lbePocketIndex*` → `Items.Pockets.pName`, 3 robot-трейта из фиксированного lookup `Lookup.SkillTrait`; фильтрованные merc-слоты предлагают `Nothing` (item 0), а `AltExplosionSoundID=-1` получает синтетический пункт `None`. Отдельное окно «Enemy ammo» правит 7 аммо-строк как `Items.AmmoTypes`. Метаданные: 173 таблицы, 168 key segments, 28 полей восьми составных ключей, 1958 `ColumnHints`, 46 declaring-колонок (23 lookup-таблицы), 1042 `TableRelations`, 25 правил `ClassVisibilityRules`, 2 `SymmetricKeyPairs`, 24 фиксированных lookup-значения, 14 миграций, 7 языков, 64-битные lookup ID. M22c заменил ошибочные однополевые ключи восьми таблиц (`Attachments`, `Launchables`, `IncompatibleAttachments`, `CompatibleFaceItems`, `Merges`, `Item_Transformations`, `StructureConstruct`, `StructureDeconstruct`) составными: item 12 показывает реальные вложения, ложные `validation.duplicate_key` устранены, остались только два известных дефекта данных v5 и один дубликат дилера.
+**Состояние:** M0–M22c и M23a завершены; M23b1–M23b3 выполнены 2026-10-25, следующий подшаг — M23b4. **Ожидает пользователя:** ручной WPF-smoke M23a по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` (включая сценарии M23b1–M23b3). Автоматические гейты M23a и M23b1–M23b3 пройдены.
 
-**Подшаги M22:** M22a — фильтры, multi-select/bulk, per-table layout; M22b — settings, close safety, external-change recovery; M22c — compound record keys. Все три выполнены. **M23:** M23a — аудит паритета (после M22c), M23b — исправления и gate. M23a0 (инвентаризация), M23a1 (shell/grid), M23a2 (item workspace UI), M23a3 (item-таблицы и изображения), M23a4 (merc gear и вспомогательные таблицы), M23a5 (backend-хранение и операции) и M23a6 (консолидация и реестр пробелов) выполнены; в M23a7 автоматические гейты пройдены, ожидается ручной smoke. M23b1 (фильтры item workspace и class-aware поля), M23b2 (relation-секции, навигация, list/dict-редакторы, симметричные пары, enemy ammo, legacy repeated key) и M23b3 (источники значений и pickers) выполнены. **Паритет:** item-workflow parity — M19; auxiliary parity — M20; full legacy parity — M23b.
+Работают: датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. В item workspace — фильтры и class-aware секции, обратные связи и навигация, list/dict/symmetric-редакторы, источники значений для звуковых, pocket- и robot-полей; merc-слоты предлагают `Nothing`, а `AltExplosionSoundID=-1` — `None`.
 
-**Проверка текущего состояния (2026-10-25, M23b3):** build `-warnaserror` (0/0), 448 тестов (Core 37, Imaging 19, Xml 179, Data 66, App 147) в базовом прогоне; с `XER_CORPUS_DIR` на v4 и v5 — 448 тестов на каждом корпусе (corpus-гейты фильтров, class-aware секций, обеих сторон `Attachments`, симметрии пар, аммо-семантики и новых источников значений выполняются с реальными ассертами); сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v5) зелёные. Известная аномалия данных: у Fire Extinguisher (item 1761) `sBurstSound`/`sSilencedBurstSound` содержат 505 при 128 записях `BurstSounds`; значение показывается как unknown, corpus-гейт фиксирует ровно 2 таких случая.
+**Метаданные:** 173 таблицы, 1042 `TableRelations`, 1958 `ColumnHints`, 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 24 фиксированных lookup-значения, 14 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера и burst-звуки item 1761.
 
-Детали завершённых этапов здесь намеренно не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 448 тестов в базовом прогоне и на каждом корпусе v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1), perf-гейты (9/9 на v5). Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается; повреждённый — только диагностика.
@@ -38,53 +38,27 @@
 
 ## Milestones
 
-### M0–M10 — фундамент — выполнены
-Скаффолдинг решения и тестов; контракты `Core`; SQLite-метабаза, seed, каталог, lookup/translation-каталог, настройки; загрузка/диагностика XML, save-gate, lossless-патчер, редактирование полей/списков/словарей, add/duplicate/delete, оверлеи и валидация; STI-парсер, ETRLE и кэш; DI-wiring и document-driven fallback; WPF shell, RESX en/ru; cancellation, invariant-числа, perf-гейты и corpus harness. После M10 добавлен STI-браузер.
+### M0–M22 — фундамент, grid, workspace и polish — выполнены
+Скаффолдинг, Core-контракты, SQLite-метабаза и seed, lossless load/save, редактирование, оверлеи, валидация, STI, DI/shell и RESX; затем discovery-схема и workspace, вкладки и schema-driven grid, панель деталей, языковые оверлеи, verified metadata с 64-битными lookup ID, lookup/Boolean/flag-редакторы, bulk/undo и read-only сравнение с экспортом.
+- **M18–M21:** relation-модель и pickers с навигацией; item master-detail workspace (**item-workflow parity**); merc gear, shopkeeper и вспомогательные таблицы (**auxiliary parity**); multi-dataset и copy/merge.
+- **M22:** grid/workflow polish (фильтры, multi-select/bulk, layout), settings/safety и compound keys.
 
-### M11–M17 — редактор, локализация, метаданные, bulk, сравнение — выполнены
-- **M11:** discovery-схема, `TableWorkspace`, runtime `IDataSetSession`, lossless структурный патчер.
-- **M12:** вкладки таблиц, виртуализированная schema-driven сетка, sparse-правка, row-операции, поиск/сортировка, chooser колонок, валидация, Save All.
-- **M13:** панель деталей с группами/фильтром, непродекларирующие `ColumnHints`, STI-превью, 32-битный битовый редактор.
-- **M14:** языковой селектор, merged-значения и маркеры «не переведено», отчёт о переводах, создание оверлея.
-- **M14.5:** сверка metadata с v4/v5; hints как основной слой, `Columns` только для lookup-таблиц, 64-битные lookup ID; реальные данные без ложных предупреждений. Отчёт — `M14.5-METADATA-REPORT.md`.
-- **M15:** lookup-комбо, Boolean-чекбоксы с sparse-семантикой, имена битов, fallback при повреждённом lookup.
-- **M16:** bulk set/add/multiply с preview, undo/redo для ячеек, строк, bulk и переводов.
-- **M17:** read-only сравнение двух `TableData` с Markdown/CSV-экспортом.
-
-### M18 — Relation model и main-table pickers — выполнен
-Метаданные `TableRelations` (`Reference`/`SubTable`/`ChildRows`/`Reverse`, фильтры, remap); `ITEMTOEXPLOSIVE` выражен через `HasFlag`. Searchable pickers в сетке и деталях, поиск по имени/ID, ручной unknown ID, кросс-табличная навигация и `validation.lookup_missing`.
-
-### M19 — Item master-detail workspace — выполнен (item-workflow parity)
-`IEditorTab` унифицировал grid и workspace-вкладки. `TableSetWorkspace` загружает Items и все 1:1/1:N-таблицы с общим undo/save; duplicate/delete/rename/swap и связанные строки — многодокументные транзакции. Item workspace: список с миниатюрами, field groups, class-aware секции, встроенные child-гриды, nested/list-поля, изображения и переводы, создание предмета.
-
-### M20 — Merc gear, вспомогательные таблицы, language catalog — выполнен (auxiliary parity)
-Merc gear workspace: пять `GEARKIT`, item pickers, status/quantity/drop, цены, overlay-имена. Миграция 0008 добавила вспомогательные таблицы (choice/drop, dealer inventory, merchants, sounds), relations и языковые коды. Item workspace получил вкладку «Торговцы»; shopkeeper `CONTROL` сохраняется без отдельного UI.
-
-### M21 — Multi-dataset и cross-dataset copy/merge — выполнен
-Вкладки привязаны к `(TableDataDirectory, TableName)` и переключаются без закрытия; сессии кэшируются, настройки хранят активный и recent-каталоги. Copy-диалог: preview, `Skip`/`Overwrite`/`Merge`, `Preserve`/`Allocate`, remap по display-тексту, опциональные related rows, атомарная многофайловая запись и восстановление при ошибке. Source только читается.
-
-### M22a — Grid: фильтры, multi-select/bulk, layout — выполнен
-Структурированные фильтры с AND/OR и фильтром по ячейке, extended selection и bulk по выделению или текущему виду, пустой `Set`. Per-table layout (колонки, ширина, порядок, сортировка, фильтр) в versioned `%AppData%/XmlEditorReloaded/layouts.json` с reset и `.bad` backup.
-
-### M22b — Shell: настройки и безопасность — выполнен
-Settings dialog управляет каталогами, recent, UI-языком (en/ru, после перезапуска) и сбросом layout; активный датасет применяется без закрытия вкладок. Закрытие вкладки и приложения — Save/Discard/Cancel с flush layout; ошибка сохранения оставляет вкладку открытой. При `xml.file_changed_externally` — Reload/Overwrite/Cancel; force-overwrite пересчитывает baseline, multi-file ошибки агрегируются.
-
-### M22c — Compound record keys — выполнен
-Восемь таблиц получают составной естественный ключ вместо ошибочного одиночного: `Items.Attachments` (`attachmentIndex,itemIndex`), `Launchables` (`launchableIndex,itemIndex`), `IncompatibleAttachments` (`itemIndex,incompatibleattachmentIndex`), `CompatibleFaceItems` (`compatiblefaceitemIndex,itemIndex`), `Merges` (4 поля), `Item_Transformations` (`usItem,usResult1..10`), `StructureConstruct` (`usCreationItem,usItemStatusLoss`), `StructureDeconstruct` (`usDeconstructItem,usItemToCreate,usCreatedItemStatus`). Миграция 0009 добавляет `RecordKeyFields` и убирает старые `TableKeys`; `RecordKeyCodec` кодирует compound-ключ, `TableDocument`/workspace работают по ссылке на запись, key-колонки compound-таблиц редактируемы, `Duplicate` отключён. Реальные дубликаты (`Attachments` v5 — 2 группы, `AdditionalDealer_43` — 1) остаются предупреждениями. Таблицы без оверлея читают строки напрямую (без overlay-merge), правки compound-key идут по ссылке на запись, а undo восстанавливает позицию элемента вместе с форматирующими пробелами. Подробный план — `M22C-COMPOSITE-KEYS-PLAN.md`. **Коммит:** `M22c: compound record keys`.
-
-### M23a — Аудит паритета
-- Выполняется после M22c; отчёт создаётся заново с учётом исправленных compound-ключей.
-- `LEGACY-PARITY-REPORT.md`: построчная матрица «функция legacy → реализация / superseded / исключено» с файлами-доказательствами.
-- Ручная проверка на v4 и v5: item workspace и sub-tables, merc gear, shopkeeper, pickers, copy, фильтры, изображения, локализация, настройки.
-- Только документ и список пробелов, без изменения поведения. **Коммит:** `M23a: legacy parity audit`.
-- **Подшаги и протокол субагентов — `M23A-PARITY-AUDIT-PLAN.md`.** M23a0 — инвентаризация UI и таблиц; M23a1 — shell/grid; M23a2 — item UI; M23a3 — item-таблицы и изображения; M23a4 — merc gear и вспомогательные таблицы; M23a5 — backend-хранение и операции; M23a6 — консолидация; M23a7 — проверка v4/v5. Секции — в `M23A-PARITY/`; каждый подшаг коммитится отдельно.
+### M23a — Аудит паритета — выполнен (кроме ручного smoke)
+`LEGACY-PARITY-REPORT.md` содержит полную матрицу legacy-функций и реестр пробелов; секции и протокол — в `M23A-PARITY/` и `M23A-PARITY-AUDIT-PLAN.md`. Поведение редактора не менялось. **Ручной smoke остаётся за пользователем.**
 
 ### M23b — Исправления и gate паритета
-- Исправляются только найденные пробелы, каждый с тестом; крупный пробел фиксируется в отчёте и выносится в отдельный подшаг после согласования.
-- Повторный полный прогон и обновление матрицы. **Маркер: full functional parity**, коммит `M23: legacy functional parity gate`.
-- **M23b1 — фильтры item workspace и видимость полей — выполнен.** Фильтр списка по 15 классовым пресетам (`Guns`…`Random Items`) и 6 флаговым (`Attachments`, `Drugs`, `Tons of Guns`, `Normal Guns`, `Sci-Fi`, `Realistic`) воспроизводит legacy `Items > Show`; произвольный фильтр использует структурированные критерии generic grid вместо `DataView.RowFilter`. Видимость групп `combat`/`vision`/`food`/`stance`/`attachments`/`modifiers`/`overheating`/`pockets`, подтаблиц и дочерних секций задаётся миграцией `0010` (`ClassVisibilityRules`, 23 правила) и повторяет карту `DisplayTabs`: Key/LBE/RandomItem/None-Money теряют соответствующие страницы. Subtable/child-секции используют те же правила вместо захардкоженных масок. **Коммит:** `M23b1: item workspace filters and class-aware fields`.
-- **M23b2 — Item-связи, навигация и структурированные редакторы — выполнен.** Закрыты `L-ITEM-027…032`: reverse-секции `Attachments` («Attachable items») и `Launchables` («Ammunition») поверх уже загруженных child-workspaces, направление `CompatibleFaceItems` исправлено на `itemIndex`, двойной клик по заголовку строки дочернего грида открывает связанный предмет (и пункт контекстного меню). `L-DATA-008`: list-секции у 1:1-подтаблиц (`BarrelConfiguration`). `L-DATA-013`: dict-семейства (`ItemCapacityPerSizeN`, `itemN`, `randomitemN`) редактируются как конкретные колонки, pickers и bulk разрешены, hints 0…34 добавлены. `L-DATA-011`: `SymmetricKeyPairs` для `IncompatibleAttachments`/`CompatibleFaceItems`, автоматическая обратная строка при добавлении и смене ключа, каскадное удаление, warning `validation.asymmetric_pair`. `L-TBL-124`: отдельное окно «Enemy ammo» с 7 строками, где `bItemNoN` разрешаются в `Items.AmmoTypes`, а не в предметы. `L-DATA-009`: legacy repeated `usResult` диагностируется (`xml.legacy_repeated_key`) без переписывания файла. Миграции `0011`–`0013`. **Коммиты:** `M23b2a`–`M23b2d`.
-- **M23b3 — Источники значений и pickers — выполнен.** `L-ITEM-011`/`L-IFIELD-337…339`: фиксированный lookup `Lookup.SkillTrait` (24 значения `NoTrait`…`Survival`) и `LookupCombo` для трёх robot skill grants; источник хранится в метабазе (`LookupValues`) и подхватывается `XmlFileLookupRepository`, если XML-файла lookup нет. `L-IFIELD-233…239`: 7 звуковых полей `Items.Weapons` → `Sounds.Sounds`/`Sounds.BurstSounds`; `L-SND-001`: `ExplosionData.ExplosionSoundID`/`AltExplosionSoundID` → `Sounds.Sounds`. Позиционный ключ адресуется зарезервированным `#Key`, имя берётся из виртуального `Text`. `L-IFIELD-275`: `Explosives.ubAnimationID` → `ExplosionData.name`. `L-IFIELD-315…326`: 12 `lbePocketIndex*` → `Pockets.pName`. `L-MERC-011`: `IncludeKeyZero` возвращает пункт `Nothing` (item 0) в 8 отфильтрованных merc-слотах; `NoneValue=-1` для `AltExplosionSoundID` даёт синтетический пункт `None`, который принимает валидация. Миграция `0014`. **Коммит:** `M23b3: value sources and pickers`.
+Исправляются только найденные пробелы, каждый с тестом. Завершены:
+- **M23b1:** фильтры item workspace и class-aware видимость полей.
+- **M23b2:** item-relation-секции и навигация, list/dict-редакторы, симметричные пары, enemy ammo, диагностика legacy repeated key.
+- **M23b3:** источники значений и pickers (звуки, анимация, pocket-поля, robot skill grants, `Nothing`/`None`).
+
+Осталось:
+- **M23b4:** валидация, границы чисел, 64-битные маски (`L-ITEM-034/047`, `L-MERC-014`, `L-IFIELD-227…230`, `L-DATA-012`).
+- **M23b5:** изображения (`L-ITEM-014`, `L-IMG-005/020`).
+- **M23b6:** shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
+- **M23b7:** shell, field UI, полировка merc gear (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
+- **M23b8:** хранение, копирование, журналирование (`L-STO-034`, `L-OPS-011/025`).
+- **Gate:** повторный полный прогон и обновление матрицы; **маркер full functional parity**, коммит `M23: legacy functional parity gate`.
 
 ### После паритета — M24–M27
 Эти функции не нужны для паритета (в legacy их нет), они закрывают собственные пробелы rewrite.
@@ -146,11 +120,10 @@ Settings dialog управляет каталогами, recent, UI-языком
 ## Основные риски
 
 - **R1 остаточный:** неоднозначная структурная замена уходит в serializer и нормализует форматирование; данные при этом корректны.
-- **R6 неполные метаданные:** seed покрывает 173 таблицы из 238/239 в v4/v5; document-driven fallback работает, остальные таблицы добавляются по мере необходимости (M23), миграции растут итеративно.
+- **R6 неполные метаданные:** seed покрывает 173 таблицы из 238/239 в v4/v5; document-driven fallback работает, остальные таблицы добавляются по мере необходимости, миграции растут итеративно.
 - **R13 многофайловое сохранение:** item workspace пишет несколько XML; per-file atomic save, ошибки агрегируются, частичное сохранение не маскируется.
 - **R14 nested/list-правки:** идут через lossless-патчер и round-trip тесты; неизменённые файлы не перезаписываются.
-- **R15 compound keys:** закрыт в M22c: `RecordKeyFields`, row-reference операции, no-overlay fast path и byte-safe patcher; приёмка — item 12, точное удаление строки и corpus baseline v4/v5.
-- **Закрыты:** byte-identity и perf (R2), malformed-файлы (R3), dict/list-маски (R4), вложенные ключи оверлеев (R5), запись в `References/` (R7), внешние изменения (R9), культура/отмена (R10), relations drift (R11), copy (R12) — покрыты фикстурами, corpus-, compare-, copy- и perf-гейтами.
+- **Закрыты:** byte-identity и perf (R2), malformed-файлы (R3), dict/list-маски (R4), вложенные ключи оверлеев (R5), запись в `References/` (R7), внешние изменения (R9), культура/отмена (R10), relations drift (R11), copy (R12), compound keys (R15) — покрыты фикстурами, corpus-, compare-, copy- и perf-гейтами.
 
 ---
 
@@ -158,13 +131,9 @@ Settings dialog управляет каталогами, recent, UI-языком
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
 2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 448 тестов, все зелёные.
-2a. M22c: `RealRecordKeyTests` — duplicate-key baseline (v4: только `AdditionalDealer_43`; v5: `Items.Attachments` 2 + `AdditionalDealer_43`), item 12 attachments = сырой XML count, точное удаление строки и undo; приёмка описана в `M22C-COMPOSITE-KEYS-PLAN.md`.
-2b. M23b1: `ClassFilters_MatchLegacyPresets`, `FlagFilters_MatchLegacyPresets`, `ItemFilters_CombineWithSearchAndClear`, `ClassVisibility_HidesIrrelevantSections`, `ChangeClass_UpdatesClassVisibility`, `GoToItemIdAndSelectRecord_ClearItemFilters`, `NewItemAndRename_ClearFiltersThatWouldHideTheRecord`, `Reload_ResetsItemFiltersAndRebuildsOptions`; corpus-гейт `Corpus_ItemFiltersAndClassVisibility` сверяет все 22 пресета с сырым XML и проверяет class-aware секции на v4/v5.
-2c. M23b2: `Initialize_ShowsReverseAttachmentsAndForwardLaunchables`, `CompatibleFaceItems_FiltersByItemIndex`, `ChildSectionNavigation_SelectsRelatedItem`, `SubTableListField_EditsBarrelConfigurations`, `DictFields_AreEditableValidatedAndCreatedOnDemand`, `SymmetricPairTests`, `EnemyAmmoViewModelTests` (включая `Corpus_EnemyAmmoCellsResolveToAmmunitionTypes`), `Load_LegacyRepeatedResult_ReportsDiagnosticWithoutMutation`; corpus-гейты `Corpus_Item12ShowsOnlyItsOwnAttachments` (обе стороны), `RealItemSetTests` (симметрия пар и отсутствие legacy-диагностики на v4/v5).
-2d. M23b3: `GetLookupValues_SkillTrait_ReturnsSeededValues`, `GetRelations_ValueSources_DeclareTargetsAndNoneValues`, `Resolve_PositionalKeyToken_UsesZeroBasedRecordIndex`, `Resolve_IncludeKeyZero_OffersZeroFirst`, `Resolve_NoneValue_AddsSyntheticEntry`, `GetEntries_MissingFile_UsesMetadataLookupValues`, `FilteredSlots_OfferNothingWithoutDocumentValue`; corpus-гейт `RealRelationTests` разрешает все новые Reference-связи на v4/v5 и фиксирует ровно 2 известные аномалии item 1761 (`sBurstSound`/`sSilencedBurstSound` = 505 при 128 записях `BurstSounds`).
-3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — прогон на temp-копиях, без изменений в `References/`.
+3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 448 тестов на каждом корпусе, temp-копии без изменений в `References/`.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests`.
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с.
-7. Ручной smoke: v4/v5, item и merc workspace, языковые оверлеи, copy, фильтры/layout, settings, close/save и external-change сценарии; malformed lookup только диагностируется.
+7. **Ручной smoke (выполняет пользователь):** `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` — v4/v5, item и merc workspace, языковые оверлеи, copy, фильтры/layout, settings, close/save, external-change, malformed lookup, а также сценарии M23b1–M23b3. Результат и подпись вносятся в checklist и `LEGACY-PARITY-REPORT.md`.
 8. `References/` не изменён; артефакты `bin/`/`obj/` в git не попадают.
