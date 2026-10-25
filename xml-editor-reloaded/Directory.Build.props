@@ -13,4 +13,19 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <!--
+    VSTest's testhost opens its parent process with PROCESS_ALL_ACCESS so it can exit when
+    vstest.console dies. Inside the DSH sandbox the restricted token only grants the
+    workspace SID a file-oriented mask (0x1F01FF), so that OpenProcess fails with
+    "access denied" and testhost aborts before running a single test. The supported
+    MSTest.EnableParentProcessQuery AppContext switch turns the watcher off; Microsoft's
+    own testhost targets use it for UWP. Apply it only in DSH so normal runs keep the
+    orphan protection.
+  -->
+  <PropertyGroup Condition="'$(DSH_SHELL)' == '1' or '$(DSH_SESSION_ID)' != ''">
+    <_MSTestEnableParentProcessQuery>false</_MSTestEnableParentProcessQuery>
+    <!-- The sandbox has no route to nuget.org; auditing would fail the restore. -->
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
 </Project>

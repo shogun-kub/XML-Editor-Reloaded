@@ -36,6 +36,12 @@
   без пакетов).
 - Итоговые официальные команды остаются штатными: `dotnet build … -warnaserror` и `dotnet test`.
   В обычной среде (без песочницы) они дают те же результаты; здесь они недоступны.
+- **Дополнение 2026-10-25:** ограничение снято на уровне проекта. `Directory.Build.props`
+  при `DSH_SHELL`/`DSH_SESSION_ID` выключает `MSTest.EnableParentProcessQuery` (testhost больше не
+  открывает родителя с `PROCESS_ALL_ACCESS`) и `NuGetAudit` (нет сети до nuget.org).
+  `xml-editor-reloaded/test.ps1` делает restore/build в один узел и запускает проекты по очереди
+  с чистым `%TEMP%`; VSTest-прогон — 469 тестов (App 149, Core 37, Data 67, Imaging 19, Xml 197).
+  Временный in-process раннер из §2 больше не нужен.
 
 ## 3. Принятые решения
 

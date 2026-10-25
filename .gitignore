@@ -58,3 +58,4 @@ $RECYCLE.BIN/
 # ===== Local sandbox/build recovery artifacts =====
 .artifacts/
 .acl-recovery/
+.tmp/
