@@ -99,7 +99,7 @@
 
 **S27. Комплекты.** Ожидаемо: пять вкладок «Комплект 1»…«Комплект 5», поле «Название комплекта» показывает `Standard`, `Mechanic`, `Combat`, `Sapper`, `Premium`. Заголовок вкладки не меняется при переименовании набора — известный пробел `L-MERC-003…007` (M23b7); лимит длины имени не enforced (`L-MERC-013`).
 
-**S28. Слоты и pickers.** В комплекте 1 изменить helmet/vest/weapon picker (поиск по имени/ID), статус, количество, drop; очистить слот ручным вводом `0` (пункта «Nothing» в списке нет — `L-MERC-011`, M23b3); изменить «Модификатор цены»/«Фиксированную цену». Ожидаемо: значения пишутся в набор, Undo/Redo работают, валидация не падает; диапазоны legacy не enforced — `L-MERC-014` (M23b4), это известное ограничение.
+**S28. Слоты и pickers.** В комплекте 1 изменить helmet/vest/weapon picker (поиск по имени/ID), статус, количество, drop; в helmet/vest/leg и пяти LBE-слотах выбрать первый пункт `Nothing` (item 0), чтобы очистить слот; проверить, что ручной ввод `0` по-прежнему сохраняет 0; изменить «Модификатор цены»/«Фиксированную цену». Ожидаемо: `Nothing` есть в списке даже если ни один набор не использует 0 (`L-MERC-011` закрыт в M23b3), значения пишутся в набор, Undo/Redo работают, валидация не падает; диапазоны legacy не enforced — `L-MERC-014` (M23b4), это известное ограничение.
 
 **S29. Русский merc-оверлей (v4).** Переключить «Русский»: kit-имена Barry — «Стандарт», «Механик», «Боец», «Разгрузка», «Элитный». Изменить имя комплекта и сохранить на копии. Ожидаемо: изменился только `Inventory/Russian.MercStartingGear.xml`, базовый `MercStartingGear.xml` не изменился; Undo возвращает. v5 — только базовая таблица, сценарий N/A.
 
@@ -233,6 +233,18 @@
 | S56 | Dict-колонки `ItemCapacityPerSizeN` (Pockets) и `itemN` (RandomItem) редактируются, picker работает | ☐ | ☐ | Bulk по конкретной колонке разрешён |
 | S57 | Пара `IncompatibleAttachments`/`CompatibleFaceItems`: добавление, удаление и смена ключа сохраняют обратную строку | ☐ | ☐ | Validation не показывает `validation.asymmetric_pair` |
 | S58 | «Enemy ammo»: 7 строк, значения Ball/HP/AP, правка пишет только один файл, закрытие спрашивает о сохранении | ☐ | ☐ | `uiIndex=19` в 7 item-choice файлах |
+
+## 3b. Дополнительные сценарии M23b3
+
+| № | Сценарий | v4 | v5 | Примечание |
+|---|---|---|---|---|
+| S59 | Item 1697 (Radio Set): три robot skill grant показывают combo `NoTrait`…`Survival`, выбранное значение сохраняется числом | ☐ | ☐ | `Lookup.SkillTrait`, 24 значения |
+| S60 | `Items.Weapons`, Glock 18 (item 2): `sSound`/`Reload Sound`/`Lock N Load Sound` показывают имена `.wav` из `Sounds`, `sBurstSound`/`sSilencedBurstSound` — из `BurstSounds`; поиск по имени и ID | ☐ | ☐ | Fire Extinguisher (1761): burst-поля `505` показываются как `unknown` — известная аномалия данных |
+| S61 | `Items.Explosives`: `ubAnimationID` показывает имя из `ExplosionData` (`None`, `Standard`, `Large`…), значение пишется числом | ☐ | ☐ | Предмет класса Grenade/Bomb |
+| S62 | `Items.LoadBearingEquipment`: 12 `Pocket #N` показывают `pName` (включая `Nothing` для 0), поиск работает | ☐ | ☐ | `lbePocketIndex1…12` |
+| S63 | `Items.ExplosionData`: `ExplosionSoundID` и `AltExplosionSoundID` показывают имена звуков; у `AltExplosionSoundID` значение `-1` предлагается как `None` и не даёт warning | ☐ | ☐ | 16 записей, 13 с `-1` |
+| S64 | Таблица `Sounds.Sounds`/`Sounds.BurstSounds` по-прежнему открывается и правит текст записей без создания дочерних элементов | ☐ | ☐ | Позиционный ключ, виртуальная колонка `Text` |
+| S65 | Сохранить без правок таблицы с новыми pickers: файлы не перезаписываются | ☐ | ☐ | Round-trip не меняет XML |
 
 ## 4. Подпись и вердикт
 

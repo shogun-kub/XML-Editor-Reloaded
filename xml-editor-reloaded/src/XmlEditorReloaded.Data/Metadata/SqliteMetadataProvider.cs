@@ -158,7 +158,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
                 """
                 SELECT s.XmlTable, r.SourceField, t.XmlTable, r.TargetValueField, r.TargetDisplayField,
                        r.Kind, r.FilterField, r.FilterOperator, r.FilterValue, r.LabelKey,
-                       r.RemapByText, r.Ordinal
+                       r.RemapByText, r.Ordinal, r.IncludeKeyZero, r.NoneValue, r.NoneDisplay
                 FROM TableRelations r
                 INNER JOIN Tables s ON s.Id = r.SourceTableId
                 INNER JOIN Tables t ON t.Id = r.TargetTableId
@@ -209,6 +209,9 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
                     LabelKey = reader.IsDBNull(9) ? null : reader.GetString(9),
                     RemapByText = reader.GetInt32(10) != 0,
                     Ordinal = reader.GetInt32(11),
+                    IncludeKeyZero = reader.GetInt32(12) != 0,
+                    NoneValue = reader.IsDBNull(13) ? null : reader.GetString(13),
+                    NoneDisplay = reader.IsDBNull(14) ? null : reader.GetString(14),
                 });
             }
 
@@ -219,6 +222,44 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             return OperationResult<IReadOnlyList<TableRelation>>.Failure(
                 ErrorCodes.IoError,
                 $"Relations for table '{sourceTable}' could not be read: {exception.Message}");
+        }
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    public async Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+        TableName lookupName,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+            var entries = new List<LookupEntry>();
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT Value, DisplayName
+                FROM LookupValues
+                WHERE LookupName = $name
+                ORDER BY Ordinal, Value;
+                """;
+            command.Parameters.AddWithValue("$name", lookupName.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                entries.Add(new LookupEntry(reader.GetInt64(0), reader.GetString(1)));
+            }
+
+            return OperationResult<IReadOnlyList<LookupEntry>>.Success(entries);
+        }
+        catch (SqliteException exception)
+        {
+            return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
+                ErrorCodes.IoError,
+                $"Lookup values for '{lookupName}' could not be read: {exception.Message}");
         }
     }
 

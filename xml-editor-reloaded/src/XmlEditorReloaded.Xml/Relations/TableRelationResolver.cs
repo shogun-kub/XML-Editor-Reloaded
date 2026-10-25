@@ -12,8 +12,22 @@ namespace XmlEditorReloaded.Xml.Relations;
 /// overlay values into display text, and caches loaded targets until the underlying files change.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Target loads are isolated from the source table: a missing, malformed, or unreadable target only
 /// fails the relation picker and never prevents the source table from opening.
+/// </para>
+/// <para>
+/// The reserved token <see cref="RecordFields.RecordKey"/> (<c>#Key</c>) is accepted as the target
+/// value field and as the filter field. It resolves to the metadata-defined record key, so tables
+/// with a positional key expose their zero-based record position as the reference value; the token
+/// never reads a child element.
+/// </para>
+/// <para>
+/// <see cref="TableRelation.IncludeKeyZero"/> additionally offers the target key <c>0</c> first,
+/// even when that record fails the relation filter. <see cref="TableRelation.NoneValue"/> adds a
+/// synthetic entry after the document order so the "no reference" value stays selectable and is
+/// accepted by membership checks even though the target file has no such record.
+/// </para>
 /// </remarks>
 public sealed class TableRelationResolver : ITableRelationResolver
 {
@@ -77,7 +91,10 @@ public sealed class TableRelationResolver : ITableRelationResolver
             relation.TargetDisplayField,
             relation.Filter?.Field,
             relation.Filter?.Operator,
-            relation.Filter?.Value);
+            relation.Filter?.Value,
+            relation.IncludeKeyZero,
+            relation.NoneValue,
+            relation.NoneDisplay);
         var stamp = BuildStamp(descriptor, languageCode);
         lock (_cacheLock)
         {
@@ -225,7 +242,7 @@ public sealed class TableRelationResolver : ITableRelationResolver
 
         foreach (var record in loaded.Data!.Document.Records)
         {
-            var key = record.GetRawValue(relation.TargetValueField)?.Trim();
+            var key = GetTargetValue(record, relation.TargetValueField)?.Trim();
             var display = record.GetRawValue(relation.TargetDisplayField)?.Trim();
             if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(display))
             {
@@ -246,7 +263,7 @@ public sealed class TableRelationResolver : ITableRelationResolver
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var record in document.Records)
         {
-            var value = record.GetRawValue(relation.TargetValueField)?.Trim();
+            var value = GetTargetValue(record, relation.TargetValueField)?.Trim();
             if (string.IsNullOrEmpty(value) || !seen.Add(value))
             {
                 continue;
@@ -263,10 +280,44 @@ public sealed class TableRelationResolver : ITableRelationResolver
 
             var filterValue = relation.Filter is null
                 ? null
-                : record.GetRawValue(relation.Filter.Field);
+                : GetTargetValue(record, relation.Filter.Field);
             if (relation.Filter is null || relation.Filter.Matches(filterValue))
             {
                 options.Add(entry);
+            }
+        }
+
+        if (relation.IncludeKeyZero)
+        {
+            // Legacy item slots used "uiIndex = 0 OR usItemClass = …" so the empty slot stayed
+            // selectable even though its class failed the filter.
+            var zero = entries.FirstOrDefault(static entry =>
+                string.Equals(entry.Value, "0", StringComparison.Ordinal));
+            if (zero is not null
+                && !options.Exists(entry => string.Equals(entry.Value, zero.Value, StringComparison.Ordinal)))
+            {
+                options.Insert(0, zero);
+            }
+        }
+
+        var noneValue = relation.NoneValue?.Trim();
+        if (!string.IsNullOrEmpty(noneValue))
+        {
+            var noneEntry = entries.FirstOrDefault(entry =>
+                string.Equals(entry.Value, noneValue, StringComparison.Ordinal));
+            if (noneEntry is null)
+            {
+                var noneDisplay = string.IsNullOrWhiteSpace(relation.NoneDisplay)
+                    ? noneValue
+                    : relation.NoneDisplay.Trim();
+                noneEntry = new RelationTargetEntry(noneValue, noneDisplay);
+                entries.Add(noneEntry);
+                options.Add(noneEntry);
+            }
+            else if (!options.Exists(entry =>
+                         string.Equals(entry.Value, noneValue, StringComparison.Ordinal)))
+            {
+                options.Add(noneEntry);
             }
         }
 
@@ -277,6 +328,11 @@ public sealed class TableRelationResolver : ITableRelationResolver
             entries,
             options);
     }
+
+    private static string? GetTargetValue(TableRecord record, string field) =>
+        string.Equals(field, RecordFields.RecordKey, StringComparison.Ordinal)
+            ? record.GetKey()
+            : record.GetRawValue(field);
 
     private static string BuildStamp(TableDescriptor descriptor, string? languageCode)
     {
@@ -320,7 +376,10 @@ public sealed class TableRelationResolver : ITableRelationResolver
         string? TargetDisplayField,
         string? FilterField,
         RelationFilterOperator? FilterOperator,
-        string? FilterValue);
+        string? FilterValue,
+        bool IncludeKeyZero,
+        string? NoneValue,
+        string? NoneDisplay);
 
     private readonly record struct TargetCacheEntry(string Stamp, RelationTarget Target);
 }

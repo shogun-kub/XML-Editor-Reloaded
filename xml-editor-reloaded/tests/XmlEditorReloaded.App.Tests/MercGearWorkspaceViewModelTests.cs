@@ -40,6 +40,8 @@ public class MercGearWorkspaceViewModelTests
         var kit = viewModel.Kits[0];
         var helmet = Assert.Single(kit.Slots, static slot => slot.ItemField == "mHelmet");
         Assert.Contains(helmet.Relation!.Options, static entry => entry.Value == "3");
+        var nothing = Assert.Single(helmet.Relation.Options, static entry => entry.Value == "0");
+        Assert.Equal("Nothing", nothing.Display);
         helmet.ItemId = "3";
         helmet.Status = "90";
         kit.PriceMod = "5";
@@ -66,6 +68,31 @@ public class MercGearWorkspaceViewModelTests
         Assert.Equal("Fighter", kits[2].Element("mGearKitName")?.Value);
         Assert.Equal(itemsBefore, await File.ReadAllBytesAsync(fixture.ItemsPath));
         Assert.Equal(overlayBefore, await File.ReadAllBytesAsync(fixture.OverlayPath));
+    }
+
+    /// <summary>
+    /// Filtered armour and LBE slots offer item 0 ("Nothing") even when no kit in the table uses it,
+    /// which reproduces the legacy <c>uiIndex = 0 OR usItemClass = …</c> picker.
+    /// </summary>
+    [Fact]
+    public async Task FilteredSlots_OfferNothingWithoutDocumentValue()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace);
+        var content = await File.ReadAllTextAsync(fixture.BasePath);
+        await File.WriteAllTextAsync(
+            fixture.BasePath,
+            content.Replace("<mHelmet>0</mHelmet>", "<mHelmet>3</mHelmet>", StringComparison.Ordinal));
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        var helmet = Assert.Single(
+            viewModel.Kits[0].Slots,
+            static slot => slot.ItemField == "mHelmet");
+        var nothing = Assert.Single(helmet.Relation!.Options, static entry => entry.Value == "0");
+        Assert.Equal("Nothing", nothing.Display);
+        Assert.Contains(helmet.Relation.Options, static entry => entry.Value == "3");
+        Assert.DoesNotContain(helmet.Relation.Options, static entry => entry.Value == "2");
     }
 
     /// <summary>

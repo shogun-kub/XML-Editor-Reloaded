@@ -514,5 +514,11 @@ public class TableDataComparerTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult(OperationResult<IReadOnlyList<TableRelation>>.Success(
                 Array.Empty<TableRelation>()));
+
+        public Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+            TableName lookupName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
+                Array.Empty<LookupEntry>()));
     }
 }

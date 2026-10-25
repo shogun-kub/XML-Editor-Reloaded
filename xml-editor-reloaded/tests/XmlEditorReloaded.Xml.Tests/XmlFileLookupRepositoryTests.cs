@@ -121,4 +121,77 @@ public class XmlFileLookupRepositoryTests
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.XmlInvalidLookupEntry, result.ErrorCode);
     }
+
+    /// <summary>
+    /// Fixed lookups such as <c>Lookup.SkillTrait</c> have no XML file; their curated values are
+    /// returned from the metadata store instead.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_MissingFile_UsesMetadataLookupValues()
+    {
+        using var workspace = new TestWorkspace();
+        var repository = new XmlFileLookupRepository(
+            workspace.DirectoryPath,
+            metadataProvider: new StaticLookupMetadataProvider());
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.SkillTrait"));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(
+            new[] { new LookupEntry(0, "NoTrait"), new LookupEntry(1, "AutoWeapons") },
+            result.Data);
+    }
+
+    /// <summary>
+    /// A missing lookup file without metadata-backed values keeps reporting the missing file.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_MissingFileWithoutMetadataValues_ReturnsFileNotFound()
+    {
+        using var workspace = new TestWorkspace();
+        var repository = new XmlFileLookupRepository(
+            workspace.DirectoryPath,
+            metadataProvider: new StaticLookupMetadataProvider());
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.Missing"));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.IoFileNotFound, result.ErrorCode);
+    }
+
+    private sealed class StaticLookupMetadataProvider : ITableMetadataProvider
+    {
+        private static readonly TableName SkillTrait = TableName.Parse("Lookup.SkillTrait");
+
+        public Task<OperationResult<TableMetadata>> GetTableAsync(
+            TableName tableName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<TableMetadata>.Failure(
+                ErrorCodes.MetadataNotFound,
+                $"Table '{tableName}' is not present in the metadata store."));
+
+        public Task<OperationResult<IReadOnlyList<TableMetadata>>> GetAllTablesAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<TableMetadata>>.Success(
+                Array.Empty<TableMetadata>()));
+
+        public Task<OperationResult<IReadOnlyList<LanguageDescriptor>>> GetLanguagesAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LanguageDescriptor>>.Success(
+                Array.Empty<LanguageDescriptor>()));
+
+        public Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
+            TableName sourceTable,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<TableRelation>>.Success(
+                Array.Empty<TableRelation>()));
+
+        public Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+            TableName lookupName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
+                lookupName == SkillTrait
+                    ? new[] { new LookupEntry(0, "NoTrait"), new LookupEntry(1, "AutoWeapons") }
+                    : Array.Empty<LookupEntry>()));
+    }
 }

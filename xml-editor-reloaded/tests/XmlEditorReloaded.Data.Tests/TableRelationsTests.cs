@@ -122,7 +122,30 @@ public class TableRelationsTests
             && relation.Filter!.Operator == RelationFilterOperator.NotEquals);
 
         var weapons = await provider.GetRelationsAsync(TableName.Parse("Items.Weapons"));
-        Assert.Equal("Items.AmmoStrings", Assert.Single(weapons.Data!).TargetTable.Value);
+        Assert.True(weapons.IsSuccess, weapons.ErrorText);
+        Assert.Equal(8, weapons.Data!.Count);
+        var calibre = Assert.Single(weapons.Data, relation => relation.TargetTable.Value == "Items.AmmoStrings");
+        Assert.Equal("ubCalibre", calibre.SourceField);
+        Assert.Equal("uiIndex", calibre.TargetValueField);
+        Assert.Equal("AmmoCaliber", calibre.TargetDisplayField);
+
+        var soundTargets = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["sSound"] = "Sounds.Sounds",
+            ["SilencedSound"] = "Sounds.Sounds",
+            ["sReloadSound"] = "Sounds.Sounds",
+            ["sLocknLoadSound"] = "Sounds.Sounds",
+            ["ManualReloadSound"] = "Sounds.Sounds",
+            ["sBurstSound"] = "Sounds.BurstSounds",
+            ["sSilencedBurstSound"] = "Sounds.BurstSounds",
+        };
+        foreach (var pair in soundTargets)
+        {
+            var sound = Assert.Single(weapons.Data, relation => relation.SourceField == pair.Key);
+            Assert.Equal(pair.Value, sound.TargetTable.Value);
+            Assert.Equal(RecordFields.RecordKey, sound.TargetValueField);
+            Assert.Equal(RecordFields.RecordText, sound.TargetDisplayField);
+        }
 
         var comboMerges = await provider.GetRelationsAsync(TableName.Parse("Items.AttachmentComboMerges"));
         Assert.Equal(22, comboMerges.Data!.Count);
@@ -166,6 +189,17 @@ public class TableRelationsTests
             && relation.Filter!.Operator == RelationFilterOperator.Equals
             && relation.Filter.Value == "2048");
         Assert.Contains(gear.Data, relation => relation.SourceField == "mWeapon" && relation.Filter is null);
+        var filteredSlots = new[]
+        {
+            "mHelmet", "mVest", "mLeg", "lVest", "lLeftThigh", "lRightThigh", "lCPack", "lBPack",
+        };
+        foreach (var slot in filteredSlots)
+        {
+            var relation = Assert.Single(gear.Data, relation => relation.SourceField == slot);
+            Assert.True(relation.IncludeKeyZero, slot);
+        }
+
+        Assert.False(Assert.Single(gear.Data, relation => relation.SourceField == "mWeapon").IncludeKeyZero);
 
         var choices = await provider.GetRelationsAsync(TableName.Parse("Inventory.GunChoices_Enemy_Admin"));
         Assert.True(choices.IsSuccess, choices.ErrorText);
@@ -177,6 +211,69 @@ public class TableRelationsTests
         var ammo = Assert.Single(drops.Data!);
         Assert.Equal("uiType", ammo.SourceField);
         Assert.Equal("Items.AmmoTypes", ammo.TargetTable.Value);
+    }
+
+    /// <summary>
+    /// The M23b3 relations address positional sound lists, pockets, and explosion data, and the
+    /// alternate explosion sound additionally declares its "no sound" value.
+    /// </summary>
+    [Fact]
+    public async Task GetRelations_ValueSources_DeclareTargetsAndNoneValues()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var explosives = await provider.GetRelationsAsync(TableName.Parse("Items.Explosives"));
+        Assert.True(explosives.IsSuccess, explosives.ErrorText);
+        var animation = Assert.Single(explosives.Data!, relation => relation.SourceField == "ubAnimationID");
+        Assert.Equal(TableRelationKind.Reference, animation.Kind);
+        Assert.Equal("Items.ExplosionData", animation.TargetTable.Value);
+        Assert.Equal("uiIndex", animation.TargetValueField);
+        Assert.Equal("name", animation.TargetDisplayField);
+        Assert.Null(animation.Filter);
+        Assert.True(animation.RemapByText);
+        Assert.Equal(40, animation.Ordinal);
+
+        var lbe = await provider.GetRelationsAsync(TableName.Parse("Items.LoadBearingEquipment"));
+        Assert.True(lbe.IsSuccess, lbe.ErrorText);
+        Assert.Equal(12, lbe.Data!.Count);
+        Assert.All(lbe.Data, relation =>
+        {
+            Assert.Equal(TableRelationKind.Reference, relation.Kind);
+            Assert.Equal("Items.Pockets", relation.TargetTable.Value);
+            Assert.Equal("pIndex", relation.TargetValueField);
+            Assert.Equal("pName", relation.TargetDisplayField);
+            Assert.True(relation.RemapByText);
+            Assert.Equal(40, relation.Ordinal);
+        });
+        var pocketFields = lbe.Data.Select(relation => relation.SourceField).ToHashSet(StringComparer.Ordinal);
+        for (var index = 1; index <= 12; index++)
+        {
+            Assert.Contains($"lbePocketIndex{index}", pocketFields);
+        }
+
+        var explosionData = await provider.GetRelationsAsync(TableName.Parse("Items.ExplosionData"));
+        Assert.True(explosionData.IsSuccess, explosionData.ErrorText);
+        Assert.Equal(2, explosionData.Data!.Count);
+        var explosionSound = Assert.Single(
+            explosionData.Data,
+            relation => relation.SourceField == "ExplosionSoundID");
+        Assert.Equal("Sounds.Sounds", explosionSound.TargetTable.Value);
+        Assert.Equal(RecordFields.RecordKey, explosionSound.TargetValueField);
+        Assert.Equal(RecordFields.RecordText, explosionSound.TargetDisplayField);
+        Assert.Null(explosionSound.NoneValue);
+        Assert.Null(explosionSound.NoneDisplay);
+
+        var alternateSound = Assert.Single(
+            explosionData.Data,
+            relation => relation.SourceField == "AltExplosionSoundID");
+        Assert.Equal("Sounds.Sounds", alternateSound.TargetTable.Value);
+        Assert.Equal(RecordFields.RecordKey, alternateSound.TargetValueField);
+        Assert.Equal(RecordFields.RecordText, alternateSound.TargetDisplayField);
+        Assert.Equal("-1", alternateSound.NoneValue);
+        Assert.Equal("None", alternateSound.NoneDisplay);
     }
 
     /// <summary>
@@ -237,13 +334,15 @@ public class TableRelationsTests
             }
         }
 
-        Assert.Equal(1020, checkedRelations);
+        Assert.Equal(1042, checkedRelations);
     }
 
     private static bool IsKnownField(TableMetadata table, string field) =>
         table.TryGetColumn(field, out _)
         || table.TryGetColumnHint(field, out _)
         || string.Equals(table.RecordKey?.Primary.KeyField, field, StringComparison.Ordinal)
+        || (string.Equals(field, RecordFields.RecordKey, StringComparison.Ordinal)
+            && table.RecordKey?.Primary.Kind == RecordKeyKind.Positional)
         || table.ListFields.Any(list => string.Equals(list.XmlFieldName, field, StringComparison.Ordinal))
         || table.DictFields.Any(dict => string.Equals(dict.XmlFieldMask, field, StringComparison.Ordinal));
 }

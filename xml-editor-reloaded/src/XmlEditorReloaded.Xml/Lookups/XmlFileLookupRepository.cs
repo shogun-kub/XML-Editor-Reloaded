@@ -9,6 +9,7 @@ namespace XmlEditorReloaded.Xml.Lookups;
 
 /// <summary>
 /// Reads lookup tables from <c>TableData/Lookup/*.xml</c> and optionally applies a language overlay.
+/// Lookups without a file fall back to fixed values curated in the metadata database.
 /// </summary>
 public sealed class XmlFileLookupRepository : ILookupRepository
 {
@@ -37,12 +38,15 @@ public sealed class XmlFileLookupRepository : ILookupRepository
 
     /// <summary>
     /// Reads the entries of a lookup table and applies the requested language overlay when available.
+    /// When the lookup file is absent, fixed values stored in the metadata database are returned
+    /// instead; they are never overlaid because they are not file-based.
     /// </summary>
     /// <param name="lookupName">Dotted lookup table name, for example <c>Lookup.ItemClass</c>.</param>
     /// <param name="languageCode">Optional language code whose overlay should override base names.</param>
     /// <param name="cancellationToken">Token to cancel the operation.</param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the entries in base-file order.
+    /// A missing file with metadata-backed values also succeeds with those values in metadata order.
     /// On failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>xml.parse_error</c>,
     /// <c>xml.invalid_lookup_entry</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
@@ -58,6 +62,19 @@ public sealed class XmlFileLookupRepository : ILookupRepository
 
         if (!File.Exists(basePath))
         {
+            // Fixed lookups such as Lookup.SkillTrait have no XML file; their curated values live in
+            // the metadata store. A missing file without static values keeps reporting the I/O error.
+            if (_metadataProvider is not null)
+            {
+                var staticValues = await _metadataProvider
+                    .GetLookupValuesAsync(lookupName, cancellationToken)
+                    .ConfigureAwait(false);
+                if (staticValues.IsSuccess && staticValues.Data is { Count: > 0 })
+                {
+                    return OperationResult<IReadOnlyList<LookupEntry>>.Success(staticValues.Data);
+                }
+            }
+
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.IoFileNotFound,
                 $"The lookup file '{basePath}' does not exist.");

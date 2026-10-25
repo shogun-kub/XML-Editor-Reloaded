@@ -20,6 +20,13 @@ public class TableRelationResolverTests
         + "<ITEM><uiIndex>2</uiIndex><szLongItemName>Grenade</szLongItemName><usItemClass>256</usItemClass></ITEM>"
         + "</ITEMLIST>";
 
+    private const string SoundsXml =
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?><SOUNDLIST>"
+        + "<SOUND>sounds/first.wav</SOUND>"
+        + "<SOUND>sounds/second.wav</SOUND>"
+        + "<SOUND>sounds/third.wav</SOUND>"
+        + "</SOUNDLIST>";
+
     /// <summary>
     /// The resolver reads value and display fields, applies the filter only to options, and supports
     /// display-based remapping.
@@ -226,6 +233,118 @@ public class TableRelationResolverTests
         Assert.Equal(3, result.Data!.Entries.Count);
     }
 
+    /// <summary>
+    /// The reserved <c>#Key</c> token resolves to the metadata-defined record key. For positional
+    /// keys this is the zero-based record index used by legacy sound ids, and the virtual text field
+    /// supplies the display text.
+    /// </summary>
+    [Fact]
+    public async Task Resolve_PositionalKeyToken_UsesZeroBasedRecordIndex()
+    {
+        using var workspace = new TestWorkspace();
+        var soundsDirectory = Path.Combine(workspace.DirectoryPath, "Sounds");
+        Directory.CreateDirectory(soundsDirectory);
+        var soundsPath = Path.Combine(soundsDirectory, "Sounds.xml");
+        await File.WriteAllTextAsync(soundsPath, SoundsXml);
+
+        var metadata = new TableMetadata(
+            TableName.Parse("Sounds.Sounds"),
+            "SOUNDLIST",
+            "SOUND",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Positional) }));
+        var descriptor = new TableDescriptor(
+            TableName.Parse("Sounds.Sounds"),
+            soundsPath,
+            "Sounds/Sounds.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var provider = new TestMetadataProvider(metadata);
+        var resolver = new TableRelationResolver(
+            new TestCatalog(new[] { descriptor }),
+            new TableRepository(provider),
+            workspace.DirectoryPath,
+            provider);
+        var relation = new TableRelation(
+            TableName.Parse("Weapons.Weapons"),
+            "ubSound",
+            TableName.Parse("Sounds.Sounds"),
+            TableRelationKind.Reference,
+            RecordFields.RecordKey,
+            RecordFields.RecordText);
+
+        var result = await resolver.ResolveAsync(relation);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var target = result.Data!;
+        Assert.Equal(new[] { "0", "1", "2" }, target.Entries.Select(entry => entry.Value));
+        Assert.Equal(
+            new[] { "sounds/first.wav", "sounds/second.wav", "sounds/third.wav" },
+            target.Entries.Select(entry => entry.Display));
+        Assert.True(target.Contains("2"));
+        Assert.Equal("sounds/third.wav", target.Find("2")!.Display);
+    }
+
+    /// <summary>
+    /// The legacy "zero or matching class" filter keeps the key-zero record in the picker and lists
+    /// it first, while the entry list still contains every target record.
+    /// </summary>
+    [Fact]
+    public async Task Resolve_IncludeKeyZero_OffersZeroFirst()
+    {
+        using var workspace = new TestWorkspace();
+        var (resolver, _) = CreateResolver(workspace, ItemsXml);
+        var relation = new TableRelation(
+            TableName.Parse("Items.Weapons"),
+            "ubCalibre",
+            TableName.Parse("Items.Items"),
+            TableRelationKind.Reference,
+            "uiIndex",
+            "szLongItemName",
+            new RelationFilter("usItemClass", RelationFilterOperator.Equals, "2"))
+        {
+            IncludeKeyZero = true,
+        };
+
+        var result = await resolver.ResolveAsync(relation);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var target = result.Data!;
+        Assert.Equal(new[] { "0", "1" }, target.Options.Select(entry => entry.Value));
+        Assert.Equal(3, target.Entries.Count);
+    }
+
+    /// <summary>
+    /// A configured "none" value becomes a synthetic target entry and picker option even though the
+    /// target file has no such record.
+    /// </summary>
+    [Fact]
+    public async Task Resolve_NoneValue_AddsSyntheticEntry()
+    {
+        using var workspace = new TestWorkspace();
+        var (resolver, _) = CreateResolver(workspace, ItemsXml);
+        var relation = new TableRelation(
+            TableName.Parse("Items.Weapons"),
+            "ubCalibre",
+            TableName.Parse("Items.Items"),
+            TableRelationKind.Reference,
+            "uiIndex",
+            "szLongItemName")
+        {
+            NoneValue = "-1",
+            NoneDisplay = "None",
+        };
+
+        var result = await resolver.ResolveAsync(relation);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var target = result.Data!;
+        Assert.Equal(4, target.Entries.Count);
+        Assert.Equal(new RelationTargetEntry("-1", "None"), target.Find("-1"));
+        Assert.Contains(target.Options, entry => entry.Value == "-1" && entry.Display == "None");
+        Assert.True(target.Contains("-1"));
+    }
+
     private static (TableRelationResolver Resolver, TableDescriptor Descriptor) CreateResolver(
         TestWorkspace workspace,
         string itemsXml,
@@ -319,5 +438,11 @@ public class TableRelationResolverTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult(OperationResult<IReadOnlyList<TableRelation>>.Success(
                 Array.Empty<TableRelation>()));
+
+        public Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+            TableName lookupName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
+                Array.Empty<LookupEntry>()));
     }
 }

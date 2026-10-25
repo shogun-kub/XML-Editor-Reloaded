@@ -58,4 +58,20 @@ public interface ITableMetadataProvider
     Task<OperationResult<IReadOnlyList<TableRelation>>> GetRelationsAsync(
         TableName sourceTable,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns curated lookup values stored in the metadata database. These values back lookups that
+    /// have no <c>TableData/Lookup/*.xml</c> file, for example the fixed skill-trait list of robot items.
+    /// </summary>
+    /// <param name="lookupName">Dotted lookup name, for example <c>Lookup.SkillTrait</c>.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the values in
+    /// metadata order; an unknown name yields an empty list. On failure, <c>error_code</c> is
+    /// <c>io.error</c> and <c>error_text</c> describes the problem.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+        TableName lookupName,
+        CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Metadata;
@@ -24,7 +25,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(13, migration.Data);
+        Assert.Equal(14, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -90,6 +91,10 @@ public class MetadataTests
         Assert.True(metadata.TryGetColumnHint("Inseparable", out var inseparableHint));
         Assert.Equal(ColumnDataType.Lookup, inseparableHint!.DataType);
         Assert.Equal("Lookup.Separability", inseparableHint.LookupTable);
+        Assert.True(metadata.TryGetColumnHint("RobotTargetingSkillGrant", out var robotTraitHint));
+        Assert.Equal(ColumnDataType.Lookup, robotTraitHint!.DataType);
+        Assert.Equal(ColumnEditorKind.LookupCombo, robotTraitHint.EditorKind);
+        Assert.Equal("Lookup.SkillTrait", robotTraitHint.LookupTable);
         Assert.Empty(metadata.Columns);
 
         var flagLookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemFlag"));
@@ -281,6 +286,25 @@ public class MetadataTests
                 'Items.StructureConstruct', 'Items.StructureDeconstruct');
             """;
         Assert.Equal(0L, (long)(await command.ExecuteScalarAsync())!);
+    }
+
+    /// <summary>
+    /// The curated SkillTrait lookup returns the fixed robot skill values in game enum order.
+    /// </summary>
+    [Fact]
+    public async Task GetLookupValues_SkillTrait_ReturnsSeededValues()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var result = await provider.GetLookupValuesAsync(TableName.Parse("Lookup.SkillTrait"));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(24, result.Data!.Count);
+        Assert.Equal(new LookupEntry(0, "NoTrait"), result.Data[0]);
+        Assert.Equal(new LookupEntry(23, "Survival"), result.Data[^1]);
     }
 
     /// <summary>

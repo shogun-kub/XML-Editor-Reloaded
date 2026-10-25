@@ -93,4 +93,25 @@ public sealed class TableRelation
     /// Gets the display order of the relation; smaller values are shown first.
     /// </summary>
     public int Ordinal { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether pickers also offer the target record whose key is <c>0</c> even
+    /// when that record fails the relation filter. The record keeps its own display name, and the
+    /// option is listed first. Legacy item slots used the filter <c>uiIndex = 0 OR usItemClass = …</c>
+    /// so that a filled slot could be cleared with the "Nothing" entry.
+    /// </summary>
+    public bool IncludeKeyZero { get; init; }
+
+    /// <summary>
+    /// Gets the additional target key that represents "no reference", for example <c>-1</c> in
+    /// <c>ExplosionData.AltExplosionSoundID</c>. The resolver adds a synthetic target entry, so the
+    /// value stays selectable and validation accepts it even though the target file has no such record.
+    /// </summary>
+    public string? NoneValue { get; init; }
+
+    /// <summary>
+    /// Gets the display text of <see cref="NoneValue"/>, or <see langword="null"/> to display the raw
+    /// value itself.
+    /// </summary>
+    public string? NoneDisplay { get; init; }
 }

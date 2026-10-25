@@ -520,5 +520,11 @@ public class TableCopyServiceTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult(OperationResult<IReadOnlyList<TableRelation>>.Success(
                 _relations.GetValueOrDefault(sourceTable) ?? Array.Empty<TableRelation>()));
+
+        public Task<OperationResult<IReadOnlyList<LookupEntry>>> GetLookupValuesAsync(
+            TableName lookupName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
+                Array.Empty<LookupEntry>()));
     }
 }
