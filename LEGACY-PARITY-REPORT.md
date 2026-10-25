@@ -845,12 +845,14 @@ WPF-поведение в этой среде не автоматизирует�
 | Проверка | Результат |
 |---|---|
 | Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
-| Базовые тесты | 460/460: Core 37, Data 65, Imaging 19, Xml 190, App 149 |
-| Corpus v4 | 460/460; единственное range-предупреждение — `Inventory.MercStartingGear`, `GEARKIT/mSmall1Status` = 600 у записи `mIndex` 237 (kit 5); предупреждений эксклюзивной группы и class-limit — 0 |
-| Corpus v5 | 460/460; тот же набор предупреждений: только `mSmall1Status` 600 |
-| Тесты M23b4 | `SetFieldValue_FlagHint_AcceptsUInt64Range`, `Validate_LargeFlagMask_IsNotInvalidType`, `Validate_NegativeLookupValue_IsMissingNotInvalid`, `Validate_DecimalField_UsesInclusiveBounds`, `Validate_OutOfRange_IsWarningWithoutMutation`, `Validate_ExclusiveFlags_*`, `Validate_ClassValueLimit_*`, `GetEntries_ReadsUnsignedMaxId`, `GetEntries_IdAboveUnsignedRange_ReturnsInvalidEntry`, `GetEntries_NegativeId_ReturnsInvalidEntry`, `Apply_Overwrite_RemapsLookupIdAbove32Bits`, `LookupMasks_IncludeBitsAbove32Bits`, `Create_HandlesIdsAboveSignedRange`, `BitEditor_ComposesValueAndLoadsXaml`, `MappedTables_ProduceOnlyTheKnownRangeWarning` |
+| Базовые тесты | 470/470: Core 37, Data 67, Imaging 19, Xml 197, App 150 |
+| Corpus v4 | 470/470; единственное range-предупреждение — `Inventory.MercStartingGear`, `GEARKIT/mSmall1Status` = 600 у записи `mIndex` 237 (kit 5); предупреждений эксклюзивной группы и class-limit — 0 |
+| Corpus v5 | 470/470; тот же набор предупреждений: только `mSmall1Status` 600 |
+| Тесты M23b4 | `SetFieldValue_FlagHint_AcceptsUInt64Range`, `Validate_LargeFlagMask_IsNotInvalidType`, `Validate_NegativeLookupValue_IsMissingNotInvalid`, `Validate_DecimalField_UsesInclusiveBounds`, `Validate_OutOfRange_IsWarningWithoutMutation`, `Validate_ExclusiveFlags_*`, `Validate_ClassValueLimit_*`, `GetEntries_ReadsUnsignedMaxId`, `GetEntries_IdAboveUnsignedRange_ReturnsInvalidEntry`, `GetEntries_NegativeId_ReturnsInvalidEntry`, `Apply_Overwrite_RemapsLookupIdAbove32Bits`, `LookupMasks_IncludeBitsAbove32Bits`, `Create_HandlesIdsAboveSignedRange`, `BitEditor_ComposesValueAndLoadsXaml`, `SortByFlagMask_OrdersUnsignedValuesAcrossSignedBoundary`, `MappedTables_ProduceOnlyTheKnownRangeWarning` |
 | Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
 | `References/` | не изменён; corpus-тесты работают на temp-копиях; LBE-сид сверен с legacy (`References/xml-editor/GUI/Data Forms/ItemDataForm.vb:1452-1580`) и с данными (108 записей в каждой версии, классы 1/2/3/4) |
+
+Прогон повторён 2026-10-25 после `67ae29d` (штатный VSTest в DSH-песочнице, `xml-editor-reloaded/test.ps1`): 470/470 в базе и на каждом корпусе, compare/copy 1/1, perf 9/9. Прежние 460 — счёт временного in-process раннера, который не выполнил 9 тестов; штатный VSTest дал 469, а добавленный при верификации тест сортировки 64-битных масок через знаковую границу (`SortByFlagMask_OrdersUnsignedValuesAcrossSignedBoundary`) — 470.
 
 **Следующий подшаг:** M23b5 — изображения (`L-ITEM-014`, `L-IMG-005/020`).
 

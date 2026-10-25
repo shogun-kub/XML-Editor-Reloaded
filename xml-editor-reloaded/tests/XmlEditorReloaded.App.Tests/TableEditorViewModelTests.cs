@@ -386,6 +386,27 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Flag masks are sorted as unsigned 64-bit values, so the signed 64-bit boundary and the largest
+    /// mask do not wrap into a negative value or compare as text.
+    /// </summary>
+    [Fact]
+    public async Task SortByFlagMask_OrdersUnsignedValuesAcrossSignedBoundary()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+
+        editor.Rows[0]["AttachmentClass"] = "18446744073709551615";
+        editor.Rows[1]["AttachmentClass"] = "9223372036854775808";
+        editor.Rows[2]["AttachmentClass"] = "9223372036854775807";
+
+        editor.SortBy("AttachmentClass", ListSortDirection.Ascending);
+
+        Assert.Equal(new[] { "2", "1", "0" }, editor.Rows.Select(row => row.Key));
+        Assert.Equal("18446744073709551615", editor.Rows[2]["AttachmentClass"]);
+    }
+
+    /// <summary>
     /// Column visibility updates the visible set and the chooser filter.
     /// </summary>
     [Fact]

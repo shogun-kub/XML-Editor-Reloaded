@@ -40,7 +40,7 @@
   при `DSH_SHELL`/`DSH_SESSION_ID` выключает `MSTest.EnableParentProcessQuery` (testhost больше не
   открывает родителя с `PROCESS_ALL_ACCESS`) и `NuGetAudit` (нет сети до nuget.org).
   `xml-editor-reloaded/test.ps1` делает restore/build в один узел и запускает проекты по очереди
-  с чистым `%TEMP%`; VSTest-прогон — 469 тестов (App 149, Core 37, Data 67, Imaging 19, Xml 197).
+  с чистым `%TEMP%`; VSTest-прогон — 470 тестов (App 150, Core 37, Data 67, Imaging 19, Xml 197).
   Временный in-process раннер из §2 больше не нужен.
 
 ## 3. Принятые решения
@@ -123,19 +123,27 @@
   сортировка через `decimal`, `TableEditorViewModel.IsValidValue` для `Lookup`/`Flags`.
 - Тесты: обновлены 32-битные ожидания (`TableRecordTests.SetFieldValue_FlagHint_AcceptsUInt64Range`,
   `BitEditor_ComposesValueAndLoadsXaml`) и fake-сервисы (8 файлов); добавлены проверки 64-битных id,
-  масок, remap по имени, отсутствия ложных предупреждений и точного набора warning'ов на корпусе.
+  масок, сортировки масок через знаковую границу, remap по имени, отсутствия ложных предупреждений
+  и точного набора warning'ов на корпусе.
 
 ## 6. Проверка M23b4
 
 | Проверка | Результат |
 |---|---|
 | Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
-| Базовый прогон | 460/460: Core 37, Data 65, Imaging 19, Xml 190, App 149 |
-| Corpus v4 / v5 | 460/460 на каждом; единственное `out_of_range` — `GEARKIT/mSmall1Status` (237), 0 `exclusive_flags`, 0 `class_value_limit` |
+| Базовый прогон | 470/470: Core 37, Data 67, Imaging 19, Xml 197, App 150 |
+| Corpus v4 / v5 | 470/470 на каждом; единственное `out_of_range` — `GEARKIT/mSmall1Status` (237), 0 `exclusive_flags`, 0 `class_value_limit` |
 | Compare / copy | 1/1, 1/1 |
 | Perf (v5) | 9/9 |
 | Round-trip / целостность | неизменённые файлы не перезаписываются; warning не делает документ dirty (проверки в тестах) |
 | `References/` | не изменён; копии и temp-каталоги |
+
+Прогон 2026-10-25 после `67ae29d` выполнен штатным VSTest через `xml-editor-reloaded/test.ps1`
+(build 0/0, 470 тестов; corpus v4 и v5 — по 470; compare/copy 1/1; perf 9/9). Числа 460 в ранней
+версии этого журнала получены временным in-process раннером, который пропустил 9 тестов; штатный
+VSTest дал 469, а добавленный при верификации тест
+`SortByFlagMask_OrdersUnsignedValuesAcrossSignedBoundary` (сортировка `Flags` через
+2^63−1/2^63/`ulong.MaxValue`, §5.8 документа 51) — 470.
 
 ## 7. Остаточные риски и задел
 

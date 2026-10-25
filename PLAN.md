@@ -10,7 +10,7 @@
 
 **Метаданные:** 173 таблицы, 1042 `TableRelations`, 1958 `ColumnHints` (123 с границами min/max), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 15 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
 
-**Проверка:** build `-warnaserror` (0/0), 460 тестов в базовом прогоне и на каждом корпусе v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1), perf-гейты (9/9 на v5). Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 470 тестов в базовом прогоне и на каждом корпусе v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1), perf-гейты (9/9 на v5). Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается; повреждённый — только диагностика.
@@ -130,8 +130,8 @@
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 460 тестов, все зелёные.
-3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 460 тестов на каждом корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение диапазона — `mSmall1Status=600` (mIndex 237, kit 5) в обеих версиях.
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 470 тестов, все зелёные.
+3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 470 тестов на каждом корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение диапазона — `mSmall1Status=600` (mIndex 237, kit 5) в обеих версиях.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests`.
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с.
