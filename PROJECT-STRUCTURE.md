@@ -17,6 +17,8 @@ JA2_1.13 Tools/
 ├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
 ├── M23A-PARITY/                     # Parity audit sections and inventories
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
+├── MEMORY.md                        # Index of the project memory (imported agent notes)
+├── memory/                          # Topic notes linked from MEMORY.md
 ├── References/                      # Read-only reference projects and game data (not in git)
 └── xml-editor-reloaded/             # Solution root — all project code
 ```
@@ -133,3 +135,4 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 - `LEGACY-PARITY-REPORT.md` — legacy parity matrix and gap register (M23a).
 - `M23A-PARITY/` — per-area audit sections and inventories used to build the report.
 - `REFERENCE-PROJECTS-STRUCTURE.md` — contents and roles of the read-only `References/` folder.
+- `MEMORY.md` — index of the project memory; the topic notes it links live in `memory/`.

@@ -1,0 +1,25 @@
+- [References folder is user-managed](references-folder-is-user-managed.md) — read-only reference projects and game installs, more will be added
+- [Reference projects structure doc](reference-projects-structure-doc.md) — how to extend REFERENCE-PROJECTS-STRUCTURE.md, now seven references
+- [Legacy reference findings](legacy-reference-findings.md) — unusable StiLib, hardcoded VB schema, broken prototype parser
+- [XML integrity is mandatory](xml-integrity-is-mandatory.md) — never break XML tables: no field removal, sparse records, lexical types
+- [Commit after each milestone](commit-after-each-milestone.md) — local `Mx: …` commit per milestone, push only when asked
+- [JA2 source needs permission](ja2-source-needs-permission.md) — 5.4 GB C++ source, ask before exploring
+- [JA2 v4/v5 data facts](ja2-v4-v5-data-facts.md) — same tag sets, different data, sparse records, one malformed lookup, Fire Extinguisher burst-sound anomaly
+- [JA2 localization overlay model](ja2-localization-overlay-model.md) — v4 Russian / v5 English by design; `Russian.*` overlays merged by key, edits go to the overlay
+- [Editor status and roadmap](ja2-editor-status.md) — M0–M23b3 done, 448 tests green; next manual smoke + M23b4; M18–M27 roadmap
+- [Editor architecture and build](ja2-editor-architecture.md) — solution, packages, DI wiring, corpus/perf gates, repo hygiene
+- [XML round-trip](ja2-editor-xml-roundtrip.md) — byte patching, XmlWriter normalization, structural patching, editing API
+- [Metadata layer](ja2-editor-metadata.md) — SQLite schema/seed, validation, ColumnHints vs Columns, 64-bit lookups, flag mappings
+- [Localization overlays](ja2-editor-localization.md) — overlay load/merge/write, nested keys, language selector, translation report
+- [Shell and grid](ja2-editor-shell-grid.md) — M9–M13 shell, workspace/schema, grid editor, detail panel
+- [Item and merc workspaces](ja2-editor-item-merc.md) — M19 item master-detail, M20 merc gear/auxiliary tables, M23b2 relation directions and enemy ammo
+- [Bulk edits and compare](ja2-editor-editing-operations.md) — M16 bulk/undo, M17 cross-version compare and export
+- [Relations and copy](ja2-editor-relations-copy.md) — M18 relation pickers, M21 multi-dataset copy/remap
+- [Grid polish and keys](ja2-editor-grid-polish.md) — M22a filters/layout, M22b recovery, M22c compound keys
+- [Legacy parity](ja2-editor-parity.md) — M23a0–M23a7 audits, gap register, M23b1–M23b2 fixes
+- [STI imaging](ja2-editor-imaging.md) — STI parser/ETRLE/catalog and the image viewer
+- [Documentation stays compact](documentation-stays-compact.md) — PLAN.md and PROJECT-STRUCTURE.md are summaries; implementation detail lives in code/tests/git
+- [Read before edit](read-before-edit.md) — global one-paragraph rule in `~/.zcode/AGENTS.md`: `Read` before `Edit` only (not `Write`), keep it terse
+- [Context stays small](context-stays-small.md) — user treats session context as a budget; prefer terse files over detail that can be read on demand
+- [ZCode context budget](zcode-context-budget.md) — 3 files always; local tool search + compact AGENTS.md cut input 29.4k→12.8k; resumed chats keep old mode
+- [M14.5 verified metadata](m14.5-verified-metadata.md) — 502 hints, 46 lookup columns, 64-bit lookup IDs, hint-driven validation, v4/v5 zero false warnings
