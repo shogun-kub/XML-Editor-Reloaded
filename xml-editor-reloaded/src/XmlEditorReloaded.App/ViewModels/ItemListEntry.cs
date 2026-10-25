@@ -13,6 +13,7 @@ public sealed partial class ItemListEntry : ObservableObject
     private Func<TableRowViewModel, Task<BitmapSource?>>? _thumbnailLoader;
     private BitmapSource? _thumbnail;
     private bool _thumbnailRequested;
+    private int _thumbnailGeneration;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ItemListEntry"/> class.
@@ -82,7 +83,8 @@ public sealed partial class ItemListEntry : ObservableObject
         }
 
         _thumbnailRequested = true;
-        _ = LoadThumbnailAsync();
+        var generation = ++_thumbnailGeneration;
+        _ = LoadThumbnailAsync(generation);
     }
 
     internal void ConfigureThumbnail(Func<TableRowViewModel, Task<BitmapSource?>>? loader)
@@ -90,7 +92,24 @@ public sealed partial class ItemListEntry : ObservableObject
         _thumbnailLoader = loader;
     }
 
-    private async Task LoadThumbnailAsync()
+    /// <summary>
+    /// Drops the cached list thumbnail after the row's graphic fields changed. A thumbnail that was
+    /// already requested is reloaded immediately; an entry that is not visible yet loads the new image
+    /// when it is created. A load that was already in flight is discarded when it finishes, so it cannot
+    /// overwrite the image of the new frame.
+    /// </summary>
+    internal void InvalidateThumbnail()
+    {
+        var wasRequested = _thumbnailRequested;
+        _thumbnailRequested = false;
+        Thumbnail = null;
+        if (wasRequested)
+        {
+            RequestThumbnail();
+        }
+    }
+
+    private async Task LoadThumbnailAsync(int generation)
     {
         var loader = _thumbnailLoader;
         if (loader is null)
@@ -100,7 +119,11 @@ public sealed partial class ItemListEntry : ObservableObject
 
         try
         {
-            Thumbnail = await loader(Row).ConfigureAwait(true);
+            var image = await loader(Row).ConfigureAwait(true);
+            if (generation == _thumbnailGeneration)
+            {
+                Thumbnail = image;
+            }
         }
         catch (Exception)
         {

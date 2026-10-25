@@ -6,7 +6,7 @@
 - [JA2 source needs permission](ja2-source-needs-permission.md) — 5.4 GB C++ source, ask before exploring
 - [JA2 v4/v5 data facts](ja2-v4-v5-data-facts.md) — same tag sets, different data, sparse records, one malformed lookup, Fire Extinguisher burst-sound anomaly
 - [JA2 localization overlay model](ja2-localization-overlay-model.md) — v4 Russian / v5 English by design; `Russian.*` overlays merged by key, edits go to the overlay
-- [Editor status and roadmap](ja2-editor-status.md) — M0–M23b4 done, 470 tests green; next manual smoke + M23b5; M18–M27 roadmap
+- [Editor status and roadmap](ja2-editor-status.md) — M0–M23b5 done, 488 tests green; next manual smoke + M23b6; M18–M27 roadmap
 - [Editor architecture and build](ja2-editor-architecture.md) — solution, packages, DI wiring, corpus/perf gates, repo hygiene
 - [XML round-trip](ja2-editor-xml-roundtrip.md) — byte patching, XmlWriter normalization, structural patching, editing API
 - [Metadata layer](ja2-editor-metadata.md) — SQLite schema/seed, validation, ColumnHints vs Columns, 64-bit lookups, flag mappings

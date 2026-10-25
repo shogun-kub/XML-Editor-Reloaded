@@ -200,6 +200,13 @@ public class ImageViewerViewModelTests
             bitmap.Freeze();
             return Task.FromResult(OperationResult<BitmapSource>.Success(bitmap));
         }
+
+        public Task<OperationResult<int>> GetFrameCountAsync(
+            string gameDataDirectory,
+            ImageSize size,
+            int graphicType,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<int>.Success(12));
     }
 
     private sealed record ImageRequest(

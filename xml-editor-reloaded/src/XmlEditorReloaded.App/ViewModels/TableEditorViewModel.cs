@@ -1598,6 +1598,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
             if (fieldName is "ubGraphicNum" or "ubGraphicType")
             {
+                row.InvalidateThumbnail();
                 _ = LoadDetailImagesAsync();
             }
 

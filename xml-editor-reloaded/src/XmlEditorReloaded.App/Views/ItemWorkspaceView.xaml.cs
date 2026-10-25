@@ -24,4 +24,12 @@ public partial class ItemWorkspaceView : UserControl
             entry.RequestThumbnail();
         }
     }
+
+    private void OnGraphicImageThumbnailLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: ItemImageOption option })
+        {
+            option.RequestThumbnail();
+        }
+    }
 }

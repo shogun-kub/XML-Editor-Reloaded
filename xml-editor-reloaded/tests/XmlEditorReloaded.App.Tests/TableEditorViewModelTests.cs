@@ -1007,6 +1007,71 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Editing <c>ubGraphicNum</c> in the standalone grid drops the cached row thumbnail and reloads the
+    /// image with the new index.
+    /// </summary>
+    [Fact]
+    public async Task GraphicEdit_InvalidatesGridThumbnail()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            images: images,
+            includeGraphics: true);
+        var row = Assert.Single(editor.Rows, candidate => candidate.Key == "1");
+        row.RequestThumbnail();
+        await WaitUntilAsync(() => row.Thumbnail is not null);
+        Assert.Contains(images.Requests, request =>
+            request.Size == ImageSize.Small && request.GraphicType == 2 && request.GraphicIndex == 35);
+
+        row["ubGraphicNum"] = "36";
+
+        await WaitUntilAsync(() => row.Thumbnail is not null && images.Requests.Any(request =>
+            request.Size == ImageSize.Small && request.GraphicType == 2 && request.GraphicIndex == 36));
+        Assert.Equal("36", row["ubGraphicNum"]);
+        Assert.True(editor.IsDirty);
+    }
+
+    /// <summary>
+    /// A grid thumbnail load that is still pending when the index changes must not overwrite the image
+    /// of the new frame.
+    /// </summary>
+    [Fact]
+    public async Task GraphicEdit_WhileGridThumbnailLoadPending_KeepsNewestImage()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService
+        {
+            BitmapFactory = request => TestItemImageService.CreateBitmap(request.GraphicIndex + 1),
+        };
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            images: images,
+            includeGraphics: true);
+        var row = Assert.Single(editor.Rows, candidate => candidate.Key == "1");
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        images.BeforeImageReturn = request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 35
+                ? gate.Task
+                : Task.CompletedTask;
+        row.RequestThumbnail();
+        await WaitUntilAsync(() => images.Requests.Any(request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 35));
+        Assert.Null(row.Thumbnail);
+
+        row["ubGraphicNum"] = "36";
+        await WaitUntilAsync(() => row.Thumbnail?.PixelWidth == 37);
+
+        gate.SetResult(true);
+        await Task.Delay(100);
+
+        Assert.Equal(37, row.Thumbnail?.PixelWidth);
+    }
+
+    /// <summary>
     /// The detail bit editor is offered only for flag masks and writes the composed value back.
     /// </summary>
     [Fact]

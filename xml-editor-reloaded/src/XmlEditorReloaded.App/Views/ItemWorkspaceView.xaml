@@ -612,63 +612,110 @@
                     </TabItem>
 
                     <TabItem Header="{Binding ImagesTabText}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Margin="4">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                    <TextBlock VerticalAlignment="Center"
-                                               Margin="0,0,6,0"
-                                               Text="{Binding GraphicTypeLabel}" />
-                                    <ComboBox Width="180"
-                                              VerticalAlignment="Center"
-                                              ItemsSource="{Binding GraphicTypes}"
-                                              SelectedItem="{Binding SelectedGraphicType, Mode=TwoWay}"
-                                              DisplayMemberPath="Text" />
+                        <Grid Margin="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel Grid.Column="0" Margin="0,0,10,0">
+                                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                                    <TextBlock FontWeight="SemiBold"
+                                               Text="{Binding GraphicImageListLabel}" />
+                                    <TextBlock Foreground="#FF666666"
+                                               Text="{Binding GraphicImageListInfo}" />
                                 </StackPanel>
-                                <ItemsControl ItemsSource="{Binding DetailImages}">
-                                    <ItemsControl.ItemTemplate>
+                                <ListBox ItemsSource="{Binding GraphicImages}"
+                                         SelectedItem="{Binding SelectedGraphicImage, Mode=TwoWay}"
+                                         VirtualizingStackPanel.IsVirtualizing="True"
+                                         VirtualizingStackPanel.VirtualizationMode="Recycling"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="0,0,0,6">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <Grid Grid.Row="0">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock FontWeight="SemiBold"
-                                                               Text="{Binding Label}" />
-                                                    <TextBlock Grid.Column="1"
-                                                               Margin="8,0,0,0"
-                                                               HorizontalAlignment="Right"
-                                                               Foreground="#FF666666"
-                                                               TextTrimming="CharacterEllipsis"
-                                                               Text="{Binding InfoText}" />
-                                                </Grid>
-                                                <Border Grid.Row="1"
-                                                        Height="{Binding PanelHeight}"
-                                                        Margin="0,2,0,0"
+                                            <Grid Margin="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="40"
+                                                        Height="40"
                                                         Background="{StaticResource CheckerBrush}"
-                                                        BorderBrush="#FFAFAFAF"
+                                                        BorderBrush="#FFD0D0D0"
                                                         BorderThickness="1">
-                                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                                                  VerticalScrollBarVisibility="Auto">
-                                                        <Image Source="{Binding Image}"
-                                                               Stretch="None"
-                                                               HorizontalAlignment="Center"
-                                                               VerticalAlignment="Center"
-                                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                               SnapsToDevicePixels="True" />
-                                                    </ScrollViewer>
+                                                    <Image Source="{Binding Thumbnail}"
+                                                           Stretch="Uniform"
+                                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                           Loaded="OnGraphicImageThumbnailLoaded" />
                                                 </Border>
+                                                <TextBlock Grid.Column="1"
+                                                           Margin="6,0,0,0"
+                                                           VerticalAlignment="Center"
+                                                           Text="{Binding DisplayText}" />
                                             </Grid>
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </ScrollViewer>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+
+                            <ScrollViewer Grid.Column="1"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Margin="0,0,6,0"
+                                                   Text="{Binding GraphicTypeLabel}" />
+                                        <ComboBox Width="180"
+                                                  VerticalAlignment="Center"
+                                                  ItemsSource="{Binding GraphicTypes}"
+                                                  SelectedItem="{Binding SelectedGraphicType, Mode=TwoWay}"
+                                                  DisplayMemberPath="Text" />
+                                    </StackPanel>
+                                    <ItemsControl ItemsSource="{Binding DetailImages}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,6">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid Grid.Row="0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock FontWeight="SemiBold"
+                                                                   Text="{Binding Label}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   Margin="8,0,0,0"
+                                                                   HorizontalAlignment="Right"
+                                                                   Foreground="#FF666666"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   Text="{Binding InfoText}" />
+                                                    </Grid>
+                                                    <Border Grid.Row="1"
+                                                            Height="{Binding PanelHeight}"
+                                                            Margin="0,2,0,0"
+                                                            Background="{StaticResource CheckerBrush}"
+                                                            BorderBrush="#FFAFAFAF"
+                                                            BorderThickness="1">
+                                                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                                      VerticalScrollBarVisibility="Auto">
+                                                            <Image Source="{Binding Image}"
+                                                                   Stretch="None"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"
+                                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                                   SnapsToDevicePixels="True" />
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </Grid>

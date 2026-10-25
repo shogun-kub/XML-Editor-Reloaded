@@ -3,7 +3,9 @@ using System.IO;
 using System.Xml.Linq;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Filtering;
+using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
@@ -768,6 +770,286 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// The image chooser is built from the small sheet frame count of the selected item's graphic type,
+    /// exposes the inclusive maximum index, and selects the frame stored in <c>ubGraphicNum</c>.
+    /// </summary>
+    [Fact]
+    public async Task SelectItem_BuildsGraphicImageChooserFromSheetFrames()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+
+        await WaitUntilAsync(() => viewModel.GraphicImages.Count == 12);
+
+        Assert.Equal(12, viewModel.GraphicImages.Count);
+        Assert.Equal(11, viewModel.GraphicIndexMaximum);
+        Assert.Equal("12 images", viewModel.GraphicImageListInfo);
+        Assert.All(viewModel.GraphicImages, option => Assert.Equal(0, option.GraphicType));
+        Assert.Equal(1, viewModel.SelectedGraphicImage?.Index);
+        Assert.Same(viewModel.GraphicImages[1], viewModel.SelectedGraphicImage);
+        Assert.Contains(0, images.FrameCountTypes);
+
+        Assert.Null(viewModel.GraphicImages[3].Thumbnail);
+        viewModel.GraphicImages[3].RequestThumbnail();
+        await WaitUntilAsync(() => viewModel.GraphicImages[3].Thumbnail is not null);
+        Assert.Contains(images.Requests, request =>
+            request.Size == ImageSize.Big && request.GraphicIndex == 3);
+        var bigRequests = images.Requests.Count(request =>
+            request.Size == ImageSize.Big && request.GraphicIndex == 3);
+        viewModel.GraphicImages[3].RequestThumbnail();
+        Assert.Equal(bigRequests, images.Requests.Count(request =>
+            request.Size == ImageSize.Big && request.GraphicIndex == 3));
+    }
+
+    /// <summary>
+    /// Clearing the item selection drops the chooser, its maximum, and the selection.
+    /// </summary>
+    [Fact]
+    public async Task ClearSelection_ClearsGraphicImageChooser()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+
+        viewModel.SelectedItem = null;
+
+        await WaitUntilAsync(() => viewModel.GraphicImages.Count == 0);
+        Assert.Equal(-1, viewModel.GraphicIndexMaximum);
+        Assert.Null(viewModel.SelectedGraphicImage);
+        Assert.Equal(string.Empty, viewModel.GraphicImageListInfo);
+    }
+
+    /// <summary>
+    /// Undo of an image-index change restores both the stored index and the chooser selection.
+    /// </summary>
+    [Fact]
+    public async Task Undo_GraphicIndexChange_RestoresChooserSelection()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+        viewModel.SelectedGraphicImage = viewModel.GraphicImages[4];
+        Assert.Equal("4", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+
+        viewModel.UndoCommand.Execute(null);
+
+        await WaitUntilAsync(() => viewModel.SelectedGraphicImage?.Index == 1);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.Equal("12 images", viewModel.GraphicImageListInfo);
+    }
+
+    /// <summary>
+    /// Choosing a frame in the image chooser writes its index to <c>ubGraphicNum</c> and reloads the
+    /// detail previews for the new frame.
+    /// </summary>
+    [Fact]
+    public async Task SelectGraphicImage_WritesGraphicIndexAndReloadsPreview()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicImages.Count == 12);
+
+        viewModel.SelectedGraphicImage = viewModel.GraphicImages[4];
+
+        Assert.Equal("4", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.True(viewModel.IsDirty);
+        Assert.True(viewModel.CanUndo);
+        await WaitUntilAsync(() => images.Requests.Any(
+            request => request.Size == ImageSize.Small && request.GraphicIndex == 4));
+        Assert.Equal(4, viewModel.SelectedGraphicImage?.Index);
+    }
+
+    /// <summary>
+    /// An index outside the small sheet is rejected before it reaches the document, so an invalid
+    /// <c>ubGraphicNum</c> cannot be typed and does not dirty the item.
+    /// </summary>
+    [Fact]
+    public async Task SetItemValue_GraphicIndexAboveSheet_IsRejected()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+
+        var result = viewModel.SetItemValue("ubGraphicNum", "12");
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidNumber, result.ErrorCode);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.False(viewModel.IsDirty);
+        Assert.Contains("0…11", viewModel.StatusText, StringComparison.Ordinal);
+
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "11").IsSuccess);
+        Assert.Equal("11", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+    }
+
+    /// <summary>
+    /// Changing <c>ubGraphicType</c> asks the catalog for the new sheet, rebuilds the chooser with that
+    /// sheet's frames, and keeps an index that only exists in the new sheet unselected.
+    /// </summary>
+    [Fact]
+    public async Task ChangeGraphicType_ReloadsImageChooserForNewSheet()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService();
+        images.FrameCountsByType[0] = 12;
+        images.FrameCountsByType[1] = 5;
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicImages.Count == 12);
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "9").IsSuccess);
+
+        Assert.True(viewModel.SetItemValue("ubGraphicType", "1").IsSuccess);
+        await WaitUntilAsync(() => viewModel.GraphicImages.Count == 5);
+
+        Assert.Equal(4, viewModel.GraphicIndexMaximum);
+        Assert.Equal(
+            "Index 9 is outside the valid range 0…4.",
+            viewModel.GraphicImageListInfo);
+        Assert.All(viewModel.GraphicImages, option => Assert.Equal(1, option.GraphicType));
+        Assert.Null(viewModel.SelectedGraphicImage);
+        Assert.Equal(new[] { 0, 1 }, images.FrameCountTypes);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicType"]);
+        Assert.Equal("9", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+
+        viewModel.SelectedGraphicImage = viewModel.GraphicImages[2];
+        await WaitUntilAsync(() => viewModel.GraphicImageListInfo == "5 images");
+        Assert.Equal("2", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.Equal(2, viewModel.SelectedGraphicImage?.Index);
+    }
+
+    /// <summary>
+    /// While the new sheet is being counted the old chooser is already gone, so an index that belonged
+    /// to the previous sheet is rejected instead of being written.
+    /// </summary>
+    [Fact]
+    public async Task ChangeGraphicType_WhileFrameCountPending_RejectsStaleIndex()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        images.FrameCountsByType[1] = 5;
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        images.BeforeFrameCountReturn = type => type == 1 ? gate.Task : Task.CompletedTask;
+
+        Assert.True(viewModel.SetItemValue("ubGraphicType", "1").IsSuccess);
+
+        Assert.Empty(viewModel.GraphicImages);
+        Assert.Equal(-1, viewModel.GraphicIndexMaximum);
+        var stale = viewModel.SetItemValue("ubGraphicNum", "3");
+        Assert.False(stale.IsSuccess);
+        Assert.Equal(ErrorCodes.ImageNotReady, stale.ErrorCode);
+        Assert.Equal("The image list is still loading; try again.", viewModel.StatusText);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+
+        gate.SetResult(true);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 4);
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "3").IsSuccess);
+        Assert.Equal("3", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+    }
+
+    /// <summary>
+    /// The legacy spinner minimum was zero; a negative index is rejected even when no sheet is available
+    /// and the maximum is unknown.
+    /// </summary>
+    [Fact]
+    public async Task SetItemValue_NegativeGraphicIndex_IsRejectedWithoutSheet()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService();
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicImageListInfo.StartsWith("not available", StringComparison.Ordinal));
+
+        Assert.Empty(viewModel.GraphicImages);
+        Assert.Equal(-1, viewModel.GraphicIndexMaximum);
+        var negative = viewModel.SetItemValue("ubGraphicNum", "-1");
+
+        Assert.False(negative.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidNumber, negative.ErrorCode);
+        Assert.Equal("The image index cannot be negative.", viewModel.StatusText);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.False(viewModel.IsDirty);
+
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "3").IsSuccess);
+        Assert.Equal("3", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+    }
+
+    /// <summary>
+    /// Editing <c>ubGraphicNum</c> through the item form drops the cached selector thumbnail and reloads
+    /// it with the same frame that the detail previews show.
+    /// </summary>
+    [Fact]
+    public async Task GraphicEdit_InvalidatesItemListThumbnail()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+        var entry = viewModel.SelectedItem!;
+        entry.RequestThumbnail();
+        await WaitUntilAsync(() => entry.Thumbnail is not null);
+        Assert.Contains(images.Requests, request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 1);
+
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "3").IsSuccess);
+
+        await WaitUntilAsync(() => entry.Thumbnail is not null && images.Requests.Any(request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 3));
+        Assert.Equal("3", entry.Row["ubGraphicNum"]);
+        Assert.Equal(3, viewModel.SelectedGraphicImage?.Index);
+    }
+
+    /// <summary>
+    /// A thumbnail load that is still in flight when the frame changes must not overwrite the newer
+    /// image when it finally completes.
+    /// </summary>
+    [Fact]
+    public async Task GraphicEdit_WhileListThumbnailLoadPending_KeepsNewestImage()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService
+        {
+            FrameCount = 12,
+            BitmapFactory = request => TestItemImageService.CreateBitmap(request.GraphicIndex + 1),
+        };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.DetailImages.All(panel => panel.Image is not null));
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        images.BeforeImageReturn = request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 1
+                ? gate.Task
+                : Task.CompletedTask;
+        var entry = viewModel.SelectedItem!;
+        var requestCount = images.Requests.Count;
+        entry.RequestThumbnail();
+        await WaitUntilAsync(() => images.Requests.Skip(requestCount).Any(request =>
+            request.Size == ImageSize.Small && request.GraphicIndex == 1));
+        Assert.Null(entry.Thumbnail);
+
+        Assert.True(viewModel.SetItemValue("ubGraphicNum", "3").IsSuccess);
+        await WaitUntilAsync(() => entry.Thumbnail?.PixelWidth == 4);
+
+        gate.SetResult(true);
+        await Task.Delay(100);
+
+        Assert.Equal(4, entry.Thumbnail?.PixelWidth);
+    }
+
+    /// <summary>
     /// The shopkeeper tab lists dealer stock rows for the selected item and saves a quantity edit to the
     /// dealer file without rewriting the item file.
     /// </summary>
@@ -926,6 +1208,49 @@ public class ItemWorkspaceViewModelTests
             .Count(element => element.Element("attachmentIndex")?.Value == "12");
         Assert.Equal(rawAttachToCount, attachToEditor.Rows.Count);
         Assert.All(attachToEditor.Rows, row => Assert.Equal("12", row["attachmentIndex"]));
+    }
+
+    /// <summary>
+    /// With <c>XER_CORPUS_DIR</c> set, item 12 gets an image chooser whose frames are exactly the gun
+    /// sheet frames and whose selection is its stored <c>ubGraphicNum</c> (110).
+    /// </summary>
+    [Fact]
+    public async Task Corpus_Item12ImageChooserMatchesGunSheet()
+    {
+        var corpus = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(corpus) || !Directory.Exists(corpus))
+        {
+            return;
+        }
+
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var session = new DataSetSession(corpus, provider, catalog, repository);
+        var descriptors = await catalog.GetTablesAsync(corpus);
+        Assert.True(descriptors.IsSuccess, descriptors.ErrorText);
+        var descriptor = descriptors.Data!.Single(candidate => candidate.TableName == Items);
+        var viewModel = new ItemWorkspaceViewModel(
+            session,
+            descriptor,
+            languageCode: null,
+            new FakeDialogService(),
+            new WpfItemImageService());
+        await viewModel.InitializeAsync();
+
+        viewModel.SelectRecord("12");
+
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum >= 110);
+        Assert.Equal(
+            viewModel.GraphicIndexMaximum + 1,
+            viewModel.GraphicImages.Count);
+        Assert.Equal(110, viewModel.SelectedGraphicImage?.Index);
+        Assert.Equal(0, viewModel.SelectedGraphicImage?.GraphicType);
+        Assert.Equal(viewModel.GraphicImages[110], viewModel.SelectedGraphicImage);
     }
 
     /// <summary>
@@ -1176,7 +1501,8 @@ public class ItemWorkspaceViewModelTests
 
     private static async Task<(ItemWorkspaceViewModel ViewModel, FakeDialogService Dialog)> CreateWorkspaceAsync(
         Fixture fixture,
-        string? languageCode = null)
+        string? languageCode = null,
+        TestItemImageService? images = null)
     {
         var databasePath = Path.Combine(fixture.Workspace.DirectoryPath, "metadata.sqlite");
         var migration = await new DatabaseMigrator().MigrateAsync(databasePath);
@@ -1189,10 +1515,25 @@ public class ItemWorkspaceViewModelTests
         Assert.True(descriptors.IsSuccess, descriptors.ErrorText);
         var descriptor = descriptors.Data!.Single(candidate => candidate.TableName == Items);
         var dialog = new FakeDialogService();
-        var images = new TestItemImageService();
-        var viewModel = new ItemWorkspaceViewModel(session, descriptor, languageCode, dialog, images);
+        var imageService = images ?? new TestItemImageService();
+        var viewModel = new ItemWorkspaceViewModel(session, descriptor, languageCode, dialog, imageService);
         await viewModel.InitializeAsync();
         return (viewModel, dialog);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> predicate)
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            if (predicate())
+            {
+                return;
+            }
+
+            await Task.Delay(25);
+        }
+
+        Assert.Fail("The asynchronous image operation did not complete in time.");
     }
 
     private static Fixture CreateFixture(

@@ -957,6 +957,24 @@
   <data name="GraphicTypeFormat" xml:space="preserve">
     <value>P{0} items</value>
   </data>
+  <data name="ItemImageListLabel" xml:space="preserve">
+    <value>Images of the selected type</value>
+  </data>
+  <data name="ItemImageListInfoFormat" xml:space="preserve">
+    <value>{0} images</value>
+  </data>
+  <data name="ItemImageOptionFormat" xml:space="preserve">
+    <value>#{0}</value>
+  </data>
+  <data name="ItemImageIndexOutOfRangeFormat" xml:space="preserve">
+    <value>Index {0} is outside the valid range 0…{1}.</value>
+  </data>
+  <data name="ItemImageIndexNegative" xml:space="preserve">
+    <value>The image index cannot be negative.</value>
+  </data>
+  <data name="ItemImageListLoading" xml:space="preserve">
+    <value>The image list is still loading; try again.</value>
+  </data>
   <data name="ItemIdConflict" xml:space="preserve">
     <value>Item '{0}' already exists.</value>
   </data>

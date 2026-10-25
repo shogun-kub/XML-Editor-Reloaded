@@ -1,8 +1,8 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b4 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b5. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b5 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b6. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
 
-Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b3): закрытие пробелов фиксируют секции `M23b1`…`M23b4` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
+Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b4): закрытие пробелов фиксируют секции `M23b1`…`M23b5` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -854,7 +854,34 @@ WPF-поведение в этой среде не автоматизирует�
 
 Прогон повторён 2026-10-25 после `67ae29d` (штатный VSTest в DSH-песочнице, `xml-editor-reloaded/test.ps1`): 470/470 в базе и на каждом корпусе, compare/copy 1/1, perf 9/9. Прежние 460 — счёт временного in-process раннера, который не выполнил 9 тестов; штатный VSTest дал 469, а добавленный при верификации тест сортировки 64-битных масок через знаковую границу (`SortByFlagMask_OrdersUnsignedValuesAcrossSignedBoundary`) — 470.
 
-**Следующий подшаг:** M23b5 — изображения (`L-ITEM-014`, `L-IMG-005/020`).
+**Следующий подшаг:** M23b6 — shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
+
+## M23b5 — Изображения
+
+**Дата:** 2026-10-25. **Статус:** выполнен. **Закрытые пробелы:** `L-ITEM-014`, `L-IMG-005`, `L-IMG-020` — 3 записи реестра (3 ID). Матрица и реестр выше остаются снимком M23a; факт закрытия фиксирует эта секция. Решения, сверка с legacy и остаточные риски — `M23A-PARITY/53-m23b5-implementation-log.md`.
+
+**Реализация.**
+- `Imaging/Catalog/ItemImageCatalog.cs`: `GetFrameCountAsync(ImageSize, graphicType)` читает число кадров medium/small-листа, возвращает `image.no_sheet` для `Big` (big — отдельные файлы) и кэширует результат по `(path, lastWriteTime)`; `GetMaxIndexAsync(type)` = count − 1. Новый код `image.not_ready` в `Core/Api/ErrorCodes.cs` сообщает о правке индекса, пока список кадров ещё грузится.
+- `App/ViewModels/ItemImageOption.cs` + `ItemWorkspaceView.xaml(.cs)`: левая колонка вкладки Images — список кадров текущего типа с виртуализацией и ленивыми big-миниатюрами; выбор кадра пишет `ubGraphicNum` (не тип). Длина списка — ровно `max + 1` по small-листу, то есть список и допустимый диапазон всегда совпадают (в legacy список брался из medium-листа и мог не совпадать с максимумом small).
+- `App/ViewModels/ItemWorkspaceViewModel.cs`: `GraphicImages`, `SelectedGraphicImage`, `GraphicIndexMaximum`, `GraphicImageListInfo`; максимум перезагружается при смене предмета, типа, undo/redo. Индекс валидируется до записи: отрицательный отклоняется всегда, нецелый — метаданными, при известном максимуме верхняя граница отклоняется, во время загрузки — `image.not_ready`. Старый список очищается синхронно до await, поэтому клик по кадру предыдущего типа невозможен. При смене типа сохранённый индекс не зажимается: форма показывает `Index N is outside the valid range 0…M`, а выбор валидного кадра возвращает счётчик изображений.
+- `App/ViewModels/TableRowViewModel.cs`, `ItemListEntry.cs`: `InvalidateThumbnail` с generation-guard; `TableEditorViewModel.SetCellValue` и `ItemWorkspaceViewModel.SetCellValue` инвалидируют миниатюру строки/списка при изменении `ubGraphicType`/`ubGraphicNum`. Завершившийся позже старый декод отбрасывается и не перезаписывает новый кадр.
+- `App/Services/IItemImageService.cs`, `WpfItemImageService.cs`: frame count через каталог данных; `Strings.resx`/`Strings.ru.resx` — шесть новых строк (заголовок списка, счётчик, подпись кадра, out-of-range, negative, loading).
+
+**Осознанные отличия.** (1) Отрицательный и out-of-range индекс отклоняются, а не зажимаются, как в WinForms `NumericUpDown`; значение никогда не переписывается без явной правки. (2) Смена типа не зажимает и не сохраняет новый индекс; показывается предупреждение, данные остаются как были. (3) Строки с отсутствующим big-изображением не переписываются в `0/0`, отсутствие STI не фатально. (4) Chooser строится по small-листу, а big-превью грузится лениво; legacy предзагружала все кадры при старте. (5) Прозрачность цвета угла big-кадров legacy не воспроизведена — визуальное отличие существовало до M23b5 и в реестр не входило.
+
+**Проверка M23b5.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 488/488: Core 37, Data 67, Imaging 24, Xml 197, App 163 |
+| Corpus v4 | 488/488; `Corpus_Item12ImageChooserMatchesGunSheet` проверяет item 12 (тип 0, индекс 110) на реальном листе |
+| Corpus v5 | 488/488; тот же image-гейт |
+| Тесты M23b5 | `SelectItem_BuildsGraphicImageChooserFromSheetFrames`, `SelectGraphicImage_WritesGraphicIndexAndReloadsPreview`, `SetItemValue_GraphicIndexAboveSheet_IsRejected`, `ChangeGraphicType_ReloadsImageChooserForNewSheet`, `ChangeGraphicType_WhileFrameCountPending_RejectsStaleIndex`, `SetItemValue_NegativeGraphicIndex_IsRejectedWithoutSheet`, `ClearSelection_ClearsGraphicImageChooser`, `Undo_GraphicIndexChange_RestoresChooserSelection`, `GraphicEdit_InvalidatesItemListThumbnail`, `GraphicEdit_WhileListThumbnailLoadPending_KeepsNewestImage`, `GraphicEdit_InvalidatesGridThumbnail`, `GraphicEdit_WhileGridThumbnailLoadPending_KeepsNewestImage`, `Corpus_Item12ImageChooserMatchesGunSheet`, `Catalog_FrameCount_MatchesSmallSheetAndMaxIndex`, `Catalog_FrameCount_MissingSheetAndBigSizeAreRejected`, `Catalog_FrameCount_ReReadsWhenSheetChanges`, `Catalog_FrameCount_MediumSheetAndArgumentGuards`, `Catalog_MaxIndex_MissingSheet_ReturnsImageNotFound` |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| `References/` | не изменён; corpus-тесты работают на temp-копиях и читают корпус только на чтение |
+
+**Следующий подшаг:** M23b6 — shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
 
 ## Вне паритета (осознанно)
 

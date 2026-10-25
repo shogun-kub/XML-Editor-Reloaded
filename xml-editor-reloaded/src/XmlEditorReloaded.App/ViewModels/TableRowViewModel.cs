@@ -18,6 +18,7 @@ public sealed partial class TableRowViewModel : ObservableObject
     private Func<TableRowViewModel, Task<BitmapSource?>>? _thumbnailLoader;
     private BitmapSource? _thumbnail;
     private bool _thumbnailRequested;
+    private int _thumbnailGeneration;
 
     internal TableRowViewModel(WorkspaceRow row, ITableCellEditor editor)
     {
@@ -115,7 +116,8 @@ public sealed partial class TableRowViewModel : ObservableObject
         }
 
         _thumbnailRequested = true;
-        _ = LoadThumbnailAsync();
+        var generation = ++_thumbnailGeneration;
+        _ = LoadThumbnailAsync(generation);
     }
 
     internal void ConfigureThumbnail(Func<TableRowViewModel, Task<BitmapSource?>>? loader)
@@ -123,7 +125,24 @@ public sealed partial class TableRowViewModel : ObservableObject
         _thumbnailLoader = loader;
     }
 
-    private async Task LoadThumbnailAsync()
+    /// <summary>
+    /// Drops the cached grid thumbnail after <c>ubGraphicType</c> or <c>ubGraphicNum</c> changed. A
+    /// thumbnail that was already requested is reloaded immediately; a cell that is not visible yet
+    /// loads the new image when it is created. A load that was already in flight is discarded when it
+    /// finishes, so it cannot overwrite the image of the new frame.
+    /// </summary>
+    internal void InvalidateThumbnail()
+    {
+        var wasRequested = _thumbnailRequested;
+        _thumbnailRequested = false;
+        Thumbnail = null;
+        if (wasRequested)
+        {
+            RequestThumbnail();
+        }
+    }
+
+    private async Task LoadThumbnailAsync(int generation)
     {
         var loader = _thumbnailLoader;
         if (loader is null)
@@ -133,7 +152,11 @@ public sealed partial class TableRowViewModel : ObservableObject
 
         try
         {
-            Thumbnail = await loader(this).ConfigureAwait(true);
+            var image = await loader(this).ConfigureAwait(true);
+            if (generation == _thumbnailGeneration)
+            {
+                Thumbnail = image;
+            }
         }
         catch (Exception)
         {

@@ -957,6 +957,24 @@
   <data name="GraphicTypeFormat" xml:space="preserve">
     <value>Предметы P{0}</value>
   </data>
+  <data name="ItemImageListLabel" xml:space="preserve">
+    <value>Изображения выбранного типа</value>
+  </data>
+  <data name="ItemImageListInfoFormat" xml:space="preserve">
+    <value>Изображений: {0}</value>
+  </data>
+  <data name="ItemImageOptionFormat" xml:space="preserve">
+    <value>№{0}</value>
+  </data>
+  <data name="ItemImageIndexOutOfRangeFormat" xml:space="preserve">
+    <value>Индекс {0} вне допустимого диапазона 0…{1}.</value>
+  </data>
+  <data name="ItemImageIndexNegative" xml:space="preserve">
+    <value>Индекс изображения не может быть отрицательным.</value>
+  </data>
+  <data name="ItemImageListLoading" xml:space="preserve">
+    <value>Список изображений ещё загружается; повторите попытку.</value>
+  </data>
   <data name="ItemIdConflict" xml:space="preserve">
     <value>Предмет '{0}' уже существует.</value>
   </data>

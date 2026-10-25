@@ -71,6 +71,15 @@ public static class ErrorCodes
     /// <summary>The requested item image file or frame could not be found.</summary>
     public const string ImageNotFound = "image.not_found";
 
+    /// <summary>The requested image size has no sprite sheet, for example separate big-item files.</summary>
+    public const string ImageNoSheet = "image.no_sheet";
+
+    /// <summary>
+    /// An image edit was attempted while the frame list was still loading, so its valid range is not
+    /// known yet.
+    /// </summary>
+    public const string ImageNotReady = "image.not_ready";
+
     /// <summary>The requested record key does not exist in the document.</summary>
     public const string KeyNotFound = "key.not_found";
 

@@ -38,4 +38,22 @@ public sealed class WpfItemImageService : IItemImageService
             ? OperationResult<BitmapSource>.Success(RgbaBufferConverter.ToBitmapSource(image.Data!))
             : OperationResult<BitmapSource>.Failure(image);
     }
+
+    /// <inheritdoc />
+    public async Task<OperationResult<int>> GetFrameCountAsync(
+        string gameDataDirectory,
+        ImageSize size,
+        int graphicType,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(gameDataDirectory);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var catalog = _catalogs.GetOrAdd(
+            gameDataDirectory,
+            static directory => new ItemImageCatalog(directory));
+        return await catalog
+            .GetFrameCountAsync(size, graphicType, cancellationToken)
+            .ConfigureAwait(false);
+    }
 }

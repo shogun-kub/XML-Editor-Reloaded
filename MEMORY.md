@@ -42,7 +42,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b4 готовы, 470 тестов; далее ручной smoke и M23b5; roadmap M18–M27 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b5 готовы, 488 тестов; далее ручной smoke и M23b6; roadmap M18–M27 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
@@ -52,5 +52,5 @@
 | Массовые правки и сравнение | [memory/ja2-editor-editing-operations.md](memory/ja2-editor-editing-operations.md) | M16 bulk/undo, M17 сравнение версий и экспорт |
 | Связи и копирование | [memory/ja2-editor-relations-copy.md](memory/ja2-editor-relations-copy.md) | M18 pickers связей, M21 multi-dataset copy/remap |
 | Полировка grid | [memory/ja2-editor-grid-polish.md](memory/ja2-editor-grid-polish.md) | M22a фильтры/layout, M22b recovery, M22c составные ключи |
-| Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b2 |
-| STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE/каталоги и просмотр изображений |
+| Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b5 |
+| STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |

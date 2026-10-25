@@ -59,10 +59,13 @@ public sealed partial class ItemWorkspaceViewModel :
     private string? _languageCode;
     private bool _suppressLanguageChange;
     private bool _suppressGraphicType;
+    private bool _suppressGraphicImage;
+    private bool _graphicImageListLoading;
     private bool _suppressSelection;
     private bool _suppressItemFilter;
     private bool _isReloading;
     private CancellationTokenSource? _imageCts;
+    private CancellationTokenSource? _imageListCts;
     private string? _pendingSelection;
 
     [ObservableProperty]
@@ -134,6 +137,15 @@ public sealed partial class ItemWorkspaceViewModel :
     private GraphicTypeOption? _selectedGraphicType;
 
     [ObservableProperty]
+    private ItemImageOption? _selectedGraphicImage;
+
+    [ObservableProperty]
+    private int _graphicIndexMaximum = -1;
+
+    [ObservableProperty]
+    private string _graphicImageListInfo = string.Empty;
+
+    [ObservableProperty]
     private LanguageOptionViewModel? _selectedLanguageOption;
 
     /// <summary>
@@ -186,6 +198,7 @@ public sealed partial class ItemWorkspaceViewModel :
         NameLabel = Strings.Get("ItemNameLabel");
         ClassLabel = Strings.Get("ItemClassLabel");
         GraphicTypeLabel = Strings.Get("ItemGraphicTypeLabel");
+        GraphicImageListLabel = Strings.Get("ItemImageListLabel");
         CompatibleItemText = Strings.Get("ItemCompatibleOnly");
         FieldsTabText = Strings.Get("ItemTabFields");
         SubTablesTabText = Strings.Get("ItemTabSubTables");
@@ -353,6 +366,11 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Gets the graphic type label.
     /// </summary>
     public string GraphicTypeLabel { get; }
+
+    /// <summary>
+    /// Gets the label above the image chooser.
+    /// </summary>
+    public string GraphicImageListLabel { get; }
 
     /// <summary>
     /// Gets the note that list-field pickers show only attachment items.
@@ -525,6 +543,12 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Gets the selectable item graphic types.
     /// </summary>
     public ObservableCollection<GraphicTypeOption> GraphicTypes { get; } = new();
+
+    /// <summary>
+    /// Gets the frames offered for the selected graphic type. Entries are created from the small sheet
+    /// length, so the list exposes exactly the valid <c>ubGraphicNum</c> range.
+    /// </summary>
+    public ObservableCollection<ItemImageOption> GraphicImages { get; } = new();
 
     /// <summary>
     /// Gets the language selector options: the base table and existing overlays.
@@ -1304,6 +1328,29 @@ public sealed partial class ItemWorkspaceViewModel :
             return OperationResult.Success();
         }
 
+        if (table == _descriptor.TableName
+            && string.Equals(fieldName, GraphicIndexField, StringComparison.Ordinal)
+            && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var requestedIndex))
+        {
+            if (requestedIndex < 0)
+            {
+                StatusText = Strings.Get("ItemImageIndexNegative");
+                return OperationResult.Failure(ErrorCodes.XmlInvalidNumber, StatusText);
+            }
+
+            if (_graphicImageListLoading)
+            {
+                StatusText = Strings.Get("ItemImageListLoading");
+                return OperationResult.Failure(ErrorCodes.ImageNotReady, StatusText);
+            }
+
+            if (GraphicIndexMaximum >= 0 && requestedIndex > GraphicIndexMaximum)
+            {
+                StatusText = Strings.Format("ItemImageIndexOutOfRangeFormat", value, GraphicIndexMaximum);
+                return OperationResult.Failure(ErrorCodes.XmlInvalidNumber, StatusText);
+            }
+        }
+
         var result = _set.SetValue(table, row.Key, fieldName, value, addIfMissing: wasAbsent);
         if (!result.IsSuccess)
         {
@@ -1317,6 +1364,12 @@ public sealed partial class ItemWorkspaceViewModel :
             row.Refresh(refreshed);
         }
 
+        if (fieldName is GraphicTypeField or GraphicIndexField)
+        {
+            var entry = _allItems.FirstOrDefault(candidate => ReferenceEquals(candidate.Row, row));
+            entry?.InvalidateThumbnail();
+        }
+
         IsDirty = _set.IsDirty;
         RefreshHistoryState();
         if (table == _descriptor.TableName)
@@ -1328,8 +1381,16 @@ public sealed partial class ItemWorkspaceViewModel :
                 RebuildSections();
                 RefreshChildSectionState();
             }
-            else if (fieldName is GraphicTypeField or GraphicIndexField)
+            else if (string.Equals(fieldName, GraphicTypeField, StringComparison.Ordinal))
             {
+                SyncGraphicType();
+                GraphicIndexMaximum = -1;
+                _ = LoadImagesAsync();
+                _ = RefreshGraphicImagesAsync();
+            }
+            else if (string.Equals(fieldName, GraphicIndexField, StringComparison.Ordinal))
+            {
+                SyncGraphicImageSelection();
                 _ = LoadImagesAsync();
             }
         }
@@ -1417,6 +1478,25 @@ public sealed partial class ItemWorkspaceViewModel :
         {
             SetCellValue(_itemRow, GraphicTypeField, text);
         }
+    }
+
+    partial void OnSelectedGraphicImageChanged(ItemImageOption? value)
+    {
+        if (_suppressGraphicImage || value is null || _itemRow is null)
+        {
+            return;
+        }
+
+        var current = GetGraphicIndex(_itemRow);
+        if (current == value.Index)
+        {
+            return;
+        }
+
+        SetCellValue(
+            _itemRow,
+            GraphicIndexField,
+            value.Index.ToString(CultureInfo.InvariantCulture));
     }
 
     partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)
@@ -1925,7 +2005,9 @@ public sealed partial class ItemWorkspaceViewModel :
             ClearAllSections(keepItems: true);
             _rowOwners.Clear();
             CancelImageLoads();
+            CancelGraphicImageListLoad();
             ClearImages();
+            ClearGraphicImages();
             RebuildShopkeeperEntries();
             return;
         }
@@ -1937,7 +2019,9 @@ public sealed partial class ItemWorkspaceViewModel :
         RebuildShopkeeperEntries();
         RefreshChildSectionState();
         SyncGraphicType();
+        GraphicIndexMaximum = -1;
         _ = LoadImagesAsync();
+        _ = RefreshGraphicImagesAsync();
     }
 
     /// <summary>
@@ -2531,6 +2615,7 @@ public sealed partial class ItemWorkspaceViewModel :
             RebuildShopkeeperEntries();
             RefreshChildSectionState();
             _ = LoadImagesAsync();
+            _ = RefreshGraphicImagesAsync();
             RefreshHistoryState();
             StatusText = Strings.Get(undo ? "EditorUndone" : "EditorRedone");
         }
@@ -2660,6 +2745,179 @@ public sealed partial class ItemWorkspaceViewModel :
         }
     }
 
+    private async Task RefreshGraphicImagesAsync()
+    {
+        var token = BeginGraphicImageListLoad();
+        // Drop the previous type's frames before awaiting, so a stale entry can never write an index that
+        // belongs to another sheet while the new count is loading.
+        ClearGraphicImages();
+        var dataDirectory = _session.GameDataDirectory;
+        if (_itemRow is null || dataDirectory is null)
+        {
+            return;
+        }
+
+        var graphicType = GetGraphicType(_itemRow);
+        _graphicImageListLoading = true;
+        GraphicImageListInfo = Strings.Get("ImageLoading");
+        try
+        {
+            var count = await _itemImages
+                .GetFrameCountAsync(dataDirectory, ImageSize.Small, graphicType, token)
+                .ConfigureAwait(true);
+            token.ThrowIfCancellationRequested();
+            if (!count.IsSuccess || count.Data <= 0)
+            {
+                ClearGraphicImages();
+                GraphicImageListInfo = Strings.Format(
+                    "ImageNotAvailableFormat",
+                    count.ErrorCode ?? string.Empty);
+                return;
+            }
+
+            var maximum = count.Data - 1;
+            var currentIndex = GetGraphicIndex(_itemRow);
+            _suppressGraphicImage = true;
+            try
+            {
+                GraphicImages.Clear();
+                for (var index = 0; index <= maximum; index++)
+                {
+                    var option = new ItemImageOption(
+                        graphicType,
+                        index,
+                        Strings.Format("ItemImageOptionFormat", index));
+                    option.ConfigureThumbnail(LoadGraphicImageThumbnailAsync);
+                    GraphicImages.Add(option);
+                }
+
+                SelectedGraphicImage = currentIndex is { } current
+                    ? GraphicImages.FirstOrDefault(option => option.Index == current)
+                    : null;
+            }
+            finally
+            {
+                _suppressGraphicImage = false;
+            }
+
+            GraphicIndexMaximum = maximum;
+            // A stored index can be outside the sheet after a type change. The value is kept (the editor
+            // never rewrites a field the user did not edit) but the chooser says why no frame is selected.
+            GraphicImageListInfo = currentIndex is { } staleIndex && staleIndex > maximum
+                ? Strings.Format("ItemImageIndexOutOfRangeFormat", staleIndex, maximum)
+                : Strings.Format("ItemImageListInfoFormat", count.Data);
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer type or item selection replaced this list.
+        }
+        catch (Exception exception)
+        {
+            if (!token.IsCancellationRequested)
+            {
+                ClearGraphicImages();
+                GraphicImageListInfo = Strings.Format("StatusError", exception.Message);
+            }
+        }
+        finally
+        {
+            // A cancelled load belongs to an older type or item; the newer load owns this flag.
+            if (!token.IsCancellationRequested)
+            {
+                _graphicImageListLoading = false;
+            }
+        }
+    }
+
+    private async Task<BitmapSource?> LoadGraphicImageThumbnailAsync(ItemImageOption option)
+    {
+        var dataDirectory = _session.GameDataDirectory;
+        if (dataDirectory is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            var result = await _itemImages
+                .GetImageAsync(
+                    dataDirectory,
+                    ImageSize.Big,
+                    option.GraphicType,
+                    option.Index,
+                    CancellationToken.None)
+                .ConfigureAwait(true);
+            return result.Data;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    private void SyncGraphicImageSelection()
+    {
+        var current = _itemRow is null ? null : GetGraphicIndex(_itemRow);
+        if (current is { } validIndex
+            && GraphicImages.Count > 0
+            && validIndex <= GraphicIndexMaximum)
+        {
+            // A previous type change may have left an out-of-range warning; a valid frame replaces it.
+            GraphicImageListInfo = Strings.Format("ItemImageListInfoFormat", GraphicImages.Count);
+        }
+
+        var selected = current is { } index
+            ? GraphicImages.FirstOrDefault(option => option.Index == index)
+            : null;
+        if (ReferenceEquals(SelectedGraphicImage, selected))
+        {
+            return;
+        }
+
+        _suppressGraphicImage = true;
+        try
+        {
+            SelectedGraphicImage = selected;
+        }
+        finally
+        {
+            _suppressGraphicImage = false;
+        }
+    }
+
+    private void ClearGraphicImages()
+    {
+        _suppressGraphicImage = true;
+        try
+        {
+            GraphicImages.Clear();
+            SelectedGraphicImage = null;
+        }
+        finally
+        {
+            _suppressGraphicImage = false;
+        }
+
+        GraphicIndexMaximum = -1;
+        GraphicImageListInfo = string.Empty;
+        _graphicImageListLoading = false;
+    }
+
+    private void CancelGraphicImageListLoad()
+    {
+        _imageListCts?.Cancel();
+        _imageListCts?.Dispose();
+        _imageListCts = null;
+    }
+
+    private CancellationToken BeginGraphicImageListLoad()
+    {
+        _imageListCts?.Cancel();
+        _imageListCts?.Dispose();
+        _imageListCts = new CancellationTokenSource();
+        return _imageListCts.Token;
+    }
+
     private async Task LoadImagesAsync()
     {
         var token = BeginImageLoad();
@@ -2752,23 +3010,28 @@ public sealed partial class ItemWorkspaceViewModel :
 
     private static bool TryGetGraphic(TableRowViewModel row, out int graphicType, out int graphicIndex)
     {
-        graphicType = 0;
-        graphicIndex = -1;
-        var rawIndex = row.GetStoredValue(GraphicIndexField);
-        if (!int.TryParse(rawIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out graphicIndex)
-            || graphicIndex < 0)
-        {
-            return false;
-        }
+        graphicType = GetGraphicType(row);
+        var index = GetGraphicIndex(row);
+        graphicIndex = index ?? -1;
+        return index is not null;
+    }
 
+    private static int GetGraphicType(TableRowViewModel row)
+    {
         var rawType = row.GetStoredValue(GraphicTypeField);
-        if (int.TryParse(rawType, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedType)
-            && parsedType >= 0)
-        {
-            graphicType = parsedType;
-        }
+        return int.TryParse(rawType, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedType)
+            && parsedType >= 0
+            ? parsedType
+            : 0;
+    }
 
-        return true;
+    private static int? GetGraphicIndex(TableRowViewModel row)
+    {
+        var rawIndex = row.GetStoredValue(GraphicIndexField);
+        return int.TryParse(rawIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedIndex)
+            && parsedIndex >= 0
+            ? parsedIndex
+            : null;
     }
 
     private void ClearImages()

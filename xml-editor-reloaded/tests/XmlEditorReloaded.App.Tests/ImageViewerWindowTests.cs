@@ -63,5 +63,14 @@ public class ImageViewerWindowTests
             Task.FromResult(OperationResult<BitmapSource>.Failure(
                 ErrorCodes.ImageNotFound,
                 "The image does not exist."));
+
+        public Task<OperationResult<int>> GetFrameCountAsync(
+            string gameDataDirectory,
+            ImageSize size,
+            int graphicType,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<int>.Failure(
+                ErrorCodes.ImageNotFound,
+                "The image does not exist."));
     }
 }
