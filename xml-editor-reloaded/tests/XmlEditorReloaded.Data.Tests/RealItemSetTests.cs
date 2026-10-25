@@ -1,3 +1,4 @@
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Data.Catalog;
@@ -92,6 +93,12 @@ public class RealItemSetTests
                 report.Issues,
                 static issue => issue.Code == ValidationCodes.AsymmetricPair);
         }
+
+        var transformations = set.GetWorkspace(TableName.Parse("Items.Item_Transformations"));
+        Assert.NotNull(transformations);
+        Assert.DoesNotContain(
+            transformations.Diagnostics,
+            static diagnostic => diagnostic.Code == ErrorCodes.XmlLegacyRepeatedKey);
 
         var gun = set.Primary.BaseDocument.Records.First(record =>
             record.GetRawValue("szItemName") is not null

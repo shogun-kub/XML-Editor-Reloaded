@@ -23,6 +23,12 @@ public static class ErrorCodes
     /// <summary>The record element declared by metadata was not found under the document root.</summary>
     public const string XmlRecordElementMissing = "xml.record_element_missing";
 
+    /// <summary>
+    /// A compound key is stored in the legacy positional form, for example repeated <c>usResult</c>
+    /// elements instead of <c>usResult1..usResult10</c>.
+    /// </summary>
+    public const string XmlLegacyRepeatedKey = "xml.legacy_repeated_key";
+
     /// <summary>Serialized XML could not be verified by re-parsing it.</summary>
     public const string XmlSerializationError = "xml.serialization_error";
 

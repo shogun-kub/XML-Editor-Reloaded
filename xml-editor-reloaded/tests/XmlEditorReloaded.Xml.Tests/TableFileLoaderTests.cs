@@ -124,6 +124,61 @@ public class TableFileLoaderTests
     }
 
     /// <summary>
+    /// A legacy item-transformations record stores its result key as repeated <c>usResult</c> elements
+    /// instead of numbered fields. The loader reports it without changing a byte of the file.
+    /// </summary>
+    [Fact]
+    public async Task Load_LegacyRepeatedResult_ReportsDiagnosticWithoutMutation()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Item_Transformations.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?><TRANSFORMATIONS_LIST>
+            <TRANSFORM><usItem>1</usItem><usResult>2</usResult><usResult>3</usResult></TRANSFORM>
+            </TRANSFORMATIONS_LIST>
+            """);
+        var before = await File.ReadAllBytesAsync(path);
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Item_Transformations"), TransformationMetadata());
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.Loaded, result.Data!.Status);
+        var diagnostic = Assert.Single(result.Data.Diagnostics);
+        Assert.Equal(ErrorCodes.XmlLegacyRepeatedKey, diagnostic.Code);
+        Assert.Contains("usResult", diagnostic.Message, StringComparison.Ordinal);
+        Assert.NotNull(diagnostic.Line);
+        Assert.Equal(before, await File.ReadAllBytesAsync(path));
+    }
+
+    /// <summary>
+    /// The numbered representation used by v4/v5 produces no legacy-format diagnostic.
+    /// </summary>
+    [Fact]
+    public async Task Load_NumberedResult_HasNoLegacyDiagnostic()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Item_Transformations.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?><TRANSFORMATIONS_LIST>
+            <TRANSFORM><usItem>1</usItem><usResult1>2</usResult1><usResult2>3</usResult2></TRANSFORM>
+            </TRANSFORMATIONS_LIST>
+            """);
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Item_Transformations"), TransformationMetadata());
+
+        Assert.True(result.IsSuccess);
+        Assert.DoesNotContain(
+            result.Data!.Diagnostics,
+            diagnostic => diagnostic.Code == ErrorCodes.XmlLegacyRepeatedKey);
+    }
+
+    /// <summary>
     /// BOM and CRLF are detected and exposed through the document format.
     /// </summary>
     [Fact]
@@ -147,4 +202,31 @@ public class TableFileLoaderTests
         Assert.Equal("\r\n", document.Format.NewLine);
         Assert.Equal("utf-8", document.Format.EncodingName);
     }
+
+    private static TableDescriptor Descriptor(string path, string tableName) => new(
+        TableName.Parse(tableName),
+        path,
+        tableName.Replace('.', '/') + ".xml",
+        IsMapped: true,
+        Array.Empty<Core.Localization.OverlayDescriptor>());
+
+    private static TableMetadata TransformationMetadata() => new(
+        TableName.Parse("Items.Item_Transformations"),
+        "TRANSFORMATIONS_LIST",
+        "TRANSFORM",
+        isLookup: false,
+        recordKeyFields: new[]
+        {
+            "usItem",
+            "usResult1",
+            "usResult2",
+            "usResult3",
+            "usResult4",
+            "usResult5",
+            "usResult6",
+            "usResult7",
+            "usResult8",
+            "usResult9",
+            "usResult10",
+        });
 }

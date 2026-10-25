@@ -152,6 +152,8 @@ public sealed class TableFileLoader
             status = TableDocumentStatus.LoadedReadOnly;
         }
 
+        AddLegacyRepeatedKeyDiagnostic(metadata, root, recordElementName, diagnostics);
+
         var lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
         var sha256 = Convert.ToHexString(SHA256.HashData(bytes));
         var tableDocument = new TableDocument(
@@ -183,6 +185,68 @@ public sealed class TableFileLoader
 
     private static string InferRecordElement(XElement root) =>
         root.Elements().FirstOrDefault()?.Name.LocalName ?? root.Name.LocalName;
+
+    /// <summary>
+    /// Reports compound keys that use the legacy positional representation, for example a repeated
+    /// <c>usResult</c> element instead of <c>usResult1..usResult10</c>. The document is not modified:
+    /// the numbered key fields stay absent, so such records cannot be identified for editing, but the
+    /// file is preserved byte for byte until the user changes a value.
+    /// </summary>
+    private static void AddLegacyRepeatedKeyDiagnostic(
+        TableMetadata? metadata,
+        XElement root,
+        string recordElementName,
+        List<LoadDiagnostic> diagnostics)
+    {
+        if (metadata?.RecordKeyFields is not { Count: > 1 } keyFields)
+        {
+            return;
+        }
+
+        var numberedPrefixes = keyFields
+            .Select(static field =>
+            {
+                var digits = field.Length;
+                while (digits > 0 && char.IsAsciiDigit(field[digits - 1]))
+                {
+                    digits--;
+                }
+
+                return digits > 0 && digits < field.Length ? field[..digits] : null;
+            })
+            .Where(static prefix => prefix is not null)
+            .Select(static prefix => prefix!)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        foreach (var prefix in numberedPrefixes)
+        {
+            var offending = root
+                .Elements()
+                .Where(element => string.Equals(element.Name.LocalName, recordElementName, StringComparison.Ordinal))
+                .FirstOrDefault(element =>
+                    element.Elements().Count(child => string.Equals(
+                        child.Name.LocalName,
+                        prefix,
+                        StringComparison.Ordinal)) > 1
+                    && !element.Elements().Any(child => string.Equals(
+                        child.Name.LocalName,
+                        prefix + "1",
+                        StringComparison.Ordinal)));
+            if (offending is null)
+            {
+                continue;
+            }
+
+            diagnostics.Add(CreateElementDiagnostic(
+                offending,
+                ErrorCodes.XmlLegacyRepeatedKey,
+                $"The record uses repeated '{prefix}' elements for a compound key instead of numbered "
+                + $"'{prefix}1..{prefix}N' fields. The file is preserved unchanged, but the record cannot be "
+                + "identified or edited until it is converted."));
+            return;
+        }
+    }
 
     private static LoadDiagnostic CreateElementDiagnostic(XElement element, string code, string message)
     {
