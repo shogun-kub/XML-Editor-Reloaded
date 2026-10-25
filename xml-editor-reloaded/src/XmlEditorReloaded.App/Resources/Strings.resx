@@ -897,6 +897,9 @@
   <data name="ItemListSection.DefaultAttachment" xml:space="preserve">
     <value>Default attachments</value>
   </data>
+  <data name="ItemListSection.BarrelConfiguration" xml:space="preserve">
+    <value>Barrel configurations</value>
+  </data>
   <data name="ItemStance.STAND_MODIFIERS" xml:space="preserve">
     <value>Standing modifiers</value>
   </data>

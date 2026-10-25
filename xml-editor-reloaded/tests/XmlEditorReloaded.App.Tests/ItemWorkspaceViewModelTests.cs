@@ -155,6 +155,41 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// A repeated field of a 1:1 sub-table is edited as a list section of that section. The legacy
+    /// editor generated BarrelConfiguration0..N columns and wrote them back as repeated tags; the
+    /// rewrite keeps the repeated tags and writes the list in place.
+    /// </summary>
+    [Fact]
+    public async Task SubTableListField_EditsBarrelConfigurations()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateBarrelFixture(workspace);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectRecord("1");
+        var weapons = Assert.Single(viewModel.SubTableSections, section => section.TableName == Weapons);
+        var barrels = Assert.Single(
+            weapons.ListSections,
+            section => section.FieldName == "BarrelConfiguration");
+        Assert.Equal("Barrel configurations", barrels.Label);
+        Assert.Equal(2, barrels.Values.Count);
+
+        barrels.Values[0].Value = "4";
+        barrels.AddCommand.Execute(null);
+        await viewModel.SaveAsync();
+
+        var weaponsDocument = XDocument.Load(fixture.WeaponPath);
+        var weapon = weaponsDocument.Root!
+            .Elements("WEAPON")
+            .Single(element => element.Element("uiIndex")?.Value == "1");
+        Assert.Equal(
+            new[] { "4", "3", "0" },
+            weapon.Elements("BarrelConfiguration").Select(static element => element.Value).ToArray());
+        Assert.Empty(weapon.Elements("BarrelConfiguration0"));
+    }
+
+    /// <summary>
     /// Editing the item and its weapon from one workspace marks the set dirty and one save writes both
     /// files.
     /// </summary>
@@ -1031,6 +1066,24 @@ public class ItemWorkspaceViewModelTests
             <?xml version="1.0" encoding="utf-8"?><LAUNCHABLELIST>
             <LAUNCHABLE><launchableIndex>13</launchableIndex><itemIndex>10</itemIndex></LAUNCHABLE>
             </LAUNCHABLELIST>
+            """);
+        return fixture;
+    }
+
+    /// <summary>
+    /// Builds a fixture whose weapon row repeats <c>BarrelConfiguration</c>, the legacy dynamic-column
+    /// family that has no metadata declaration and is detected from the document.
+    /// </summary>
+    private static Fixture CreateBarrelFixture(TestWorkspace workspace)
+    {
+        var fixture = CreateFixture(workspace);
+        File.WriteAllText(
+            fixture.WeaponPath,
+            """
+            <?xml version="1.0" encoding="utf-8"?><WEAPONLIST>
+            <WEAPON><uiIndex>1</uiIndex><usRange>100</usRange><ubCalibre>0</ubCalibre><BarrelConfiguration>2</BarrelConfiguration><BarrelConfiguration>3</BarrelConfiguration></WEAPON>
+            <WEAPON><uiIndex>2</uiIndex><usRange>110</usRange><ubCalibre>0</ubCalibre></WEAPON>
+            </WEAPONLIST>
             """);
         return fixture;
     }

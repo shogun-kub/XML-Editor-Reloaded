@@ -109,10 +109,11 @@ public sealed class TableColumnViewModel : ObservableObject
     /// <summary>
     /// Gets a value indicating whether the grid must not edit this column. Single-field keys, repeated
     /// fields, and nested structures are read-only until a dedicated editor is available. Compound key
-    /// fields stay editable because a new row has to be completed by the user.
+    /// fields stay editable because a new row has to be completed by the user; an indexed (dict) field
+    /// is edited as its concrete expanded column, for example <c>ItemCapacityPerSize3</c>.
     /// </summary>
     public bool IsReadOnly =>
-        (Column.IsKey && !Column.IsCompoundKey) || Column.IsList || Column.IsDict || Column.IsNested;
+        (Column.IsKey && !Column.IsCompoundKey) || Column.IsList || Column.IsNested;
 
     /// <summary>
     /// Gets a value indicating whether the grid can show a lookup combo for this column.

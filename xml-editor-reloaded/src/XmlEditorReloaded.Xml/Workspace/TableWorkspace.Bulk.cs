@@ -60,7 +60,7 @@ public sealed partial class TableWorkspace
                 $"Field '{request.FieldName}' is not part of table '{Descriptor.TableName}'.");
         }
 
-        if (column.IsKey || column.IsList || column.IsDict || column.IsNested)
+        if (column.IsKey || column.IsList || column.IsNested)
         {
             return OperationResult<BulkEditPreview>.Failure(
                 ErrorCodes.BulkFieldNotEditable,

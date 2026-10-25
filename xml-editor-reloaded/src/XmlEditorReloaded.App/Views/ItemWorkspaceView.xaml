@@ -34,6 +34,47 @@
                 </DrawingGroup>
             </DrawingBrush.Drawing>
         </DrawingBrush>
+        <DataTemplate x:Key="ItemListSectionTemplate">
+            <GroupBox Margin="0,4,0,0" Header="{Binding Label}">
+                <StackPanel Margin="4">
+                    <TextBlock Foreground="#FF777777"
+                               TextWrapping="Wrap"
+                               Text="{Binding CompatibleNote}" />
+                    <ItemsControl ItemsSource="{Binding Values}" Margin="0,4,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <views:RelationPicker Grid.Column="0"
+                                                          VerticalAlignment="Center"
+                                                          RelationData="{Binding Relation}"
+                                                          SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          Visibility="{Binding HasRelation, Converter={StaticResource BoolToVisibility}}" />
+                                    <TextBox Grid.Column="0"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                             Visibility="{Binding IsPlainValue, Converter={StaticResource BoolToVisibility}}" />
+                                    <Button Grid.Column="1"
+                                            Margin="6,0,0,0"
+                                            Padding="8,1"
+                                            Content="✕"
+                                            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button Margin="0,6,0,0"
+                            Padding="10,2"
+                            HorizontalAlignment="Left"
+                            Content="{Binding AddText}"
+                            Command="{Binding AddCommand}" />
+                </StackPanel>
+            </GroupBox>
+        </DataTemplate>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
@@ -385,51 +426,9 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <ItemsControl ItemsSource="{Binding ListSections}" Margin="0,6,0,0">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <GroupBox Margin="0,4,0,0" Header="{Binding Label}">
-                                                <StackPanel Margin="4">
-                                                    <TextBlock Foreground="#FF777777"
-                                                               TextWrapping="Wrap"
-                                                               Text="{Binding CompatibleNote}" />
-                                                    <ItemsControl ItemsSource="{Binding Values}" Margin="0,4,0,0">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid Margin="0,1">
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="*" />
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <views:RelationPicker Grid.Column="0"
-                                                                                          VerticalAlignment="Center"
-                                                                                          RelationData="{Binding Relation}"
-                                                                                          SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                                          Visibility="{Binding HasRelation, Converter={StaticResource BoolToVisibility}}" />
-                                                                    <TextBox Grid.Column="0"
-                                                                             VerticalAlignment="Center"
-                                                                             Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                                                                             Visibility="{Binding IsPlainValue, Converter={StaticResource BoolToVisibility}}" />
-                                                                    <Button Grid.Column="1"
-                                                                            Margin="6,0,0,0"
-                                                                            Padding="8,1"
-                                                                            Content="✕"
-                                                                            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=GroupBox}}"
-                                                                            CommandParameter="{Binding}" />
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                    <Button Margin="0,6,0,0"
-                                                            Padding="10,2"
-                                                            HorizontalAlignment="Left"
-                                                            Content="{Binding AddText}"
-                                                            Command="{Binding AddCommand}" />
-                                                </StackPanel>
-                                            </GroupBox>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding ListSections}"
+                                              Margin="0,6,0,0"
+                                              ItemTemplate="{StaticResource ItemListSectionTemplate}" />
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>
@@ -474,6 +473,9 @@
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
+                                                <ItemsControl ItemsSource="{Binding ListSections}"
+                                                              Margin="0,6,0,0"
+                                                              ItemTemplate="{StaticResource ItemListSectionTemplate}" />
                                             </StackPanel>
                                         </Expander>
                                     </DataTemplate>

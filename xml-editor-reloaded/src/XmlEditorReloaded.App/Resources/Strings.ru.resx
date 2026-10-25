@@ -897,6 +897,9 @@
   <data name="ItemListSection.DefaultAttachment" xml:space="preserve">
     <value>Вложения по умолчанию</value>
   </data>
+  <data name="ItemListSection.BarrelConfiguration" xml:space="preserve">
+    <value>Конфигурации стволов</value>
+  </data>
   <data name="ItemStance.STAND_MODIFIERS" xml:space="preserve">
     <value>Модификаторы стоя</value>
   </data>

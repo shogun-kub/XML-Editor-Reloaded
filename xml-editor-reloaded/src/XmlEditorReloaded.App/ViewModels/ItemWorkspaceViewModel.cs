@@ -1183,9 +1183,24 @@ public sealed partial class ItemWorkspaceViewModel :
     /// <param name="tableName">Table that stores the field.</param>
     /// <param name="fieldName">Case-sensitive XML element name of the repeated field.</param>
     /// <param name="values">New values in list order.</param>
-    internal void SetListValues(TableName tableName, string fieldName, IReadOnlyList<string> values)
+    internal void SetListValues(TableName tableName, string fieldName, IReadOnlyList<string> values) =>
+        SetListValues(tableName, fieldName, recordKey: null, values);
+
+    /// <summary>
+    /// Writes a repeated field of one record.
+    /// </summary>
+    /// <param name="tableName">Table that stores the field.</param>
+    /// <param name="fieldName">Case-sensitive XML element name of the repeated field.</param>
+    /// <param name="recordKey">Record that owns the field; the selected item when omitted.</param>
+    /// <param name="values">New values in list order.</param>
+    internal void SetListValues(
+        TableName tableName,
+        string fieldName,
+        string? recordKey,
+        IReadOnlyList<string> values)
     {
-        if (_set is null || _itemRow?.Key is not { } key)
+        var key = recordKey ?? _itemRow?.Key;
+        if (_set is null || key is null)
         {
             return;
         }
@@ -2079,6 +2094,7 @@ public sealed partial class ItemWorkspaceViewModel :
             ListSections.Add(new ItemListSectionViewModel(
                 this,
                 primary.Descriptor.TableName,
+                recordKey: null,
                 column.XmlFieldName,
                 ListSectionLabel(column.XmlFieldName),
                 relation,
@@ -2224,6 +2240,9 @@ public sealed partial class ItemWorkspaceViewModel :
             var fields = row is null
                 ? Array.Empty<DetailFieldViewModel>()
                 : BuildSubTableFields(member, row);
+            var listSections = row is null
+                ? Array.Empty<ItemListSectionViewModel>()
+                : BuildSubTableListSections(member, row);
             _allFields.AddRange(fields);
             SubTableSections.Add(new ItemSubTableSectionViewModel(
                 this,
@@ -2231,7 +2250,8 @@ public sealed partial class ItemWorkspaceViewModel :
                 LabelFor(member),
                 row,
                 sourceValue,
-                fields));
+                fields,
+                listSections));
         }
     }
 
@@ -2264,6 +2284,47 @@ public sealed partial class ItemWorkspaceViewModel :
             .OrderBy(static field => field.GroupOrder)
             .ThenBy(static field => field.Order)
             .ToArray();
+    }
+
+    /// <summary>
+    /// Builds the repeated-field sections of one sub-table row. A list field is skipped by
+    /// <see cref="BuildSubTableFields"/> because it is edited as a list, not as a scalar cell.
+    /// </summary>
+    private IReadOnlyList<ItemListSectionViewModel> BuildSubTableListSections(
+        TableSetMember member,
+        TableRowViewModel row)
+    {
+        var sources = _fieldSources.GetValueOrDefault(member.Workspace.Descriptor.TableName);
+        var sections = new List<ItemListSectionViewModel>();
+        foreach (var column in member.Workspace.Schema.Columns)
+        {
+            if (column.IsKey
+                || column.IsNested
+                || column.IsDict
+                || !column.IsList
+                || column.MaxOccurrences <= 1)
+            {
+                continue;
+            }
+
+            if (!MatchesFieldFilter(column.XmlFieldName, ColumnDataType.String))
+            {
+                continue;
+            }
+
+            RelationColumnData? relation = null;
+            sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
+            sections.Add(new ItemListSectionViewModel(
+                this,
+                member.Workspace.Descriptor.TableName,
+                row.Key,
+                column.XmlFieldName,
+                ListSectionLabel(column.XmlFieldName),
+                relation,
+                row.GetValues(column.XmlFieldName)));
+        }
+
+        return sections;
     }
 
     private TableRowViewModel? CreateRow(TableWorkspace workspace, string? key)

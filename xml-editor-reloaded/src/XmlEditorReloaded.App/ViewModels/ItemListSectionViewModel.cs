@@ -14,12 +14,17 @@ public sealed partial class ItemListSectionViewModel : ObservableObject
 {
     private readonly ItemWorkspaceViewModel _host;
     private readonly TableName _tableName;
+    private readonly string? _recordKey;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ItemListSectionViewModel"/> class.
     /// </summary>
     /// <param name="host">Item workspace that applies list edits.</param>
     /// <param name="tableName">Table that stores the repeated field.</param>
+    /// <param name="recordKey">
+    /// Record key that owns the repeated field, or <see langword="null"/> for a field of the selected item.
+    /// Sub-table sections pass the related record key.
+    /// </param>
     /// <param name="fieldName">Case-sensitive XML element name of the repeated field.</param>
     /// <param name="label">Localized section label.</param>
     /// <param name="relation">Optional relation used by the value pickers.</param>
@@ -28,6 +33,7 @@ public sealed partial class ItemListSectionViewModel : ObservableObject
     public ItemListSectionViewModel(
         ItemWorkspaceViewModel host,
         TableName tableName,
+        string? recordKey,
         string fieldName,
         string label,
         RelationColumnData? relation,
@@ -39,6 +45,7 @@ public sealed partial class ItemListSectionViewModel : ObservableObject
 
         _host = host;
         _tableName = tableName;
+        _recordKey = recordKey;
         FieldName = fieldName;
         Label = label;
         Relation = relation;
@@ -113,7 +120,11 @@ public sealed partial class ItemListSectionViewModel : ObservableObject
     }
 
     internal void Apply() =>
-        _host.SetListValues(_tableName, FieldName, Values.Select(static value => value.Value).ToArray());
+        _host.SetListValues(
+            _tableName,
+            FieldName,
+            _recordKey,
+            Values.Select(static value => value.Value).ToArray());
 }
 
 /// <summary>

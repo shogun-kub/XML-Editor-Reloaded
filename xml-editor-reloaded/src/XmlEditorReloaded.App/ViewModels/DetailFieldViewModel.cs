@@ -78,9 +78,9 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             column.Order,
             column.GroupKey,
             column.GroupOrder,
-            (column.IsKey && !column.IsCompoundKey) || column.IsList || column.IsDict || column.IsNested || !host.IsEditable || row.Key is null,
+            (column.IsKey && !column.IsCompoundKey) || column.IsList || column.IsNested || !host.IsEditable || row.Key is null,
             column.IsTranslatable,
-            !column.IsKey && !column.IsList && !column.IsDict && !column.IsNested
+            !column.IsKey && !column.IsList && !column.IsNested
                 && host.IsEditable && row.Key is not null
                 && (column.DataType == ColumnDataType.Flags || column.EditorKind == ColumnEditorKind.FlagEditor),
             lookup,

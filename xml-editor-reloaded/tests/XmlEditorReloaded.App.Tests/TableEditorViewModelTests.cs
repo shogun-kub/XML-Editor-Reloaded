@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Windows.Controls;
+using System.Xml.Linq;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.App.Views;
@@ -76,6 +77,73 @@ public class TableEditorViewModelTests
         Assert.Equal(
             Path.Combine(data13, "TableData", "Items", "Items.xml"),
             descriptor.FilePath);
+    }
+
+    /// <summary>
+    /// An indexed (dict) family such as <c>ItemCapacityPerSizeN</c> is edited through its concrete
+    /// expanded columns. The hint added for the pocket capacities validates the type, a missing index is
+    /// created on demand, and the detail panel exposes the same field as editable.
+    /// </summary>
+    [Fact]
+    public async Task DictFields_AreEditableValidatedAndCreatedOnDemand()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(data13, "TableData");
+        var itemsDirectory = Path.Combine(tableData, "Items");
+        Directory.CreateDirectory(itemsDirectory);
+        var pocketsPath = Path.Combine(itemsDirectory, "Pockets.xml");
+        await File.WriteAllTextAsync(
+            pocketsPath,
+            """
+            <?xml version="1.0" encoding="utf-8"?><POCKETLIST>
+            <POCKET><pIndex>1</pIndex><ItemCapacityPerSize0>1</ItemCapacityPerSize0><ItemCapacityPerSize2>2</ItemCapacityPerSize2></POCKET>
+            <POCKET><pIndex>2</pIndex><ItemCapacityPerSize0>3</ItemCapacityPerSize0></POCKET>
+            </POCKETLIST>
+            """);
+
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, repository)
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Pockets");
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            languageCode: null,
+            new FakeDialogService(),
+            new TestItemImageService());
+        await editor.InitializeAsync();
+
+        var column = editor.Columns.Single(candidate => candidate.Name == "ItemCapacityPerSize0");
+        Assert.True(column.IsDict);
+        Assert.False(column.IsReadOnly);
+
+        var row = editor.Rows.Single(candidate => candidate.Key == "2");
+        editor.SelectedRow = row;
+        row["ItemCapacityPerSize0"] = "abc";
+        Assert.Equal("3", row["ItemCapacityPerSize0"]);
+
+        row["ItemCapacityPerSize2"] = "7";
+        Assert.Equal("7", row["ItemCapacityPerSize2"]);
+        Assert.True(editor.IsDirty);
+
+        var detail = FlattenDetailFields(editor).Single(field => field.Name == "ItemCapacityPerSize2");
+        Assert.False(detail.IsReadOnly);
+
+        await editor.SaveCommand.ExecuteAsync(null);
+
+        var document = XDocument.Load(pocketsPath);
+        var pocket = document.Root!
+            .Elements("POCKET")
+            .Single(element => element.Element("pIndex")?.Value == "2");
+        Assert.Equal("7", pocket.Element("ItemCapacityPerSize2")?.Value);
+        Assert.Equal("3", pocket.Element("ItemCapacityPerSize0")?.Value);
     }
 
     /// <summary>

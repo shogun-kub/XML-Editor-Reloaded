@@ -25,6 +25,7 @@ public sealed partial class ItemSubTableSectionViewModel : ObservableObject
     /// <param name="row">Related record of the selected item, or <see langword="null"/> when absent.</param>
     /// <param name="sourceValue">Value of the relation source field on the item, or <see langword="null"/>.</param>
     /// <param name="fields">Editable fields of the related record.</param>
+    /// <param name="listSections">Repeated fields of the related record, for example barrel configurations.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
     public ItemSubTableSectionViewModel(
         ItemWorkspaceViewModel host,
@@ -32,7 +33,8 @@ public sealed partial class ItemSubTableSectionViewModel : ObservableObject
         string label,
         TableRowViewModel? row,
         string? sourceValue,
-        IEnumerable<DetailFieldViewModel> fields)
+        IEnumerable<DetailFieldViewModel> fields,
+        IEnumerable<ItemListSectionViewModel>? listSections = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(member);
@@ -43,6 +45,8 @@ public sealed partial class ItemSubTableSectionViewModel : ObservableObject
         Row = row;
         SourceValue = sourceValue;
         Fields = new ObservableCollection<DetailFieldViewModel>(fields);
+        ListSections = new ObservableCollection<ItemListSectionViewModel>(
+            listSections ?? Array.Empty<ItemListSectionViewModel>());
     }
 
     /// <summary>
@@ -74,6 +78,11 @@ public sealed partial class ItemSubTableSectionViewModel : ObservableObject
     /// Gets the editable fields of the related record.
     /// </summary>
     public ObservableCollection<DetailFieldViewModel> Fields { get; }
+
+    /// <summary>
+    /// Gets the repeated fields of the related record, for example <c>BarrelConfiguration</c>.
+    /// </summary>
+    public ObservableCollection<ItemListSectionViewModel> ListSections { get; }
 
     /// <summary>
     /// Gets a value indicating whether the related record exists.
