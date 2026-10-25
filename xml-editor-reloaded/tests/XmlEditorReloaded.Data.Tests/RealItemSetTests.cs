@@ -1,4 +1,5 @@
 using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml.Workspace;
@@ -75,6 +76,21 @@ public class RealItemSetTests
                  })
         {
             Assert.Contains(TableName.Parse(expected), members);
+        }
+
+        foreach (var pairTable in new[]
+                 {
+                     "Items.IncompatibleAttachments",
+                     "Items.CompatibleFaceItems",
+                 })
+        {
+            var pairWorkspace = set.GetWorkspace(TableName.Parse(pairTable));
+            Assert.NotNull(pairWorkspace);
+            Assert.True(pairWorkspace.GetRows().Count > 0);
+            var report = await pairWorkspace.ValidateAsync();
+            Assert.DoesNotContain(
+                report.Issues,
+                static issue => issue.Code == ValidationCodes.AsymmetricPair);
         }
 
         var gun = set.Primary.BaseDocument.Records.First(record =>

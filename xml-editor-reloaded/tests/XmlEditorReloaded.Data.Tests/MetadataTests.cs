@@ -24,7 +24,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(12, migration.Data);
+        Assert.Equal(13, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -114,6 +114,19 @@ public class MetadataTests
         Assert.True(pockets.IsSuccess, pockets.ErrorText);
         Assert.True(pockets.Data!.TryGetColumnHint("pRestriction", out var restrictionHint));
         Assert.Equal("Lookup.ItemClass", restrictionHint!.LookupTable);
+
+        var incompatible = await provider.GetTableAsync(TableName.Parse("Items.IncompatibleAttachments"));
+        Assert.True(incompatible.IsSuccess, incompatible.ErrorText);
+        Assert.NotNull(incompatible.Data!.SymmetricKeyPair);
+        Assert.Equal("itemIndex", incompatible.Data.SymmetricKeyPair!.FirstField);
+        Assert.Equal("incompatibleattachmentIndex", incompatible.Data.SymmetricKeyPair.SecondField);
+
+        var compatibleFaces = await provider.GetTableAsync(TableName.Parse("Items.CompatibleFaceItems"));
+        Assert.True(compatibleFaces.IsSuccess, compatibleFaces.ErrorText);
+        Assert.NotNull(compatibleFaces.Data!.SymmetricKeyPair);
+        Assert.Equal("compatiblefaceitemIndex", compatibleFaces.Data.SymmetricKeyPair!.FirstField);
+        Assert.Equal("itemIndex", compatibleFaces.Data.SymmetricKeyPair.SecondField);
+        Assert.Null(metadata.SymmetricKeyPair);
 
         var languages = await provider.GetLanguagesAsync();
         Assert.True(languages.IsSuccess, languages.ErrorText);

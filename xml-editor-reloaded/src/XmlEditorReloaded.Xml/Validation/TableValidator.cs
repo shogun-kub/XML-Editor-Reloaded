@@ -88,6 +88,7 @@ public sealed class TableValidator
         }
 
         ValidateDictMasks(metadata, tableName, document.Xml, issues);
+        ValidateSymmetricPairs(metadata, tableName, records, issues);
 
         var lookupCache = new Dictionary<string, IReadOnlyList<LookupEntry>>(StringComparer.Ordinal);
         foreach (var record in records)
@@ -110,13 +111,60 @@ public sealed class TableValidator
         return new ValidationReport(issues);
     }
 
+    /// <summary>
+    /// Warns about records that have no counterpart with the two symmetric key values reversed.
+    /// Existing asymmetric data is reported, never rewritten.
+    /// </summary>
+    private static void ValidateSymmetricPairs(
+        TableMetadata metadata,
+        TableName tableName,
+        IReadOnlyList<ResolvedRecord> records,
+        List<ValidationIssue> issues)
+    {
+        if (metadata.SymmetricKeyPair is not { } pair)
+        {
+            return;
+        }
+
+        var resolved = records
+            .Where(static record => record.IsKeyResolved && record.Key is not null)
+            .ToArray();
+        var keys = resolved
+            .Select(static record => record.Key!)
+            .ToHashSet(StringComparer.Ordinal);
+        foreach (var record in resolved)
+        {
+            var first = record.Element.Element(pair.FirstField)?.Value.Trim();
+            var second = record.Element.Element(pair.SecondField)?.Value.Trim();
+            if (string.IsNullOrEmpty(first)
+                || string.IsNullOrEmpty(second)
+                || string.Equals(first, second, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var counterpartKey = RecordKeyCodec.Compose(new[] { second, first });
+            if (keys.Contains(counterpartKey))
+            {
+                continue;
+            }
+
+            issues.Add(new ValidationIssue(
+                ValidationSeverity.Warning,
+                ValidationCodes.AsymmetricPair,
+                $"Record '{record.Key}' has no counterpart with reversed {pair.FirstField}/{pair.SecondField} values.",
+                tableName,
+                record.Key,
+                pair.FirstField));
+        }
+    }
+
     private static void ValidateDictMasks(
         TableMetadata metadata,
         TableName tableName,
         XDocument document,
         List<ValidationIssue> issues)
-    {
-        foreach (var definition in metadata.DictFields)
+    {        foreach (var definition in metadata.DictFields)
         {
             var parts = definition.XmlFieldMask.Split(DictFieldDefinition.IndexPlaceholder, StringSplitOptions.None);
             if (parts.Length != 2 || string.IsNullOrEmpty(parts[0]) && string.IsNullOrEmpty(parts[1]))

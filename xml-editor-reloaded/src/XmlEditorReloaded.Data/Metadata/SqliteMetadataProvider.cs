@@ -268,6 +268,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         var recordKeyFields = await ReadRecordKeyFieldsAsync(connection, row.Id, cancellationToken).ConfigureAwait(false);
         var visibilityRules = await ReadClassVisibilityRulesAsync(connection, row.Id, cancellationToken)
             .ConfigureAwait(false);
+        var symmetricKeyPair = await ReadSymmetricKeyPairAsync(connection, row.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -281,7 +283,27 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             translatableFields,
             columnHints,
             recordKeyFields,
-            visibilityRules);
+            visibilityRules,
+            symmetricKeyPair);
+    }
+
+    private static async Task<SymmetricKeyPair?> ReadSymmetricKeyPairAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT FirstField, SecondField
+            FROM SymmetricKeyPairs
+            WHERE TableId = $tableId;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? new SymmetricKeyPair(reader.GetString(0), reader.GetString(1))
+            : null;
     }
 
     private static async Task<IReadOnlyList<ClassVisibilityRule>> ReadClassVisibilityRulesAsync(

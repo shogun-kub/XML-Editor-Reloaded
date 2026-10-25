@@ -531,6 +531,7 @@ public sealed class TableSetWorkspace
                 }
 
                 copy.Data!.TrySetValue(relation.TargetValueField, newKey, addIfMissing: true);
+                workspace.EnsureSymmetricCounterpart(transaction, copy.Data);
                 transaction.Add(ElementSnapshotState.CaptureInsertion(workspace.BaseDocument, copy.Data.Element));
                 continue;
             }
@@ -549,6 +550,7 @@ public sealed class TableSetWorkspace
                 }
 
                 copy.Data!.TrySetValue(relation.TargetValueField, newKey, addIfMissing: true);
+                workspace.EnsureSymmetricCounterpart(transaction, copy.Data);
                 transaction.Add(ElementSnapshotState.CaptureInsertion(workspace.BaseDocument, copy.Data.Element));
             }
         }

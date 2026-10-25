@@ -23,6 +23,9 @@ public static class ValidationCodes
     /// <summary>A dictionary field mask is malformed or produces an invalid index.</summary>
     public const string DictMask = "validation.dict_mask";
 
+    /// <summary>A table with symmetric key pairs contains a record without its reversed counterpart.</summary>
+    public const string AsymmetricPair = "validation.asymmetric_pair";
+
     /// <summary>The table has no metadata and cannot be schema-validated.</summary>
     public const string Unmapped = "validation.unmapped";
 }

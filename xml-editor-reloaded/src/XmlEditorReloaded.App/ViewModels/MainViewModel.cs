@@ -109,6 +109,7 @@ public partial class MainViewModel : ObservableObject
         BrowseText = Strings.Get("BrowseText");
         RefreshText = Strings.Get("RefreshText");
         ImagesText = Strings.Get("ImageViewerButton");
+        EnemyAmmoText = Strings.Get("EnemyAmmoButton");
         CompareText = Strings.Get("CompareButton");
         CopyText = Strings.Get("CopyButton");
         SettingsText = Strings.Get("SettingsButton");
@@ -145,6 +146,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the item image viewer button text.
     /// </summary>
     public string ImagesText { get; }
+
+    /// <summary>
+    /// Gets the enemy ammunition editor button text.
+    /// </summary>
+    public string EnemyAmmoText { get; }
 
     /// <summary>
     /// Gets the cross-version comparison button text.
@@ -282,6 +288,31 @@ public partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void OpenImageViewer() => _imageViewer.Show(DataDirectory);
+
+    [RelayCommand]
+    private async Task OpenEnemyAmmoAsync()
+    {
+        if (_dataSet is null)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var viewModel = new EnemyAmmoViewModel(_dataSet);
+            await viewModel.InitializeAsync().ConfigureAwait(true);
+            _dialogService.ShowEnemyAmmo(viewModel);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     [RelayCommand]
     private void CompareVersions() => _versionCompare.Show(DataDirectory);

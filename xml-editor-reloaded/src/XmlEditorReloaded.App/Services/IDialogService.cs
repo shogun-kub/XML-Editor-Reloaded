@@ -94,6 +94,16 @@ public interface IDialogService
     void ShowTranslationReport(TranslationReport report, string title);
 
     /// <summary>
+    /// Shows the seven-row enemy ammunition editor.
+    /// </summary>
+    /// <param name="viewModel">Loaded enemy-ammo view model.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="viewModel"/> is null.</exception>
+    void ShowEnemyAmmo(EnemyAmmoViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+    }
+
+    /// <summary>
     /// Shows a save-file dialog.
     /// </summary>
     /// <param name="title">Dialog title.</param>

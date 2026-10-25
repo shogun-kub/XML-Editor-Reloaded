@@ -1513,4 +1513,37 @@
   <data name="ExternalChangeCancelled" xml:space="preserve">
     <value>Сохранение отменено: файл изменён на диске.</value>
   </data>
+  <data name="EnemyAmmoButton" xml:space="preserve">
+    <value>Боеприпасы врагов</value>
+  </data>
+  <data name="EnemyAmmoTitle" xml:space="preserve">
+    <value>Боеприпасы врагов и ополчения</value>
+  </data>
+  <data name="EnemyAmmoCloseText" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="EnemyAmmoHint" xml:space="preserve">
+    <value>Это типы боеприпасов, а не предметы. Правка записывает строку uiIndex=19 в каждый файл выбора предметов.</value>
+  </data>
+  <data name="EnemyAmmoMissingTable" xml:space="preserve">
+    <value>Таблица выбора предметов {0} не найдена.</value>
+  </data>
+  <data name="EnemyAmmoMissingRow" xml:space="preserve">
+    <value>В таблице {0} нет строки боеприпасов uiIndex={1}.</value>
+  </data>
+  <data name="EnemyAmmoNothingLoaded" xml:space="preserve">
+    <value>Строки боеприпасов не загружены.</value>
+  </data>
+  <data name="EnemyAmmoLoadedFormat" xml:space="preserve">
+    <value>Загружено строк: {0}.</value>
+  </data>
+  <data name="EnemyAmmoSaved" xml:space="preserve">
+    <value>Боеприпасы сохранены.</value>
+  </data>
+  <data name="EnemyAmmoFieldFormat" xml:space="preserve">
+    <value>Слот {0}</value>
+  </data>
+  <data name="EnemyAmmoClosePrompt" xml:space="preserve">
+    <value>Есть несохранённые изменения боеприпасов. Сохранить их перед закрытием?</value>
+  </data>
 </root>

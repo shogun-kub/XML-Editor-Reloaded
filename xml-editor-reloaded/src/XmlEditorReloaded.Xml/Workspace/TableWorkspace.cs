@@ -366,6 +366,7 @@ public sealed partial class TableWorkspace
                 : SetValue(key, path, rawText, addIfMissing);
         }
 
+        var pairBefore = CaptureSymmetricPairValues(record);
         var before = ElementSnapshotState.Capture(BaseDocument, record.Element);
         var result = record.SetFieldValue(path, rawText, addIfMissing);
         if (result.IsSuccess)
@@ -373,6 +374,7 @@ public sealed partial class TableWorkspace
             var transaction = new TableEditTransaction();
             before.CompleteAfter(record.Element);
             transaction.Add(before);
+            ReconcileSymmetricPair(transaction, record, pairBefore);
             History.Record(transaction);
         }
 
@@ -422,6 +424,8 @@ public sealed partial class TableWorkspace
         var key = record.GetKey() ?? string.Empty;
         var overlayState = CaptureOverlayState(key);
         var baseState = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var transaction = new TableEditTransaction();
+        DeleteSymmetricCounterpart(transaction, record);
         var deleted = BaseDocument.DeleteRecord(record);
         if (!deleted.IsSuccess)
         {
@@ -441,7 +445,6 @@ public sealed partial class TableWorkspace
             }
         }
 
-        var transaction = new TableEditTransaction();
         transaction.Add(baseState);
         transaction.Add(overlayState);
         History.Record(transaction);
@@ -512,6 +515,8 @@ public sealed partial class TableWorkspace
         }
 
         var transaction = new TableEditTransaction();
+        var recordBefore = BaseDocument.FindRecord(recordKey);
+        var pairBefore = recordBefore is null ? null : CaptureSymmetricPairValues(recordBefore);
         var before = isOverlayEdit
             ? CaptureOverlayState(recordKey)
             : CaptureBaseState(recordKey);
@@ -522,6 +527,22 @@ public sealed partial class TableWorkspace
             if (isOverlayEdit)
             {
                 CompleteOverlayState(transaction, before, recordKey);
+            }
+            else if (recordBefore is not null)
+            {
+                // The record key itself may have changed, so the snapshot is completed through the
+                // captured element instead of looking the record up again by its old key.
+                if (before is null)
+                {
+                    transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, recordBefore.Element));
+                }
+                else
+                {
+                    before.CompleteAfter(recordBefore.Element);
+                    transaction.Add(before);
+                }
+
+                ReconcileSymmetricPair(transaction, recordBefore, pairBefore);
             }
             else
             {
@@ -711,6 +732,7 @@ public sealed partial class TableWorkspace
 
         var transaction = new TableEditTransaction();
         transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, record.Element));
+        ReconcileSymmetricPair(transaction, record, before: null);
         History.Record(transaction);
         return result;
     }
@@ -810,6 +832,13 @@ public sealed partial class TableWorkspace
 
         var baseState = CaptureBaseState(key);
         var overlayState = CaptureOverlayState(key);
+        var transaction = new TableEditTransaction();
+        var recordBefore = BaseDocument.FindRecord(key);
+        if (recordBefore is not null)
+        {
+            DeleteSymmetricCounterpart(transaction, recordBefore);
+        }
+
         var deleted = BaseDocument.DeleteRecord(key);
         if (!deleted.IsSuccess)
         {
@@ -829,7 +858,6 @@ public sealed partial class TableWorkspace
             }
         }
 
-        var transaction = new TableEditTransaction();
         transaction.Add(baseState);
         transaction.Add(overlayState);
         History.Record(transaction);
@@ -1045,5 +1073,111 @@ public sealed partial class TableWorkspace
         return root?.Elements()
             .FirstOrDefault(element =>
                 string.Equals(element.Name.LocalName, firstSegment, StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// Creates the reversed counterpart of a complete pair row when it is missing. The caller owns the
+    /// transaction, so the row change and the counterpart stay one undo step.
+    /// </summary>
+    internal void EnsureSymmetricCounterpart(TableEditTransaction transaction, TableRecord record)
+    {
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentNullException.ThrowIfNull(record);
+        ReconcileSymmetricPair(transaction, record, before: null);
+    }
+
+    private SymmetricPairValues? CaptureSymmetricPairValues(TableRecord record)
+    {
+        if (Metadata?.SymmetricKeyPair is not { } pair)
+        {
+            return null;
+        }
+
+        return new SymmetricPairValues(
+            record.GetRawValue(pair.FirstField)?.Trim(),
+            record.GetRawValue(pair.SecondField)?.Trim());
+    }
+
+    private TableRecord? FindSymmetricCounterpart(SymmetricPairValues values)
+    {
+        if (Metadata?.SymmetricKeyPair is null || !values.IsComplete || values.IsSelfPair)
+        {
+            return null;
+        }
+
+        var key = RecordKeyCodec.Compose(new[] { values.Second, values.First });
+        return BaseDocument.FindRecord(key);
+    }
+
+    private void ReconcileSymmetricPair(
+        TableEditTransaction transaction,
+        TableRecord record,
+        SymmetricPairValues? before)
+    {
+        if (Metadata?.SymmetricKeyPair is not { } pair
+            || CaptureSymmetricPairValues(record) is not { } after)
+        {
+            return;
+        }
+
+        if (before is { IsComplete: true } oldValues && !oldValues.Equals(after))
+        {
+            var oldCounterpart = FindSymmetricCounterpart(oldValues);
+            var newCounterpart = FindSymmetricCounterpart(after);
+            if (oldCounterpart is not null
+                && !ReferenceEquals(oldCounterpart.Element, record.Element)
+                && !ReferenceEquals(oldCounterpart.Element, newCounterpart?.Element))
+            {
+                var state = ElementSnapshotState.Capture(BaseDocument, oldCounterpart.Element);
+                if (BaseDocument.DeleteRecord(oldCounterpart).IsSuccess)
+                {
+                    state.MarkRemoved();
+                    transaction.Add(state);
+                }
+            }
+        }
+
+        if (!after.IsComplete || after.IsSelfPair || FindSymmetricCounterpart(after) is not null)
+        {
+            return;
+        }
+
+        var created = BaseDocument.AddRecord();
+        if (!created.IsSuccess || created.Data is null)
+        {
+            return;
+        }
+
+        created.Data.TrySetValue(pair.FirstField, after.Second!, addIfMissing: true);
+        created.Data.TrySetValue(pair.SecondField, after.First!, addIfMissing: true);
+        transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, created.Data.Element));
+    }
+
+    private void DeleteSymmetricCounterpart(TableEditTransaction transaction, TableRecord record)
+    {
+        if (CaptureSymmetricPairValues(record) is not { } values)
+        {
+            return;
+        }
+
+        var counterpart = FindSymmetricCounterpart(values);
+        if (counterpart is null || ReferenceEquals(counterpart.Element, record.Element))
+        {
+            return;
+        }
+
+        var state = ElementSnapshotState.Capture(BaseDocument, counterpart.Element);
+        if (BaseDocument.DeleteRecord(counterpart).IsSuccess)
+        {
+            state.MarkRemoved();
+            transaction.Add(state);
+        }
+    }
+
+    private readonly record struct SymmetricPairValues(string? First, string? Second)
+    {
+        public bool IsComplete => !string.IsNullOrEmpty(First) && !string.IsNullOrEmpty(Second);
+
+        public bool IsSelfPair => string.Equals(First, Second, StringComparison.Ordinal);
     }
 }

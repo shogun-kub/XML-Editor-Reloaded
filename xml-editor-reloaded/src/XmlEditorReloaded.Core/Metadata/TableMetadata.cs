@@ -35,6 +35,10 @@ public sealed class TableMetadata
     /// Optional rules that limit item field groups and related sections to selected item classes. An
     /// empty list keeps every section visible.
     /// </param>
+    /// <param name="symmetricKeyPair">
+    /// Optional declaration that records are stored in reversed pairs. The workspace maintains the
+    /// counterpart during add, delete, and key edits, and validation warns about asymmetric data.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -48,7 +52,8 @@ public sealed class TableMetadata
         IReadOnlyList<string>? translatableFieldPaths = null,
         IReadOnlyList<ColumnHint>? columnHints = null,
         IReadOnlyList<string>? recordKeyFields = null,
-        IReadOnlyList<ClassVisibilityRule>? classVisibilityRules = null)
+        IReadOnlyList<ClassVisibilityRule>? classVisibilityRules = null,
+        SymmetricKeyPair? symmetricKeyPair = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -64,6 +69,7 @@ public sealed class TableMetadata
         ColumnHints = columnHints ?? Array.Empty<ColumnHint>();
         RecordKeyFields = recordKeyFields ?? Array.Empty<string>();
         ClassVisibilityRules = classVisibilityRules ?? Array.Empty<ClassVisibilityRule>();
+        SymmetricKeyPair = symmetricKeyPair;
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
         _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
         _classVisibilityBySection = ClassVisibilityRules
@@ -144,6 +150,12 @@ public sealed class TableMetadata
     /// empty list means that no section is class-restricted.
     /// </summary>
     public IReadOnlyList<ClassVisibilityRule> ClassVisibilityRules { get; }
+
+    /// <summary>
+    /// Gets the declaration that records are stored in reversed key pairs, or <see langword="null"/>
+    /// when the table has no such invariant.
+    /// </summary>
+    public SymmetricKeyPair? SymmetricKeyPair { get; }
 
     /// <summary>
     /// Attempts to find a class visibility rule for one section.

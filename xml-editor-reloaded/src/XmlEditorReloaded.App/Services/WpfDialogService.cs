@@ -114,6 +114,20 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public void ShowEnemyAmmo(ViewModels.EnemyAmmoViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+
+        var window = new Views.EnemyAmmoWindow(viewModel, this);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
+    }
+
+    /// <inheritdoc />
     public BulkEditRequest? EditBulk(BulkEditContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
