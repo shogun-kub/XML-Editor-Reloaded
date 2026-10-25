@@ -221,6 +221,19 @@
 | S49 | Malformed в compare/copy | ☐ | ☐ | |
 | S50 | Итоговая целостность | ☐ | ☐ | |
 
+## 3a. Дополнительные сценарии M23b2
+
+| № | Сценарий | v4 | v5 | Примечание |
+|---|---|---|---|---|
+| S51 | «Attachable items»: предмет, используемый как вложение, показывает строки по `attachmentIndex` | ☐ | ☐ | Обратное направление legacy `AttachToGrid` |
+| S52 | «Ammunition»: пусковая показывает запускаемые боеприпасы по `itemIndex` | ☐ | ☐ | Legacy `LaunchableGrid`; для класса Launcher |
+| S53 | Двойной клик по заголовку строки `Attachments`/`Launchables` открывает связанный предмет | ☐ | ☐ | Второй способ — контекстное меню |
+| S54 | `CompatibleFaceItems` фильтруется по `itemIndex` выбранного лица | ☐ | ☐ | Строка показывает `compatiblefaceitemIndex` |
+| S55 | `BarrelConfiguration` в секции Weapons: правка/добавление/удаление без `BarrelConfigurationN` | ☐ | ☐ | Предметы 686/711/754 |
+| S56 | Dict-колонки `ItemCapacityPerSizeN` (Pockets) и `itemN` (RandomItem) редактируются, picker работает | ☐ | ☐ | Bulk по конкретной колонке разрешён |
+| S57 | Пара `IncompatibleAttachments`/`CompatibleFaceItems`: добавление, удаление и смена ключа сохраняют обратную строку | ☐ | ☐ | Validation не показывает `validation.asymmetric_pair` |
+| S58 | «Enemy ammo»: 7 строк, значения Ball/HP/AP, правка пишет только один файл, закрытие спрашивает о сохранении | ☐ | ☐ | `uiIndex=19` в 7 item-choice файлах |
+
 ## 4. Подпись и вердикт
 
 - **Тестировщик:** ______________________________

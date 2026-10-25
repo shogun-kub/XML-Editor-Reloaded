@@ -773,6 +773,36 @@ WPF-поведение в этой среде не автоматизирует�
 
 Ограничение: env-gated corpus/compare/copy-тесты делают early-return в базовом прогоне и выполняются с реальными ассертами при заданных `XER_*`-переменных.
 
+## M23b2 — Item-связи, навигация и структурированные редакторы
+
+**Дата:** 2026-10-25. **Статус:** выполнен. **Закрытые пробелы:** `L-ITEM-027…032` (6 ID), `L-TBL-124`, `L-DATA-008`, `L-DATA-009`, `L-DATA-011`, `L-DATA-013` — 11 ID в 11 записях.
+
+**Реализация.**
+- `Data/Metadata/Migrations/0011_M23b2ItemRelations.sql`: `CompatibleFaceItems` ChildRows фильтруется по `itemIndex`, Reverse — по `compatiblefaceitemIndex` (как legacy `CompatibleFaceItemGrid`); reverse-связи `Attachments`/`Launchables` получают `LabelKey`; добавлены class-aware правила новых направлений (`Items.Attachments|attachmentIndex` = 268484606, `Items.Launchables|itemIndex` = 16).
+- `Xml/Workspace/TableSetWorkspace.cs`: reverse-связь над уже загруженной child-таблицей становится отдельным member. Rename/delete теперь переписывают и удаляют строки обоих направлений (`attachmentIndex`/`itemIndex`, `launchableIndex`/`itemIndex`).
+- `App/ViewModels/ItemWorkspaceViewModel.cs`: секции «Attachable items» и «Ammunition» строятся из reverse-relation поверх того же workspace; shopkeeper-вкладка по-прежнему использует только `LabelKey = ShopkeeperInventory`; direction-qualified ключ секции для class visibility.
+- `App/ViewModels/TableEditorViewModel.cs`, `App/Views/TableView.xaml(.cs)`: `RowActivationField`/`ParentRelationField`, `NavigateToRelationTarget`, заголовок строки в embedded-гридах и двойной клик по нему; пункт «Open the referenced record» в контекстном меню. Событие дочернего грида перехватывается `ItemWorkspaceViewModel` и выбирает предмет в текущем workspace.
+- `Data/Metadata/Migrations/0012_M23b2IndexedFields.sql` + `TableColumnViewModel`/`DetailFieldViewModel`/`TableWorkspace.Bulk`: dict-семейства редактируются как конкретные колонки (`ItemCapacityPerSizeN`, `itemN`, `randomitemN`), pickers больше не подавляются, bulk разрешён; hints 0…34 дают проверку типа.
+- `App/ViewModels/ItemListSectionViewModel.cs`, `ItemSubTableSectionViewModel.cs`, `ItemWorkspaceView.xaml`: list-секции доступны и у 1:1-подтаблиц; `BarrelConfiguration` Weapons редактируется как повторяющийся элемент, без `BarrelConfigurationN`.
+- `Data/Metadata/Migrations/0013_M23b2SymmetricPairs.sql`, `Core/Metadata/SymmetricKeyPair.cs`, `TableWorkspace`: `SymmetricKeyPairs` для `IncompatibleAttachments`/`CompatibleFaceItems`; обратная строка создаётся при добавлении и завершении/смене ключа, удаляется вместе с парой, переносится при смене ключа; `TableValidator` выдаёт `validation.asymmetric_pair`, не меняя документ. Duplicate item копирует обе половины.
+- `App/ViewModels/EnemyAmmoViewModel.cs`, `Views/EnemyAmmoWindow.xaml`, кнопка «Enemy ammo»: 7 строк (`uiIndex=19`) из item-choice файлов; `bItemNo1..50` разрешаются в `Items.AmmoTypes` (Ball/HP/AP…), а не в предметы; строки подписаны из `Lookup.AmmoChoices`; правка пишет только затронутый файл, missing-поля создаются, некорректный тип отклоняется; закрытие спрашивает о несохранённых изменениях.
+- `Xml/Loading/TableFileLoader.cs`: повторяющийся `usResult` (legacy positional compound key) даёт `xml.legacy_repeated_key`; файл не нормализуется и не перезаписывается.
+
+**Решения по открытым вопросам.** (3) направление `CompatibleFaceItems` исправлено в метаданных, отдельная секция не нужна. (5) симметрия поддерживается автоматически, уже асимметричные данные получают warning, а не переписываются. (6) старый формат `usResult` отклоняется с диагностикой, без нормализации. (7) dict-семейства редактируются как скалярные колонки, отдельный индексированный диалог не вводится. (10) аммо-строка получила отдельный 7-строчный редактор, а не условную relation-связь.
+
+**Проверка M23b2.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 440/440: Core 37, Imaging 19, Xml 174, Data 64, App 146 |
+| Corpus v4 / v5 | 440/440 на каждом: обе стороны `Attachments` для item 12, симметрия `IncompatibleAttachments`/`CompatibleFaceItems`, отсутствие legacy-диагностики, `Corpus_EnemyAmmoCellsResolveToAmmunitionTypes` |
+| Тесты M23b2 | `Initialize_ShowsReverseAttachmentsAndForwardLaunchables`, `CompatibleFaceItems_FiltersByItemIndex`, `ChildSectionNavigation_SelectsRelatedItem`, `SubTableListField_EditsBarrelConfigurations`, `DictFields_AreEditableValidatedAndCreatedOnDemand`, `SymmetricPairTests` (5), `EnemyAmmoViewModelTests` (4), `Load_LegacyRepeatedResult_ReportsDiagnosticWithoutMutation` |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| `References/` | не изменён; corpus-тесты работают на temp-копиях, enemy-ammo corpus-гейт только читает |
+
+**Следующий подшаг:** M23b3 — источники значений и pickers (`L-ITEM-011`, `L-MERC-011`, `L-IFIELD-233…239/275/315…326`, `L-SND-001`).
+
 ## Вне паритета (осознанно)
 
 - Скрытые/мёртвые меню legacy: Edit, Print/Preview/Setup, Profiles, Tools/Options, Maps/Cities/SAM/Movement, New Window и неработающие BitCodeMaker/working-data cache/сохранение layout в неверный путь.
