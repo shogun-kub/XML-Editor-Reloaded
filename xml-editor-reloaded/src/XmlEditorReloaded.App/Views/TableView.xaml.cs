@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -415,6 +416,31 @@ public partial class TableView : UserControl
         if (!string.IsNullOrEmpty(cell.Column.SortMemberPath))
         {
             _viewModel.CurrentCellField = cell.Column.SortMemberPath;
+        }
+    }
+
+    /// <summary>
+    /// Opens the record referenced by an embedded child row when its row header is double-clicked,
+    /// matching the legacy row-header navigation without taking over double-click cell editing.
+    /// </summary>
+    private void OnRowsGridDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (_viewModel is not { IsEmbedded: true } || e.ChangedButton != MouseButton.Left)
+        {
+            return;
+        }
+
+        var source = e.OriginalSource as DependencyObject;
+        if (FindAncestor<DataGridRowHeader>(source) is not { } rowHeader)
+        {
+            return;
+        }
+
+        var row = rowHeader.DataContext as TableRowViewModel
+            ?? (rowHeader.TemplatedParent as DataGridRow)?.Item as TableRowViewModel;
+        if (row is not null && _viewModel.NavigateToRelationTarget(row))
+        {
+            e.Handled = true;
         }
     }
 

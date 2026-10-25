@@ -1586,7 +1586,7 @@ public sealed partial class ItemWorkspaceViewModel :
             return;
         }
 
-        foreach (var member in _set.GetMembers(TableRelationKind.ChildRows))
+        foreach (var member in ChildSectionMembers(_set))
         {
             var editor = new TableEditorViewModel(
                 _session,
@@ -1598,13 +1598,49 @@ public sealed partial class ItemWorkspaceViewModel :
                 IsEmbedded = true,
                 ShowDetails = false,
                 EmbeddedSave = SaveAsync,
+                ParentRelationField = member.Relation.TargetValueField,
+                RowActivationField = member.Relation.TargetDisplayField,
             };
             await editor
                 .InitializeFromWorkspaceAsync(member.Workspace, _languages, cancellationToken)
                 .ConfigureAwait(true);
             editor.ExternalRowFilter = row => IsRowOfSelectedItem(member.Relation, row);
+            editor.TableNavigationRequested += OnChildEditorNavigationRequested;
             ChildSections.Add(new ItemChildSectionViewModel(this, member, LabelFor(member), editor));
         }
+    }
+
+    /// <summary>
+    /// Returns the members that become child grids: the outgoing 1:N relations and the reverse
+    /// relations that legacy exposed as a second direction of the same table.
+    /// </summary>
+    private static IEnumerable<TableSetMember> ChildSectionMembers(TableSetWorkspace set) =>
+        set.GetMembers(TableRelationKind.ChildRows)
+            .Concat(set.GetMembers(TableRelationKind.Reverse).Where(
+                static member => IsReverseSection(member.Relation)));
+
+    private static bool IsReverseSection(TableRelation relation) =>
+        relation.Kind == TableRelationKind.Reverse
+        && relation.LabelKey is { } labelKey
+        && labelKey.StartsWith("ItemSectionReverse.", StringComparison.Ordinal);
+
+    private static bool IsShopkeeperRelation(TableRelation relation) =>
+        string.Equals(relation.LabelKey, "ShopkeeperInventory", StringComparison.Ordinal);
+
+    /// <summary>
+    /// Follows a navigation request raised by an embedded child grid. Targets in the same table are
+    /// selected in this workspace; other targets are forwarded to the shell.
+    /// </summary>
+    private void OnChildEditorNavigationRequested(object? sender, TableNavigationRequest request)
+    {
+        if (request.TableName == _descriptor.TableName
+            && string.Equals(request.TableDataDirectory, TableDataDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            SelectRecord(request.RecordKey);
+            return;
+        }
+
+        TableNavigationRequested?.Invoke(this, request);
     }
 
     private bool IsRowOfSelectedItem(TableRelation relation, TableRowViewModel row) =>
@@ -1629,7 +1665,7 @@ public sealed partial class ItemWorkspaceViewModel :
         {
             section.IsVisible = IsSectionVisibleForClass(
                 ClassVisibilitySectionKind.ChildTable,
-                section.TableName.Value,
+                SectionKeyFor(section.Member.Relation),
                 classBits);
             section.Editor.NewRowDefaults = key is null
                 ? null
@@ -1905,6 +1941,11 @@ public sealed partial class ItemWorkspaceViewModel :
         foreach (var member in _set.GetMembers(TableRelationKind.Reverse))
         {
             var relation = member.Relation;
+            if (!IsShopkeeperRelation(relation))
+            {
+                continue;
+            }
+
             var displayField = DisplayFieldOf(relation);
             foreach (var row in member.Workspace.GetRows())
             {
@@ -1948,7 +1989,8 @@ public sealed partial class ItemWorkspaceViewModel :
 
     private TableSetMember? FindReverseMember(TableName tableName) =>
         _set?.GetMembers(TableRelationKind.Reverse)
-            .FirstOrDefault(member => member.Relation.TargetTable == tableName);
+            .FirstOrDefault(member => IsShopkeeperRelation(member.Relation)
+                && member.Relation.TargetTable == tableName);
 
     private static string DisplayFieldOf(TableRelation relation) =>
         relation.TargetDisplayField ?? relation.TargetValueField;
@@ -2333,12 +2375,26 @@ public sealed partial class ItemWorkspaceViewModel :
 
     private string LabelFor(TableSetMember member)
     {
-        var key = "ItemSection." + member.Relation.TargetTable.Value.Replace('.', '_');
+        var relation = member.Relation;
+        var key = !string.IsNullOrWhiteSpace(relation.LabelKey)
+            ? relation.LabelKey!
+            : relation.Kind == TableRelationKind.Reverse
+                ? "ItemSectionReverse." + relation.TargetTable.Value.Replace('.', '_')
+                : "ItemSection." + relation.TargetTable.Value.Replace('.', '_');
         var label = Strings.Get(key);
         return string.Equals(label, key, StringComparison.Ordinal)
-            ? member.Relation.TargetTable.Value.Split('.').Last()
+            ? relation.TargetTable.Value.Split('.').Last()
             : label;
     }
+
+    /// <summary>
+    /// Returns the class-visibility key of a related section. Child rows are keyed by table name; a
+    /// reverse view of the same table adds the direction field so both directions can differ.
+    /// </summary>
+    private static string SectionKeyFor(TableRelation relation) =>
+        relation.Kind == TableRelationKind.Reverse
+            ? relation.TargetTable.Value + "|" + relation.TargetValueField
+            : relation.TargetTable.Value;
 
     private IEnumerable<TableWorkspace> AllWorkspaces()
     {
@@ -2347,7 +2403,9 @@ public sealed partial class ItemWorkspaceViewModel :
             return Array.Empty<TableWorkspace>();
         }
 
-        return new[] { _set.Primary }.Concat(_set.Members.Select(static member => member.Workspace));
+        return new[] { _set.Primary }
+            .Concat(_set.Members.Select(static member => member.Workspace))
+            .DistinctBy(static workspace => workspace.Descriptor.TableName);
     }
 
     private void OnHistoryChanged(object? sender, EventArgs e)

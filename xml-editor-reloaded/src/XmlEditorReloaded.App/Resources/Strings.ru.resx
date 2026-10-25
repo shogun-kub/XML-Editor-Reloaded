@@ -942,6 +942,12 @@
   <data name="ItemSection.Items_AttachmentComboMerges" xml:space="preserve">
     <value>Слияния комбинаций вложений</value>
   </data>
+  <data name="ItemSectionReverse.Items_Attachments" xml:space="preserve">
+    <value>Предметы с этим вложением</value>
+  </data>
+  <data name="ItemSectionReverse.Items_Launchables" xml:space="preserve">
+    <value>Боеприпасы</value>
+  </data>
   <data name="GraphicTypeGuns" xml:space="preserve">
     <value>Оружие</value>
   </data>

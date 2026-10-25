@@ -147,11 +147,20 @@ public class RealItemSetTests
         var set = load.Data!;
 
         var reverse = set.GetMembers(TableRelationKind.Reverse).ToList();
-        Assert.Equal(80, reverse.Count);
+        Assert.Equal(84, reverse.Count);
+        Assert.Equal(
+            80,
+            reverse.Count(member => string.Equals(
+                member.Relation.LabelKey,
+                "ShopkeeperInventory",
+                StringComparison.Ordinal)));
         Assert.All(
-            reverse,
+            reverse.Where(member => !string.Equals(
+                member.Relation.LabelKey,
+                "ShopkeeperInventory",
+                StringComparison.Ordinal)),
             member => Assert.StartsWith(
-                "NPCInventory.",
+                "Items.",
                 member.Relation.TargetTable.Value,
                 StringComparison.Ordinal));
 

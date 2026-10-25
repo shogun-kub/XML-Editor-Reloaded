@@ -60,6 +60,33 @@ public class TableRelationsTests
                 && relation.TargetTable.Value == "Items.LoadBearingEquipment");
         Assert.Equal("lbeIndex", lbe.TargetValueField);
 
+        var compatibleFaces = Assert.Single(
+            relations,
+            relation => relation.Kind == TableRelationKind.ChildRows
+                && relation.TargetTable.Value == "Items.CompatibleFaceItems");
+        Assert.Equal("itemIndex", compatibleFaces.TargetValueField);
+        Assert.Equal("compatiblefaceitemIndex", compatibleFaces.TargetDisplayField);
+
+        var compatibleFacesReverse = Assert.Single(
+            relations,
+            relation => relation.Kind == TableRelationKind.Reverse
+                && relation.TargetTable.Value == "Items.CompatibleFaceItems");
+        Assert.Equal("compatiblefaceitemIndex", compatibleFacesReverse.TargetValueField);
+
+        var attachTo = Assert.Single(
+            relations,
+            relation => relation.Kind == TableRelationKind.Reverse
+                && relation.TargetTable.Value == "Items.Attachments");
+        Assert.Equal("attachmentIndex", attachTo.TargetValueField);
+        Assert.Equal("ItemSectionReverse.Items_Attachments", attachTo.LabelKey);
+
+        var ammunition = Assert.Single(
+            relations,
+            relation => relation.Kind == TableRelationKind.Reverse
+                && relation.TargetTable.Value == "Items.Launchables");
+        Assert.Equal("itemIndex", ammunition.TargetValueField);
+        Assert.Equal("ItemSectionReverse.Items_Launchables", ammunition.LabelKey);
+
         var ammoTypes = await provider.GetRelationsAsync(TableName.Parse("Items.AmmoTypes"));
         var highExplosive = Assert.Single(
             ammoTypes.Data!,

@@ -24,7 +24,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(10, migration.Data);
+        Assert.Equal(11, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -59,7 +59,7 @@ public class MetadataTests
         Assert.Equal("overheating", overheatHint!.GroupKey);
         Assert.True(metadata.TryGetColumnHint("sBackpackWeightModifier", out var pocketsHint));
         Assert.Equal("pockets", pocketsHint!.GroupKey);
-        Assert.Equal(23, metadata.ClassVisibilityRules.Count);
+        Assert.Equal(25, metadata.ClassVisibilityRules.Count);
         Assert.True(metadata.TryGetClassVisibilityRule(
             ClassVisibilitySectionKind.Group,
             "combat",

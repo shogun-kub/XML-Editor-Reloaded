@@ -258,6 +258,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             {
                 OnPropertyChanged(nameof(ShowThumbnailColumn));
                 OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+                OnPropertyChanged(nameof(RowHeaderWidth));
             }
         }
     }
@@ -279,6 +280,26 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// command save the whole host set instead of this table alone.
     /// </summary>
     public Func<Task>? EmbeddedSave { get; set; }
+
+    /// <summary>
+    /// Gets or sets the field that stores the owning record key in an embedded child grid. The field is
+    /// skipped when a row activation looks for the related record, so double-clicking a row opens the
+    /// other side of the relation instead of the current parent.
+    /// </summary>
+    public string? ParentRelationField { get; set; }
+
+    /// <summary>
+    /// Gets or sets the field whose relation is followed when a child row is activated. The item
+    /// workspace sets it to the relation display field, for example <c>attachmentIndex</c> for an
+    /// attachments row or <c>itemIndex</c> for the reverse view.
+    /// </summary>
+    public string? RowActivationField { get; set; }
+
+    /// <summary>
+    /// Gets the row-header width. Embedded child grids show row headers so a row can be activated for
+    /// navigation without starting cell editing; standalone grids keep the compact header-less layout.
+    /// </summary>
+    public double RowHeaderWidth => IsEmbedded ? 24 : 0;
 
     /// <summary>
     /// Gets a value indicating whether the grid must be read-only.
@@ -2077,6 +2098,86 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         TableNavigationRequested?.Invoke(
             this,
             new TableNavigationRequest(relation.Relation.TargetTable, value, TableDataDirectory));
+    }
+
+    /// <summary>
+    /// Follows the relation of one grid row to its target record. When a field name is supplied, for
+    /// example the clicked cell, that relation is tried first; otherwise the configured
+    /// <see cref="RowActivationField"/> is used, then the first relation that does not point at the
+    /// parent record.
+    /// </summary>
+    /// <param name="row">Grid row to activate.</param>
+    /// <param name="fieldName">Optional field whose relation should be followed.</param>
+    /// <returns><see langword="true"/> when navigation was started; otherwise <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> is null.</exception>
+    public bool NavigateToRelationTarget(TableRowViewModel row, string? fieldName = null)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+
+        if (!string.IsNullOrWhiteSpace(fieldName)
+            && !string.Equals(fieldName, ParentRelationField, StringComparison.Ordinal)
+            && TryNavigateToRelation(row, fieldName))
+        {
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(RowActivationField)
+            && TryNavigateToRelation(row, RowActivationField))
+        {
+            return true;
+        }
+
+        foreach (var candidate in _relationByField.Keys)
+        {
+            if (string.Equals(candidate, ParentRelationField, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (TryNavigateToRelation(row, candidate))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Opens the record referenced by the current cell of the selected row.
+    /// </summary>
+    [RelayCommand]
+    private void GoToTarget()
+    {
+        if (SelectedRow is { } row)
+        {
+            NavigateToRelationTarget(row, CurrentCellField);
+        }
+    }
+
+    private bool TryNavigateToRelation(TableRowViewModel row, string fieldName)
+    {
+        if (!_relationByField.TryGetValue(fieldName, out var relation) || !relation.IsAvailable)
+        {
+            return false;
+        }
+
+        if (!relation.TryGetTargetValue(row[fieldName], out var value))
+        {
+            StatusText = Strings.Get("EditorRelationTargetMissing");
+            return false;
+        }
+
+        if (relation.Relation.TargetTable == Descriptor.TableName)
+        {
+            SelectRecord(value);
+            return true;
+        }
+
+        TableNavigationRequested?.Invoke(
+            this,
+            new TableNavigationRequest(relation.Relation.TargetTable, value, TableDataDirectory));
+        return true;
     }
 
     /// <summary>

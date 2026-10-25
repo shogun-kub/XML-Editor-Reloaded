@@ -149,9 +149,10 @@ public sealed class TableSetWorkspace
     /// <param name="tableDataDirectory">Absolute <c>TableData</c> directory of the data set.</param>
     /// <param name="languageCode">Language overlay to load for tables that provide it, or <see langword="null"/>.</param>
     /// <param name="includeReverseRelations">
-    /// When <see langword="true"/>, targets of reverse relations are loaded as editable members too,
-    /// unless the same table is already loaded through a 1:N relation. The item workspace uses this
-    /// to show and edit dealer inventories that reference the selected item.
+    /// When <see langword="true"/>, targets of reverse relations are loaded as editable members too.
+    /// A reverse relation over a table that is already loaded through a 1:N relation is a separate
+    /// direction of the same workspace: the item workspace uses it for the "attachable items" and
+    /// "ammunition" views, and the rename/delete paths use both directions to rewrite or remove rows.
     /// </param>
     /// <param name="cancellationToken">Token to cancel the load.</param>
     /// <returns>
@@ -262,13 +263,10 @@ public sealed class TableSetWorkspace
 
                 if (loaded.TryGetValue(relation.TargetTable, out var alreadyLoaded))
                 {
-                    // Reverse views of tables that are already loaded through a 1:N relation add no
-                    // editable member; the child editor already owns the same workspace.
-                    if (!isReverseMember)
-                    {
-                        members.Add(new TableSetMember(relation, alreadyLoaded));
-                    }
-
+                    // A reverse view over an already loaded 1:N table is a distinct direction of the
+                    // same workspace: keep the member so the UI can show it and so rename/delete see
+                    // the rows that point back at the primary key through the other key field.
+                    members.Add(new TableSetMember(relation, alreadyLoaded));
                     continue;
                 }
 

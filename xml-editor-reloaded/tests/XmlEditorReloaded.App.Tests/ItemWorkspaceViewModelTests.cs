@@ -63,6 +63,98 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// The item workspace shows both legacy directions of the relation tables: the reverse attachment
+    /// view ("Attachable items") and the forward launchables view ("Ammunition"), while the original
+    /// launcher-child view stays hidden for a launcher class.
+    /// </summary>
+    [Fact]
+    public async Task Initialize_ShowsReverseAttachmentsAndForwardLaunchables()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateRelationFixture(workspace);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectRecord("10");
+
+        var attachTo = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.Reverse);
+        Assert.Equal("Attachable items", attachTo.Label);
+        Assert.True(attachTo.IsVisible);
+        Assert.Single(attachTo.Editor.Rows);
+        Assert.Equal("1", attachTo.Editor.Rows[0]["itemIndex"]);
+
+        var ammunition = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == Launchables
+                && section.Member.Relation.Kind == TableRelationKind.Reverse);
+        Assert.Equal("Ammunition", ammunition.Label);
+        Assert.True(ammunition.IsVisible);
+        Assert.Single(ammunition.Editor.Rows);
+        Assert.Equal("13", ammunition.Editor.Rows[0]["launchableIndex"]);
+
+        var launcherChild = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == Launchables
+                && section.Member.Relation.Kind == TableRelationKind.ChildRows);
+        Assert.False(launcherChild.IsVisible);
+    }
+
+    /// <summary>
+    /// Compatible face items are filtered by the selected item's <c>itemIndex</c>, matching the legacy
+    /// CompatibleFaceItemGrid, and the row exposes <c>compatiblefaceitemIndex</c> as the related item.
+    /// </summary>
+    [Fact]
+    public async Task CompatibleFaceItems_FiltersByItemIndex()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateRelationFixture(workspace);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectRecord("17");
+
+        var faces = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == CompatibleFaceItems);
+        Assert.Equal(TableRelationKind.ChildRows, faces.Member.Relation.Kind);
+        Assert.True(faces.IsVisible);
+        var row = Assert.Single(faces.Editor.Rows);
+        Assert.Equal("18", row["compatiblefaceitemIndex"]);
+    }
+
+    /// <summary>
+    /// Activating a row of a child or reverse section navigates to the related item in the same item
+    /// workspace, including when the target row is not the current selection.
+    /// </summary>
+    [Fact]
+    public async Task ChildSectionNavigation_SelectsRelatedItem()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateRelationFixture(workspace);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectRecord("10");
+        var ammunition = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == Launchables
+                && section.Member.Relation.Kind == TableRelationKind.Reverse);
+        Assert.True(ammunition.Editor.NavigateToRelationTarget(ammunition.Editor.Rows[0]));
+        Assert.Equal("13", viewModel.SelectedItem?.Key);
+
+        viewModel.SelectRecord("10");
+        var attachTo = Assert.Single(
+            viewModel.ChildSections,
+            section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.Reverse);
+        Assert.True(attachTo.Editor.NavigateToRelationTarget(attachTo.Editor.Rows[0]));
+        Assert.Equal("1", viewModel.SelectedItem?.Key);
+    }
+
+    /// <summary>
     /// Editing the item and its weapon from one workspace marks the set dirty and one save writes both
     /// files.
     /// </summary>
@@ -126,7 +218,8 @@ public class ItemWorkspaceViewModelTests
         Assert.True(weapon.HasRow);
         Assert.Equal("100", weapon.Fields.Single(field => field.Name == "usRange").Value);
         var attachments = viewModel.ChildSections
-            .Single(section => section.TableName == Attachments)
+            .Single(section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.ChildRows)
             .Editor;
         Assert.Equal(2, attachments.Rows.Count);
 
@@ -183,7 +276,8 @@ public class ItemWorkspaceViewModelTests
         var weapon = Assert.Single(viewModel.SubTableSections, section => section.TableName == Weapons);
         Assert.Equal("5", weapon.Row?.Key);
         var attachmentEditor = viewModel.ChildSections
-            .Single(section => section.TableName == Attachments)
+            .Single(section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.ChildRows)
             .Editor;
         Assert.All(
             attachmentEditor.Rows,
@@ -774,7 +868,8 @@ public class ItemWorkspaceViewModelTests
         viewModel.SelectRecord("12");
 
         var editor = viewModel.ChildSections
-            .Single(section => section.TableName == Attachments)
+            .Single(section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.ChildRows)
             .Editor;
         var rawCount = XDocument
             .Load(Path.Combine(corpus, "Items", "Attachments.xml"))
@@ -784,6 +879,18 @@ public class ItemWorkspaceViewModelTests
         Assert.True(rawCount > 0);
         Assert.Equal(rawCount, editor.Rows.Count);
         Assert.All(editor.Rows, row => Assert.Equal("12", row["itemIndex"]));
+
+        var attachToEditor = viewModel.ChildSections
+            .Single(section => section.TableName == Attachments
+                && section.Member.Relation.Kind == TableRelationKind.Reverse)
+            .Editor;
+        var rawAttachToCount = XDocument
+            .Load(Path.Combine(corpus, "Items", "Attachments.xml"))
+            .Root!
+            .Elements("ATTACHMENT")
+            .Count(element => element.Element("attachmentIndex")?.Value == "12");
+        Assert.Equal(rawAttachToCount, attachToEditor.Rows.Count);
+        Assert.All(attachToEditor.Rows, row => Assert.Equal("12", row["attachmentIndex"]));
     }
 
     /// <summary>
@@ -901,6 +1008,32 @@ public class ItemWorkspaceViewModelTests
             .Select(static entry => entry.Key)
             .OrderBy(static key => key, StringComparer.Ordinal)
             .ToArray();
+
+    /// <summary>
+    /// Builds a fixture whose relation rows exercise both directions: item 10 is a launcher that
+    /// launches item 13, item 17 is a face item compatible with item 18, and attachments rows make
+    /// item 1 attachable to item 10 through <c>attachmentIndex</c>.
+    /// </summary>
+    private static Fixture CreateRelationFixture(TestWorkspace workspace)
+    {
+        var fixture = CreateFilterFixture(workspace);
+        var itemsDirectory = Path.GetDirectoryName(fixture.ItemsPath)!;
+        File.WriteAllText(
+            Path.Combine(itemsDirectory, "CompatibleFaceItems.xml"),
+            """
+            <?xml version="1.0" encoding="utf-8"?><COMPATIBLEFACEITEMLIST>
+            <COMPATIBLEFACEITEM><compatiblefaceitemIndex>18</compatiblefaceitemIndex><itemIndex>17</itemIndex></COMPATIBLEFACEITEM>
+            </COMPATIBLEFACEITEMLIST>
+            """);
+        File.WriteAllText(
+            Path.Combine(itemsDirectory, "Launchables.xml"),
+            """
+            <?xml version="1.0" encoding="utf-8"?><LAUNCHABLELIST>
+            <LAUNCHABLE><launchableIndex>13</launchableIndex><itemIndex>10</itemIndex></LAUNCHABLE>
+            </LAUNCHABLELIST>
+            """);
+        return fixture;
+    }
 
     /// <summary>
     /// Builds a fixture with one item of every legacy item class and the flag combinations used by the

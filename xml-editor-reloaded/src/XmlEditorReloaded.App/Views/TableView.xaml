@@ -280,8 +280,8 @@
                   CanUserSortColumns="True"
                   SelectionMode="Extended"
                   SelectionUnit="FullRow"
-                  HeadersVisibility="Column"
-                  RowHeaderWidth="0"
+                  HeadersVisibility="All"
+                  RowHeaderWidth="{Binding RowHeaderWidth}"
                   RowHeight="22"
                   ColumnHeaderHeight="26"
                   GridLinesVisibility="All"
@@ -297,9 +297,12 @@
                   SelectionChanged="OnSelectionChanged"
                   CurrentCellChanged="OnCurrentCellChanged"
                   ColumnReordered="OnColumnReordered"
+                  PreviewMouseDoubleClick="OnRowsGridDoubleClick"
                   PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                 <DataGrid.ContextMenu>
                     <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Header="{Binding GoToTargetText}"
+                                  Command="{Binding GoToTargetCommand}" />
                         <MenuItem Header="{Binding FilterByValueText}"
                                   Command="{Binding FilterByValueCommand}" />
                         <MenuItem Header="{Binding FilterExcludeValueText}"

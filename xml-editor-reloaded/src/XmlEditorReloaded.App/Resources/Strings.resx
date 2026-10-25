@@ -942,6 +942,12 @@
   <data name="ItemSection.Items_AttachmentComboMerges" xml:space="preserve">
     <value>Attachment combo merges</value>
   </data>
+  <data name="ItemSectionReverse.Items_Attachments" xml:space="preserve">
+    <value>Attachable items</value>
+  </data>
+  <data name="ItemSectionReverse.Items_Launchables" xml:space="preserve">
+    <value>Ammunition</value>
+  </data>
   <data name="GraphicTypeGuns" xml:space="preserve">
     <value>Guns</value>
   </data>
