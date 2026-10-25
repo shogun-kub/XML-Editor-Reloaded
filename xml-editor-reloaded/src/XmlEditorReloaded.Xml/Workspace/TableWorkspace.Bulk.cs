@@ -383,9 +383,10 @@ public sealed partial class TableWorkspace
                 ColumnDataType.Decimal =>
                     decimal.TryParse(operand, DecimalStyles, CultureInfo.InvariantCulture, out _),
                 ColumnDataType.Lookup =>
-                    long.TryParse(operand, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                    long.TryParse(operand, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)
+                    || ulong.TryParse(operand, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
                 ColumnDataType.Flags =>
-                    uint.TryParse(operand, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                    ulong.TryParse(operand, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
                 ColumnDataType.Boolean => operand.Trim() is "0" or "1",
                 _ => true,
             };

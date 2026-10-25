@@ -25,7 +25,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(14, migration.Data);
+        Assert.Equal(15, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -96,6 +96,69 @@ public class MetadataTests
         Assert.Equal(ColumnEditorKind.LookupCombo, robotTraitHint.EditorKind);
         Assert.Equal("Lookup.SkillTrait", robotTraitHint.LookupTable);
         Assert.Empty(metadata.Columns);
+
+        Assert.True(metadata.TryGetColumnHint("ItemSize", out var itemSizeHint));
+        Assert.Equal(0L, itemSizeHint!.Minimum);
+        Assert.Equal(99L, itemSizeHint.Maximum);
+        Assert.Equal(61, metadata.ColumnHints.Count(hint => hint.Maximum is not null));
+        var launcherGroup = Assert.Single(metadata.ExclusiveFlagGroups);
+        Assert.Equal("launcher_type", launcherGroup.GroupKey);
+        Assert.Equal(
+            new[] { "Cannon", "Mortar", "GrenadeLauncher", "RocketLauncher" },
+            launcherGroup.FieldNames);
+        Assert.Empty(metadata.ClassValueLimits);
+
+        var gear = await provider.GetTableAsync(TableName.Parse("Inventory.MercStartingGear"));
+        Assert.True(gear.IsSuccess, gear.ErrorText);
+        Assert.True(gear.Data!.TryGetColumnHint("mSmall1Status", out var statusHint));
+        Assert.Equal(0L, statusHint!.Minimum);
+        Assert.Equal(100L, statusHint.Maximum);
+        Assert.True(gear.Data.TryGetColumnHint("mBig0Quantity", out var quantityHint));
+        Assert.Equal(0L, quantityHint!.Minimum);
+        Assert.Equal(10L, quantityHint.Maximum);
+        Assert.True(gear.Data.TryGetColumnHint("mSmall2Quantity", out var smallQuantityHint));
+        Assert.Equal(10L, smallQuantityHint!.Maximum);
+        Assert.True(gear.Data.TryGetColumnHint("mSmall0Quantity", out var firstSmallQuantityHint));
+        Assert.Equal(100L, firstSmallQuantityHint!.Maximum);
+        Assert.True(gear.Data.TryGetColumnHint("mPriceMod", out var priceModHint));
+        Assert.Equal(-32000L, priceModHint!.Minimum);
+        Assert.Equal(32000L, priceModHint.Maximum);
+        Assert.True(gear.Data.TryGetColumnHint("mAbsolutePrice", out var absolutePriceHint));
+        Assert.Equal(-1L, absolutePriceHint!.Minimum);
+        Assert.Equal(32000L, absolutePriceHint.Maximum);
+        Assert.Equal(35, gear.Data.ColumnHints.Count(hint => hint.Maximum is not null));
+
+        var weapons = await provider.GetTableAsync(TableName.Parse("Items.Weapons"));
+        Assert.True(weapons.IsSuccess, weapons.ErrorText);
+        Assert.True(weapons.Data!.TryGetColumnHint("usOverheatingJamThreshold", out var jamHint));
+        Assert.Equal(60000L, jamHint!.Maximum);
+        Assert.True(weapons.Data.TryGetColumnHint("bAccuracy", out var accuracyHint));
+        Assert.Equal(-100L, accuracyHint!.Minimum);
+        Assert.Equal(14, weapons.Data.ColumnHints.Count(hint => hint.Maximum is not null));
+
+        var explosives = await provider.GetTableAsync(TableName.Parse("Items.Explosives"));
+        Assert.True(explosives.IsSuccess, explosives.ErrorText);
+        Assert.True(explosives.Data!.TryGetColumnHint("bIndoorModifier", out var indoorHint));
+        Assert.Equal(-1L, indoorHint!.Minimum);
+        Assert.Equal(10L, indoorHint.Maximum);
+        Assert.Equal(8, explosives.Data.ColumnHints.Count(hint => hint.Maximum is not null));
+
+        var magazines = await provider.GetTableAsync(TableName.Parse("Items.Magazines"));
+        Assert.True(magazines.IsSuccess, magazines.ErrorText);
+        Assert.Equal(1, magazines.Data!.ColumnHints.Count(hint => hint.Maximum is not null));
+
+        var lbe = await provider.GetTableAsync(TableName.Parse("Items.LoadBearingEquipment"));
+        Assert.True(lbe.IsSuccess, lbe.ErrorText);
+        Assert.Equal(5, lbe.Data!.ClassValueLimits.Count);
+        var lbeClassOne = Assert.Single(lbe.Data.ClassValueLimits, limit => limit.ClassValue == "1");
+        Assert.Equal("lbeClass", lbeClassOne.ClassField);
+        Assert.Equal("lbePocketIndex%Index%", lbeClassOne.FieldMask);
+        Assert.Equal(5, lbeClassOne.MaxOrdinal);
+        Assert.Contains(lbe.Data.ClassValueLimits, limit => limit.ClassValue == "3" && limit.MaxOrdinal == 7);
+        Assert.Contains(lbe.Data.ClassValueLimits, limit => limit.ClassValue == "0" && limit.MaxOrdinal == 0);
+        Assert.True(lbe.Data.TryGetColumnHint("lbePocketsAvailable", out var lbePocketsHint));
+        Assert.Equal(4095L, lbePocketsHint!.Maximum);
+        Assert.Equal(4, lbe.Data.ColumnHints.Count(hint => hint.Maximum is not null));
 
         var flagLookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemFlag"));
         Assert.True(flagLookup.IsSuccess, flagLookup.ErrorText);

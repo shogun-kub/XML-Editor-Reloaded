@@ -4,13 +4,13 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M22c и M23a завершены; M23b1–M23b3 выполнены 2026-10-25, следующий подшаг — M23b4. **Ожидает пользователя:** ручной WPF-smoke M23a по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` (включая сценарии M23b1–M23b3). Автоматические гейты M23a и M23b1–M23b3 пройдены.
+**Состояние:** M0–M22c и M23a завершены; M23b1–M23b4 выполнены 2026-10-25, следующий подшаг — M23b5. **Ожидает пользователя:** ручной WPF-smoke M23a по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` (включая сценарии M23b1–M23b4). Автоматические гейты M23a и M23b1–M23b4 пройдены.
 
-Работают: датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. В item workspace — фильтры и class-aware секции, обратные связи и навигация, list/dict/symmetric-редакторы, источники значений для звуковых, pocket- и robot-полей; merc-слоты предлагают `Nothing`, а `AltExplosionSoundID=-1` — `None`.
+Работают: датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. В item workspace — фильтры и class-aware секции, обратные связи и навигация, list/dict/symmetric-редакторы, источники значений для звуковых, pocket- и robot-полей; merc-слоты предлагают `Nothing`, а `AltExplosionSoundID=-1` — `None`. Валидация предупреждает о выходе за границы legacy-спиннеров, о нескольких установленных флагах пусковой группы и о карманах LBE сверх лимита класса, ничего не обнуляя; lookup-id и маски `Flags` — 64-битные, битовый редактор показывает все 64 бита.
 
-**Метаданные:** 173 таблицы, 1042 `TableRelations`, 1958 `ColumnHints`, 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 24 фиксированных lookup-значения, 14 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера и burst-звуки item 1761.
+**Метаданные:** 173 таблицы, 1042 `TableRelations`, 1958 `ColumnHints` (123 с границами min/max), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 15 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
 
-**Проверка:** build `-warnaserror` (0/0), 448 тестов в базовом прогоне и на каждом корпусе v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1), perf-гейты (9/9 на v5). Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 460 тестов в базовом прогоне и на каждом корпусе v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1), perf-гейты (9/9 на v5). Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила (из AGENTS.md):**
 - XML-целостность: не терять поля (включая неизвестные), не нормализовать sparse-записи, сохранять лексическую форму (`1.0`), порядок, регистр, декларацию. Неизменённый файл не перезаписывается; повреждённый — только диагностика.
@@ -51,9 +51,9 @@
 - **M23b1:** фильтры item workspace и class-aware видимость полей.
 - **M23b2:** item-relation-секции и навигация, list/dict-редакторы, симметричные пары, enemy ammo, диагностика legacy repeated key.
 - **M23b3:** источники значений и pickers (звуки, анимация, pocket-поля, robot skill grants, `Nothing`/`None`).
+- **M23b4:** валидация legacy-границ чисел, эксклюзивные группы флагов, карта LBE-класс→карманы и 64-битные lookup-id/маски (`L-ITEM-034/047`, `L-MERC-014`, `L-IFIELD-227…230`, `L-DATA-012`).
 
 Осталось:
-- **M23b4:** валидация, границы чисел, 64-битные маски (`L-ITEM-034/047`, `L-MERC-014`, `L-IFIELD-227…230`, `L-DATA-012`).
 - **M23b5:** изображения (`L-ITEM-014`, `L-IMG-005/020`).
 - **M23b6:** shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
 - **M23b7:** shell, field UI, полировка merc gear (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
@@ -130,10 +130,10 @@
 ## Проверка
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений.
-2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 448 тестов, все зелёные.
-3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 448 тестов на каждом корпусе, temp-копии без изменений в `References/`.
+2. `dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx` — 460 тестов, все зелёные.
+3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 460 тестов на каждом корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение диапазона — `mSmall1Status=600` (mIndex 237, kit 5) в обеих версиях.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests`.
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с.
-7. **Ручной smoke (выполняет пользователь):** `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` — v4/v5, item и merc workspace, языковые оверлеи, copy, фильтры/layout, settings, close/save, external-change, malformed lookup, а также сценарии M23b1–M23b3. Результат и подпись вносятся в checklist и `LEGACY-PARITY-REPORT.md`.
+7. **Ручной smoke (выполняет пользователь):** `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` — v4/v5, item и merc workspace, языковые оверлеи, copy, фильтры/layout, settings, close/save, external-change, malformed lookup, а также сценарии M23b1–M23b4. Результат и подпись вносятся в checklist и `LEGACY-PARITY-REPORT.md`.
 8. `References/` не изменён; артефакты `bin/`/`obj/` в git не попадают.

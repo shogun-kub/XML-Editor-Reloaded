@@ -4,31 +4,31 @@ using XmlEditorReloaded.App.Resources;
 namespace XmlEditorReloaded.App.ViewModels;
 
 /// <summary>
-/// Bit flags editor for one 32-bit integer value.
+/// Bit flags editor for one unsigned 64-bit integer value.
 /// </summary>
 public sealed class BitEditorViewModel
 {
-    private readonly List<BitItem> _bits = new(32);
+    private readonly List<BitItem> _bits = new(64);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BitEditorViewModel"/> class.
     /// </summary>
     /// <param name="title">Dialog title.</param>
-    /// <param name="value">Initial 32-bit value.</param>
+    /// <param name="value">Initial 64-bit value.</param>
     /// <param name="labels">Optional names for individual bits, keyed by bit number.</param>
     /// <param name="valueName">Optional name of the exact value, for example a combination entry.</param>
     public BitEditorViewModel(
         string title,
-        uint value,
+        ulong value,
         IReadOnlyDictionary<int, string>? labels = null,
         string? valueName = null)
     {
         Title = title;
-        for (var bit = 0; bit < 32; bit++)
+        for (var bit = 0; bit < 64; bit++)
         {
             string? label = null;
             labels?.TryGetValue(bit, out label);
-            _bits.Add(new BitItem(bit, (value & (1u << bit)) != 0, label));
+            _bits.Add(new BitItem(bit, (value & (1UL << bit)) != 0, label));
         }
 
         ValueSummary = valueName is null
@@ -62,22 +62,22 @@ public sealed class BitEditorViewModel
     public string CancelText { get; }
 
     /// <summary>
-    /// Gets the 32 bit items, least significant bit first.
+    /// Gets the 64 bit items, least significant bit first.
     /// </summary>
     public IReadOnlyList<BitItem> Bits => _bits;
 
     /// <summary>
-    /// Composes the unsigned 32-bit value from the current checkbox states.
+    /// Composes the unsigned 64-bit value from the current checkbox states.
     /// </summary>
     /// <returns>The composed value.</returns>
-    public uint ComposeValue()
+    public ulong ComposeValue()
     {
-        var value = 0u;
+        var value = 0UL;
         foreach (var bit in Bits)
         {
             if (bit.IsSet)
             {
-                value |= 1u << bit.Number;
+                value |= 1UL << bit.Number;
             }
         }
 
@@ -93,7 +93,7 @@ public sealed class BitItem
     /// <summary>
     /// Initializes a new instance of the <see cref="BitItem"/> class.
     /// </summary>
-    /// <param name="number">Bit number, 0 to 31.</param>
+    /// <param name="number">Bit number, 0 to 63.</param>
     /// <param name="isSet">Whether the bit is set.</param>
     /// <param name="label">Optional lookup name of the bit.</param>
     public BitItem(int number, bool isSet, string? label = null)

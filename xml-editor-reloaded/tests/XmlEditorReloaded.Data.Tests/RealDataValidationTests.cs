@@ -99,6 +99,86 @@ public class RealDataValidationTests
     }
 
     /// <summary>
+    /// The curated numeric ranges, the exclusive launcher group and the LBE pocket limits produce no
+    /// warnings on either reference data set except the known <c>mSmall1Status = 600</c> value, and
+    /// validation never marks the document dirty.
+    /// </summary>
+    [Fact]
+    public async Task MappedTables_ProduceOnlyTheKnownRangeWarning()
+    {
+        var tableData = Environment.GetEnvironmentVariable("XER_CORPUS_DIR");
+        if (string.IsNullOrWhiteSpace(tableData) || !Directory.Exists(tableData))
+        {
+            return;
+        }
+
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var tables = await provider.GetAllTablesAsync();
+        Assert.True(tables.IsSuccess, tables.ErrorText);
+        var languages = await provider.GetLanguagesAsync();
+        Assert.True(languages.IsSuccess, languages.ErrorText);
+        var lookups = new XmlFileLookupRepository(tableData, languages.Data!, provider);
+        var loader = new TableFileLoader();
+        var validator = new TableValidator();
+        var rangeIssues = new List<ValidationIssue>();
+        var groupIssues = new List<ValidationIssue>();
+        var checkedTables = 0;
+
+        foreach (var metadata in tables.Data!)
+        {
+            var relativePath = metadata.TableName.ToRelativePath();
+            var filePath = Path.Combine(tableData, relativePath);
+            if (!File.Exists(filePath))
+            {
+                continue;
+            }
+
+            var descriptor = new TableDescriptor(
+                metadata.TableName,
+                filePath,
+                relativePath,
+                IsMapped: true,
+                Array.Empty<OverlayDescriptor>());
+            var load = await loader.LoadAsync(descriptor, metadata);
+            if (!load.IsSuccess || load.Data!.Status == TableDocumentStatus.Malformed)
+            {
+                continue;
+            }
+
+            var document = load.Data.GetDocument<TableDocument>();
+            if (document is null)
+            {
+                continue;
+            }
+
+            checkedTables++;
+            var report = await validator.ValidateAsync(document, lookups);
+            rangeIssues.AddRange(report.Issues.Where(
+                static issue => issue.Code == ValidationCodes.OutOfRange));
+            groupIssues.AddRange(report.Issues.Where(static issue =>
+                issue.Code is ValidationCodes.ExclusiveFlags or ValidationCodes.ClassValueLimit));
+            Assert.False(document.IsDirty, $"{relativePath}: validation marked the document dirty.");
+        }
+
+        Assert.True(checkedTables > 50, $"Only {checkedTables} mapped tables were checked.");
+        Assert.True(
+            groupIssues.Count == 0,
+            $"Unexpected exclusive-group or class-limit warnings ({groupIssues.Count}):{Environment.NewLine}"
+            + string.Join(Environment.NewLine, groupIssues.Take(10).Select(
+                static issue => $"{issue.TableName}: {issue.Code} at {issue.FieldPath} ({issue.RecordKey})")));
+
+        var warning = Assert.Single(rangeIssues);
+        Assert.Equal(ValidationCodes.OutOfRange, warning.Code);
+        Assert.Equal(TableName.Parse("Inventory.MercStartingGear"), warning.TableName);
+        Assert.Equal("GEARKIT/mSmall1Status", warning.FieldPath);
+        Assert.Equal("237", warning.RecordKey);
+        Assert.Contains("100", warning.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// The real Items schema receives the verified hint types, lookup references, and flag editors.
     /// </summary>
     [Fact]

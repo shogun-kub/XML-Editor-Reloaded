@@ -56,6 +56,7 @@ public class RealAuxiliaryTablesTests
         var failures = new List<string>();
         var checkedTables = 0;
         var knownDuplicateKeys = 0;
+        var knownRangeWarnings = 0;
 
         foreach (var metadata in tables.Data!.Where(static table =>
                      AuxiliaryPrefixes.Any(prefix => table.TableName.Value.StartsWith(
@@ -121,6 +122,17 @@ public class RealAuxiliaryTablesTests
                     continue;
                 }
 
+                // Both reference data sets contain one gear status above the legacy 0..100 spinner
+                // limit. The editor keeps the value, reports it, and never clamps it.
+                if (issue.Code == ValidationCodes.OutOfRange
+                    && relativePath == "Inventory/MercStartingGear.xml"
+                    && issue.FieldPath == "GEARKIT/mSmall1Status"
+                    && issue.RecordKey == "237")
+                {
+                    knownRangeWarnings++;
+                    continue;
+                }
+
                 failures.Add($"{relativePath}: {issue.Code} at {issue.FieldPath}: {issue.Message}");
             }
 
@@ -128,6 +140,7 @@ public class RealAuxiliaryTablesTests
         }
 
         Assert.Equal(1, knownDuplicateKeys);
+        Assert.Equal(1, knownRangeWarnings);
         Assert.Equal(104, checkedTables);
         Assert.True(
             failures.Count == 0,

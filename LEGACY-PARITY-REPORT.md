@@ -1,6 +1,8 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b4 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b5. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+
+Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b3): закрытие пробелов фиксируют секции `M23b1`…`M23b4` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -825,6 +827,32 @@ WPF-поведение в этой среде не автоматизирует�
 | `References/` | не изменён; corpus-тесты работают на temp-копиях |
 
 **Следующий подшаг:** M23b4 — валидация, границы чисел и 64-битные маски (`L-ITEM-034/047`, `L-MERC-014`, `L-IFIELD-227…230`, `L-DATA-012`).
+
+## M23b4 — Валидация, границы чисел и 64-битные маски
+
+**Дата:** 2026-10-25. **Статус:** выполнен. **Закрытые пробелы:** `L-ITEM-034`, `L-ITEM-047`, `L-MERC-014`, `L-IFIELD-227…230` (4 ID), `L-DATA-012` — 8 ID в 5 записях. Матрица и реестр выше остаются снимком M23a (см. вводную заметку о статусе); факт закрытия фиксирует эта секция. Решения и ограничения — `M23A-PARITY/52-m23b4-implementation-log.md`.
+
+**Реализация.**
+- `Data/Metadata/Migrations/0015_M23b4ValidationLimits.sql`: `ColumnHints.Minimum`/`Maximum` (nullable `INTEGER`, границы включительные) и 123 ограниченных поля в 6 таблицах — `Items.Items` 61, `Items.Weapons` 14, `Items.Explosives` 8, `Items.Magazines` 1, `Items.LoadBearingEquipment` 4, `Inventory.MercStartingGear` 35. Пределы сняты с legacy `NumericUpDown`; `ItemSize` 0…99, потому что `MAX_ITEM_SIZE` по умолчанию 99 (120 записей содержат ровно 99). Два legacy-предела, противоречащих данным (`Items.Items.PercentStatusDrainReduction` = -300, `Items.Weapons.usOverheatingDamageThreshold` = 65650), намеренно не засеяны.
+- Там же `ExclusiveFlagGroups` (`launcher_type` на `Items.Items`: `Cannon`, `Mortar`, `GrenadeLauncher`, `RocketLauncher` — не более одного, все четыре сняты = legacy «N/A») и `ClassValueLimits` для `Items.LoadBearingEquipment` (`lbeClass`: 0 → 0, 1 → 5, 2 → 12, 3 → 7, 4 → 12 над `lbePocketIndex%Index%`).
+- `Core/Metadata/ColumnHint.cs` получил `Minimum`/`Maximum`; новые `Core/Metadata/ExclusiveFlagGroup.cs` и `Core/Metadata/ClassValueLimit.cs`; `TableMetadata` отдаёт `ExclusiveFlagGroups`/`ClassValueLimits`; в `ValidationCodes` добавлены `validation.out_of_range`, `validation.exclusive_flags`, `validation.class_value_limit`; `Data/Metadata/SqliteMetadataProvider.cs` читает новые колонки и таблицы.
+- `Xml/Validation/TableValidator.cs`: все четыре правила (диапазон, эксклюзивная группа, предел по классу, членство в lookup) — только предупреждения, значения никогда не клампятся и не очищаются; членство в lookup считается по беззнаковым id, поэтому отрицательное значение даёт только `validation.lookup_missing`.
+- 64 бита (`L-DATA-012`): `LookupEntry.Id` — `ulong`; `Flags` разбираются как `ulong` в `Xml/Documents/TableRecord.cs`, `Xml/Validation/TableValidator.cs`, `Xml/Workspace/TableWorkspace.Bulk.cs`, `App/ViewModels/TableEditorViewModel.cs`; `App/ViewModels/BitEditorViewModel.cs`, `IDialogService.EditBits`, `WpfDialogService.EditBits`, `Views/BitEditorWindow.xaml(.cs)` переведены на `ulong`.
+- `Views/BitEditorWindow.xaml` выше (Height 500 / MinHeight 320) — 16 строк по 4 колонки помещаются без прокрутки; подписи битов больше не фильтруются по `uint.MaxValue`, поэтому биты 32 и 33 из `Lookup.ItemFlag`/`AttachmentClass` видны. `Core/Metadata/ClassVisibilityRule.cs` принимает `ulong classBits`, сентинел «-1 = видно всегда» сохранён; `Xml/Copy/TableCopyRemapper.cs` и `App/ViewModels/LookupColumnData.cs` — `ulong`; сортировка lookup/флагов сравнивает значения как `decimal`, поэтому `2^63` и `ulong.MaxValue` упорядочены верно.
+
+**Проверка M23b4.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 460/460: Core 37, Data 65, Imaging 19, Xml 190, App 149 |
+| Corpus v4 | 460/460; единственное range-предупреждение — `Inventory.MercStartingGear`, `GEARKIT/mSmall1Status` = 600 у записи `mIndex` 237 (kit 5); предупреждений эксклюзивной группы и class-limit — 0 |
+| Corpus v5 | 460/460; тот же набор предупреждений: только `mSmall1Status` 600 |
+| Тесты M23b4 | `SetFieldValue_FlagHint_AcceptsUInt64Range`, `Validate_LargeFlagMask_IsNotInvalidType`, `Validate_NegativeLookupValue_IsMissingNotInvalid`, `Validate_DecimalField_UsesInclusiveBounds`, `Validate_OutOfRange_IsWarningWithoutMutation`, `Validate_ExclusiveFlags_*`, `Validate_ClassValueLimit_*`, `GetEntries_ReadsUnsignedMaxId`, `GetEntries_IdAboveUnsignedRange_ReturnsInvalidEntry`, `GetEntries_NegativeId_ReturnsInvalidEntry`, `Apply_Overwrite_RemapsLookupIdAbove32Bits`, `LookupMasks_IncludeBitsAbove32Bits`, `Create_HandlesIdsAboveSignedRange`, `BitEditor_ComposesValueAndLoadsXaml`, `MappedTables_ProduceOnlyTheKnownRangeWarning` |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| `References/` | не изменён; corpus-тесты работают на temp-копиях; LBE-сид сверен с legacy (`References/xml-editor/GUI/Data Forms/ItemDataForm.vb:1452-1580`) и с данными (108 записей в каждой версии, классы 1/2/3/4) |
+
+**Следующий подшаг:** M23b5 — изображения (`L-ITEM-014`, `L-IMG-005/020`).
 
 ## Вне паритета (осознанно)
 

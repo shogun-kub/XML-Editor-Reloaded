@@ -250,7 +250,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                entries.Add(new LookupEntry(reader.GetInt64(0), reader.GetString(1)));
+                entries.Add(new LookupEntry((ulong)reader.GetInt64(0), reader.GetString(1)));
             }
 
             return OperationResult<IReadOnlyList<LookupEntry>>.Success(entries);
@@ -311,6 +311,10 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             .ConfigureAwait(false);
         var symmetricKeyPair = await ReadSymmetricKeyPairAsync(connection, row.Id, cancellationToken)
             .ConfigureAwait(false);
+        var exclusiveFlagGroups = await ReadExclusiveFlagGroupsAsync(connection, row.Id, cancellationToken)
+            .ConfigureAwait(false);
+        var classValueLimits = await ReadClassValueLimitsAsync(connection, row.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -325,7 +329,76 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             columnHints,
             recordKeyFields,
             visibilityRules,
-            symmetricKeyPair);
+            symmetricKeyPair,
+            exclusiveFlagGroups,
+            classValueLimits);
+    }
+
+    private static async Task<IReadOnlyList<ExclusiveFlagGroup>> ReadExclusiveFlagGroupsAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var groups = new List<ExclusiveFlagGroup>();
+        var fieldsByGroup = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        var order = new List<string>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT GroupKey, XmlFieldName
+            FROM ExclusiveFlagGroups
+            WHERE TableId = $tableId
+            ORDER BY GroupKey, Ordinal, XmlFieldName;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var groupKey = reader.GetString(0);
+            if (!fieldsByGroup.TryGetValue(groupKey, out var fields))
+            {
+                fields = new List<string>();
+                fieldsByGroup.Add(groupKey, fields);
+                order.Add(groupKey);
+            }
+
+            fields.Add(reader.GetString(1));
+        }
+
+        foreach (var groupKey in order)
+        {
+            groups.Add(new ExclusiveFlagGroup(groupKey, fieldsByGroup[groupKey]));
+        }
+
+        return groups;
+    }
+
+    private static async Task<IReadOnlyList<ClassValueLimit>> ReadClassValueLimitsAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var limits = new List<ClassValueLimit>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT ClassField, ClassValue, FieldMask, MaxOrdinal
+            FROM ClassValueLimits
+            WHERE TableId = $tableId
+            ORDER BY ClassField, MaxOrdinal, ClassValue;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            limits.Add(new ClassValueLimit(
+                reader.GetString(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetInt32(3)));
+        }
+
+        return limits;
     }
 
     private static async Task<SymmetricKeyPair?> ReadSymmetricKeyPairAsync(
@@ -556,7 +629,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         await using var command = connection.CreateCommand();
         command.CommandText =
             """
-            SELECT XmlFieldName, DataType, EditorKind, DisplayWidth, LookupTable, TooltipKey, Flags, GroupKey, GroupOrder
+            SELECT XmlFieldName, DataType, EditorKind, DisplayWidth, LookupTable, TooltipKey, Flags, GroupKey, GroupOrder, Minimum, Maximum
             FROM ColumnHints
             WHERE TableId = $tableId
             ORDER BY XmlFieldName;
@@ -576,6 +649,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
                 Flags = reader.IsDBNull(6) ? null : (ColumnFlags)reader.GetInt32(6),
                 GroupKey = reader.IsDBNull(7) ? null : reader.GetString(7),
                 GroupOrder = reader.GetInt32(8),
+                Minimum = reader.IsDBNull(9) ? null : reader.GetInt64(9),
+                Maximum = reader.IsDBNull(10) ? null : reader.GetInt64(10),
             });
         }
 

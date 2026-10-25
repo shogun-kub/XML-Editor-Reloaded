@@ -1219,6 +1219,32 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Lookup identifiers above 32 bits produce bit labels instead of being dropped, and the edited
+    /// value keeps its full 64-bit precision.
+    /// </summary>
+    [Fact]
+    public async Task LookupMasks_IncludeBitsAbove32Bits()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(
+            workspace,
+            includeLookups: true,
+            includeHighBits: true);
+        dialog.EditBitsResult = (1UL << 33) + 1;
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "0");
+        var field = Assert.Single(FlattenDetailFields(editor), candidate => candidate.Name == "AttachmentClass");
+
+        field.EditBitsCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastBitLabels);
+        Assert.Equal("High32", dialog.LastBitLabels![32]);
+        Assert.Equal("High33", dialog.LastBitLabels[33]);
+        Assert.Equal(((1UL << 33) + 1).ToString(CultureInfo.InvariantCulture), field.Value);
+    }
+
+    /// <summary>
     /// Nested structures are read-only in the detail form and cannot be overwritten as scalar text.
     /// </summary>
     [Fact]
@@ -1247,17 +1273,31 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         var viewModel = new BitEditorViewModel("bits", 5);
-        Assert.Equal(32, viewModel.Bits.Count);
+        Assert.Equal(64, viewModel.Bits.Count);
         Assert.True(viewModel.Bits[0].IsSet);
         Assert.False(viewModel.Bits[1].IsSet);
         Assert.True(viewModel.Bits[2].IsSet);
-        Assert.Equal(5u, viewModel.ComposeValue());
+        Assert.Equal(5UL, viewModel.ComposeValue());
         viewModel.Bits[1].IsSet = true;
-        Assert.Equal(7u, viewModel.ComposeValue());
+        Assert.Equal(7UL, viewModel.ComposeValue());
 
-        var maxValue = new BitEditorViewModel("bits", uint.MaxValue);
+        var highBit = new BitEditorViewModel("bits", 1UL << 63);
+        Assert.True(highBit.Bits[63].IsSet);
+        Assert.All(highBit.Bits.Take(63), bit => Assert.False(bit.IsSet));
+        Assert.Equal(1UL << 63, highBit.ComposeValue());
+        highBit.Bits[0].IsSet = true;
+        Assert.Equal((1UL << 63) + 1, highBit.ComposeValue());
+
+        var maxValue = new BitEditorViewModel("bits", ulong.MaxValue);
         Assert.All(maxValue.Bits, bit => Assert.True(bit.IsSet));
-        Assert.Equal(uint.MaxValue, maxValue.ComposeValue());
+        Assert.Equal(ulong.MaxValue, maxValue.ComposeValue());
+
+        var lookupBits = new BitEditorViewModel(
+            "bits",
+            1UL << 33,
+            new Dictionary<int, string> { [32] = "Bit32", [33] = "Bit33" });
+        Assert.Equal("Bit33 (33)", lookupBits.Bits[33].DisplayText);
+        Assert.Equal("Bit32 (32)", lookupBits.Bits[32].DisplayText);
 
         var named = new BitEditorViewModel(
             "bits",
@@ -1563,6 +1603,7 @@ public class TableEditorViewModelTests
         bool includeLookups = false,
         bool includeBooleans = false,
         bool includeRelations = false,
+        bool includeHighBits = false,
         FakeTableLayoutStore? layoutStore = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
@@ -1635,6 +1676,10 @@ public class TableEditorViewModelTests
                 + "<AttachmentClass><id>2</id><name>B</name></AttachmentClass>"
                 + "<AttachmentClass><id>3</id><name>AB</name></AttachmentClass>"
                 + "<AttachmentClass><id>4</id><name>C</name></AttachmentClass>"
+                + (includeHighBits
+                    ? "<AttachmentClass><id>4294967296</id><name>High32</name></AttachmentClass>"
+                      + "<AttachmentClass><id>8589934592</id><name>High33</name></AttachmentClass>"
+                    : string.Empty)
                 + "</JA2Data>");
             // Separability.xml is intentionally absent so the editor must fall back to text.
         }
@@ -1665,7 +1710,7 @@ public class TableEditorViewModelTests
 
         public string? LastExternalChangeMessage { get; private set; }
 
-        public uint? EditBitsResult { get; set; }
+        public ulong? EditBitsResult { get; set; }
 
         public IReadOnlyDictionary<int, string>? LastBitLabels { get; private set; }
 
@@ -1694,9 +1739,9 @@ public class TableEditorViewModelTests
             return ExternalChangeResult;
         }
 
-        public uint? EditBits(
+        public ulong? EditBits(
             string title,
-            uint value,
+            ulong value,
             IReadOnlyDictionary<int, string>? labels = null,
             string? valueName = null)
         {

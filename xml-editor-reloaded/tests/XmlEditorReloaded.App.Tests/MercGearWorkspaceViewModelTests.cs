@@ -294,9 +294,9 @@ public class MercGearWorkspaceViewModelTests
             return ExternalChangeResult;
         }
 
-        public uint? EditBits(
+        public ulong? EditBits(
             string title,
-            uint value,
+            ulong value,
             IReadOnlyDictionary<int, string>? labels = null,
             string? valueName = null) => null;
 

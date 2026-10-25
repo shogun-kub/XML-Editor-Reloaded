@@ -54,3 +54,7 @@ $RECYCLE.BIN/
 *.tmp
 *.log
 /.zcodeignore
+
+# ===== Local sandbox/build recovery artifacts =====
+.artifacts/
+.acl-recovery/

@@ -640,9 +640,10 @@ public sealed class TableRecord
             ColumnDataType.Integer =>
                 int.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Lookup =>
-                long.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                long.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)
+                || ulong.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Flags =>
-                uint.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                ulong.TryParse(rawText, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Decimal =>
                 decimal.TryParse(rawText, DecimalStyles, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Boolean => rawText.Trim() is "0" or "1",

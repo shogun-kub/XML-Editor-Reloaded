@@ -63,4 +63,16 @@ public sealed class ColumnHint
     /// Gets the group display order; smaller values are shown first. Zero means unspecified.
     /// </summary>
     public int GroupOrder { get; init; }
+
+    /// <summary>
+    /// Gets the inclusive lower bound of a numeric field, or <see langword="null"/> when unbounded.
+    /// The bound is used by validation only and never clamps an edited value.
+    /// </summary>
+    public long? Minimum { get; init; }
+
+    /// <summary>
+    /// Gets the inclusive upper bound of a numeric field, or <see langword="null"/> when unbounded.
+    /// The bound is used by validation only and never clamps an edited value.
+    /// </summary>
+    public long? Maximum { get; init; }
 }

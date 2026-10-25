@@ -69,6 +69,63 @@ public class XmlFileLookupRepositoryTests
     }
 
     /// <summary>
+    /// Identifiers above the signed 64-bit range are still valid unsigned values.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_ReadsUnsignedMaxId()
+    {
+        using var workspace = new TestWorkspace();
+        var directory = workspace.CopyFixtureDirectory("Lookup");
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "Huge.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data><ItemFlag><id>18446744073709551615</id><name>Huge flag</name></ItemFlag></JA2Data>");
+        var repository = new XmlFileLookupRepository(workspace.DirectoryPath);
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.Huge"));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(new LookupEntry(ulong.MaxValue, "Huge flag"), Assert.Single(result.Data!));
+    }
+
+    /// <summary>
+    /// An identifier beyond the unsigned 64-bit range rejects the file instead of wrapping.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_IdAboveUnsignedRange_ReturnsInvalidEntry()
+    {
+        using var workspace = new TestWorkspace();
+        var directory = workspace.CopyFixtureDirectory("Lookup");
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "Overflow.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data><ItemFlag><id>18446744073709551616</id><name>Overflow</name></ItemFlag></JA2Data>");
+        var repository = new XmlFileLookupRepository(workspace.DirectoryPath);
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.Overflow"));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidLookupEntry, result.ErrorCode);
+    }
+
+    /// <summary>
+    /// Lookup identifiers are unsigned, so a negative id is rejected rather than stored as a wrapped value.
+    /// </summary>
+    [Fact]
+    public async Task GetEntries_NegativeId_ReturnsInvalidEntry()
+    {
+        using var workspace = new TestWorkspace();
+        var directory = workspace.CopyFixtureDirectory("Lookup");
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "Negative.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data><ItemFlag><id>-1</id><name>Negative</name></ItemFlag></JA2Data>");
+        var repository = new XmlFileLookupRepository(workspace.DirectoryPath);
+
+        var result = await repository.GetEntriesAsync(TableName.Parse("Lookup.Negative"));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidLookupEntry, result.ErrorCode);
+    }
+
+    /// <summary>
     /// A missing lookup file is reported as an operation failure.
     /// </summary>
     [Fact]

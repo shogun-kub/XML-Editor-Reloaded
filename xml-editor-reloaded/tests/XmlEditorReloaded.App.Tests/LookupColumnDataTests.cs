@@ -38,6 +38,28 @@ public class LookupColumnDataTests
     }
 
     /// <summary>
+    /// Identifiers above the signed 64-bit range are known entries and are not confused with
+    /// neighbouring unknown values.
+    /// </summary>
+    [Fact]
+    public void Create_HandlesIdsAboveSignedRange()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var data = LookupColumnData.Create(
+            TableName.Parse("Lookup.Test"),
+            new[] { new LookupEntry(ulong.MaxValue, "Huge"), new LookupEntry(2, "Two") },
+            new string?[] { "18446744073709551615", "18446744073709551614" });
+
+        Assert.True(data.IsAvailable);
+        Assert.Equal("Huge", data.GetExactEntryName("18446744073709551615"));
+        Assert.Equal("Huge (ID 18446744073709551615)", data.GetTooltip("18446744073709551615"));
+        Assert.Null(data.GetName("18446744073709551614"));
+        Assert.Equal("18446744073709551614 (unknown)", data.Display("18446744073709551614"));
+        Assert.Null(data.GetExactEntryName("18446744073709551614"));
+        Assert.Equal(3, data.Options.Count);
+    }
+
+    /// <summary>
     /// A failed lookup still shows raw values and exposes the error instead of pretending that every
     /// value is unknown.
     /// </summary>

@@ -4,7 +4,7 @@ using XmlEditorReloaded.App.ViewModels;
 namespace XmlEditorReloaded.App.Views;
 
 /// <summary>
-/// Dialog that edits a 32-bit integer as a set of bit flags.
+/// Dialog that edits an unsigned 64-bit integer as a set of bit flags.
 /// </summary>
 public partial class BitEditorWindow : Window
 {
@@ -27,7 +27,7 @@ public partial class BitEditorWindow : Window
     /// <summary>
     /// Gets the edited value after the dialog is accepted, or <see langword="null"/> when cancelled.
     /// </summary>
-    public uint? Value { get; private set; }
+    public ulong? Value { get; private set; }
 
     private void OnOk(object sender, RoutedEventArgs e)
     {

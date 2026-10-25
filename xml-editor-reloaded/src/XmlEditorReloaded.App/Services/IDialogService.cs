@@ -72,16 +72,16 @@ public interface IDialogService
     ExternalChangeChoice ResolveExternalChange(string message, string title);
 
     /// <summary>
-    /// Shows a 32-bit bit-flags editor.
+    /// Shows an unsigned 64-bit bit-flags editor.
     /// </summary>
     /// <param name="title">Dialog title.</param>
     /// <param name="value">Initial value.</param>
     /// <param name="labels">Optional names for individual bits, keyed by bit number.</param>
     /// <param name="valueName">Optional name of the exact value, for example a lookup combination entry.</param>
     /// <returns>The edited value, or <see langword="null"/> when cancelled.</returns>
-    uint? EditBits(
+    ulong? EditBits(
         string title,
-        uint value,
+        ulong value,
         IReadOnlyDictionary<int, string>? labels = null,
         string? valueName = null);
 

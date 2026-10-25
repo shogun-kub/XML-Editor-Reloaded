@@ -127,6 +127,282 @@ public class TableValidatorTests
     }
 
     /// <summary>
+    /// A curated numeric range produces a warning but never changes the stored value.
+    /// </summary>
+    [Theory]
+    [InlineData("100")]
+    [InlineData("101")]
+    public async Task Validate_OutOfRange_IsWarningWithoutMutation(string value)
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                $"<ubWeight>{value}</ubWeight>",
+                StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("ubWeight")
+            {
+                DataType = ColumnDataType.Integer,
+                Maximum = 99,
+            }));
+        var before = await File.ReadAllBytesAsync(path);
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        var issue = Assert.Single(report.Issues, item => item.Code == ValidationCodes.OutOfRange);
+        Assert.Equal(ValidationSeverity.Warning, issue.Severity);
+        Assert.Equal("1", issue.RecordKey);
+        Assert.Equal("ubWeight", issue.FieldPath);
+        Assert.Contains("99", issue.Message, StringComparison.Ordinal);
+        Assert.False(document.IsDirty);
+        Assert.Equal(before, await File.ReadAllBytesAsync(path));
+    }
+
+    /// <summary>
+    /// Values within the inclusive range and values of unbounded fields stay silent.
+    /// </summary>
+    [Fact]
+    public async Task Validate_WithinRange_IsSilent()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("ubWeight")
+            {
+                DataType = ColumnDataType.Integer,
+                Minimum = 0,
+                Maximum = 10,
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.OutOfRange);
+    }
+
+    /// <summary>
+    /// Flag masks above the signed 32-bit range are valid 64-bit values, including the largest
+    /// mask that occurs in the reference data.
+    /// </summary>
+    [Theory]
+    [InlineData("4294967296")]
+    [InlineData("8589934592")]
+    [InlineData("2415919104")]
+    [InlineData("18446744073709551615")]
+    public async Task Validate_LargeFlagMask_IsNotInvalidType(string value)
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<AvailableAttachmentPoint>1</AvailableAttachmentPoint>",
+                $"<AvailableAttachmentPoint>{value}</AvailableAttachmentPoint>",
+                StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("AvailableAttachmentPoint")
+            {
+                DataType = ColumnDataType.Flags,
+                LookupTable = "Lookup.AttachmentPoint",
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document, new StubLookupRepository());
+
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.InvalidType);
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.LookupMissing);
+    }
+
+    /// <summary>
+    /// A negative lookup value keeps its previous meaning: it is reported as missing, never as an
+    /// invalid type, because lookup identifiers themselves are unsigned.
+    /// </summary>
+    [Fact]
+    public async Task Validate_NegativeLookupValue_IsMissingNotInvalid()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>-1</ubWeight>",
+                StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("ubWeight")
+            {
+                DataType = ColumnDataType.Lookup,
+                LookupTable = "Lookup.ItemClass",
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document, new StubLookupRepository());
+
+        var issue = Assert.Single(
+            report.Issues,
+            item => item.Code == ValidationCodes.LookupMissing && item.RecordKey == "1");
+        Assert.Equal("ubWeight", issue.FieldPath);
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.InvalidType);
+    }
+
+    /// <summary>
+    /// Integer bounds also apply to decimal fields; the fractional part is compared, not truncated.
+    /// </summary>
+    [Theory]
+    [InlineData("0.25", false)]
+    [InlineData("10.5", true)]
+    public async Task Validate_DecimalField_UsesInclusiveBounds(string value, bool outOfRange)
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                $"<ubWeight>{value}</ubWeight>",
+                StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("ubWeight")
+            {
+                DataType = ColumnDataType.Decimal,
+                Minimum = -1,
+                Maximum = 10,
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        if (outOfRange)
+        {
+            var issue = Assert.Single(report.Issues, item => item.Code == ValidationCodes.OutOfRange);
+            Assert.Equal("ubWeight", issue.FieldPath);
+        }
+        else
+        {
+            Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.OutOfRange);
+        }
+    }
+
+    /// <summary>
+    /// Several fields of an exclusive group are reported together; one set field is valid.
+    /// </summary>
+    [Fact]
+    public async Task Validate_ExclusiveFlags_WarnsOnlyWhenSeveralAreSet()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>10</ubWeight><Cannon>1</Cannon><Mortar>1</Mortar><RocketLauncher>0</RocketLauncher>",
+                StringComparison.Ordinal));
+        var metadata = MetadataWithRules(
+            new[]
+            {
+                new ExclusiveFlagGroup(
+                    "launcher_type",
+                    new[] { "Cannon", "Mortar", "GrenadeLauncher", "RocketLauncher" }),
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        var issue = Assert.Single(report.Issues, item => item.Code == ValidationCodes.ExclusiveFlags);
+        Assert.Equal(ValidationSeverity.Warning, issue.Severity);
+        Assert.Equal("1", issue.RecordKey);
+        Assert.Equal("Cannon", issue.FieldPath);
+        Assert.Contains("Cannon", issue.Message, StringComparison.Ordinal);
+        Assert.Contains("Mortar", issue.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("GrenadeLauncher", issue.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A single set field of an exclusive group is valid.
+    /// </summary>
+    [Fact]
+    public async Task Validate_ExclusiveFlags_OneField_IsSilent()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>10</ubWeight><Cannon>1</Cannon><Mortar>0</Mortar>",
+                StringComparison.Ordinal));
+        var metadata = MetadataWithRules(
+            new[]
+            {
+                new ExclusiveFlagGroup("launcher_type", new[] { "Cannon", "Mortar" }),
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.ExclusiveFlags);
+    }
+
+    /// <summary>
+    /// An indexed field above the class-dependent limit is reported; later zero fields are not.
+    /// </summary>
+    [Fact]
+    public async Task Validate_ClassValueLimit_WarnsAboveAllowedIndex()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>10</ubWeight><lbeClass>1</lbeClass><lbePocketIndex1>5</lbePocketIndex1><lbePocketIndex5>5</lbePocketIndex5><lbePocketIndex6>7</lbePocketIndex6><lbePocketIndex7>0</lbePocketIndex7>",
+                StringComparison.Ordinal));
+        var metadata = MetadataWithRules(
+            classValueLimits: new[]
+            {
+                new ClassValueLimit("lbeClass", "1", "lbePocketIndex%Index%", 5),
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        var issue = Assert.Single(report.Issues, item => item.Code == ValidationCodes.ClassValueLimit);
+        Assert.Equal(ValidationSeverity.Warning, issue.Severity);
+        Assert.Equal("lbePocketIndex6", issue.FieldPath);
+        Assert.Contains("first 5", issue.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A class value without a declared limit does not restrict its indexed fields.
+    /// </summary>
+    [Fact]
+    public async Task Validate_ClassValueLimit_OtherClass_IsSilent()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path)).Replace(
+                "<ubWeight>10</ubWeight>",
+                "<ubWeight>10</ubWeight><lbeClass>2</lbeClass><lbePocketIndex6>7</lbePocketIndex6>",
+                StringComparison.Ordinal));
+        var metadata = MetadataWithRules(
+            classValueLimits: new[]
+            {
+                new ClassValueLimit("lbeClass", "1", "lbePocketIndex%Index%", 5),
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var report = await new TableValidator().ValidateAsync(document);
+
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.ClassValueLimit);
+    }
+
+    /// <summary>
     /// Duplicate primary keys are reported once per duplicated key.
     /// </summary>
     [Fact]
@@ -310,6 +586,19 @@ public class TableValidatorTests
             new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
             columns: Array.Empty<ColumnMetadata>(),
             columnHints: hints);
+
+    private static TableMetadata MetadataWithRules(
+        ExclusiveFlagGroup[]? exclusiveFlagGroups = null,
+        ClassValueLimit[]? classValueLimits = null) =>
+        new(
+            TableName.Parse("Items.Items"),
+            "ITEMLIST",
+            "ITEM",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
+            columns: Array.Empty<ColumnMetadata>(),
+            exclusiveFlagGroups: exclusiveFlagGroups,
+            classValueLimits: classValueLimits);
 
     private static async Task<TableDocument> LoadAsync(string path, TableMetadata? metadata)
     {

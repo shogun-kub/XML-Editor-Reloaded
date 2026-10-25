@@ -81,9 +81,9 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
-    public uint? EditBits(
+    public ulong? EditBits(
         string title,
-        uint value,
+        ulong value,
         IReadOnlyDictionary<int, string>? labels = null,
         string? valueName = null)
     {

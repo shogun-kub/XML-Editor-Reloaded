@@ -51,8 +51,8 @@ public sealed partial class ItemWorkspaceViewModel :
     private readonly Dictionary<TableRowViewModel, TableName> _rowOwners = new();
     private readonly List<ItemListEntry> _allItems = new();
     private readonly List<DetailFieldViewModel> _allFields = new();
-    private readonly Dictionary<long, string> _classNames = new();
-    private readonly Dictionary<long, string> _classExactNames = new();
+    private readonly Dictionary<ulong, string> _classNames = new();
+    private readonly Dictionary<ulong, string> _classExactNames = new();
     private IReadOnlyList<LanguageDescriptor> _languages = Array.Empty<LanguageDescriptor>();
     private TableSetWorkspace? _set;
     private TableRowViewModel? _itemRow;
@@ -1129,9 +1129,9 @@ public sealed partial class ItemWorkspaceViewModel :
         }
 
         var currentText = field.Value;
-        var current = uint.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+        var current = ulong.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
-            : 0u;
+            : 0UL;
         LookupColumnData? lookup = null;
         if (_rowOwners.TryGetValue(field.Row, out var table)
             && _fieldSources.TryGetValue(table, out var sources)
@@ -2386,8 +2386,8 @@ public sealed partial class ItemWorkspaceViewModel :
             : ColumnDataType.String;
     }
 
-    private uint ParseClassBits(string? raw) =>
-        uint.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0;
+    private ulong ParseClassBits(string? raw) =>
+        ulong.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0;
 
     private string ResolveClassText(TableRowViewModel row)
     {
@@ -2410,7 +2410,7 @@ public sealed partial class ItemWorkspaceViewModel :
         return names.Length == 0 ? bits.ToString(CultureInfo.InvariantCulture) : string.Join(" | ", names);
     }
 
-    private static bool IsPowerOfTwo(long value) => value > 0 && (value & (value - 1)) == 0;
+    private static bool IsPowerOfTwo(ulong value) => value > 0 && (value & (value - 1)) == 0;
 
     private string BuildItemHeader(TableRowViewModel row)
     {
@@ -2419,14 +2419,14 @@ public sealed partial class ItemWorkspaceViewModel :
         return name.Length == 0 ? key : $"{key}: {name}";
     }
 
-    private bool IsGroupVisibleForClass(string? groupKey, long classBits) =>
+    private bool IsGroupVisibleForClass(string? groupKey, ulong classBits) =>
         groupKey is null
         || IsSectionVisibleForClass(ClassVisibilitySectionKind.Group, groupKey, classBits);
 
     private bool IsSectionVisibleForClass(
         ClassVisibilitySectionKind kind,
         string sectionKey,
-        long classBits)
+        ulong classBits)
     {
         var metadata = _set?.Primary.Metadata;
         return metadata is null
@@ -2806,19 +2806,19 @@ public sealed partial class ItemWorkspaceViewModel :
         var labels = new Dictionary<int, string>();
         foreach (var entry in lookup.Entries)
         {
-            if (entry.Id <= 0 || entry.Id > uint.MaxValue)
+            if (entry.Id == 0)
             {
                 continue;
             }
 
-            var mask = (uint)entry.Id;
+            var mask = entry.Id;
             if ((mask & (mask - 1)) != 0)
             {
                 continue;
             }
 
             var bit = BitOperations.Log2(mask);
-            if (bit < 32)
+            if (bit < 64)
             {
                 labels.TryAdd(bit, entry.Name);
             }

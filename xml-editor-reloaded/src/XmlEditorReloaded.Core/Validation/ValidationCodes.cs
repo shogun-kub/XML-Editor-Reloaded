@@ -26,6 +26,15 @@ public static class ValidationCodes
     /// <summary>A table with symmetric key pairs contains a record without its reversed counterpart.</summary>
     public const string AsymmetricPair = "validation.asymmetric_pair";
 
+    /// <summary>A numeric value is outside the curated inclusive range of its field.</summary>
+    public const string OutOfRange = "validation.out_of_range";
+
+    /// <summary>Several fields of an exclusive flag group are set at the same time.</summary>
+    public const string ExclusiveFlags = "validation.exclusive_flags";
+
+    /// <summary>An indexed field is set above the limit that its class value permits.</summary>
+    public const string ClassValueLimit = "validation.class_value_limit";
+
     /// <summary>The table has no metadata and cannot be schema-validated.</summary>
     public const string Unmapped = "validation.unmapped";
 }

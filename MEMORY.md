@@ -42,10 +42,10 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b3 готовы, 448 тестов; далее ручной smoke и M23b4; roadmap M18–M27 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b4 готовы, 460 тестов; далее ручной smoke и M23b5; roadmap M18–M27 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
-| Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, флаги |
+| Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
 | Локализация | [memory/ja2-editor-localization.md](memory/ja2-editor-localization.md) | Загрузка/слияние/запись оверлеев, вложенные ключи, отчёт по переводам |
 | Shell и grid | [memory/ja2-editor-shell-grid.md](memory/ja2-editor-shell-grid.md) | M9–M13: shell, workspace/schema, grid-редактор, панель деталей |
 | Item и merc | [memory/ja2-editor-item-merc.md](memory/ja2-editor-item-merc.md) | M19 item master-detail, M20 merc gear и вспомогательные таблицы, M23b2 |

@@ -79,6 +79,6 @@ public sealed class ClassVisibilityRule
     /// <see langword="true"/> when the section is always visible or at least one class bit is included
     /// in <see cref="VisibleClasses"/>; otherwise <see langword="false"/>.
     /// </returns>
-    public bool IsVisible(long classBits) =>
-        VisibleClasses < 0 || (VisibleClasses & classBits) != 0;
+    public bool IsVisible(ulong classBits) =>
+        VisibleClasses < 0 || ((ulong)VisibleClasses & classBits) != 0;
 }

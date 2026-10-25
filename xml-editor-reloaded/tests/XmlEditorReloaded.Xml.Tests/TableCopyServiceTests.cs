@@ -103,6 +103,42 @@ public class TableCopyServiceTests
     }
 
     /// <summary>
+    /// Lookup identifiers above 32 bits are remapped by display text instead of a truncated value.
+    /// </summary>
+    [Fact]
+    public async Task Apply_Overwrite_RemapsLookupIdAbove32Bits()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        WriteTable(
+            data.SourceDirectory,
+            "Lookup/ItemClass.xml",
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+            + "<ItemClass><id>8589934592</id><name>Gun</name></ItemClass>"
+            + "<ItemClass><id>4</id><name>Misc</name></ItemClass>"
+            + "</JA2Data>");
+        var sourcePath = data.SourceDescriptor.FilePath;
+        await File.WriteAllTextAsync(
+            sourcePath,
+            (await File.ReadAllTextAsync(sourcePath)).Replace(
+                "<usItemClass>2</usItemClass>",
+                "<usItemClass>8589934592</usItemClass>",
+                StringComparison.Ordinal));
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+
+        var result = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            TableName.Parse("Items.Items"),
+            new[] { "5" },
+            TableCopyConflictPolicy.Overwrite));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var item = LoadRecord(data.TargetDescriptor.FilePath, "uiIndex", "5");
+        Assert.Equal("20", item.Element("usItemClass")?.Value);
+    }
+
+    /// <summary>
     /// Merge fills only fields that are absent from the target record and keeps existing target values.
     /// </summary>
     [Fact]

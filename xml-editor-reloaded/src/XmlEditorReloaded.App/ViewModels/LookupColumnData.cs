@@ -61,7 +61,7 @@ public sealed class LookupOption
 /// </summary>
 public sealed class LookupColumnData
 {
-    private readonly Dictionary<long, LookupOption> _byId;
+    private readonly Dictionary<ulong, LookupOption> _byId;
     private readonly List<LookupEntry> _entries;
 
     private LookupColumnData(
@@ -73,11 +73,11 @@ public sealed class LookupColumnData
     {
         TableName = tableName;
         _entries = entries.ToList();
-        _byId = new Dictionary<long, LookupOption>();
+        _byId = new Dictionary<ulong, LookupOption>();
         foreach (var option in options)
         {
             if (!option.IsUnknown
-                && long.TryParse(option.IdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
+                && ulong.TryParse(option.IdText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
                 && !_byId.ContainsKey(id))
             {
                 _byId.Add(id, option);
@@ -135,7 +135,7 @@ public sealed class LookupColumnData
         ArgumentNullException.ThrowIfNull(entries);
         ArgumentNullException.ThrowIfNull(values);
 
-        var knownById = new HashSet<long>();
+        var knownById = new HashSet<ulong>();
         var options = new List<LookupOption>();
         foreach (var entry in entries)
         {
@@ -159,7 +159,7 @@ public sealed class LookupColumnData
             }
 
             var trimmed = value.Trim();
-            if (long.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
+            if (ulong.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
                 && knownById.Contains(id))
             {
                 continue;
@@ -274,8 +274,8 @@ public sealed class LookupColumnData
         return _byId.TryGetValue(id, out option!);
     }
 
-    private static bool TryParseId(string? rawValue, out long id) =>
-        long.TryParse(
+    private static bool TryParseId(string? rawValue, out ulong id) =>
+        ulong.TryParse(
             rawValue?.Trim(),
             NumberStyles.Integer,
             CultureInfo.InvariantCulture,

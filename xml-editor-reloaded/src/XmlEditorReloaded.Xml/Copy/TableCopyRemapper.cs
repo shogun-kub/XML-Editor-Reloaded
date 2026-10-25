@@ -178,7 +178,7 @@ internal sealed class TableCopyRemapper
         string lookupName,
         CancellationToken cancellationToken)
     {
-        if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
+        if (!ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
         {
             return null;
         }

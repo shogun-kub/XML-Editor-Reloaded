@@ -75,10 +75,10 @@ public class TableRecordTests
     }
 
     /// <summary>
-    /// Flag masks use the full unsigned 32-bit range and reject values beyond it.
+    /// Flag masks use the full unsigned 64-bit range and reject values beyond it.
     /// </summary>
     [Fact]
-    public async Task SetFieldValue_FlagHint_AcceptsUInt32Range()
+    public async Task SetFieldValue_FlagHint_AcceptsUInt64Range()
     {
         using var workspace = new TestWorkspace();
         var path = workspace.CopyFixture("items-mini.xml");
@@ -92,13 +92,15 @@ public class TableRecordTests
         var document = await LoadAsync(path, metadata);
         var record = document.Records[0];
 
-        var accepted = record.SetFieldValue("usItemClass", "4294967295", addIfMissing: true);
-        var rejected = record.SetFieldValue("usItemClass", "4294967296");
+        var accepted = record.SetFieldValue("usItemClass", "8589934592", addIfMissing: true);
+        var maximum = record.SetFieldValue("usItemClass", "18446744073709551615");
+        var rejected = record.SetFieldValue("usItemClass", "18446744073709551616");
 
         Assert.True(accepted.IsSuccess, accepted.ErrorText);
+        Assert.True(maximum.IsSuccess, maximum.ErrorText);
         Assert.False(rejected.IsSuccess);
         Assert.Equal(ErrorCodes.XmlInvalidNumber, rejected.ErrorCode);
-        Assert.Equal("4294967295", record.GetRawValue("usItemClass"));
+        Assert.Equal("18446744073709551615", record.GetRawValue("usItemClass"));
     }
 
     /// <summary>

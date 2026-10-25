@@ -160,9 +160,9 @@ public class SettingsViewModelTests
         public ExternalChangeChoice ResolveExternalChange(string message, string title) =>
             ExternalChangeChoice.Cancel;
 
-        public uint? EditBits(
+        public ulong? EditBits(
             string title,
-            uint value,
+            ulong value,
             IReadOnlyDictionary<int, string>? labels = null,
             string? valueName = null) => null;
 

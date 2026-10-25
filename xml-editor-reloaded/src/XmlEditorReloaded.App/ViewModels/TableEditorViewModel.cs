@@ -2266,9 +2266,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         var currentText = field.Value;
-        var current = uint.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+        var current = ulong.TryParse(currentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
-            : 0u;
+            : 0UL;
         _lookupByField.TryGetValue(field.Name, out var lookup);
         var edited = _dialogService.EditBits(
             Strings.Format("BitEditorTitleFormat", field.Name),
@@ -2293,19 +2293,19 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         var labels = new Dictionary<int, string>();
         foreach (var entry in lookup.Entries)
         {
-            if (entry.Id <= 0 || entry.Id > uint.MaxValue)
+            if (entry.Id == 0)
             {
                 continue;
             }
 
-            var mask = (uint)entry.Id;
+            var mask = entry.Id;
             if ((mask & (mask - 1)) != 0)
             {
                 continue;
             }
 
             var bit = BitOperations.Log2(mask);
-            if (bit < 32)
+            if (bit < 64)
             {
                 labels.TryAdd(bit, entry.Name);
             }
@@ -2554,9 +2554,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             ColumnDataType.Integer =>
                 int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Lookup =>
-                long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)
+                || ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Flags =>
-                uint.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+                ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Decimal =>
                 decimal.TryParse(value, DecimalStyles, CultureInfo.InvariantCulture, out _),
             ColumnDataType.Boolean => value.Trim() is "0" or "1",
@@ -2650,8 +2651,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         private static int CompareLookup(string left, string right)
         {
-            if (long.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
-                && long.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
+            if (decimal.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
+                && decimal.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
             {
                 return leftValue.CompareTo(rightValue);
             }
@@ -2661,8 +2662,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         private static int CompareFlags(string left, string right)
         {
-            if (uint.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
-                && uint.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
+            if (decimal.TryParse(left, NumberStyles.Integer, CultureInfo.InvariantCulture, out var leftValue)
+                && decimal.TryParse(right, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rightValue))
             {
                 return leftValue.CompareTo(rightValue);
             }

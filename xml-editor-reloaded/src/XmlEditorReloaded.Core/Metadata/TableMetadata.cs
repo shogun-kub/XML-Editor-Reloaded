@@ -39,6 +39,14 @@ public sealed class TableMetadata
     /// Optional declaration that records are stored in reversed pairs. The workspace maintains the
     /// counterpart during add, delete, and key edits, and validation warns about asymmetric data.
     /// </param>
+    /// <param name="exclusiveFlagGroups">
+    /// Optional groups of boolean fields where only one field may be set. Validation reports groups
+    /// with several set fields but never clears a field.
+    /// </param>
+    /// <param name="classValueLimits">
+    /// Optional limits of indexed fields that depend on a class value, for example the number of
+    /// load-bearing pockets allowed by an LBE class. Validation reports values above the limit only.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -53,7 +61,9 @@ public sealed class TableMetadata
         IReadOnlyList<ColumnHint>? columnHints = null,
         IReadOnlyList<string>? recordKeyFields = null,
         IReadOnlyList<ClassVisibilityRule>? classVisibilityRules = null,
-        SymmetricKeyPair? symmetricKeyPair = null)
+        SymmetricKeyPair? symmetricKeyPair = null,
+        IReadOnlyList<ExclusiveFlagGroup>? exclusiveFlagGroups = null,
+        IReadOnlyList<ClassValueLimit>? classValueLimits = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -70,6 +80,8 @@ public sealed class TableMetadata
         RecordKeyFields = recordKeyFields ?? Array.Empty<string>();
         ClassVisibilityRules = classVisibilityRules ?? Array.Empty<ClassVisibilityRule>();
         SymmetricKeyPair = symmetricKeyPair;
+        ExclusiveFlagGroups = exclusiveFlagGroups ?? Array.Empty<ExclusiveFlagGroup>();
+        ClassValueLimits = classValueLimits ?? Array.Empty<ClassValueLimit>();
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
         _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
         _classVisibilityBySection = ClassVisibilityRules
@@ -156,6 +168,18 @@ public sealed class TableMetadata
     /// when the table has no such invariant.
     /// </summary>
     public SymmetricKeyPair? SymmetricKeyPair { get; }
+
+    /// <summary>
+    /// Gets the groups of boolean fields where at most one field may be set. An empty list means that
+    /// no such invariant is declared.
+    /// </summary>
+    public IReadOnlyList<ExclusiveFlagGroup> ExclusiveFlagGroups { get; }
+
+    /// <summary>
+    /// Gets the limits of indexed fields that depend on a class value. An empty list means that no
+    /// class-dependent limit is declared.
+    /// </summary>
+    public IReadOnlyList<ClassValueLimit> ClassValueLimits { get; }
 
     /// <summary>
     /// Attempts to find a class visibility rule for one section.

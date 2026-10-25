@@ -168,10 +168,10 @@ public sealed class XmlFileLookupRepository : ILookupRepository
             var idText = element.Elements().FirstOrDefault(static child => child.Name.LocalName == "id")?.Value;
             var name = element.Elements().FirstOrDefault(static child => child.Name.LocalName == "name")?.Value;
 
-            if (!long.TryParse(idText, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var id))
+            if (!ulong.TryParse(idText, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var id))
             {
                 throw new InvalidDataException(
-                    $"Lookup entry #{index} in '{path}' has no valid 64-bit integer 'id' element.");
+                    $"Lookup entry #{index} in '{path}' has no valid unsigned 64-bit integer 'id' element.");
             }
 
             if (name is null)

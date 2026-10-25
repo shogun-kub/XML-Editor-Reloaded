@@ -89,6 +89,8 @@ public sealed class TableValidator
 
         ValidateDictMasks(metadata, tableName, document.Xml, issues);
         ValidateSymmetricPairs(metadata, tableName, records, issues);
+        ValidateExclusiveFlagGroups(metadata, tableName, records, issues);
+        ValidateClassValueLimits(metadata, tableName, records, issues);
 
         var lookupCache = new Dictionary<string, IReadOnlyList<LookupEntry>>(StringComparer.Ordinal);
         foreach (var record in records)
@@ -157,6 +159,115 @@ public sealed class TableValidator
                 record.Key,
                 pair.FirstField));
         }
+    }
+
+    /// <summary>
+    /// Warns when several fields of an exclusive group are set at the same time. Existing data is
+    /// reported as-is; no field is cleared.
+    /// </summary>
+    private static void ValidateExclusiveFlagGroups(
+        TableMetadata metadata,
+        TableName tableName,
+        IReadOnlyList<ResolvedRecord> records,
+        List<ValidationIssue> issues)
+    {
+        if (metadata.ExclusiveFlagGroups.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var group in metadata.ExclusiveFlagGroups)
+        {
+            foreach (var record in records)
+            {
+                var setFields = group.FieldNames
+                    .Where(field => IsFlagSet(record.Element.Element(field)))
+                    .ToArray();
+                if (setFields.Length < 2)
+                {
+                    continue;
+                }
+
+                issues.Add(new ValidationIssue(
+                    ValidationSeverity.Warning,
+                    ValidationCodes.ExclusiveFlags,
+                    $"Exclusive fields {string.Join(", ", setFields)} of group '{group.GroupKey}' are set at the same time; at most one may be active.",
+                    tableName,
+                    record.Key,
+                    setFields[0]));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Warns when an indexed field carries a value above the limit that the current class value
+    /// permits. The legacy editor disabled the fields; the rewrite keeps the value and reports it.
+    /// </summary>
+    private static void ValidateClassValueLimits(
+        TableMetadata metadata,
+        TableName tableName,
+        IReadOnlyList<ResolvedRecord> records,
+        List<ValidationIssue> issues)
+    {
+        if (metadata.ClassValueLimits.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var limit in metadata.ClassValueLimits)
+        {
+            var maskParts = limit.FieldMask.Split(DictFieldDefinition.IndexPlaceholder, StringSplitOptions.None);
+            if (maskParts.Length != 2)
+            {
+                continue;
+            }
+
+            foreach (var record in records)
+            {
+                var classElement = record.Element.Element(limit.ClassField);
+                if (classElement is null
+                    || !string.Equals(classElement.Value.Trim(), limit.ClassValue, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                foreach (var element in record.Element.Elements())
+                {
+                    var name = element.Name.LocalName;
+                    if (!name.StartsWith(maskParts[0], StringComparison.Ordinal)
+                        || !name.EndsWith(maskParts[1], StringComparison.Ordinal)
+                        || name.Length <= maskParts[0].Length + maskParts[1].Length)
+                    {
+                        continue;
+                    }
+
+                    var indexText = name[maskParts[0].Length..^maskParts[1].Length];
+                    if (!int.TryParse(indexText, NumberStyles.None, CultureInfo.InvariantCulture, out var index)
+                        || index <= limit.MaxOrdinal
+                        || IsZeroOrEmpty(element.Value))
+                    {
+                        continue;
+                    }
+
+                    issues.Add(new ValidationIssue(
+                        ValidationSeverity.Warning,
+                        ValidationCodes.ClassValueLimit,
+                        $"Field '{name}' is set although {limit.ClassField}='{limit.ClassValue}' permits only the first {limit.MaxOrdinal} indexed field(s).",
+                        tableName,
+                        record.Key,
+                        name));
+                }
+            }
+        }
+    }
+
+    private static bool IsFlagSet(XElement? element) =>
+        element is not null && string.Equals(element.Value.Trim(), "1", StringComparison.Ordinal);
+
+    private static bool IsZeroOrEmpty(string value)
+    {
+        var trimmed = value.Trim();
+        return trimmed.Length == 0 || trimmed is "0" or "0.0";
     }
 
     private static void ValidateDictMasks(
@@ -315,15 +426,15 @@ public sealed class TableValidator
             return;
         }
 
+        if (hint is { Minimum: not null } or { Maximum: not null })
+        {
+            ValidateRange(hint, dataType.Value, leaf, path, recordKey, tableName, issues);
+        }
+
         var lookupTable = hint?.LookupTable ?? column?.LookupTable;
         if (lookupTable is not null && lookupRepository is not null
             && dataType is ColumnDataType.Lookup or ColumnDataType.Integer)
         {
-            if (!long.TryParse(leaf.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
-            {
-                return;
-            }
-
             var entries = await GetLookupAsync(
                     lookupTable,
                     lookupRepository,
@@ -332,12 +443,12 @@ public sealed class TableValidator
                     cancellationToken)
                 .ConfigureAwait(false);
 
-            if (entries is not null && entries.All(entry => entry.Id != id))
+            if (entries is not null && !ContainsLookupId(entries, leaf.Value))
             {
                 issues.Add(new ValidationIssue(
                     ValidationSeverity.Warning,
                     ValidationCodes.LookupMissing,
-                    $"Value '{id}' is not present in lookup table '{lookupTable}'.",
+                    $"Value '{leaf.Value.Trim()}' is not present in lookup table '{lookupTable}'.",
                     tableName,
                     recordKey,
                     path));
@@ -427,17 +538,87 @@ public sealed class TableValidator
         return int.TryParse(indexText, NumberStyles.None, CultureInfo.InvariantCulture, out _);
     }
 
+    private static void ValidateRange(
+        ColumnHint hint,
+        ColumnDataType dataType,
+        XElement leaf,
+        string path,
+        string? recordKey,
+        TableName tableName,
+        List<ValidationIssue> issues)
+    {
+        if (!TryGetNumericValue(dataType, leaf.Value, out var value))
+        {
+            return;
+        }
+
+        var minimum = hint.Minimum;
+        var maximum = hint.Maximum;
+        if (minimum is not null && value < minimum.Value)
+        {
+            issues.Add(new ValidationIssue(
+                ValidationSeverity.Warning,
+                ValidationCodes.OutOfRange,
+                $"Value '{leaf.Value}' is below the allowed minimum {minimum.Value}.",
+                tableName,
+                recordKey,
+                path));
+            return;
+        }
+
+        if (maximum is not null && value > maximum.Value)
+        {
+            issues.Add(new ValidationIssue(
+                ValidationSeverity.Warning,
+                ValidationCodes.OutOfRange,
+                $"Value '{leaf.Value}' is above the allowed maximum {maximum.Value}.",
+                tableName,
+                recordKey,
+                path));
+        }
+    }
+
+    private static bool TryGetNumericValue(ColumnDataType dataType, string value, out decimal number)
+    {
+        const NumberStyles IntegerStyles = NumberStyles.Integer;
+        number = 0m;
+        return dataType switch
+        {
+            ColumnDataType.Integer or ColumnDataType.Lookup or ColumnDataType.Flags =>
+                decimal.TryParse(value, IntegerStyles, CultureInfo.InvariantCulture, out number),
+            ColumnDataType.Decimal =>
+                decimal.TryParse(value, DecimalStyles, CultureInfo.InvariantCulture, out number),
+            _ => false,
+        };
+    }
+
     private static bool IsValidValue(ColumnDataType dataType, string value) => dataType switch
     {
         ColumnDataType.Integer =>
             int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
         ColumnDataType.Lookup =>
-            long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)
+            || ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
         ColumnDataType.Flags =>
-            uint.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
+            ulong.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _),
         ColumnDataType.Decimal =>
             decimal.TryParse(value, DecimalStyles, CultureInfo.InvariantCulture, out _),
         ColumnDataType.Boolean => value.Trim() is "0" or "1",
         _ => true,
     };
+
+    /// <summary>
+    /// Checks whether a lookup value matches an unsigned identifier. Negative values remain valid text
+    /// for a lookup column (they are used as a "none" sentinel) but can never match an identifier, so
+    /// they are reported as missing instead of invalid.
+    /// </summary>
+    private static bool ContainsLookupId(IReadOnlyList<LookupEntry> entries, string rawValue)
+    {
+        if (!ulong.TryParse(rawValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
+        {
+            return false;
+        }
+
+        return entries.Any(entry => entry.Id == id);
+    }
 }

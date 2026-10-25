@@ -889,7 +889,7 @@ public class MainViewModelTests
 
         public ExternalChangeChoice ExternalChangeResult { get; set; } = ExternalChangeChoice.Cancel;
 
-        public uint? EditBitsResult { get; set; }
+        public ulong? EditBitsResult { get; set; }
 
         public TranslationReport? LastTranslationReport { get; private set; }
 
@@ -917,9 +917,9 @@ public class MainViewModelTests
             return ExternalChangeResult;
         }
 
-        public uint? EditBits(
+        public ulong? EditBits(
             string title,
-            uint value,
+            ulong value,
             IReadOnlyDictionary<int, string>? labels = null,
             string? valueName = null) => EditBitsResult;
 
