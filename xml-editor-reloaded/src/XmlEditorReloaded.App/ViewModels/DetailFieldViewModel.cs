@@ -26,7 +26,9 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         bool isTranslatable,
         bool canEditBits,
         LookupColumnData? lookup,
-        RelationColumnData? relation)
+        RelationColumnData? relation,
+        int maxTextLength,
+        bool showCharacterCounter)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(row);
@@ -54,6 +56,8 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         HasRelationError = relation is { IsAvailable: false };
         IsPlainText = !IsBoolean && !IsLookup && !IsRelation;
         CanEditBits = canEditBits;
+        MaxTextLength = maxTextLength;
+        ShowCharacterCounter = showCharacterCounter && maxTextLength > 0;
     }
 
     /// <summary>
@@ -64,12 +68,14 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     /// <param name="column">Schema column of the field.</param>
     /// <param name="lookup">Optional lookup source of the field.</param>
     /// <param name="relation">Optional relation source of the field.</param>
+    /// <param name="textLimit">Optional input length limit and counter configuration of the field.</param>
     internal DetailFieldViewModel(
         IDetailFieldHost host,
         TableRowViewModel row,
         TableSchemaColumn column,
         LookupColumnData? lookup = null,
-        RelationColumnData? relation = null)
+        RelationColumnData? relation = null,
+        ColumnTextLimit? textLimit = null)
         : this(
             host,
             row,
@@ -84,7 +90,9 @@ public sealed partial class DetailFieldViewModel : ObservableObject
                 && host.IsEditable && row.Key is not null
                 && (column.DataType == ColumnDataType.Flags || column.EditorKind == ColumnEditorKind.FlagEditor),
             lookup,
-            relation)
+            relation,
+            textLimit?.MaxLength ?? 0,
+            textLimit?.ShowCounter ?? false)
     {
         ArgumentNullException.ThrowIfNull(column);
         Column = column;
@@ -128,7 +136,9 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             isTranslatable,
             !isReadOnly && dataType == ColumnDataType.Flags,
             lookup,
-            relation)
+            relation,
+            0,
+            false)
     {
     }
 
@@ -292,6 +302,23 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     /// Gets a value indicating whether the bit editor is available for this field.
     /// </summary>
     public bool CanEditBits { get; }
+
+    /// <summary>
+    /// Gets the maximum number of characters the user may type, or zero when the field is unlimited.
+    /// The limit restricts typing only; an existing longer value stays visible and is saved unchanged.
+    /// </summary>
+    public int MaxTextLength { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the legacy remaining-character counter is shown next to the
+    /// text box.
+    /// </summary>
+    public bool ShowCharacterCounter { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the field has a text length limit.
+    /// </summary>
+    public bool HasTextLengthLimit => MaxTextLength > 0;
 
     /// <summary>
     /// Gets or sets the current field value.

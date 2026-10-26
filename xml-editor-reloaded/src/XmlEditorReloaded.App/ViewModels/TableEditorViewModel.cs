@@ -2332,7 +2332,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         {
             _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
             _relationByField.TryGetValue(column.XmlFieldName, out var relation);
-            _allDetailFields.Add(new DetailFieldViewModel(this, SelectedRow, column, lookup, relation));
+            _allDetailFields.Add(new DetailFieldViewModel(
+                this,
+                SelectedRow,
+                column,
+                lookup,
+                relation,
+                DetailTextLimits.Resolve(Workspace, column.XmlFieldName)));
         }
 
         ApplyDetailFilter();

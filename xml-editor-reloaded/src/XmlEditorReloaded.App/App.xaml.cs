@@ -102,6 +102,11 @@ public partial class App : Application
 
             var window = _serviceProvider.GetRequiredService<MainWindow>();
             MainWindow = window;
+            if (settings.IsSuccess)
+            {
+                window.ApplySavedPlacement(settings.Data?.WindowPlacement);
+            }
+
             window.Show();
             await _serviceProvider.GetRequiredService<MainViewModel>().InitializeAsync();
         }

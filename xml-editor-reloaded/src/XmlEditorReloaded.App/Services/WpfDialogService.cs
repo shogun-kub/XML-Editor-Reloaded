@@ -98,6 +98,18 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public void ShowAbout()
+    {
+        var window = new Views.AboutWindow(new ViewModels.AboutViewModel());
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
+    }
+
+    /// <inheritdoc />
     public void ShowTranslationReport(TranslationReport report, string title)
     {
         ArgumentNullException.ThrowIfNull(report);

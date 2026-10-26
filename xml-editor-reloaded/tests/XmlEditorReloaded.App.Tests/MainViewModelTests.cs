@@ -746,6 +746,95 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// Closing the application stores the current window size, position, and maximized state without
+    /// dropping the other settings.
+    /// </summary>
+    [Fact]
+    public async Task RequestClose_PersistsWindowPlacement()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var placement = new WindowPlacement(-20, 30, 1400, 900, true);
+
+        Assert.True(await viewModel.RequestCloseAsync(placement));
+
+        var loaded = await settingsStore.LoadAsync();
+        Assert.True(loaded.IsSuccess, loaded.ErrorText);
+        Assert.Equal(placement, loaded.Data!.WindowPlacement);
+        Assert.Equal(data13, loaded.Data.ActiveDataDirectory);
+        Assert.Equal(new[] { data13 }, loaded.Data.DataDirectories);
+    }
+
+    /// <summary>
+    /// When settings could not be loaded, closing must not overwrite the settings file with a placement
+    /// merged into defaults.
+    /// </summary>
+    [Fact]
+    public async Task RequestClose_SettingsNotLoaded_DoesNotPersistPlacement()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        Assert.True(await viewModel.RequestCloseAsync(new WindowPlacement(0, 0, 1280, 780, false)));
+
+        var loaded = await settingsStore.LoadAsync();
+        Assert.True(loaded.IsSuccess, loaded.ErrorText);
+        Assert.Null(loaded.Data!.WindowPlacement);
+        Assert.Equal(data13, loaded.Data.ActiveDataDirectory);
+    }
+
+    /// <summary>
+    /// A corrupt settings file is reported but never overwritten on close, so the user can repair it.
+    /// </summary>
+    [Fact]
+    public async Task RequestClose_CorruptSettingsFile_DoesNotOverwriteIt()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var settingsPath = workspace.PathOf("settings.json");
+        await File.WriteAllTextAsync(settingsPath, "{ invalid");
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        await viewModel.InitializeAsync();
+        Assert.False(string.IsNullOrEmpty(viewModel.StatusText));
+
+        Assert.True(await viewModel.RequestCloseAsync(new WindowPlacement(0, 0, 1280, 780, false)));
+
+        Assert.Equal("{ invalid", await File.ReadAllTextAsync(settingsPath));
+        Assert.False((await settingsStore.LoadAsync()).IsSuccess);
+    }
+
+    /// <summary>
+    /// The Help &gt; About command forwards to the dialog service.
+    /// </summary>
+    [Fact]
+    public async Task OpenAbout_ShowsAboutThroughDialogService()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenAboutCommand.Execute(null);
+
+        Assert.Equal(1, dialog.AboutShown);
+    }
+
+    /// <summary>
     /// Cancelling the unsaved-changes dialog during application close aborts the close.
     /// </summary>
     [Fact]
@@ -892,6 +981,10 @@ public class MainViewModelTests
         public ulong? EditBitsResult { get; set; }
 
         public TranslationReport? LastTranslationReport { get; private set; }
+
+        public int AboutShown { get; private set; }
+
+        public void ShowAbout() => AboutShown++;
 
         public string? LastUnsavedChangesMessage { get; private set; }
 

@@ -971,6 +971,28 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// The generic table detail panel resolves the same text limits as the item workspace: the
+    /// description fields get the counter, the item name field gets only the input limit.
+    /// </summary>
+    [Fact]
+    public async Task DetailForm_DescriptionsExposeCharacterCounterAndLimit()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeDescriptions: true);
+        var fields = FlattenDetailFields(editor).ToDictionary(field => field.Name, StringComparer.Ordinal);
+
+        Assert.Equal(400, fields["szItemDesc"].MaxTextLength);
+        Assert.True(fields["szItemDesc"].ShowCharacterCounter);
+        Assert.Equal(400, fields["szBRDesc"].MaxTextLength);
+        Assert.True(fields["szBRDesc"].ShowCharacterCounter);
+        Assert.Equal(80, fields["szItemName"].MaxTextLength);
+        Assert.False(fields["szItemName"].ShowCharacterCounter);
+        Assert.Equal(0, fields["ubWeight"].MaxTextLength);
+        Assert.False(fields["ubWeight"].ShowCharacterCounter);
+    }
+
+    /// <summary>
     /// Selecting a row with graphic fields loads all three previews; a row without them clears the panels.
     /// </summary>
     [Fact]
@@ -1690,6 +1712,7 @@ public class TableEditorViewModelTests
         bool includeBooleans = false,
         bool includeRelations = false,
         bool includeHighBits = false,
+        bool includeDescriptions = false,
         FakeTableLayoutStore? layoutStore = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
@@ -1716,10 +1739,13 @@ public class TableEditorViewModelTests
         var longNames = includeRelations
             ? "<szLongItemName>Nothing</szLongItemName>"
             : string.Empty;
+        var descriptions = includeDescriptions
+            ? "<szItemDesc>Nothing at all.</szItemDesc><szBRDesc>Nothing at all (BR).</szBRDesc>"
+            : string.Empty;
         await File.WriteAllTextAsync(
             Path.Combine(itemsDirectory, "Items.xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + longNames + "<ubWeight>0</ubWeight>"
+            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + longNames + descriptions + "<ubWeight>0</ubWeight>"
             + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + missingRelationTarget + "</ITEM>"
             + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName>"
             + (includeRelations ? "<szLongItemName>Glock 17</szLongItemName>" : string.Empty)

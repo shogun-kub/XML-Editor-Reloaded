@@ -65,6 +65,93 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// The description fields expose the legacy 400-character limit and remaining-character counter,
+    /// while the name fields only get the 80-character limit and other fields stay unlimited.
+    /// </summary>
+    [Fact]
+    public async Task DetailForm_DescriptionsExposeCharacterCounterAndLimit()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDescriptions: true);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+        var fields = viewModel.ItemGroups
+            .SelectMany(group => group.Fields)
+            .ToDictionary(field => field.Name, StringComparer.Ordinal);
+
+        var description = fields["szItemDesc"];
+        Assert.Equal(400, description.MaxTextLength);
+        Assert.True(description.ShowCharacterCounter);
+        Assert.True(description.HasTextLengthLimit);
+        var brDescription = fields["szBRDesc"];
+        Assert.Equal(400, brDescription.MaxTextLength);
+        Assert.True(brDescription.ShowCharacterCounter);
+
+        var name = fields["szItemName"];
+        Assert.Equal(80, name.MaxTextLength);
+        Assert.False(name.ShowCharacterCounter);
+        Assert.True(name.HasTextLengthLimit);
+
+        var itemClass = fields["usItemClass"];
+        Assert.Equal(0, itemClass.MaxTextLength);
+        Assert.False(itemClass.ShowCharacterCounter);
+        Assert.False(itemClass.HasTextLengthLimit);
+    }
+
+    /// <summary>
+    /// With the Chinese overlay active, the description limits follow the language override and the
+    /// counter follows the visible overlay value.
+    /// </summary>
+    [Fact]
+    public async Task DescriptionLimit_FollowsActiveLanguageOverlay()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDescriptions: true, includeChineseOverlay: true);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture, "zh");
+        var fields = viewModel.ItemGroups
+            .SelectMany(group => group.Fields)
+            .ToDictionary(field => field.Name, StringComparer.Ordinal);
+
+        var description = fields["szItemDesc"];
+        Assert.Equal("可靠的手枪", description.Value);
+        Assert.Equal(63, description.MaxTextLength);
+        Assert.True(description.ShowCharacterCounter);
+        Assert.True(description.IsTranslated);
+
+        var brDescription = fields["szBRDesc"];
+        Assert.Equal(90, brDescription.MaxTextLength);
+        Assert.True(brDescription.ShowCharacterCounter);
+    }
+
+    /// <summary>
+    /// A value longer than the limit is never truncated: it stays visible, round-trips through an overlay
+    /// save, and only further typing is restricted by the input limit.
+    /// </summary>
+    [Fact]
+    public async Task DescriptionOverLimit_IsKeptWithoutTruncation()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDescriptions: true, includeChineseOverlay: true);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture, "zh");
+        var description = viewModel.ItemGroups
+            .SelectMany(group => group.Fields)
+            .Single(field => field.Name == "szItemDesc");
+        var longText = new string('x', 70);
+
+        description.Value = longText;
+
+        Assert.Equal(longText, description.Value);
+        Assert.True(description.Value.Length > description.MaxTextLength);
+        await viewModel.SaveAsync();
+        var overlay = XDocument.Load(Path.Combine(Path.GetDirectoryName(fixture.ItemsPath)!, "Chinese.Items.xml"));
+        Assert.Equal(
+            longText,
+            overlay.Root!.Elements("ITEM").First().Element("szItemDesc")!.Value);
+    }
+
+    /// <summary>
     /// The item workspace shows both legacy directions of the relation tables: the reverse attachment
     /// view ("Attachable items") and the forward launchables view ("Ammunition"), while the original
     /// launcher-child view stays hidden for a launcher class.
@@ -1696,7 +1783,9 @@ public class ItemWorkspaceViewModelTests
         bool includeOverlay = false,
         bool includeDealer = false,
         bool includeDealerFile = false,
-        bool includeDuplicateDealer = false)
+        bool includeDuplicateDealer = false,
+        bool includeDescriptions = false,
+        bool includeChineseOverlay = false)
     {
         var tableData = workspace.PathOf(Path.Combine("Data-1.13", "TableData"));
         var itemsDirectory = Path.Combine(tableData, "Items");
@@ -1725,6 +1814,10 @@ public class ItemWorkspaceViewModelTests
             + "\t<ITEM>\r\n"
             + "\t\t<uiIndex>1</uiIndex>\r\n"
             + "\t\t<szItemName>Glock 17</szItemName>\r\n"
+            + (includeDescriptions
+                ? "\t\t<szItemDesc>A reliable pistol.</szItemDesc>\r\n"
+                  + "\t\t<szBRDesc>A reliable pistol (BR).</szBRDesc>\r\n"
+                : string.Empty)
             + "\t\t<usItemClass>2</usItemClass>\r\n"
             + "\t\t<ubClassIndex>1</ubClassIndex>\r\n"
             + "\t\t<ubGraphicType>0</ubGraphicType>\r\n"
@@ -1757,6 +1850,18 @@ public class ItemWorkspaceViewModelTests
                 + "\t<ITEM>\r\n"
                 + "\t\t<uiIndex>1</uiIndex>\r\n"
                 + "\t\t<szItemName>Глок 17</szItemName>\r\n"
+                + "\t</ITEM>\r\n"
+                + "</ITEMLIST>\r\n");
+        }
+
+        if (includeChineseOverlay)
+        {
+            File.WriteAllText(
+                Path.Combine(itemsDirectory, "Chinese.Items.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>\r\n"
+                + "\t<ITEM>\r\n"
+                + "\t\t<uiIndex>1</uiIndex>\r\n"
+                + "\t\t<szItemDesc>可靠的手枪</szItemDesc>\r\n"
                 + "\t</ITEM>\r\n"
                 + "</ITEMLIST>\r\n");
         }

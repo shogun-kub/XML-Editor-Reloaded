@@ -4,6 +4,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <AssemblyTitle>XML Editor Reloaded</AssemblyTitle>
+    <Product>XML Editor Reloaded</Product>
+    <Description>Viewer and editor for Jagged Alliance 2 1.13 XML table data and STI item images.</Description>
   </PropertyGroup>
 
   <ItemGroup>

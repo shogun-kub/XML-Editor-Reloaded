@@ -1588,4 +1588,31 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="EnemyAmmoClosePrompt" xml:space="preserve">
     <value>Enemy ammunition has unsaved changes. Save them before closing?</value>
   </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Help</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_About XML Editor Reloaded</value>
+  </data>
+  <data name="AboutTitleFormat" xml:space="preserve">
+    <value>About {0}</value>
+  </data>
+  <data name="AboutVersionLabel" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="AboutCopyrightLabel" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="AboutOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="DetailCharactersLeftFormat" xml:space="preserve">
+    <value>{0} characters left</value>
+  </data>
+  <data name="DetailCharactersOverLimitFormat" xml:space="preserve">
+    <value>{0} characters over the limit</value>
+  </data>
 </root>

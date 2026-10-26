@@ -78,6 +78,10 @@ public class CompositionTests
                     "Close");
                 unsavedWindow.Close();
 
+                var aboutWindow = new global::XmlEditorReloaded.App.Views.AboutWindow(new AboutViewModel());
+                Assert.IsType<AboutViewModel>(aboutWindow.DataContext);
+                aboutWindow.Close();
+
                 var externalWindow = new global::XmlEditorReloaded.App.Views.ExternalChangeWindow(
                     "File changed",
                     "Save");

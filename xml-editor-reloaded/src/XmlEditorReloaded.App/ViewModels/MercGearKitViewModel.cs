@@ -285,9 +285,18 @@ public sealed partial class MercGearKitViewModel : ObservableObject
     public int Index { get; }
 
     /// <summary>
-    /// Gets the kit tab header.
+    /// Gets the kit tab header. It shows the kit name when one is stored, like the legacy page caption,
+    /// and falls back to the localized kit number otherwise.
     /// </summary>
-    public string Header => Resources.Strings.Format("MercGearKitTabFormat", Index + 1);
+    public string Header => _name.Length == 0
+        ? Resources.Strings.Format("MercGearKitTabFormat", Index + 1)
+        : _name;
+
+    /// <summary>
+    /// Gets the maximum accepted length of the kit name, matching the legacy <c>MaxLength = 80</c>
+    /// of <c>GearKitNameTextBox</c>.
+    /// </summary>
+    public int NameMaxLength => 80;
 
     /// <summary>
     /// Gets the localized kit name label.
@@ -329,6 +338,7 @@ public sealed partial class MercGearKitViewModel : ObservableObject
             }
 
             _host.SetKitName(this, value);
+            OnPropertyChanged(nameof(Header));
         }
     }
 
@@ -403,6 +413,7 @@ public sealed partial class MercGearKitViewModel : ObservableObject
         try
         {
             SetProperty(ref _name, state.Name, nameof(Name));
+            OnPropertyChanged(nameof(Header));
             SetProperty(ref _priceMod, state.PriceMod, nameof(PriceMod));
             SetProperty(ref _absolutePrice, state.AbsolutePrice, nameof(AbsolutePrice));
             IsNameTranslated = state.IsNameTranslated;

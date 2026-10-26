@@ -86,6 +86,13 @@ public interface IDialogService
         string? valueName = null);
 
     /// <summary>
+    /// Shows the About window with the product, version, and description of the application build.
+    /// </summary>
+    void ShowAbout()
+    {
+    }
+
+    /// <summary>
     /// Shows the read-only translation report for the current overlay.
     /// </summary>
     /// <param name="report">Translation report to display.</param>

@@ -169,6 +169,7 @@
                                         <TextBox Grid.Row="0"
                                                  Grid.Column="1"
                                                  MinWidth="220"
+                                                 MaxLength="{Binding NameMaxLength}"
                                                  Text="{Binding Name, UpdateSourceTrigger=LostFocus}" />
                                         <TextBlock Grid.Row="0"
                                                    Grid.Column="2"

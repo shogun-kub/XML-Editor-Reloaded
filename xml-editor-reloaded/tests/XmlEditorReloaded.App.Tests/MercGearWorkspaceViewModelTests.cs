@@ -71,6 +71,33 @@ public class MercGearWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// The kit tab header shows the stored kit name and falls back to the localized kit number when the
+    /// name is cleared, matching the legacy page caption behavior; the name field keeps the legacy
+    /// <c>MaxLength = 80</c>.
+    /// </summary>
+    [Fact]
+    public async Task KitHeader_FollowsNameAndFallsBackToLocalizedNumber()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        var kit = viewModel.Kits[0];
+        Assert.Equal("Standard", kit.Header);
+        Assert.Equal(80, kit.NameMaxLength);
+
+        kit.Name = "Field kit";
+        Assert.Equal("Field kit", kit.Header);
+
+        kit.Name = string.Empty;
+        Assert.Equal("Kit 1", kit.Header);
+        Assert.Equal("Mechanic", viewModel.Kits[1].Header);
+        viewModel.Kits[1].Name = string.Empty;
+        Assert.Equal("Kit 2", viewModel.Kits[1].Header);
+    }
+
+    /// <summary>
     /// Filtered armour and LBE slots offer item 0 ("Nothing") even when no kit in the table uses it,
     /// which reproduces the legacy <c>uiIndex = 0 OR usItemClass = …</c> picker.
     /// </summary>
@@ -112,12 +139,14 @@ public class MercGearWorkspaceViewModelTests
         Assert.Equal(8, viewModel.LanguageOptions.Count);
         Assert.Equal("ru", viewModel.SelectedLanguageOption?.Code);
         Assert.Equal("Стандарт", viewModel.Kits[0].Name);
+        Assert.Equal("Стандарт", viewModel.Kits[0].Header);
         Assert.True(viewModel.Kits[0].IsNameTranslated);
         Assert.Equal("Fighter", viewModel.Kits[2].Name);
         Assert.False(viewModel.Kits[2].IsNameTranslated);
         Assert.True(viewModel.Kits[2].ShowNameMarker);
 
         viewModel.Kits[0].Name = "Стандарт+";
+        Assert.Equal("Стандарт+", viewModel.Kits[0].Header);
         Assert.True(viewModel.IsDirty);
         await viewModel.SaveAsync();
         Assert.False(viewModel.IsDirty);

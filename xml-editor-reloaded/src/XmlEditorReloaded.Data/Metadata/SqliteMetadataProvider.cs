@@ -315,6 +315,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             .ConfigureAwait(false);
         var classValueLimits = await ReadClassValueLimitsAsync(connection, row.Id, cancellationToken)
             .ConfigureAwait(false);
+        var textLimits = await ReadColumnTextLimitsAsync(connection, row.Id, cancellationToken)
+            .ConfigureAwait(false);
 
         return new TableMetadata(
             TableName.Parse(row.XmlTable),
@@ -331,7 +333,36 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             visibilityRules,
             symmetricKeyPair,
             exclusiveFlagGroups,
-            classValueLimits);
+            classValueLimits,
+            textLimits);
+    }
+
+    private static async Task<IReadOnlyList<ColumnTextLimit>> ReadColumnTextLimitsAsync(
+        SqliteConnection connection,
+        int tableId,
+        CancellationToken cancellationToken)
+    {
+        var limits = new List<ColumnTextLimit>();
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT XmlFieldName, LanguageCode, MaxLength, ShowCounter
+            FROM ColumnTextLimits
+            WHERE TableId = $tableId
+            ORDER BY XmlFieldName, LanguageCode;
+            """;
+        command.Parameters.AddWithValue("$tableId", tableId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            limits.Add(new ColumnTextLimit(
+                reader.GetString(0),
+                reader.GetString(1),
+                reader.GetInt32(2),
+                reader.GetInt32(3) != 0));
+        }
+
+        return limits;
     }
 
     private static async Task<IReadOnlyList<ExclusiveFlagGroup>> ReadExclusiveFlagGroupsAsync(

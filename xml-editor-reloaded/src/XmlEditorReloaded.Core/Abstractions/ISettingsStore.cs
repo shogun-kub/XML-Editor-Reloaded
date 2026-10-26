@@ -10,12 +10,17 @@ namespace XmlEditorReloaded.Core.Abstractions;
 /// <param name="ActiveLanguageCode">Language code used for overlay editing, or <see langword="null"/> for base-only.</param>
 /// <param name="UiLanguageCode">Language code of the editor UI, for example <c>en</c> or <c>ru</c>.</param>
 /// <param name="RecentDataDirectories">Recently used data directory paths, most recent first.</param>
+/// <param name="WindowPlacement">
+/// Last size, position, and maximized state of the main window, or <see langword="null"/> when the
+/// window has not been closed yet.
+/// </param>
 public sealed record AppSettings(
     IReadOnlyList<string> DataDirectories,
     string? ActiveDataDirectory,
     string? ActiveLanguageCode,
     string? UiLanguageCode,
-    IReadOnlyList<string> RecentDataDirectories)
+    IReadOnlyList<string> RecentDataDirectories,
+    WindowPlacement? WindowPlacement = null)
 {
     /// <summary>
     /// Gets the default settings used on first start.

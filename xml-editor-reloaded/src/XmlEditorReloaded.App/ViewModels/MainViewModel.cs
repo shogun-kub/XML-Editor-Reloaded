@@ -31,6 +31,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ISettingsDialogService _settingsDialog;
     private readonly ITableLayoutStore _layoutStore;
     private AppSettings _settings = AppSettings.Default;
+    private bool _settingsLoaded;
     private IDataSetSession? _dataSet;
     private CancellationTokenSource? _operationCts;
     private int _operationGeneration;
@@ -113,6 +114,8 @@ public partial class MainViewModel : ObservableObject
         CompareText = Strings.Get("CompareButton");
         CopyText = Strings.Get("CopyButton");
         SettingsText = Strings.Get("SettingsButton");
+        HelpMenuText = Strings.Get("MenuHelp");
+        AboutMenuText = Strings.Get("MenuAbout");
         OpenTableText = Strings.Get("EditorOpenText");
         SaveAllText = Strings.Get("EditorSaveAllText");
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
@@ -166,6 +169,16 @@ public partial class MainViewModel : ObservableObject
     /// Gets the settings button text.
     /// </summary>
     public string SettingsText { get; }
+
+    /// <summary>
+    /// Gets the Help menu header.
+    /// </summary>
+    public string HelpMenuText { get; }
+
+    /// <summary>
+    /// Gets the Help &gt; About menu item text.
+    /// </summary>
+    public string AboutMenuText { get; }
 
     /// <summary>
     /// Gets the open-table button text.
@@ -256,6 +269,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         _settings = load.Data!;
+        _settingsLoaded = true;
         DataDirectory = _settings.ActiveDataDirectory
             ?? _settings.DataDirectories.FirstOrDefault()
             ?? string.Empty;
@@ -375,6 +389,12 @@ public partial class MainViewModel : ObservableObject
             StatusText += " " + Strings.Format("CopyTabsNotReloaded", notReloaded);
         }
     }
+
+    /// <summary>
+    /// Shows the About window with the product, version, and description of the build.
+    /// </summary>
+    [RelayCommand]
+    private void OpenAbout() => _dialogService.ShowAbout();
 
     [RelayCommand]
     private async Task OpenSettingsAsync()
@@ -540,11 +560,16 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Closes every tab after resolving unsaved changes and flushes pending grid layouts. The window uses
-    /// this before it closes; a <see langword="false"/> result means the close must be cancelled.
+    /// Closes every tab after resolving unsaved changes, persists the window placement, and flushes
+    /// pending grid layouts. The window uses this before it closes; a <see langword="false"/> result
+    /// means the close must be cancelled.
     /// </summary>
+    /// <param name="windowPlacement">
+    /// Current size, position, and maximized state of the main window, or <see langword="null"/> when
+    /// there is nothing to persist.
+    /// </param>
     /// <returns><see langword="true"/> when the application may close; otherwise <see langword="false"/>.</returns>
-    public async Task<bool> RequestCloseAsync()
+    public async Task<bool> RequestCloseAsync(WindowPlacement? windowPlacement = null)
     {
         foreach (var editor in Editors.ToArray())
         {
@@ -555,7 +580,33 @@ public partial class MainViewModel : ObservableObject
         }
 
         await FlushLayoutsAsync().ConfigureAwait(true);
+        if (windowPlacement is not null)
+        {
+            await PersistWindowPlacementAsync(windowPlacement).ConfigureAwait(true);
+        }
+
         return true;
+    }
+
+    /// <summary>
+    /// Stores the window placement when it changed. A settings write failure is reported in the status
+    /// line but never blocks closing the application.
+    /// </summary>
+    /// <param name="placement">Placement captured from the main window.</param>
+    /// <returns>A task that completes when the placement is stored or the failure is reported.</returns>
+    private async Task PersistWindowPlacementAsync(WindowPlacement placement)
+    {
+        if (!_settingsLoaded || _settings.WindowPlacement == placement)
+        {
+            return;
+        }
+
+        _settings = _settings with { WindowPlacement = placement };
+        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        if (!save.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
+        }
     }
 
     /// <summary>

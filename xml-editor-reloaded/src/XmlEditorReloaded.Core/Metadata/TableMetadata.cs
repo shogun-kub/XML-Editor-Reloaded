@@ -7,6 +7,7 @@ public sealed class TableMetadata
 {
     private readonly Dictionary<string, ColumnMetadata> _columnsByName;
     private readonly Dictionary<string, ColumnHint> _hintsByName;
+    private readonly Dictionary<string, Dictionary<string, ColumnTextLimit>> _textLimitsByField;
     private readonly Dictionary<(ClassVisibilitySectionKind Kind, string SectionKey), ClassVisibilityRule>
         _classVisibilityBySection;
 
@@ -47,6 +48,10 @@ public sealed class TableMetadata
     /// Optional limits of indexed fields that depend on a class value, for example the number of
     /// load-bearing pockets allowed by an LBE class. Validation reports values above the limit only.
     /// </param>
+    /// <param name="textLimits">
+    /// Optional input length limits and remaining-character counters of text fields. A limit restricts
+    /// typing only and never validates or rewrites an existing value.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -63,7 +68,8 @@ public sealed class TableMetadata
         IReadOnlyList<ClassVisibilityRule>? classVisibilityRules = null,
         SymmetricKeyPair? symmetricKeyPair = null,
         IReadOnlyList<ExclusiveFlagGroup>? exclusiveFlagGroups = null,
-        IReadOnlyList<ClassValueLimit>? classValueLimits = null)
+        IReadOnlyList<ClassValueLimit>? classValueLimits = null,
+        IReadOnlyList<ColumnTextLimit>? textLimits = null)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -82,8 +88,20 @@ public sealed class TableMetadata
         SymmetricKeyPair = symmetricKeyPair;
         ExclusiveFlagGroups = exclusiveFlagGroups ?? Array.Empty<ExclusiveFlagGroup>();
         ClassValueLimits = classValueLimits ?? Array.Empty<ClassValueLimit>();
+        TextLimits = textLimits ?? Array.Empty<ColumnTextLimit>();
         _columnsByName = Columns.ToDictionary(static c => c.XmlFieldName, StringComparer.Ordinal);
         _hintsByName = ColumnHints.ToDictionary(static h => h.XmlFieldName, StringComparer.Ordinal);
+        _textLimitsByField = TextLimits
+            .GroupBy(static limit => limit.XmlFieldName, StringComparer.Ordinal)
+            .ToDictionary(
+                static group => group.Key,
+                static group => group
+                    .GroupBy(static limit => limit.LanguageCode, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(
+                        static language => language.Key,
+                        static language => language.First(),
+                        StringComparer.OrdinalIgnoreCase),
+                StringComparer.Ordinal);
         _classVisibilityBySection = ClassVisibilityRules
             .GroupBy(static rule => (rule.Kind, rule.SectionKey))
             .ToDictionary(static group => group.Key, static group => group.First());
@@ -180,6 +198,46 @@ public sealed class TableMetadata
     /// class-dependent limit is declared.
     /// </summary>
     public IReadOnlyList<ClassValueLimit> ClassValueLimits { get; }
+
+    /// <summary>
+    /// Gets the input length limits and remaining-character counters of text fields. An empty list means
+    /// that no text field of the table is limited.
+    /// </summary>
+    public IReadOnlyList<ColumnTextLimit> TextLimits { get; }
+
+    /// <summary>
+    /// Attempts to find the text length limit that applies to a field in the given overlay language.
+    /// The language-specific limit wins; otherwise the neutral limit applies.
+    /// </summary>
+    /// <param name="xmlFieldName">Case-sensitive XML element name.</param>
+    /// <param name="languageCode">Overlay language code, or <see langword="null"/> for the base table.</param>
+    /// <param name="limit">The applicable limit when found.</param>
+    /// <returns><see langword="true"/> when the field has a limit; otherwise <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="xmlFieldName"/> is empty.</exception>
+    public bool TryGetTextLimit(string xmlFieldName, string? languageCode, out ColumnTextLimit? limit)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(xmlFieldName);
+        limit = null;
+        if (!_textLimitsByField.TryGetValue(xmlFieldName, out var byLanguage))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(languageCode)
+            && byLanguage.TryGetValue(languageCode, out var specific))
+        {
+            limit = specific;
+            return true;
+        }
+
+        if (byLanguage.TryGetValue(string.Empty, out var neutral))
+        {
+            limit = neutral;
+            return true;
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Attempts to find a class visibility rule for one section.

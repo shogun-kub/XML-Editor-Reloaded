@@ -1,8 +1,8 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b6 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b7. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b7 выполнены по состоянию на 2026-10-26; следующий подшаг — M23b8. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
 
-Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b6): закрытие пробелов фиксируют секции `M23b1`…`M23b6` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
+Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b7): закрытие пробелов фиксируют секции `M23b1`…`M23b7` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -908,7 +908,35 @@ WPF-поведение в этой среде не автоматизирует�
 | Тесты M23b6 | `ShopkeeperTab_AddsAndRemovesDealerRow`, `ShopkeeperTab_AddDealerRow_UndoAndRedoRestoreChoices`, `ShopkeeperTab_RepeatedDealerKey_EditsAndRemovesExactRow`, `ShopkeeperTab_EmptiedDealerFile_HidesDealerAfterReload`, `ShopkeeperTab_ListsDealersAndSavesQuantity`, `Lookup_AddRecord_CreatesEmptyNameAndSavesLoadableFile`, `NonLookup_AddRecord_DoesNotAddNameElement` |
 | `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
 
-**Следующий подшаг:** M23b7 — shell, field UI и полировка merc gear (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
+**Следующий подшаг после M23b6:** M23b7 — shell, field UI и полировка merc gear (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
+
+## M23b7 — Shell, field UI и полировка merc gear
+
+**Дата:** 2026-10-26. **Статус:** выполнен. **Закрытые пробелы:** `L-SHELL-183`, `L-AUX-018`, `L-AUX-019`, `L-ITEM-017`, `L-MERC-003…007` (5 ID), `L-MERC-013`, `L-SET-009` — 5 записей реестра (11 ID). Матрица и реестр выше остаются снимком M23a; факт закрытия фиксирует эта секция. Детали, сверка с legacy и остаточные риски — `M23A-PARITY/55-m23b7-implementation-log.md`.
+
+**Реализация.**
+- About (`App/ViewModels/AboutViewModel`, `App/Views/AboutWindow`, `IDialogService.ShowAbout`, `WpfDialogService`): продукт, версия, описание и copyright из метаданных сборки; версия — `AssemblyInformationalVersion` без `+sha`; отсутствующие атрибуты скрывают строку. Окно модальное, `CenterOwner`, без taskbar, OK по Enter/Esc.
+- Shell (`MainWindow.xaml`, `MainViewModel`): меню `_Help` → `_About …`; `HelpMenuText`, `AboutMenuText`, `OpenAboutCommand`. RESX en/ru: `MenuHelp`, `MenuAbout`, `AboutTitleFormat`, `AboutVersionLabel`, `AboutDescriptionLabel`, `AboutCopyrightLabel`, `AboutOk`.
+- `XmlEditorReloaded.App.csproj`: `AssemblyTitle`/`Product`/`Description` для About.
+- Геометрия (`Core/Abstractions/WindowPlacement`, `AppSettings.WindowPlacement`, `JsonSettingsStore`, `MainWindow.ApplySavedPlacement`/`CapturePlacement`, `App.OnStartup`, `MainViewModel.RequestCloseAsync`): сохраняются размер, позиция и maximized-состояние; `FitToScreen` поднимает размер до `MinWidth/MinHeight` и зажимает окно в виртуальный экран, сохраняя отрицательные координаты второго монитора; свёрнутое окно не перезаписывает геометрию; настройки не пишутся, пока они не загрузились, и при ошибке записи закрытие не блокируется.
+- Счётчики (`Data/Metadata/Migrations/0016_ItemTextLengthLimits.sql`, `Core/Metadata/ColumnTextLimit`, `TableMetadata.TextLimits`/`TryGetTextLimit`, `SqliteMetadataProvider`, `DetailFieldViewModel`, `DetailTextLimits`, `FieldEditor.xaml`, `CharacterCounter`/`CharacterCounterConverter`): таблица `ColumnTextLimits` с языковыми переопределениями; 7 строк для `Items.Items` (80/80/400/80/400, `zh` 63/90 у описаний). Лимит ограничивает ввод, счётчик считает видимый текст и обновляется на каждый символ без записи на каждый символ; сохранённое значение длиннее лимита показывается как «N сверх лимита» и не обрезается.
+- Merc gear (`MercGearKitViewModel`, `MercGearWorkspaceView.xaml`): заголовок вкладки показывает имя набора и откатывается к локализованному `Kit N` при пустом имени; уведомление обновляется при правке, undo/redo, save и reload; `MaxLength = 80` у поля имени.
+
+**Осознанные отличия.** (1) About модален (legacy — немодальное окно) и без логотипа; copyright/company показываются только при наличии метаданных сборки (релизные значения — M27b), версия информационная (`0.1.0`), а не 4-компонентная. (2) Геометрия: свёрнутое окно не записывает позицию (нельзя стартовать свёрнутым); невалидная/устаревшая позиция не восстанавливается за экраном, а зажимается; ошибка записи настроек не мешает закрытию; сохранение только при закрытии. (3) Счётчики: 16 legacy-счётчиков сводятся к двум полям с языковым лимитом; в китайском режиме непереведённое поле считает базовый текст и может показывать превышение; лимиты действуют и в панели деталей generic grid (надмножество legacy); значения длиннее лимита не обрезаются. (4) Merc gear: заголовок обновляется при фиксации имени, а не на каждый символ, чтобы не создавать undo-запись на каждый символ; fallback локализован.
+
+**Проверка M23b7.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 532/532: Core 50, Data 73, Imaging 24, Xml 199, App 186 |
+| Corpus v4 | 532/532 |
+| Corpus v5 | 532/532 |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| Тесты M23b7 | `AboutWindowTests.*`, `MainViewModelTests.OpenAbout_ShowsAboutThroughDialogService`, `RequestClose_PersistsWindowPlacement`, `RequestClose_SettingsNotLoaded_DoesNotPersistPlacement`, `RequestClose_CorruptSettingsFile_DoesNotOverwriteIt`, `WindowPlacementTests.*`, `SettingsTests.*WindowPlacement*`, `MainWindowPlacementTests.*`, `CharacterCounterTests.*`, `MetadataTests.ItemTextLimits_DeclareDescriptionCountersAndChineseOverrides`, `ItemWorkspaceViewModelTests.DetailForm_DescriptionsExposeCharacterCounterAndLimit`, `DescriptionLimit_FollowsActiveLanguageOverlay`, `DescriptionOverLimit_IsKeptWithoutTruncation`, `TableEditorViewModelTests.DetailForm_DescriptionsExposeCharacterCounterAndLimit`, `MercGearWorkspaceViewModelTests.KitHeader_FollowsNameAndFallsBackToLocalizedNumber` |
+| `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
+
+**Следующий подшаг:** M23b8 — хранение, копирование и журналирование (`L-STO-034`, `L-OPS-011`, `L-OPS-025`).
 
 ## Вне паритета (осознанно)
 

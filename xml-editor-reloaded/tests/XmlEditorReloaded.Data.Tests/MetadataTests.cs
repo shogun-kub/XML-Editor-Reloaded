@@ -25,7 +25,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(15, migration.Data);
+        Assert.Equal(16, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -107,6 +107,7 @@ public class MetadataTests
             new[] { "Cannon", "Mortar", "GrenadeLauncher", "RocketLauncher" },
             launcherGroup.FieldNames);
         Assert.Empty(metadata.ClassValueLimits);
+        Assert.Equal(7, metadata.TextLimits.Count);
 
         var gear = await provider.GetTableAsync(TableName.Parse("Inventory.MercStartingGear"));
         Assert.True(gear.IsSuccess, gear.ErrorText);
@@ -386,6 +387,51 @@ public class MetadataTests
         Assert.True(first.IsSuccess, first.ErrorText);
         Assert.True(second.IsSuccess, second.ErrorText);
         Assert.Equal(0, second.Data);
+    }
+
+    /// <summary>
+    /// Item text limits describe the legacy description counters, the name limits without counters, and
+    /// the Chinese description overrides; any other language falls back to the neutral limit.
+    /// </summary>
+    [Fact]
+    public async Task ItemTextLimits_DeclareDescriptionCountersAndChineseOverrides()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var items = await provider.GetTableAsync(TableName.Parse("Items.Items"));
+        Assert.True(items.IsSuccess, items.ErrorText);
+        var metadata = items.Data!;
+
+        Assert.True(metadata.TryGetTextLimit("szItemDesc", null, out var description));
+        Assert.Equal(400, description!.MaxLength);
+        Assert.True(description.ShowCounter);
+        Assert.True(metadata.TryGetTextLimit("szBRDesc", null, out var brDescription));
+        Assert.Equal(400, brDescription!.MaxLength);
+        Assert.True(brDescription.ShowCounter);
+
+        Assert.True(metadata.TryGetTextLimit("szItemName", null, out var name));
+        Assert.Equal(80, name!.MaxLength);
+        Assert.False(name.ShowCounter);
+        Assert.True(metadata.TryGetTextLimit("szLongItemName", null, out var longName));
+        Assert.Equal(80, longName!.MaxLength);
+        Assert.False(longName.ShowCounter);
+        Assert.True(metadata.TryGetTextLimit("szBRName", null, out var brName));
+        Assert.Equal(80, brName!.MaxLength);
+        Assert.False(brName.ShowCounter);
+
+        Assert.True(metadata.TryGetTextLimit("szItemDesc", "zh", out var chineseDescription));
+        Assert.Equal(63, chineseDescription!.MaxLength);
+        Assert.True(chineseDescription.ShowCounter);
+        Assert.True(metadata.TryGetTextLimit("szBRDesc", "zh", out var chineseBrDescription));
+        Assert.Equal(90, chineseBrDescription!.MaxLength);
+        Assert.True(chineseBrDescription.ShowCounter);
+
+        Assert.True(metadata.TryGetTextLimit("szItemDesc", "ru", out var russianDescription));
+        Assert.Equal(400, russianDescription!.MaxLength);
+        Assert.False(metadata.TryGetTextLimit("usItemClass", null, out _));
     }
 
     /// <summary>

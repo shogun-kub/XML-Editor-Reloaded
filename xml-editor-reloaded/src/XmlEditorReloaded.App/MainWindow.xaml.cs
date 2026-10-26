@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Abstractions;
 
 namespace XmlEditorReloaded.App;
 
@@ -29,6 +30,71 @@ public partial class MainWindow : Window
         MappedColumn.Header = viewModel.MappedColumn;
     }
 
+    /// <summary>
+    /// Applies a saved size, position, and maximized state. A placement saved on a monitor that is no
+    /// longer available is moved back inside the virtual screen instead of being restored off-screen.
+    /// </summary>
+    /// <param name="placement">Saved placement, or <see langword="null"/> to keep the designer defaults.</param>
+    public void ApplySavedPlacement(WindowPlacement? placement)
+    {
+        var fitted = placement?.FitToScreen(
+            SystemParameters.VirtualScreenLeft,
+            SystemParameters.VirtualScreenTop,
+            SystemParameters.VirtualScreenWidth,
+            SystemParameters.VirtualScreenHeight,
+            MinWidth,
+            MinHeight);
+        if (fitted is null)
+        {
+            return;
+        }
+
+        WindowStartupLocation = WindowStartupLocation.Manual;
+        Left = fitted.Left;
+        Top = fitted.Top;
+        Width = fitted.Width;
+        Height = fitted.Height;
+        if (fitted.IsMaximized)
+        {
+            WindowState = WindowState.Maximized;
+        }
+    }
+
+    /// <summary>
+    /// Captures the placement to persist on close. A minimized window keeps its previously saved
+    /// placement, because restoring an application minimized would hide it at start-up.
+    /// </summary>
+    /// <returns>The current placement, or <see langword="null"/> when there is nothing to persist.</returns>
+    public WindowPlacement? CapturePlacement()
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            return null;
+        }
+
+        var width = ActualWidth > 0 ? ActualWidth : Width;
+        var height = ActualHeight > 0 ? ActualHeight : Height;
+        var bounds = WindowState == WindowState.Normal
+            ? new Rect(Left, Top, width, height)
+            : RestoreBounds;
+        if (!double.IsFinite(bounds.Left)
+            || !double.IsFinite(bounds.Top)
+            || !double.IsFinite(bounds.Width)
+            || !double.IsFinite(bounds.Height)
+            || bounds.Width <= 0
+            || bounds.Height <= 0)
+        {
+            return null;
+        }
+
+        return new WindowPlacement(
+            bounds.Left,
+            bounds.Top,
+            bounds.Width,
+            bounds.Height,
+            WindowState == WindowState.Maximized);
+    }
+
     /// <inheritdoc />
     protected override async void OnClosing(CancelEventArgs e)
     {
@@ -44,7 +110,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var request = viewModel.RequestCloseAsync();
+        var request = viewModel.RequestCloseAsync(CapturePlacement());
         if (request.IsCompletedSuccessfully)
         {
             if (request.Result)

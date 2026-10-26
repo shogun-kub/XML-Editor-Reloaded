@@ -2383,7 +2383,13 @@ public sealed partial class ItemWorkspaceViewModel :
             RelationColumnData? relation = null;
             sources?.Lookups.TryGetValue(column.XmlFieldName, out lookup);
             sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
-            fields.Add(new DetailFieldViewModel(this, _itemRow, column, lookup, relation));
+            fields.Add(new DetailFieldViewModel(
+                this,
+                _itemRow,
+                column,
+                lookup,
+                relation,
+                DetailTextLimits.Resolve(primary, column.XmlFieldName)));
         }
 
         AddFieldGroups(ItemGroups, fields);
@@ -2584,7 +2590,13 @@ public sealed partial class ItemWorkspaceViewModel :
             RelationColumnData? relation = null;
             sources?.Lookups.TryGetValue(column.XmlFieldName, out lookup);
             sources?.Relations.TryGetValue(column.XmlFieldName, out relation);
-            fields.Add(new DetailFieldViewModel(this, row, column, lookup, relation));
+            fields.Add(new DetailFieldViewModel(
+                this,
+                row,
+                column,
+                lookup,
+                relation,
+                DetailTextLimits.Resolve(member.Workspace, column.XmlFieldName)));
         }
 
         return fields

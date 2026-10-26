@@ -8,12 +8,14 @@
              d:DesignWidth="320">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <views:CharacterCounterConverter x:Key="CharacterCounterConverter" />
     </UserControl.Resources>
     <Grid Margin="0,1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="14" />
             <ColumnDefinition Width="105" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -56,11 +58,25 @@
                   SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding IsEditable}"
                   Visibility="{Binding IsLookup, Converter={StaticResource BoolToVisibility}}" />
-        <TextBox Grid.Column="2"
+        <TextBox x:Name="ValueTextBox"
+                 Grid.Column="2"
                  Margin="4,0,0,0"
+                 MaxLength="{Binding MaxTextLength}"
                  Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                  IsReadOnly="{Binding IsReadOnly}"
                  Visibility="{Binding IsPlainText, Converter={StaticResource BoolToVisibility}}" />
+        <TextBlock Grid.Column="3"
+                   Margin="6,0,0,0"
+                   VerticalAlignment="Center"
+                   Foreground="#FF8B6F00"
+                   Visibility="{Binding ShowCharacterCounter, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock.Text>
+                <MultiBinding Converter="{StaticResource CharacterCounterConverter}">
+                    <Binding ElementName="ValueTextBox" Path="Text" />
+                    <Binding Path="MaxTextLength" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
         <views:RelationPicker Grid.Column="2"
                               Margin="4,0,0,0"
                               VerticalAlignment="Center"
@@ -68,14 +84,14 @@
                               SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               IsReadOnly="{Binding IsReadOnly}"
                               Visibility="{Binding IsRelation, Converter={StaticResource BoolToVisibility}}" />
-        <Button Grid.Column="3"
+        <Button Grid.Column="4"
                 Margin="4,0,0,0"
                 Padding="5,0"
                 Content="→"
                 Command="{Binding GoToTargetCommand}"
                 ToolTip="{Binding GoToTargetTooltip}"
                 Visibility="{Binding CanGoToTarget, Converter={StaticResource BoolToVisibility}}" />
-        <Button Grid.Column="4"
+        <Button Grid.Column="5"
                 Margin="4,0,0,0"
                 Padding="5,0"
                 Content="{Binding EditBitsText}"

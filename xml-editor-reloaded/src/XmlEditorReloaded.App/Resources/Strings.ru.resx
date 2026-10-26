@@ -1588,4 +1588,31 @@
   <data name="EnemyAmmoClosePrompt" xml:space="preserve">
     <value>Есть несохранённые изменения боеприпасов. Сохранить их перед закрытием?</value>
   </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Справка</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_О программе XML Editor Reloaded</value>
+  </data>
+  <data name="AboutTitleFormat" xml:space="preserve">
+    <value>О программе {0}</value>
+  </data>
+  <data name="AboutVersionLabel" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="AboutDescriptionLabel" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="AboutCopyrightLabel" xml:space="preserve">
+    <value>Авторские права</value>
+  </data>
+  <data name="AboutOk" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="DetailCharactersLeftFormat" xml:space="preserve">
+    <value>Осталось символов: {0}</value>
+  </data>
+  <data name="DetailCharactersOverLimitFormat" xml:space="preserve">
+    <value>Превышение лимита на {0} символов</value>
+  </data>
 </root>

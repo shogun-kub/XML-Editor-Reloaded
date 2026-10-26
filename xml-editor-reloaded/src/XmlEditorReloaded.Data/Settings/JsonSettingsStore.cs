@@ -144,7 +144,19 @@ public sealed class JsonSettingsStore : ISettingsStore
         dto.ActiveDataDirectory,
         dto.ActiveLanguageCode,
         dto.UiLanguageCode ?? "en",
-        dto.RecentDataDirectories ?? new List<string>());
+        dto.RecentDataDirectories ?? new List<string>(),
+        Map(dto.WindowPlacement));
+
+    private static WindowPlacement? Map(WindowPlacementDto? dto)
+    {
+        if (dto is not { Left: { } left, Top: { } top, Width: { } width, Height: { } height })
+        {
+            return null;
+        }
+
+        var placement = new WindowPlacement(left, top, width, height, dto.IsMaximized ?? false);
+        return placement.HasUsableSize ? placement : null;
+    }
 
     private static SettingsDto Map(AppSettings settings) => new()
     {
@@ -153,6 +165,16 @@ public sealed class JsonSettingsStore : ISettingsStore
         ActiveLanguageCode = settings.ActiveLanguageCode,
         UiLanguageCode = settings.UiLanguageCode,
         RecentDataDirectories = settings.RecentDataDirectories.ToList(),
+        WindowPlacement = settings.WindowPlacement is { } placement
+            ? new WindowPlacementDto
+            {
+                Left = placement.Left,
+                Top = placement.Top,
+                Width = placement.Width,
+                Height = placement.Height,
+                IsMaximized = placement.IsMaximized,
+            }
+            : null,
     };
 
     private sealed class SettingsDto
@@ -166,5 +188,20 @@ public sealed class JsonSettingsStore : ISettingsStore
         public string? UiLanguageCode { get; set; }
 
         public List<string>? RecentDataDirectories { get; set; }
+
+        public WindowPlacementDto? WindowPlacement { get; set; }
+    }
+
+    private sealed class WindowPlacementDto
+    {
+        public double? Left { get; set; }
+
+        public double? Top { get; set; }
+
+        public double? Width { get; set; }
+
+        public double? Height { get; set; }
+
+        public bool? IsMaximized { get; set; }
     }
 }
