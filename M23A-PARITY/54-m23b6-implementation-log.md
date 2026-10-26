@@ -114,6 +114,8 @@
 
 ## 5. Проверка M23b6
 
+**Коммит:** `e1a086e M23b6: shopkeeper row CRUD and lookup identity`.
+
 | Проверка | Результат |
 |---|---|
 | Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
