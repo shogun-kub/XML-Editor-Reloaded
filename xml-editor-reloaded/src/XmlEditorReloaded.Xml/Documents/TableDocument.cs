@@ -207,6 +207,15 @@ public sealed class TableDocument
             element.Add(new XElement(XName.Get(keyField), key));
         }
 
+        // A lookup record is an id/name pair on disk: XmlFileLookupRepository rejects the whole file
+        // when any record lacks a name element, so a new row starts with an empty name like legacy did.
+        if (Metadata?.IsLookup == true
+            && !element.Elements().Any(static child =>
+                string.Equals(child.Name.LocalName, "name", StringComparison.Ordinal)))
+        {
+            element.Add(new XElement(XName.Get("name"), string.Empty));
+        }
+
         _document.Root.Add(element);
         var record = new TableRecord(this, element);
         _records.Add(record);

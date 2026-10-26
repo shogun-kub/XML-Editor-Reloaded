@@ -1122,6 +1122,30 @@
   <data name="ShopkeeperEmptyText" xml:space="preserve">
     <value>No dealer stocks this item.</value>
   </data>
+  <data name="ShopkeeperAddDealerLabel" xml:space="preserve">
+    <value>Add to dealer</value>
+  </data>
+  <data name="ShopkeeperAddText" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="ShopkeeperRemoveText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ShopkeeperNoDealersText" xml:space="preserve">
+    <value>Every loaded dealer already stocks this item.</value>
+  </data>
+  <data name="ShopkeeperRemoveTitle" xml:space="preserve">
+    <value>Remove dealer row</value>
+  </data>
+  <data name="ShopkeeperConfirmRemoveFormat" xml:space="preserve">
+    <value>Remove the {0} row for item {1} (quantity {2})?</value>
+  </data>
+  <data name="ShopkeeperRowAddedFormat" xml:space="preserve">
+    <value>{0} now stocks this item.</value>
+  </data>
+  <data name="ShopkeeperRowRemovedFormat" xml:space="preserve">
+    <value>{0} no longer stocks this item.</value>
+  </data>
   <data name="MercGearSearchLabel" xml:space="preserve">
     <value>Search mercenary</value>
   </data>

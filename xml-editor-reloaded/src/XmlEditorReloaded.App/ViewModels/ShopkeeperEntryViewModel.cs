@@ -1,12 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.ViewModels;
 
 /// <summary>
 /// One dealer inventory row that stocks the selected item. The quantity is edited in place and written
-/// back to the dealer table through the item workspace, so the edit shares the workspace undo history
-/// and the next save.
+/// back to the exact dealer row through the item workspace, so an edit or removal keeps addressing the
+/// same row even when another dealer row repeats its <c>uiIndex</c>. The edit shares the workspace undo
+/// history and the next save.
 /// </summary>
 public sealed partial class ShopkeeperEntryViewModel : ObservableObject
 {
@@ -16,27 +19,27 @@ public sealed partial class ShopkeeperEntryViewModel : ObservableObject
     /// <summary>
     /// Initializes a new instance of the <see cref="ShopkeeperEntryViewModel"/> class.
     /// </summary>
-    /// <param name="host">Item workspace that applies quantity edits.</param>
+    /// <param name="host">Item workspace that applies quantity edits and removals.</param>
     /// <param name="tableName">Dealer inventory table that owns the row.</param>
-    /// <param name="rowKey">Primary key of the dealer row.</param>
+    /// <param name="row">Exact workspace row that stores the item reference and quantity.</param>
     /// <param name="dealerName">Display name of the dealer.</param>
     /// <param name="quantity">Current optimal quantity.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
     public ShopkeeperEntryViewModel(
         ItemWorkspaceViewModel host,
         TableName tableName,
-        string rowKey,
+        WorkspaceRow row,
         string dealerName,
         string quantity)
     {
         ArgumentNullException.ThrowIfNull(host);
-        ArgumentNullException.ThrowIfNull(rowKey);
+        ArgumentNullException.ThrowIfNull(row);
         ArgumentNullException.ThrowIfNull(dealerName);
         ArgumentNullException.ThrowIfNull(quantity);
 
         _host = host;
         TableName = tableName;
-        RowKey = rowKey;
+        Row = row;
         DealerName = dealerName;
         _quantity = quantity;
     }
@@ -47,9 +50,15 @@ public sealed partial class ShopkeeperEntryViewModel : ObservableObject
     public TableName TableName { get; }
 
     /// <summary>
-    /// Gets the primary key of the dealer row.
+    /// Gets the exact workspace row that stores the dealer stock entry. Unlike a key lookup, this
+    /// reference cannot be confused with another row that repeats the same <c>uiIndex</c>.
     /// </summary>
-    public string RowKey { get; }
+    public WorkspaceRow Row { get; }
+
+    /// <summary>
+    /// Gets the primary key of the dealer row as displayed in status messages.
+    /// </summary>
+    public string RowKey => Row.Key ?? string.Empty;
 
     /// <summary>
     /// Gets the display name of the dealer.
@@ -78,4 +87,10 @@ public sealed partial class ShopkeeperEntryViewModel : ObservableObject
     /// </summary>
     /// <param name="quantity">Stored quantity.</param>
     internal void Refresh(string quantity) => SetProperty(ref _quantity, quantity, nameof(Quantity));
+
+    /// <summary>
+    /// Removes this exact dealer row after the item workspace confirms the action.
+    /// </summary>
+    [RelayCommand]
+    private void Remove() => _host.RemoveShopkeeperEntry(this);
 }

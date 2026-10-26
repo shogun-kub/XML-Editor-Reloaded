@@ -1050,6 +1050,160 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// The shopkeeper tab creates a missing dealer row for the selected item, rejects a negative
+    /// quantity without touching the set, and removes the row again as one undoable item-set edit.
+    /// </summary>
+    [Fact]
+    public async Task ShopkeeperTab_AddsAndRemovesDealerRow()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDealerFile: true);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+        var itemsBefore = await File.ReadAllBytesAsync(fixture.ItemsPath);
+
+        Assert.Empty(viewModel.ShopkeeperEntries);
+        Assert.True(viewModel.HasShopkeeperDealerOptions);
+        var dealer = Assert.Single(viewModel.ShopkeeperDealerOptions);
+        Assert.Equal("Alberto", dealer.DealerName);
+        Assert.Equal("0", viewModel.NewShopkeeperQuantity);
+        Assert.False(viewModel.AddShopkeeperEntryCommand.CanExecute(null));
+        viewModel.SelectedShopkeeperDealer = dealer;
+        Assert.True(viewModel.AddShopkeeperEntryCommand.CanExecute(null));
+
+        viewModel.NewShopkeeperQuantity = "-1";
+        viewModel.AddShopkeeperEntry();
+        Assert.Empty(viewModel.ShopkeeperEntries);
+        Assert.False(viewModel.IsDirty);
+        viewModel.NewShopkeeperQuantity = "not a number";
+        viewModel.AddShopkeeperEntry();
+        Assert.Empty(viewModel.ShopkeeperEntries);
+
+        viewModel.NewShopkeeperQuantity = "5";
+        viewModel.AddShopkeeperEntry();
+        var entry = Assert.Single(viewModel.ShopkeeperEntries);
+        Assert.Equal("Alberto", entry.DealerName);
+        Assert.Equal("5", entry.Quantity);
+        Assert.Equal("0", viewModel.NewShopkeeperQuantity);
+        Assert.True(viewModel.IsDirty);
+        Assert.True(viewModel.CanUndo);
+
+        await viewModel.SaveAsync();
+        var saved = XDocument.Load(fixture.DealerPath);
+        var added = Assert.Single(
+            saved.Root!.Elements("INVENTORY"),
+            row => row.Element("sItemIndex")?.Value == "1");
+        Assert.Equal("1", added.Element("uiIndex")?.Value);
+        Assert.Equal("5", added.Element("ubOptimalNumber")?.Value);
+
+        dialog.ConfirmResult = true;
+        viewModel.RemoveShopkeeperEntry(entry);
+        Assert.Empty(viewModel.ShopkeeperEntries);
+        Assert.True(viewModel.HasShopkeeperDealerOptions);
+
+        await viewModel.SaveAsync();
+        saved = XDocument.Load(fixture.DealerPath);
+        Assert.DoesNotContain(
+            saved.Root!.Elements("INVENTORY"),
+            row => row.Element("sItemIndex")?.Value == "1");
+        Assert.Single(saved.Root!.Elements("INVENTORY"));
+        Assert.Equal(itemsBefore, await File.ReadAllBytesAsync(fixture.ItemsPath));
+    }
+
+    /// <summary>
+    /// A row added to a dealer can be undone and redone as one step; the dealer choices follow the
+    /// current stock state.
+    /// </summary>
+    [Fact]
+    public async Task ShopkeeperTab_AddDealerRow_UndoAndRedoRestoreChoices()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDealerFile: true);
+        var (viewModel, _) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectedShopkeeperDealer = Assert.Single(viewModel.ShopkeeperDealerOptions);
+        viewModel.NewShopkeeperQuantity = "2";
+        viewModel.AddShopkeeperEntry();
+        Assert.Single(viewModel.ShopkeeperEntries);
+        Assert.Empty(viewModel.ShopkeeperDealerOptions);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.Empty(viewModel.ShopkeeperEntries);
+        Assert.Single(viewModel.ShopkeeperDealerOptions);
+
+        viewModel.RedoCommand.Execute(null);
+        Assert.Single(viewModel.ShopkeeperEntries);
+        Assert.Empty(viewModel.ShopkeeperDealerOptions);
+    }
+
+    /// <summary>
+    /// Removing the only row of a dealer leaves an empty inventory file, which loads read-only: after a
+    /// reload the dealer is not offered for adding and the add command stays unavailable.
+    /// </summary>
+    [Fact]
+    public async Task ShopkeeperTab_EmptiedDealerFile_HidesDealerAfterReload()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(workspace, includeDealer: true);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+        dialog.ConfirmResult = true;
+
+        viewModel.RemoveShopkeeperEntry(Assert.Single(viewModel.ShopkeeperEntries));
+        await viewModel.SaveAsync();
+
+        var (reloaded, _) = await CreateWorkspaceAsync(fixture);
+        Assert.Empty(reloaded.ShopkeeperEntries);
+        Assert.Empty(reloaded.ShopkeeperDealerOptions);
+        Assert.False(reloaded.HasShopkeeperDealerOptions);
+        Assert.False(reloaded.AddShopkeeperEntryCommand.CanExecute(null));
+    }
+
+    /// <summary>
+    /// The dealer tab remembers the exact row, so a repeated <c>uiIndex</c> cannot route the quantity
+    /// edit or the removal to another item's dealer row.
+    /// </summary>
+    [Fact]
+    public async Task ShopkeeperTab_RepeatedDealerKey_EditsAndRemovesExactRow()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var fixture = CreateFixture(
+            workspace,
+            includeSecondItem: true,
+            includeDealerFile: true,
+            includeDuplicateDealer: true);
+        var (viewModel, dialog) = await CreateWorkspaceAsync(fixture);
+
+        viewModel.SelectRecord("2");
+        var entry = Assert.Single(viewModel.ShopkeeperEntries);
+        Assert.Equal("Alberto", entry.DealerName);
+        Assert.Equal("3", entry.Quantity);
+
+        entry.Quantity = "7";
+        await viewModel.SaveAsync();
+        var saved = XDocument.Load(fixture.DealerPath);
+        var rows = saved.Root!.Elements("INVENTORY").ToArray();
+        Assert.Equal(2, rows.Length);
+        Assert.All(rows, row => Assert.Equal("0", row.Element("uiIndex")?.Value));
+        Assert.Equal("9", rows.Single(row => row.Element("sItemIndex")?.Value == "1").Element("ubOptimalNumber")?.Value);
+        Assert.Equal("7", rows.Single(row => row.Element("sItemIndex")?.Value == "2").Element("ubOptimalNumber")?.Value);
+
+        viewModel.RemoveShopkeeperEntry(entry);
+        Assert.Single(viewModel.ShopkeeperEntries);
+
+        dialog.ConfirmResult = true;
+        viewModel.RemoveShopkeeperEntry(entry);
+        await viewModel.SaveAsync();
+
+        saved = XDocument.Load(fixture.DealerPath);
+        var remaining = Assert.Single(saved.Root!.Elements("INVENTORY"));
+        Assert.Equal("1", remaining.Element("sItemIndex")?.Value);
+        Assert.Equal("9", remaining.Element("ubOptimalNumber")?.Value);
+    }
+
+    /// <summary>
     /// The shopkeeper tab lists dealer stock rows for the selected item and saves a quantity edit to the
     /// dealer file without rewriting the item file.
     /// </summary>
@@ -1540,7 +1694,9 @@ public class ItemWorkspaceViewModelTests
         TestWorkspace workspace,
         bool includeSecondItem = false,
         bool includeOverlay = false,
-        bool includeDealer = false)
+        bool includeDealer = false,
+        bool includeDealerFile = false,
+        bool includeDuplicateDealer = false)
     {
         var tableData = workspace.PathOf(Path.Combine("Data-1.13", "TableData"));
         var itemsDirectory = Path.Combine(tableData, "Items");
@@ -1638,21 +1794,46 @@ public class ItemWorkspaceViewModelTests
             + "</ATTACHMENTLIST>\r\n");
 
         var dealerPath = Path.Combine(tableData, "NPCInventory", "AlbertoInventory.xml");
-        if (includeDealer)
+        if (includeDealer || includeDealerFile || includeDuplicateDealer)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(dealerPath)!);
+            var rows = new System.Text.StringBuilder();
+            if (includeDuplicateDealer)
+            {
+                AppendDealerRow(rows, "0", "1", "9");
+                AppendDealerRow(rows, "0", "2", "3");
+            }
+            else if (includeDealer)
+            {
+                AppendDealerRow(rows, "0", "1", "9");
+            }
+            else
+            {
+                // The dealer table stays editable because it has a record, but item 1 has no row yet.
+                AppendDealerRow(rows, "0", "2", "4");
+            }
+
             File.WriteAllText(
                 dealerPath,
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><INVENTORYLIST>\r\n"
-                + "\t<INVENTORY>\r\n"
-                + "\t\t<uiIndex>0</uiIndex>\r\n"
-                + "\t\t<sItemIndex>1</sItemIndex>\r\n"
-                + "\t\t<ubOptimalNumber>9</ubOptimalNumber>\r\n"
-                + "\t</INVENTORY>\r\n"
+                + rows
                 + "</INVENTORYLIST>\r\n");
         }
 
         return new Fixture(workspace, tableData, itemsPath, weaponPath, attachmentsPath, dealerPath);
+    }
+
+    private static void AppendDealerRow(
+        System.Text.StringBuilder rows,
+        string uiIndex,
+        string itemIndex,
+        string quantity)
+    {
+        rows.Append("\t<INVENTORY>\r\n")
+            .Append("\t\t<uiIndex>").Append(uiIndex).Append("</uiIndex>\r\n")
+            .Append("\t\t<sItemIndex>").Append(itemIndex).Append("</sItemIndex>\r\n")
+            .Append("\t\t<ubOptimalNumber>").Append(quantity).Append("</ubOptimalNumber>\r\n")
+            .Append("\t</INVENTORY>\r\n");
     }
 
     private sealed record Fixture(

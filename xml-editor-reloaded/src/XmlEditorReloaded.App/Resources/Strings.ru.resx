@@ -1122,6 +1122,30 @@
   <data name="ShopkeeperEmptyText" xml:space="preserve">
     <value>Ни один торговец не продаёт этот предмет.</value>
   </data>
+  <data name="ShopkeeperAddDealerLabel" xml:space="preserve">
+    <value>Добавить торговцу</value>
+  </data>
+  <data name="ShopkeeperAddText" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="ShopkeeperRemoveText" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="ShopkeeperNoDealersText" xml:space="preserve">
+    <value>Все загруженные торговцы уже продают этот предмет.</value>
+  </data>
+  <data name="ShopkeeperRemoveTitle" xml:space="preserve">
+    <value>Удаление строки торговца</value>
+  </data>
+  <data name="ShopkeeperConfirmRemoveFormat" xml:space="preserve">
+    <value>Удалить строку торговца {0} для предмета {1} (количество {2})?</value>
+  </data>
+  <data name="ShopkeeperRowAddedFormat" xml:space="preserve">
+    <value>{0} теперь продаёт этот предмет.</value>
+  </data>
+  <data name="ShopkeeperRowRemovedFormat" xml:space="preserve">
+    <value>{0} больше не продаёт этот предмет.</value>
+  </data>
   <data name="MercGearSearchLabel" xml:space="preserve">
     <value>Поиск наёмника</value>
   </data>

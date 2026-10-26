@@ -1,8 +1,8 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b5 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b6. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b6 выполнены по состоянию на 2026-10-25; следующий подшаг — M23b7. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
 
-Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b4): закрытие пробелов фиксируют секции `M23b1`…`M23b5` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
+Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b6): закрытие пробелов фиксируют секции `M23b1`…`M23b6` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -881,7 +881,34 @@ WPF-поведение в этой среде не автоматизирует�
 | Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
 | `References/` | не изменён; corpus-тесты работают на temp-копиях и читают корпус только на чтение |
 
-**Следующий подшаг:** M23b6 — shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
+**Следующий подшаг после M23b5:** M23b6 — shopkeeper и identity/CRUD lookup-строк (`L-ITEM-039`, `L-AUX-036`, `L-SHP-001`).
+
+## M23b6 — Shopkeeper и identity/CRUD lookup-строк
+
+**Дата:** 2026-10-25. **Статус:** выполнен. **Закрытые пробелы:** `L-ITEM-039`, `L-SHP-001`, `L-AUX-036` — 3 записи реестра (3 ID). Матрица и реестр выше остаются снимком M23a; факт закрытия фиксирует эта секция. Решения, сверка с legacy и остаточные риски — `M23A-PARITY/54-m23b6-implementation-log.md`.
+
+**Реализация.**
+- `App/ViewModels/ShopkeeperEntryViewModel.cs`: строка дилера хранит точный `WorkspaceRow`, а не только `uiIndex`; `RowKey` выводится из строки, количество пишется/обновляется по этой же строке, `RemoveCommand` удаляет её.
+- `App/ViewModels/ShopkeeperDealerOptionViewModel.cs`, `App/ViewModels/ItemWorkspaceViewModel.cs`: `ShopkeeperDealerOptions` — редактируемые (`Workspace.CanEdit`) инвентари, у которых ещё нет строки для выбранного предмета; `SelectedShopkeeperDealer`, `NewShopkeeperQuantity` (по умолчанию `0`, как legacy `DefaultValue`, сбрасывается после добавления), `AddShopkeeperEntryCommand`, `RemoveShopkeeperEntry`. Создание пишет `sItemIndex` предмета и `ubOptimalNumber`, удаление предварительно подтверждается с именем торговца, предметом и количеством; add/remove входят в общую undo-историю item set. Exact-row используется для правки, refresh и удаления, поэтому дубликат `uiIndex` больше не меняет чужую строку. Пересборка вариантов выполняется после add/remove, undo/redo, смены предмета и reload; read-only инвентарь не предлагается и не принимает Add/Remove.
+- `App/Views/ItemWorkspaceView.xaml`: combo торговцев, подпись и поле количества, кнопка Add, колонка Remove; строка добавления видна только при выбранном предмете, действия учитывают `IsEditable`. `Strings.resx`/`Strings.ru.resx` — 8 новых строк.
+- `Xml/Documents/TableDocument.cs`: `AddRecord` для таблицы с `Metadata.IsLookup` дописывает пустой `<name />` после ключа, поэтому сохранённый lookup-файл снова читается `XmlFileLookupRepository`; не-lookup таблицы и существующие записи не затрагиваются.
+- `Xml/Workspace/TableSetWorkspace.cs`: row-based API `GetRow(TableName, WorkspaceRow)`, `SetValue(TableName, WorkspaceRow, ...)`, `DeleteRow(TableName, WorkspaceRow)`.
+
+**Осознанные отличия.** (1) Вместо 19 фиксированных чекбоксов legacy — combo из 80 загруженных инвентарей, у которых нет строки для предмета; это сверхмножество legacy. (2) Удаление подтверждается и пишется как одна undo-транзакция, а не молча при снятии чекбокса. (3) Количество по умолчанию `0` (паритет), но нечисло/отрицательное отклоняется и не пишется; legacy-спиннер зажимал границы. (4) Новая lookup-строка получает `name=""`, как legacy, а не выдуманное имя; дубликат `uiIndex` остаётся предупреждением, данные не перенумеровываются. (5) Если файл дилера пуст, он грузится read-only (`L-STO-034`, M23b8), поэтому добавить первую строку в полностью пустой файл пока нельзя; после reload такой торговец исключается из combo и не показывает ложную ошибку, а в текущей сессии строку можно вернуть Undo. В v4/v5 таких инвентарей нет.
+
+**Проверка M23b6.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 494/494: Core 37, Data 67, Imaging 24, Xml 199, App 167 |
+| Corpus v4 | 494/494 |
+| Corpus v5 | 494/494 |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| Тесты M23b6 | `ShopkeeperTab_AddsAndRemovesDealerRow`, `ShopkeeperTab_AddDealerRow_UndoAndRedoRestoreChoices`, `ShopkeeperTab_RepeatedDealerKey_EditsAndRemovesExactRow`, `ShopkeeperTab_EmptiedDealerFile_HidesDealerAfterReload`, `ShopkeeperTab_ListsDealersAndSavesQuantity`, `Lookup_AddRecord_CreatesEmptyNameAndSavesLoadableFile`, `NonLookup_AddRecord_DoesNotAddNameElement` |
+| `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
+
+**Следующий подшаг:** M23b7 — shell, field UI и полировка merc gear (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
 
 ## Вне паритета (осознанно)
 

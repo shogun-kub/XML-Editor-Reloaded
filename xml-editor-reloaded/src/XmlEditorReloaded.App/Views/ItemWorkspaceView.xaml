@@ -527,6 +527,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0"
                                        Margin="0,0,0,6"
@@ -536,6 +537,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock FontWeight="SemiBold"
                                            Text="{Binding ShopkeeperDealerColumn}" />
@@ -553,6 +555,7 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock VerticalAlignment="Center"
                                                            TextTrimming="CharacterEllipsis"
@@ -560,6 +563,12 @@
                                                 <TextBox Grid.Column="1"
                                                          Margin="8,0,0,0"
                                                          Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}" />
+                                                <Button Grid.Column="2"
+                                                        Margin="8,0,0,0"
+                                                        Padding="10,1"
+                                                        Command="{Binding RemoveCommand}"
+                                                        Content="{Binding DataContext.ShopkeeperRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -571,6 +580,36 @@
                                        TextWrapping="Wrap"
                                        Text="{Binding ShopkeeperEmptyText}"
                                        Visibility="{Binding HasShopkeeperEntries, Converter={StaticResource InverseBoolToVisibility}}" />
+                            <StackPanel Grid.Row="3"
+                                        Margin="0,6,0,0"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding CanShowShopkeeperAddBar, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{Binding ShopkeeperAddDealerLabel}" />
+                                <ComboBox Width="200"
+                                          Margin="8,0,0,0"
+                                          DisplayMemberPath="DealerName"
+                                          IsEnabled="{Binding IsEditable}"
+                                          ItemsSource="{Binding ShopkeeperDealerOptions}"
+                                          SelectedItem="{Binding SelectedShopkeeperDealer, Mode=TwoWay}" />
+                                <TextBlock Margin="8,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding ShopkeeperQuantityColumn}" />
+                                <TextBox Width="90"
+                                         Margin="8,0,0,0"
+                                         IsEnabled="{Binding IsEditable}"
+                                         Text="{Binding NewShopkeeperQuantity, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="{Binding ShopkeeperQuantityColumn}" />
+                                <Button Margin="8,0,0,0"
+                                        Padding="10,2"
+                                        Command="{Binding AddShopkeeperEntryCommand}"
+                                        Content="{Binding ShopkeeperAddText}" />
+                                <TextBlock Margin="12,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="#FF777777"
+                                           Text="{Binding ShopkeeperNoDealersText}"
+                                           Visibility="{Binding HasShopkeeperDealerOptions, Converter={StaticResource InverseBoolToVisibility}}" />
+                            </StackPanel>
                         </Grid>
                     </TabItem>
 

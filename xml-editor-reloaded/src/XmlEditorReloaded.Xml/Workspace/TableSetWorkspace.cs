@@ -323,6 +323,20 @@ public sealed class TableSetWorkspace
         _workspaces.GetValueOrDefault(tableName);
 
     /// <summary>
+    /// Rebuilds the current state of one exact row of a member table, without looking it up by a key
+    /// that another row may share.
+    /// </summary>
+    /// <param name="tableName">Dotted table name.</param>
+    /// <param name="row">Row previously returned by the workspace of <paramref name="tableName"/>.</param>
+    /// <returns>The refreshed row, or <see langword="null"/> when the table is not part of the set or the record is gone.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> is null.</exception>
+    public WorkspaceRow? GetRow(TableName tableName, WorkspaceRow row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        return GetWorkspace(tableName)?.GetRow(row);
+    }
+
+    /// <summary>
     /// Returns every relation of the primary table that produced a loaded member.
     /// </summary>
     /// <param name="kind">Kind to filter by.</param>
@@ -371,6 +385,56 @@ public sealed class TableSetWorkspace
         string rawText,
         bool addIfMissing = false) =>
         SetValue(tableName, recordKey, FieldPath.Parse(fieldPath), rawText, addIfMissing);
+
+    /// <summary>
+    /// Sets a field value on one exact row of a member table, even when another row shares its key.
+    /// </summary>
+    /// <param name="tableName">Dotted table name.</param>
+    /// <param name="row">Exact row to edit, as returned by the workspace of <paramref name="tableName"/>.</param>
+    /// <param name="fieldPath">Slash-separated field path relative to the record.</param>
+    /// <param name="rawText">Value to store exactly.</param>
+    /// <param name="addIfMissing">Whether a missing field is appended to the record.</param>
+    /// <returns>The result of the underlying workspace edit.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/>, <paramref name="fieldPath"/>, or <paramref name="rawText"/> is null.</exception>
+    public OperationResult SetValue(
+        TableName tableName,
+        WorkspaceRow row,
+        string fieldPath,
+        string rawText,
+        bool addIfMissing = false)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(fieldPath);
+        ArgumentNullException.ThrowIfNull(rawText);
+        var workspace = GetWorkspace(tableName);
+        return workspace is null
+            ? OperationResult.Failure(
+                ErrorCodes.MetadataNotFound,
+                $"Table '{tableName}' is not part of the loaded set.")
+            : workspace.SetValue(row, fieldPath, rawText, addIfMissing);
+    }
+
+    /// <summary>
+    /// Deletes one exact row of a member table, even when another row shares its key, together with its
+    /// translation record when an overlay is selected.
+    /// </summary>
+    /// <param name="tableName">Dotted table name.</param>
+    /// <param name="row">Exact row to delete, as returned by the workspace of <paramref name="tableName"/>.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>metadata.not_found</c>, <c>key.not_found</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="row"/> is null.</exception>
+    public OperationResult DeleteRow(TableName tableName, WorkspaceRow row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        var workspace = GetWorkspace(tableName);
+        return workspace is null
+            ? OperationResult.Failure(
+                ErrorCodes.MetadataNotFound,
+                $"Table '{tableName}' is not part of the loaded set.")
+            : workspace.DeleteRow(row);
+    }
 
     /// <summary>
     /// Replaces a repeated field of one record in one table of the set.

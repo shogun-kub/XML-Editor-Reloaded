@@ -148,6 +148,12 @@ public sealed partial class ItemWorkspaceViewModel :
     [ObservableProperty]
     private LanguageOptionViewModel? _selectedLanguageOption;
 
+    [ObservableProperty]
+    private ShopkeeperDealerOptionViewModel? _selectedShopkeeperDealer;
+
+    [ObservableProperty]
+    private string _newShopkeeperQuantity = "0";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ItemWorkspaceViewModel"/> class.
     /// </summary>
@@ -209,6 +215,11 @@ public sealed partial class ItemWorkspaceViewModel :
         ShopkeeperDealerColumn = Strings.Get("ShopkeeperDealerColumn");
         ShopkeeperQuantityColumn = Strings.Get("ShopkeeperQuantityColumn");
         ShopkeeperEmptyText = Strings.Get("ShopkeeperEmptyText");
+        ShopkeeperAddDealerLabel = Strings.Get("ShopkeeperAddDealerLabel");
+        ShopkeeperAddText = Strings.Get("ShopkeeperAddText");
+        ShopkeeperRemoveText = Strings.Get("ShopkeeperRemoveText");
+        ShopkeeperNoDealersText = Strings.Get("ShopkeeperNoDealersText");
+        ShopkeeperRemoveTitle = Strings.Get("ShopkeeperRemoveTitle");
         ItemFilterLabel = Strings.Get("ItemFilterLabel");
         ClassFilterLabel = Strings.Get("ItemFilterClassLabel");
         FlagFilterLabel = Strings.Get("ItemFilterFlagLabel");
@@ -423,6 +434,31 @@ public sealed partial class ItemWorkspaceViewModel :
     public string ShopkeeperEmptyText { get; }
 
     /// <summary>
+    /// Gets the label of the control that adds the item to another dealer.
+    /// </summary>
+    public string ShopkeeperAddDealerLabel { get; }
+
+    /// <summary>
+    /// Gets the text of the button that adds a dealer row.
+    /// </summary>
+    public string ShopkeeperAddText { get; }
+
+    /// <summary>
+    /// Gets the text of the button that removes a dealer row.
+    /// </summary>
+    public string ShopkeeperRemoveText { get; }
+
+    /// <summary>
+    /// Gets the note shown when every loaded dealer already stocks the selected item.
+    /// </summary>
+    public string ShopkeeperNoDealersText { get; }
+
+    /// <summary>
+    /// Gets the confirmation-question title of a dealer row removal.
+    /// </summary>
+    public string ShopkeeperRemoveTitle { get; }
+
+    /// <summary>
     /// Gets the field filter label.
     /// </summary>
     public string ItemFilterLabel { get; }
@@ -529,9 +565,24 @@ public sealed partial class ItemWorkspaceViewModel :
     public ObservableCollection<ShopkeeperEntryViewModel> ShopkeeperEntries { get; } = new();
 
     /// <summary>
+    /// Gets the dealer inventories that could stock the selected item but do not have a row for it yet.
+    /// </summary>
+    public ObservableCollection<ShopkeeperDealerOptionViewModel> ShopkeeperDealerOptions { get; } = new();
+
+    /// <summary>
     /// Gets a value indicating whether at least one dealer stocks the selected item.
     /// </summary>
     public bool HasShopkeeperEntries => ShopkeeperEntries.Count > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether at least one dealer could still receive a row for the selected item.
+    /// </summary>
+    public bool HasShopkeeperDealerOptions => ShopkeeperDealerOptions.Count > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether the shopkeeper add-row bar applies to a selected item.
+    /// </summary>
+    public bool CanShowShopkeeperAddBar => SelectedItem is not null;
 
     /// <summary>
     /// Gets the shopkeeper count text shown above the dealer list.
@@ -1261,7 +1312,10 @@ public sealed partial class ItemWorkspaceViewModel :
         }
 
         var displayField = DisplayFieldOf(member.Relation);
-        var wasAbsent = workspace.GetRow(entry.RowKey)?.GetValue(displayField) is null;
+        // The entry remembers the exact record, so a repeated uiIndex in the dealer file cannot route
+        // the edit to another item's row.
+        var current = workspace.GetRow(entry.Row);
+        var wasAbsent = current?.GetValue(displayField) is null;
         if (wasAbsent && value.Length == 0)
         {
             return;
@@ -1269,23 +1323,133 @@ public sealed partial class ItemWorkspaceViewModel :
 
         var result = _set.SetValue(
             entry.TableName,
-            entry.RowKey,
+            entry.Row,
             displayField,
             value,
             addIfMissing: wasAbsent);
         if (!result.IsSuccess)
         {
-            entry.Refresh(workspace.GetRow(entry.RowKey)?.GetValue(displayField)?.Trim() ?? string.Empty);
+            entry.Refresh(workspace.GetRow(entry.Row)?.GetValue(displayField)?.Trim() ?? string.Empty);
             StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
             return;
         }
 
-        var stored = workspace.GetRow(entry.RowKey)?.GetValue(displayField)?.Trim() ?? string.Empty;
+        var stored = workspace.GetRow(entry.Row)?.GetValue(displayField)?.Trim() ?? string.Empty;
         entry.Refresh(stored);
         IsDirty = _set.IsDirty;
         RefreshHistoryState();
         StatusText = Strings.Format("EditorCellUpdated", displayField, entry.RowKey);
     }
+
+    /// <summary>
+    /// Adds the selected item to the dealer chosen in the shopkeeper tab. The new row stores the item
+    /// reference and the entered optimal quantity, and the edit shares the item-set undo history.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddShopkeeperEntry))]
+    public void AddShopkeeperEntry()
+    {
+        if (_set is null || _itemRow?.Key is not { } key)
+        {
+            return;
+        }
+
+        if (!IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        if (SelectedShopkeeperDealer is not { } dealer
+            || FindReverseMember(dealer.TableName) is not { } member)
+        {
+            StatusText = Strings.Format("StatusError", ErrorCodes.MetadataNotFound);
+            return;
+        }
+
+        // A dealer file with no record elements loads read-only, so it cannot receive a new row even
+        // though it has no stock row for this item. Such a dealer is not offered as a choice.
+        if (!member.Workspace.CanEdit)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        var quantity = NewShopkeeperQuantity.Trim();
+        if (!int.TryParse(quantity, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numeric)
+            || numeric < 0)
+        {
+            StatusText = Strings.Format("EditorInvalidValue", NewShopkeeperQuantity, ShopkeeperQuantityColumn);
+            return;
+        }
+
+        var quantityField = DisplayFieldOf(member.Relation);
+        var defaults = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [member.Relation.TargetValueField] = key,
+            [quantityField] = numeric.ToString(CultureInfo.InvariantCulture),
+        };
+        var result = _set.AddRecord(dealer.TableName, defaults);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        NewShopkeeperQuantity = "0";
+        RebuildShopkeeperEntries();
+        IsDirty = _set.IsDirty;
+        RefreshHistoryState();
+        StatusText = Strings.Format("ShopkeeperRowAddedFormat", dealer.DealerName);
+    }
+
+    /// <summary>
+    /// Removes one exact dealer row so the dealer no longer stocks the selected item. The operation is
+    /// confirmed first and is undone, like any other set edit, by the workspace undo command.
+    /// </summary>
+    /// <param name="entry">Dealer row to remove.</param>
+    public void RemoveShopkeeperEntry(ShopkeeperEntryViewModel entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        if (_set is null || !IsEditable)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        var member = FindReverseMember(entry.TableName);
+        if (member is null || !member.Workspace.CanEdit)
+        {
+            StatusText = Strings.Get("EditorReadOnly");
+            return;
+        }
+
+        if (!_dialogService.Confirm(
+                Strings.Format(
+                    "ShopkeeperConfirmRemoveFormat",
+                    entry.DealerName,
+                    _itemRow?.Key ?? string.Empty,
+                    entry.Quantity),
+                ShopkeeperRemoveTitle))
+        {
+            return;
+        }
+
+        var result = _set.DeleteRow(entry.TableName, entry.Row);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        RebuildShopkeeperEntries();
+        IsDirty = _set.IsDirty;
+        RefreshHistoryState();
+        StatusText = Strings.Format("ShopkeeperRowRemovedFormat", entry.DealerName);
+    }
+
+    private bool CanAddShopkeeperEntry =>
+        _set is not null && IsEditable && SelectedShopkeeperDealer is not null;
 
     /// <summary>
     /// Applies a single cell edit to the item or one of its related records.
@@ -1418,6 +1582,11 @@ public sealed partial class ItemWorkspaceViewModel :
 
     partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
 
+    partial void OnIsEditableChanged(bool value) => AddShopkeeperEntryCommand.NotifyCanExecuteChanged();
+
+    partial void OnSelectedShopkeeperDealerChanged(ShopkeeperDealerOptionViewModel? value) =>
+        AddShopkeeperEntryCommand.NotifyCanExecuteChanged();
+
     partial void OnCanUndoChanged(bool value) => UndoCommand.NotifyCanExecuteChanged();
 
     partial void OnCanRedoChanged(bool value) => RedoCommand.NotifyCanExecuteChanged();
@@ -1457,6 +1626,7 @@ public sealed partial class ItemWorkspaceViewModel :
 
     partial void OnSelectedItemChanged(ItemListEntry? value)
     {
+        OnPropertyChanged(nameof(CanShowShopkeeperAddBar));
         if (_suppressSelection)
         {
             return;
@@ -1624,6 +1794,8 @@ public sealed partial class ItemWorkspaceViewModel :
         VisibleChildSections.Clear();
         ValidationIssues.Clear();
         ShopkeeperEntries.Clear();
+        ShopkeeperDealerOptions.Clear();
+        SelectedShopkeeperDealer = null;
         NotifyShopkeeperChanged();
         _allItems.Clear();
         _allFields.Clear();
@@ -2032,6 +2204,7 @@ public sealed partial class ItemWorkspaceViewModel :
         ShopkeeperEntries.Clear();
         if (_set is null || _itemRow?.Key is not { } key)
         {
+            RebuildShopkeeperDealerOptions(new HashSet<TableName>());
             NotifyShopkeeperChanged();
             return;
         }
@@ -2057,7 +2230,7 @@ public sealed partial class ItemWorkspaceViewModel :
                 entries.Add(new ShopkeeperEntryViewModel(
                     this,
                     relation.TargetTable,
-                    row.Key,
+                    row,
                     DealerNameOf(relation.TargetTable),
                     row.GetValue(displayField)?.Trim() ?? string.Empty));
             }
@@ -2070,7 +2243,42 @@ public sealed partial class ItemWorkspaceViewModel :
             ShopkeeperEntries.Add(entry);
         }
 
+        RebuildShopkeeperDealerOptions(entries.Select(static entry => entry.TableName).ToHashSet());
         NotifyShopkeeperChanged();
+    }
+
+    /// <summary>
+    /// Rebuilds the dealer choices for a new row from the loaded shopkeeper inventories that do not
+    /// stock the selected item. The selection is kept when that dealer is still available.
+    /// </summary>
+    /// <param name="stocked">Dealer tables that already have a row for the selected item.</param>
+    private void RebuildShopkeeperDealerOptions(IReadOnlySet<TableName> stocked)
+    {
+        var selected = SelectedShopkeeperDealer?.TableName;
+        ShopkeeperDealerOptions.Clear();
+        if (_set is not null && _itemRow is not null)
+        {
+            var available = _set.GetMembers(TableRelationKind.Reverse)
+                .Where(static member => IsShopkeeperRelation(member.Relation))
+                .Where(static member => member.Workspace.CanEdit)
+                .Where(member => !stocked.Contains(member.Relation.TargetTable))
+                .GroupBy(static member => member.Relation.TargetTable)
+                .Select(static group => group.First())
+                .OrderBy(
+                    static member => DealerNameOf(member.Relation.TargetTable),
+                    StringComparer.OrdinalIgnoreCase);
+            foreach (var member in available)
+            {
+                ShopkeeperDealerOptions.Add(new ShopkeeperDealerOptionViewModel(
+                    member.Relation.TargetTable,
+                    DealerNameOf(member.Relation.TargetTable)));
+            }
+        }
+
+        SelectedShopkeeperDealer = selected is null
+            ? null
+            : ShopkeeperDealerOptions.FirstOrDefault(option => option.TableName == selected);
+        OnPropertyChanged(nameof(HasShopkeeperDealerOptions));
     }
 
     /// <summary>
@@ -2078,11 +2286,25 @@ public sealed partial class ItemWorkspaceViewModel :
     /// </summary>
     private void RefreshShopkeeperQuantities()
     {
+        var missing = false;
         foreach (var entry in ShopkeeperEntries)
         {
             var member = FindReverseMember(entry.TableName);
-            var stored = member?.Workspace.GetRow(entry.RowKey)?.GetValue(DisplayFieldOf(member.Relation));
-            entry.Refresh(stored?.Trim() ?? string.Empty);
+            var row = member?.Workspace.GetRow(entry.Row);
+            if (row is null)
+            {
+                // Undo may replace the underlying record instance, and a delete removes it outright.
+                // Rebuilding below restores the exact references instead of showing a ghost entry.
+                missing = true;
+                continue;
+            }
+
+            entry.Refresh(row.GetValue(DisplayFieldOf(member!.Relation))?.Trim() ?? string.Empty);
+        }
+
+        if (missing)
+        {
+            RebuildShopkeeperEntries();
         }
     }
 
@@ -2106,6 +2328,7 @@ public sealed partial class ItemWorkspaceViewModel :
     private void NotifyShopkeeperChanged()
     {
         OnPropertyChanged(nameof(HasShopkeeperEntries));
+        OnPropertyChanged(nameof(HasShopkeeperDealerOptions));
         OnPropertyChanged(nameof(ShopkeeperCountText));
     }
 
@@ -3105,6 +3328,8 @@ public sealed partial class ItemWorkspaceViewModel :
         VisibleChildSections.Clear();
         ValidationIssues.Clear();
         ShopkeeperEntries.Clear();
+        ShopkeeperDealerOptions.Clear();
+        SelectedShopkeeperDealer = null;
         NotifyShopkeeperChanged();
         _allFields.Clear();
     }

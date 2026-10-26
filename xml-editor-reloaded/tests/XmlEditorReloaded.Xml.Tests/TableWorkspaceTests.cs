@@ -1,8 +1,10 @@
 using System.Xml.Linq;
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.Xml.Tests;
@@ -160,6 +162,78 @@ public class TableWorkspaceTests
         Assert.True((await table.SaveAsync()).IsSuccess);
 
         Assert.Equal(original, await File.ReadAllBytesAsync(path));
+    }
+
+    /// <summary>
+    /// Adding a lookup record creates the empty <c>name</c> element required by the lookup file contract,
+    /// and the saved file is accepted by the lookup repository.
+    /// </summary>
+    [Fact]
+    public async Task Lookup_AddRecord_CreatesEmptyNameAndSavesLoadableFile()
+    {
+        using var workspace = new TestWorkspace();
+        var directory = Path.Combine(workspace.DirectoryPath, "Lookup");
+        Directory.CreateDirectory(directory);
+        var path = Path.Combine(directory, "ItemClass.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+            + "<JA2Data>\n"
+            + "\t<ItemClass>\n\t\t<id>1</id>\n\t\t<name>Gun</name>\n\t</ItemClass>\n"
+            + "\t<ItemClass>\n\t\t<id>2</id>\n\t\t<name>Knife</name>\n\t</ItemClass>\n"
+            + "</JA2Data>\n");
+        var metadata = new TableMetadata(
+            TableName.Parse("Lookup.ItemClass"),
+            "JA2Data",
+            "ItemClass",
+            isLookup: true,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "id") }));
+        var descriptor = new TableDescriptor(
+            metadata.TableName,
+            path,
+            "Lookup/ItemClass.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata);
+        Assert.True(load.IsSuccess, load.ErrorText);
+        var table = load.Data!;
+
+        var added = table.AddRecord();
+
+        Assert.True(added.IsSuccess, added.ErrorText);
+        var record = added.Data!;
+        Assert.Equal(new[] { "id", "name" }, record.FieldNames);
+        Assert.Equal("3", record.GetRawValue("id"));
+        Assert.Equal(string.Empty, record.GetRawValue("name"));
+        Assert.True((await table.SaveAsync()).IsSuccess);
+
+        var saved = XDocument.Load(path);
+        var savedRecord = Assert.Single(saved.Root!.Elements("ItemClass"), element => element.Element("id")?.Value == "3");
+        Assert.Equal(new[] { "id", "name" }, savedRecord.Elements().Select(static element => element.Name.LocalName));
+        Assert.Equal(string.Empty, savedRecord.Element("name")!.Value);
+
+        var repository = new XmlFileLookupRepository(workspace.DirectoryPath);
+        var entries = await repository.GetEntriesAsync(TableName.Parse("Lookup.ItemClass"));
+        Assert.True(entries.IsSuccess, entries.ErrorText);
+        Assert.Equal(new LookupEntry(3, string.Empty), Assert.Single(entries.Data!, entry => entry.Id == 3));
+    }
+
+    /// <summary>
+    /// Adding a record to a non-lookup table does not create a <c>name</c> element.
+    /// </summary>
+    [Fact]
+    public async Task NonLookup_AddRecord_DoesNotAddNameElement()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var load = await TableWorkspace.LoadAsync(Descriptor(path), OverlayTestData.ItemsMetadata());
+        Assert.True(load.IsSuccess, load.ErrorText);
+
+        var added = load.Data!.AddRecord();
+
+        Assert.True(added.IsSuccess, added.ErrorText);
+        Assert.Equal(new[] { "uiIndex" }, added.Data!.FieldNames);
+        Assert.False(added.Data.HasField("name"));
     }
 
     /// <summary>
