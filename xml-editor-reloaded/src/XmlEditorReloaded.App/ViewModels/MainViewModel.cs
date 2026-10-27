@@ -6,6 +6,7 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
@@ -679,6 +680,10 @@ public partial class MainViewModel : ObservableObject
             var opened = await _sessionFactory.OpenAsync(DataDirectory, source.Token).ConfigureAwait(true);
             if (!opened.IsSuccess)
             {
+                OperationLog.Warning(
+                    "MainViewModel",
+                    opened.ErrorText ?? $"The data directory '{DataDirectory}' could not be opened.",
+                    opened.ErrorCode);
                 if (generation == _operationGeneration)
                 {
                     _dataSet = null;
@@ -711,6 +716,10 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception exception)
         {
+            OperationLog.Error(
+                "MainViewModel",
+                $"The tables of '{DataDirectory}' could not be refreshed.",
+                exception: exception);
             if (generation == _operationGeneration)
             {
                 StatusText = Strings.Format("StatusError", exception.Message);
@@ -749,6 +758,10 @@ public partial class MainViewModel : ObservableObject
             var opened = await _sessionFactory.OpenAsync(path, source.Token).ConfigureAwait(true);
             if (!opened.IsSuccess)
             {
+                OperationLog.Warning(
+                    "MainViewModel",
+                    opened.ErrorText ?? $"The data directory '{path}' could not be opened.",
+                    opened.ErrorCode);
                 if (generation == _operationGeneration)
                 {
                     DataDirectory = previousDirectory;
@@ -786,6 +799,10 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception exception)
         {
+            OperationLog.Error(
+                "MainViewModel",
+                $"The data directory '{path}' could not be activated.",
+                exception: exception);
             if (generation == _operationGeneration)
             {
                 DataDirectory = previousDirectory;
@@ -808,6 +825,10 @@ public partial class MainViewModel : ObservableObject
             .ConfigureAwait(true);
         if (!result.IsSuccess)
         {
+            OperationLog.Error(
+                "MainViewModel",
+                result.ErrorText ?? "The table catalog could not be read.",
+                result.ErrorCode);
             StatusText = Strings.Format("StatusError", result.ErrorText ?? string.Empty);
             return false;
         }

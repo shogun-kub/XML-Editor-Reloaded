@@ -6,6 +6,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml;
+using XmlEditorReloaded.Xml.Copy;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Overlays;
 
@@ -156,6 +157,42 @@ public class RepositoryIntegrationTests
         Assert.Equal(baseWriteTime, File.GetLastWriteTimeUtc(items.FilePath));
         var overlayText = await File.ReadAllTextAsync(items.Overlays[0].OverlayFilePath);
         Assert.Contains("Глок 18", overlayText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Copying a lookup row through the real SQLite metadata resolves an absent id by the seeded
+    /// comparison field, so an existing target row with the same name is reused instead of duplicated.
+    /// </summary>
+    [Fact]
+    public async Task Copy_LookupRowWithAbsentId_MatchesSeededComparisonField()
+    {
+        using var workspace = new TestWorkspace();
+        var sourceTableData = CreateTableData(workspace);
+        var targetTableData = workspace.PathOf("target/TableData");
+        var targetLookup = Path.Combine(targetTableData, "Lookup");
+        Directory.CreateDirectory(targetLookup);
+        var targetPath = Path.Combine(targetLookup, "ItemClass.xml");
+        await File.WriteAllTextAsync(
+            targetPath,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+            + "<ItemClass><id>20</id><name>Gun</name></ItemClass>"
+            + "</JA2Data>");
+        var targetBefore = await File.ReadAllBytesAsync(targetPath);
+        var provider = await BuildProviderAsync(workspace, sourceTableData);
+        var copy = provider.GetRequiredService<ITableCopyService>();
+
+        var result = await copy.ApplyAsync(new TableCopyRequest(
+            sourceTableData,
+            targetTableData,
+            TableName.Parse("Lookup.ItemClass"),
+            new[] { "1" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var table = Assert.Single(result.Data!.Tables);
+        Assert.Equal(0, table.Added);
+        Assert.Equal(1, table.Skipped);
+        Assert.Equal(targetBefore, await File.ReadAllBytesAsync(targetPath));
     }
 
     /// <summary>

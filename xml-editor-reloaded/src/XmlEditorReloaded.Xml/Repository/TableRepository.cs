@@ -1,5 +1,6 @@
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Loading;
@@ -51,6 +52,10 @@ public sealed class TableRepository : ITableRepository
             }
             else if (metadataResult.ErrorCode != ErrorCodes.MetadataNotFound)
             {
+                OperationLog.Error(
+                    "TableRepository",
+                    metadataResult.ErrorText ?? $"Metadata for table '{descriptor.TableName}' could not be read.",
+                    metadataResult.ErrorCode);
                 return OperationResult<TableLoadResult>.Failure(metadataResult);
             }
             else

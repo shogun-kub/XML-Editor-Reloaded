@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Xml.Documents;
 
 namespace XmlEditorReloaded.Xml.Saving;
@@ -52,9 +53,10 @@ public sealed class TableFileSaver
 
         if (document.Status != TableDocumentStatus.Loaded)
         {
-            return OperationResult.Failure(
+            return Fail(
                 ErrorCodes.XmlNotSaveable,
-                "The document is not saveable because it was not loaded successfully.");
+                "The document is not saveable because it was not loaded successfully.",
+                OperationLogLevel.Warning);
         }
 
         if (!document.IsDirty)
@@ -68,7 +70,9 @@ public sealed class TableFileSaver
             var externalChange = DetectExternalChange(document, path);
             if (externalChange is not null)
             {
-                return externalChange;
+                return LogAndReturn(
+                    externalChange,
+                    OperationLogLevel.Warning);
             }
         }
 
@@ -84,16 +88,19 @@ public sealed class TableFileSaver
         }
         catch (Exception exception) when (exception is InvalidOperationException or XmlException)
         {
-            return OperationResult.Failure(
+            return Fail(
                 ErrorCodes.XmlSerializationError,
-                $"The document could not be serialized: {exception.Message}");
+                $"The document could not be serialized: {exception.Message}",
+                OperationLogLevel.Error,
+                exception);
         }
 
         if (!CanReparse(bytes))
         {
-            return OperationResult.Failure(
+            return Fail(
                 ErrorCodes.XmlSerializationError,
-                "The serialized XML failed verification by re-parsing and was not written.");
+                "The serialized XML failed verification by re-parsing and was not written.",
+                OperationLogLevel.Error);
         }
 
         var hash = Convert.ToHexString(SHA256.HashData(bytes));
@@ -108,7 +115,9 @@ public sealed class TableFileSaver
             var secondCheck = DetectExternalChange(document, path);
             if (secondCheck is not null)
             {
-                return secondCheck;
+                return LogAndReturn(
+                    secondCheck,
+                    OperationLogLevel.Warning);
             }
         }
 
@@ -127,17 +136,21 @@ public sealed class TableFileSaver
         {
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
-            return OperationResult.Failure(
+            return Fail(
                 ErrorCodes.IoAccessDenied,
-                $"Access to table file '{path}' was denied.");
+                $"Access to table file '{path}' was denied.",
+                OperationLogLevel.Error,
+                exception);
         }
         catch (IOException exception)
         {
-            return OperationResult.Failure(
+            return Fail(
                 ErrorCodes.IoError,
-                $"The table file '{path}' could not be written: {exception.Message}");
+                $"The table file '{path}' could not be written: {exception.Message}",
+                OperationLogLevel.Error,
+                exception);
         }
         finally
         {
@@ -156,6 +169,26 @@ public sealed class TableFileSaver
 
         document.AcceptSaved(bytes, File.GetLastWriteTimeUtc(path), hash);
         return OperationResult.Success();
+    }
+
+    private static OperationResult Fail(
+        string errorCode,
+        string message,
+        OperationLogLevel level,
+        Exception? exception = null)
+    {
+        OperationLog.Write(level, "TableFileSaver", message, errorCode, exception);
+        return OperationResult.Failure(errorCode, message);
+    }
+
+    private static OperationResult LogAndReturn(OperationResult result, OperationLogLevel level)
+    {
+        OperationLog.Write(
+            level,
+            "TableFileSaver",
+            result.ErrorText ?? "The table could not be saved.",
+            result.ErrorCode);
+        return result;
     }
 
     private static OperationResult? DetectExternalChange(TableDocument document, string path)

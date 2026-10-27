@@ -171,7 +171,8 @@ public sealed class TableMetadata
     public IReadOnlyList<string> TranslatableFieldPaths { get; }
 
     /// <summary>
-    /// Gets the curated hints for fields discovered in the document. Hints never declare fields.
+    /// Gets the curated hints for fields discovered in the document. Hints never declare fields while
+    /// the table has rows; an empty mapped table uses them as its starter schema.
     /// </summary>
     public IReadOnlyList<ColumnHint> ColumnHints { get; }
 

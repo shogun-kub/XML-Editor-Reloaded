@@ -5,6 +5,7 @@ using System.Windows.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Diagnostics;
 
 namespace XmlEditorReloaded.App;
 
@@ -138,6 +139,7 @@ public partial class MainWindow : Window
         }
         catch (Exception exception)
         {
+            OperationLog.Error("MainWindow", "The window could not be closed.", exception: exception);
             MessageBox.Show(
                 Strings.Format("StatusError", exception.Message),
                 Strings.Get("AppTitle"),

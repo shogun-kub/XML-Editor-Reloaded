@@ -2,6 +2,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 
@@ -75,9 +76,11 @@ public sealed class XmlFileLookupRepository : ILookupRepository
                 }
             }
 
+            var message = $"The lookup file '{basePath}' does not exist.";
+            OperationLog.Warning("XmlFileLookupRepository", message, ErrorCodes.IoFileNotFound);
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.IoFileNotFound,
-                $"The lookup file '{basePath}' does not exist.");
+                message);
         }
 
         try
@@ -112,27 +115,49 @@ public sealed class XmlFileLookupRepository : ILookupRepository
         }
         catch (XmlException exception)
         {
+            var message = $"The lookup file '{basePath}' could not be parsed: {exception.Message}";
+            OperationLog.Error(
+                "XmlFileLookupRepository",
+                message,
+                ErrorCodes.XmlParseError,
+                exception);
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.XmlParseError,
-                $"The lookup file could not be parsed: {exception.Message}");
+                message);
         }
         catch (InvalidDataException exception)
         {
+            OperationLog.Error(
+                "XmlFileLookupRepository",
+                exception.Message,
+                ErrorCodes.XmlInvalidLookupEntry);
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.XmlInvalidLookupEntry,
                 exception.Message);
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
+            var message = $"Access to the lookup file '{basePath}' was denied.";
+            OperationLog.Error(
+                "XmlFileLookupRepository",
+                message,
+                ErrorCodes.IoAccessDenied,
+                exception);
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the lookup file '{basePath}' was denied.");
+                message);
         }
         catch (IOException exception)
         {
+            var message = $"The lookup file '{basePath}' could not be read: {exception.Message}";
+            OperationLog.Error(
+                "XmlFileLookupRepository",
+                message,
+                ErrorCodes.IoError,
+                exception);
             return OperationResult<IReadOnlyList<LookupEntry>>.Failure(
                 ErrorCodes.IoError,
-                $"The lookup file '{basePath}' could not be read: {exception.Message}");
+                message);
         }
     }
 

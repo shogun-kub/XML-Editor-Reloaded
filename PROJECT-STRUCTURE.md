@@ -54,10 +54,11 @@ xml-editor-reloaded/
 
 Shared contracts and domain primitives: table and column identifiers, metadata and localization
 abstractions, lookup and validation primitives, imaging contracts, settings, filter and grid-layout
-contracts, and the standard `OperationResult` (`error_code`, `error_text`, `data`).
+contracts, the standard `OperationResult` (`error_code`, `error_text`, `data`), and the process-wide
+operation log facade.
 
-Folders: `Abstractions`, `Api`, `Filtering`, `Imaging`, `Layout`, `Localization`, `Metadata`,
-`Validation`. No file I/O, SQLite, or WPF.
+Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Imaging`, `Layout`, `Localization`,
+`Metadata`, `Validation`. No file I/O, SQLite, or WPF.
 
 ### XmlEditorReloaded.Xml (`net10.0`)
 
@@ -69,10 +70,10 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 
 ### XmlEditorReloaded.Data (`net10.0`)
 
-SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access, and
-persistence of application settings and per-table grid layouts.
+SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
+persistence of application settings and per-table grid layouts, and the file-backed operation log.
 
-Folders: `Catalog`, `Localization`, `Metadata`, `Settings`.
+Folders: `Catalog`, `Diagnostics`, `Localization`, `Metadata`, `Settings`.
 
 ### XmlEditorReloaded.Imaging (`net10.0`)
 

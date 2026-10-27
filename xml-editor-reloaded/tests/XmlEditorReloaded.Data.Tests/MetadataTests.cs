@@ -25,7 +25,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(16, migration.Data);
+        Assert.Equal(17, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -432,6 +432,67 @@ public class MetadataTests
         Assert.True(metadata.TryGetTextLimit("szItemDesc", "ru", out var russianDescription));
         Assert.Equal(400, russianDescription!.MaxLength);
         Assert.False(metadata.TryGetTextLimit("usItemClass", null, out _));
+    }
+
+    /// <summary>
+    /// Only lookup tables mark their display name as the copy comparison field, the id stays an ordinary
+    /// key field, and other tables keep no comparison hint.
+    /// </summary>
+    [Fact]
+    public async Task ComparisonField_MarksLookupNamesOnly()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+
+        var lookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemClass"));
+        Assert.True(lookup.IsSuccess, lookup.ErrorText);
+        var lookupMetadata = lookup.Data!;
+        Assert.True(lookupMetadata.TryGetColumnHint("name", out var nameHint));
+        Assert.Equal(ColumnDataType.String, nameHint!.DataType);
+        Assert.Equal(ColumnEditorKind.TextBox, nameHint.EditorKind);
+        Assert.Equal(ColumnFlags.ComparisonField, nameHint.Flags);
+        Assert.False(
+            lookupMetadata.TryGetColumnHint("id", out var idHint)
+            && idHint!.Flags?.HasFlag(ColumnFlags.ComparisonField) == true);
+        Assert.True(lookupMetadata.TryGetColumn("id", out var idColumn));
+        Assert.False(idColumn!.Flags.HasFlag(ColumnFlags.ComparisonField));
+
+        var items = await provider.GetTableAsync(TableName.Parse("Items.Items"));
+        Assert.True(items.IsSuccess, items.ErrorText);
+        Assert.False(
+            items.Data!.TryGetColumnHint("name", out var itemNameHint)
+            && itemNameHint!.Flags?.HasFlag(ColumnFlags.ComparisonField) == true);
+        Assert.DoesNotContain(
+            items.Data.Columns,
+            column => column.Flags.HasFlag(ColumnFlags.ComparisonField));
+    }
+
+    /// <summary>
+    /// Re-running the migrator on an existing database applies nothing, and the comparison-field
+    /// migration stays a no-op that keeps the curated hint flags intact.
+    /// </summary>
+    [Fact]
+    public async Task Migrate_OnExistingDatabase_AppliesNothingAndKeepsComparisonHints()
+    {
+        using var workspace = new TestWorkspace();
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        var migrator = new DatabaseMigrator();
+        Assert.True((await migrator.MigrateAsync(databasePath)).IsSuccess);
+
+        var rerun = await migrator.MigrateAsync(databasePath);
+
+        Assert.True(rerun.IsSuccess, rerun.ErrorText);
+        Assert.Equal(0, rerun.Data);
+
+        var provider = new SqliteMetadataProvider(databasePath);
+        var lookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemClass"));
+        Assert.True(lookup.IsSuccess, lookup.ErrorText);
+        Assert.True(lookup.Data!.TryGetColumnHint("name", out var nameHint));
+        Assert.True(nameHint!.Flags?.HasFlag(ColumnFlags.ComparisonField) == true);
+        Assert.Equal(ColumnDataType.String, nameHint.DataType);
+        Assert.Equal(ColumnEditorKind.TextBox, nameHint.EditorKind);
     }
 
     /// <summary>

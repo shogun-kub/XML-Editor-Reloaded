@@ -9,13 +9,18 @@ namespace XmlEditorReloaded.Xml.Schema;
 /// Builds a <see cref="TableSchema"/> from a loaded document. Fields are discovered as the union of
 /// all records in first-appearance order; curated column metadata overrides types and editor hints,
 /// contributes declared fields that the document does not currently contain, and non-declaring
-/// column hints refine fields that are present.
+/// column hints refine fields that are present. A mapped table with no record at all falls back to
+/// those hints, which then describe the starter fields of the first row to be added.
 /// </summary>
 public sealed class TableSchemaBuilder
 {
     private const NumberStyles DecimalStyles =
         NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint
         | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+
+    private static bool HasNestedRecordKey(TableMetadata metadata) =>
+        metadata.RecordKey is { Segments.Count: > 0 } spec
+        && !string.IsNullOrWhiteSpace(spec.Primary.Path);
 
     /// <summary>
     /// Builds the schema of a loaded table document.
@@ -90,6 +95,31 @@ public sealed class TableSchemaBuilder
 
                 statistics[column.XmlFieldName] = new ColumnStatistics { DeclaredColumn = column };
                 order.Add(column.XmlFieldName);
+            }
+        }
+
+        if (statistics.Count == 0 && metadata is not null && !HasNestedRecordKey(metadata))
+        {
+            // A mapped table whose last row was deleted has no document field to discover. Curated hints
+            // stay non-declaring while rows exist, but without any row they are the only description of
+            // the table: without this fallback the grid would have no column at all and the first row
+            // could not be filled in. Key fields come first so the new row's identity is visible.
+            var starterKeyFields = metadata.RecordKeyFields.Count > 0
+                ? metadata.RecordKeyFields.ToHashSet(StringComparer.Ordinal)
+                : metadata.RecordKey?.Primary.KeyField is { } primaryKey
+                    ? new HashSet<string>(StringComparer.Ordinal) { primaryKey }
+                    : new HashSet<string>(StringComparer.Ordinal);
+            foreach (var hint in metadata.ColumnHints
+                         .OrderBy(hint => starterKeyFields.Contains(hint.XmlFieldName) ? 0 : 1)
+                         .ThenBy(static hint => hint.XmlFieldName, StringComparer.Ordinal))
+            {
+                if (statistics.ContainsKey(hint.XmlFieldName))
+                {
+                    continue;
+                }
+
+                statistics[hint.XmlFieldName] = new ColumnStatistics();
+                order.Add(hint.XmlFieldName);
             }
         }
 

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Loading;
@@ -18,7 +19,9 @@ namespace XmlEditorReloaded.Xml.Copy;
 /// <remarks>
 /// Records are copied as XML elements, so unknown fields, repeated elements, sparse shapes, and
 /// lexical values survive unchanged. Reference fields can be rewritten by display text when the two
-/// data sets assign different identifiers to the same lookup or relation target.
+/// data sets assign different identifiers to the same lookup or relation target. A lookup row whose
+/// key is absent from the target is additionally matched by the curated comparison field, normally the
+/// display name, so an existing row is updated or skipped instead of duplicated.
 /// </remarks>
 public sealed class TableCopyService : ITableCopyService
 {
@@ -218,6 +221,10 @@ public sealed class TableCopyService : ITableCopyService
                     if (rollbackFailures.Count > 0)
                     {
                         message += " Rollback failed for: " + string.Join("; ", rollbackFailures);
+                        OperationLog.Error(
+                            "TableCopyService",
+                            "Copy rollback failed for: " + string.Join("; ", rollbackFailures),
+                            save.ErrorCode ?? ErrorCodes.IoError);
                     }
 
                     return OperationResult<TableCopyResult>.Failure(save.ErrorCode ?? ErrorCodes.IoError, message);
@@ -340,9 +347,20 @@ public sealed class TableCopyService : ITableCopyService
                 ? targetTable.Document.FindRecord(sourceKey)
                 : null;
 
+            var comparisonMatchCount = 0;
+            if (targetRecord is null && !string.IsNullOrWhiteSpace(sourceKey))
+            {
+                var comparisonMatches = FindComparisonMatches(targetTable, sourceRecord, sourceTable.ComparisonField);
+                comparisonMatchCount = comparisonMatches.Count;
+                if (comparisonMatches.Count == 1)
+                {
+                    targetRecord = comparisonMatches[0];
+                }
+            }
+
             TableCopyAction action;
             string? targetKey;
-            if (allocate)
+            if (allocate && targetRecord is null)
             {
                 action = TableCopyAction.Add;
                 targetKey = AllocateKey(context, targetTable);
@@ -365,7 +383,7 @@ public sealed class TableCopyService : ITableCopyService
                     TableCopyConflictPolicy.Merge => TableCopyAction.Merge,
                     _ => TableCopyAction.Skip,
                 };
-                targetKey = sourceKey;
+                targetKey = targetRecord.GetKey() ?? sourceKey;
             }
 
             var excluded = sourceTable.KeyFields.Count > 0
@@ -393,6 +411,16 @@ public sealed class TableCopyService : ITableCopyService
                 Action = action,
                 Remaps = remaps,
             };
+
+            if (comparisonMatchCount > 1)
+            {
+                var warning =
+                    $"Comparison field '{sourceTable.ComparisonField}' matches {comparisonMatchCount} "
+                    + "target records; the row was added instead of updated.";
+                plan.Warnings.Add(warning);
+                context.AddWarningOnce($"comparison.ambiguous:{sourceKey}", warning);
+            }
+
             AddRemapWarnings(plan.Warnings, remaps);
 
             if (request.CopyRelatedRecords
@@ -689,6 +717,40 @@ public sealed class TableCopyService : ITableCopyService
         return components.Length == sourceTable.KeyFields.Count
             ? sourceTable.Document.FindRecord(RecordKeyCodec.Compose(components))
             : null;
+    }
+
+    /// <summary>
+    /// Finds target records whose comparison field holds the same raw text as the source record. The
+    /// comparison is ordinal and case-sensitive: values are neither trimmed nor case-folded, so two
+    /// names that differ only in whitespace or casing stay distinct. The legacy editor resolved a
+    /// primary-key miss through <c>TableProperty.ComparisonField</c> the same way.
+    /// </summary>
+    /// <param name="targetTable">Loaded target table that is searched.</param>
+    /// <param name="sourceRecord">Source record whose comparison value is matched.</param>
+    /// <param name="comparisonField">Comparison field name, or <see langword="null"/> when undeclared.</param>
+    /// <returns>The matching target records in document order; an empty list when nothing matches.</returns>
+    private static IReadOnlyList<TableRecord> FindComparisonMatches(
+        TableLoad targetTable,
+        TableRecord sourceRecord,
+        string? comparisonField)
+    {
+        if (comparisonField is null)
+        {
+            return Array.Empty<TableRecord>();
+        }
+
+        var sourceValue = sourceRecord.GetRawValue(comparisonField);
+        if (string.IsNullOrEmpty(sourceValue))
+        {
+            return Array.Empty<TableRecord>();
+        }
+
+        return targetTable.Document.Records
+            .Where(record => string.Equals(
+                record.GetRawValue(comparisonField),
+                sourceValue,
+                StringComparison.Ordinal))
+            .ToArray();
     }
 
     private static IReadOnlyList<string> GetFieldsToCopy(
@@ -1064,6 +1126,42 @@ public sealed class TableCopyService : ITableCopyService
         return first.FieldNames.FirstOrDefault(name => first.GetChildFieldNames(name).Count == 0);
     }
 
+    /// <summary>
+    /// Resolves the field marked with <see cref="ColumnFlags.ComparisonField"/> from the curated hints
+    /// first and from the declared columns second. The result is <see langword="null"/> when no field is
+    /// marked or when the marked field already identifies the record, because a key match is resolved
+    /// before the alternate search.
+    /// </summary>
+    /// <param name="metadata">Metadata of the loaded table, or <see langword="null"/> when unmapped.</param>
+    /// <param name="keyField">Effective single key field of the loaded table, or <see langword="null"/>.</param>
+    /// <param name="keyFields">Compound key fields of the loaded table; empty for a single key.</param>
+    /// <returns>The comparison field name, or <see langword="null"/> when it cannot be used.</returns>
+    private static string? ResolveComparisonField(
+        TableMetadata? metadata,
+        string? keyField,
+        IReadOnlyList<string> keyFields)
+    {
+        if (metadata is null)
+        {
+            return null;
+        }
+
+        var candidate = metadata.ColumnHints
+                .FirstOrDefault(static hint => hint.Flags?.HasFlag(ColumnFlags.ComparisonField) == true)
+                ?.XmlFieldName
+            ?? metadata.Columns
+                .FirstOrDefault(static column => column.Flags.HasFlag(ColumnFlags.ComparisonField))
+                ?.XmlFieldName;
+        if (candidate is null
+            || string.Equals(candidate, keyField, StringComparison.Ordinal)
+            || keyFields.Contains(candidate, StringComparer.Ordinal))
+        {
+            return null;
+        }
+
+        return candidate;
+    }
+
     private sealed class CopyContext
     {
         private readonly HashSet<string> _warningKeys = new(StringComparer.Ordinal);
@@ -1309,7 +1407,8 @@ public sealed class TableCopyService : ITableCopyService
                 keyField,
                 keyFields,
                 positional,
-                InferDisplayField(document, metadata)));
+                InferDisplayField(document, metadata),
+                ResolveComparisonField(metadata, keyField, keyFields)));
         }
     }
 
@@ -1320,7 +1419,8 @@ public sealed class TableCopyService : ITableCopyService
         string? KeyField,
         IReadOnlyList<string> KeyFields,
         bool PositionalKey,
-        string? DisplayField)
+        string? DisplayField,
+        string? ComparisonField)
     {
         public bool HasCompoundKey => KeyFields.Count > 1;
     }

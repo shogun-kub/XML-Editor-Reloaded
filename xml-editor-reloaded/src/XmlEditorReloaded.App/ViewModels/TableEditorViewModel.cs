@@ -9,6 +9,7 @@ using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Imaging;
 using XmlEditorReloaded.Core.Layout;
@@ -611,6 +612,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
                     .ConfigureAwait(true);
                 if (!result.IsSuccess)
                 {
+                    OperationLog.Error(
+                        "TableEditorViewModel",
+                        result.ErrorText ?? $"Table '{Descriptor.TableName}' could not be opened.",
+                        result.ErrorCode);
                     StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
                     IsEditable = false;
                     return;
@@ -625,7 +630,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
                 ? Strings.Get("EditorBaseLanguage")
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
             BuildLanguageOptions(configuredLanguages);
-            IsEditable = Workspace.CanEdit && Workspace.BaseDocument.Records.Count > 0;
+            // A nested-record table keeps its rows inside the root record, so the flat grid cannot edit
+            // it. A flat table without rows, by contrast, is editable: the user may have deleted its last
+            // row, and the first new row must be addable again (L-STO-034).
+            var hasNestedRecords = !string.IsNullOrEmpty(Workspace.Metadata?.RecordKey?.Primary.Path);
+            IsEditable = Workspace.CanEdit && !hasNestedRecords;
             await LoadFieldSourcesAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
@@ -635,7 +644,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             _layoutChangesReady = true;
             StatusText = layoutError ?? (IsEditable
                 ? Strings.Get("EditorReady")
-                : Workspace.BaseDocument.Records.Count == 0
+                : hasNestedRecords
                     ? Strings.Get("EditorReadOnlyNested")
                     : Strings.Get("EditorReadOnly"));
         }
@@ -645,6 +654,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
         catch (Exception exception)
         {
+            OperationLog.Error(
+                "TableEditorViewModel",
+                $"Table '{Descriptor.TableName}' could not be initialized.",
+                exception: exception);
             StatusText = Strings.Format("StatusError", exception.Message);
             IsEditable = false;
         }

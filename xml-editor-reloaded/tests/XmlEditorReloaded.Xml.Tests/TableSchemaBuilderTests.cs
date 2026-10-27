@@ -185,6 +185,87 @@ public class TableSchemaBuilderTests
     }
 
     /// <summary>
+    /// A mapped flat table with no record at all uses its curated hints as starter columns, with key
+    /// fields first, so the first row can be filled in without reopening the table.
+    /// </summary>
+    [Fact]
+    public async Task Build_EmptyMappedTable_UsesHintsAsStarterSchema()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "empty.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><INVENTORYLIST></INVENTORYLIST>");
+        var metadata = new TableMetadata(
+            TableName.Parse("NPCInventory.AlbertoInventory"),
+            "INVENTORYLIST",
+            "INVENTORY",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }),
+            columnHints: new[]
+            {
+                new ColumnHint("sItemIndex")
+                {
+                    DataType = ColumnDataType.Integer,
+                    EditorKind = ColumnEditorKind.IntegerBox,
+                },
+                new ColumnHint("uiIndex")
+                {
+                    DataType = ColumnDataType.Integer,
+                    EditorKind = ColumnEditorKind.IntegerBox,
+                },
+                new ColumnHint("ubOptimalNumber")
+                {
+                    DataType = ColumnDataType.Integer,
+                    EditorKind = ColumnEditorKind.IntegerBox,
+                },
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        Assert.Equal(
+            new[] { "uiIndex", "sItemIndex", "ubOptimalNumber" },
+            schema.Columns.Select(static column => column.XmlFieldName));
+        Assert.True(schema.FindColumn("uiIndex")!.IsKey);
+        Assert.Equal(0, schema.FindColumn("sItemIndex")!.PresenceCount);
+        Assert.Equal(ColumnDataType.Integer, schema.FindColumn("sItemIndex")!.DataType);
+        Assert.Equal(ColumnEditorKind.IntegerBox, schema.FindColumn("sItemIndex")!.EditorKind);
+    }
+
+    /// <summary>
+    /// An empty nested-record table does not expand its hints: the flat grid presents nested records
+    /// through the workspace rows, not as direct fields of the root.
+    /// </summary>
+    [Fact]
+    public async Task Build_EmptyNestedTable_DoesNotDeclareHintColumns()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "cities.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO></CITY_INFO>");
+        var metadata = new TableMetadata(
+            TableName.Parse("Map.Cities"),
+            "CITY_INFO",
+            "COUNTRY",
+            isLookup: false,
+            new RecordKeySpec(new[]
+            {
+                new RecordKeySegment("CITYLIST/CITY", RecordKeyKind.Scalar, "uiIndex"),
+            }),
+            columnHints: new[]
+            {
+                new ColumnHint("uiIndex") { DataType = ColumnDataType.Integer },
+            });
+        var document = await LoadAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        Assert.Empty(schema.Columns);
+    }
+
+    /// <summary>
     /// Elements with child nodes are typed as nested and grouped as structures instead of being
     /// inferred from concatenated text.
     /// </summary>

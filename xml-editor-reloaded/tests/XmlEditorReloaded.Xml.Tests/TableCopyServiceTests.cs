@@ -335,6 +335,212 @@ public class TableCopyServiceTests
         Assert.Equal(ErrorCodes.CopyAllocateUnsupported, allocate.ErrorCode);
     }
 
+    /// <summary>
+    /// A lookup row whose target id is absent but whose display name already exists is skipped under the
+    /// skip policy, and the target file keeps exactly one row with that name.
+    /// </summary>
+    [Fact]
+    public async Task LookupCopy_SkipPolicy_SkipsExistingNameRow()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var targetPath = Path.Combine(data.TargetDirectory, "Lookup", "ItemClass.xml");
+        var targetBefore = await File.ReadAllBytesAsync(targetPath);
+        var tableName = TableName.Parse("Lookup.ItemClass");
+
+        var preview = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        var planned = Assert.Single(preview.Data!.Records);
+        Assert.Equal(TableCopyAction.Skip, planned.Action);
+        Assert.Equal("20", planned.TargetKey);
+        Assert.False(preview.Data.HasChanges);
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        Assert.Equal(1, Assert.Single(apply.Data!.Tables).Skipped);
+        var rows = XDocument.Load(targetPath).Root!.Elements("ItemClass").ToArray();
+        Assert.Single(rows, row => row.Element("name")?.Value == "Gun");
+        Assert.Equal(targetBefore, await File.ReadAllBytesAsync(targetPath));
+    }
+
+    /// <summary>
+    /// The overwrite policy rewrites the target row that already carries the source display name and keeps
+    /// that row's own key, so no duplicate name row is appended.
+    /// </summary>
+    [Fact]
+    public async Task LookupCopy_OverwritePolicy_UpdatesExistingNameRow()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var targetPath = Path.Combine(data.TargetDirectory, "Lookup", "ItemClass.xml");
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            TableName.Parse("Lookup.ItemClass"),
+            new[] { "2" },
+            TableCopyConflictPolicy.Overwrite));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        var table = Assert.Single(apply.Data!.Tables);
+        Assert.Equal(1, table.Updated);
+        Assert.Equal(0, table.Added);
+
+        var rows = XDocument.Load(targetPath).Root!.Elements("ItemClass").ToArray();
+        Assert.Equal(2, rows.Length);
+        var gun = Assert.Single(rows, row => row.Element("name")?.Value == "Gun");
+        Assert.Equal("20", gun.Element("id")?.Value);
+        Assert.DoesNotContain(rows, row => row.Element("id")?.Value == "2");
+    }
+
+    /// <summary>
+    /// Allocate mode still resolves an absent id by display name, so it cannot append a duplicate name;
+    /// the skip policy leaves the target file unchanged.
+    /// </summary>
+    [Fact]
+    public async Task LookupCopy_AllocateMode_SkipsExistingNameRow()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var targetPath = Path.Combine(data.TargetDirectory, "Lookup", "ItemClass.xml");
+        var targetBefore = await File.ReadAllBytesAsync(targetPath);
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            TableName.Parse("Lookup.ItemClass"),
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip,
+            TableCopyKeyMode.Allocate));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        var table = Assert.Single(apply.Data!.Tables);
+        Assert.Equal(0, table.Added);
+        Assert.Equal(1, table.Skipped);
+        Assert.Equal(targetBefore, await File.ReadAllBytesAsync(targetPath));
+    }
+
+    /// <summary>
+    /// When the source display name is absent from the target, the alternate search finds no row, so the
+    /// record is added and the source key is preserved.
+    /// </summary>
+    [Fact]
+    public async Task LookupCopy_AbsentDisplayName_AddsRowWithSourceKey()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        await File.WriteAllTextAsync(
+            Path.Combine(data.SourceDirectory, "Lookup", "ItemClass.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+            + "<ItemClass><id>2</id><name>Rifle</name></ItemClass>"
+            + "</JA2Data>");
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var targetPath = Path.Combine(data.TargetDirectory, "Lookup", "ItemClass.xml");
+        var tableName = TableName.Parse("Lookup.ItemClass");
+
+        var preview = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        var planned = Assert.Single(preview.Data!.Records);
+        Assert.Equal(TableCopyAction.Add, planned.Action);
+        Assert.Equal("2", planned.TargetKey);
+        Assert.Empty(planned.Warnings);
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        var table = Assert.Single(apply.Data!.Tables);
+        Assert.Equal(1, table.Added);
+        Assert.Equal(0, table.Updated);
+
+        var added = LoadRecord(targetPath, "name", "Rifle");
+        Assert.Equal("2", added.Element("id")?.Value);
+        Assert.Equal(3, XDocument.Load(targetPath).Root!.Elements("ItemClass").Count());
+    }
+
+    /// <summary>
+    /// Two target rows with the same display name cannot be resolved unambiguously: the row is added, the
+    /// plan carries a warning that names the comparison field, and the existing rows stay unchanged.
+    /// </summary>
+    [Fact]
+    public async Task LookupCopy_AmbiguousDisplayName_AddsRowAndWarns()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        var targetPath = Path.Combine(data.TargetDirectory, "Lookup", "ItemClass.xml");
+        await File.WriteAllTextAsync(
+            targetPath,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+            + "<ItemClass><id>20</id><name>Gun</name></ItemClass>"
+            + "<ItemClass><id>40</id><name>Gun</name></ItemClass>"
+            + "</JA2Data>");
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var tableName = TableName.Parse("Lookup.ItemClass");
+
+        var preview = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(preview.IsSuccess, preview.ErrorText);
+        var planned = Assert.Single(preview.Data!.Records);
+        Assert.Equal(TableCopyAction.Add, planned.Action);
+        Assert.Contains(
+            planned.Warnings,
+            warning => warning.Contains("'name'", StringComparison.Ordinal)
+                && warning.Contains("2 target records", StringComparison.Ordinal));
+
+        var apply = await service.ApplyAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            tableName,
+            new[] { "2" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.True(apply.IsSuccess, apply.ErrorText);
+        var table = Assert.Single(apply.Data!.Tables);
+        Assert.Equal(1, table.Added);
+        Assert.Equal(0, table.Updated);
+        Assert.Contains(
+            apply.Data.Warnings,
+            warning => warning.Contains("'name'", StringComparison.Ordinal)
+                && warning.Contains("2 target records", StringComparison.Ordinal));
+
+        var rows = XDocument.Load(targetPath).Root!.Elements("ItemClass").ToArray();
+        Assert.Equal(3, rows.Length);
+        Assert.Contains(rows, row => row.Element("id")?.Value == "20" && row.Element("name")?.Value == "Gun");
+        Assert.Contains(rows, row => row.Element("id")?.Value == "40" && row.Element("name")?.Value == "Gun");
+        var added = Assert.Single(rows, row => row.Element("id")?.Value == "2");
+        Assert.Equal("Gun", added.Element("name")?.Value);
+    }
+
     private static CopyData CreateData(TestWorkspace workspace)
     {
         var source = Path.Combine(workspace.DirectoryPath, "source");
@@ -504,7 +710,8 @@ public class TableCopyServiceTests
                     TableName.Parse("Lookup.ItemClass"),
                     "JA2Data",
                     "ItemClass",
-                    isLookup: true),
+                    isLookup: true,
+                    columnHints: new[] { new ColumnHint("name") { Flags = ColumnFlags.ComparisonField } }),
             }.ToDictionary(static table => table.TableName);
 
             _relations = new Dictionary<TableName, IReadOnlyList<TableRelation>>

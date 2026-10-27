@@ -1,8 +1,8 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b7 выполнены по состоянию на 2026-10-26; следующий подшаг — M23b8. Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b8 выполнены по состоянию на 2026-10-27; следующий шаг — gate M23b (полный прогон, матрица, маркер full functional parity). Ручной WPF-smoke ожидает выполнения по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`; без подписи пользователя M23a не закрыт. Поведение редактора в M23a не менялось.
 
-Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b7): закрытие пробелов фиксируют секции `M23b1`…`M23b7` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
+Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b8): закрытие пробелов фиксируют секции `M23b1`…`M23b8` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
 **Эталон:** `References/xml-editor` (VB.NET/WinForms), только чтение. `References/JA_2_1.13_TableData_Editor` — прототип, эталоном не считается. `References/Ja 2 1.13 source` в M23a не использовался.
 
@@ -894,7 +894,7 @@ WPF-поведение в этой среде не автоматизирует�
 - `Xml/Documents/TableDocument.cs`: `AddRecord` для таблицы с `Metadata.IsLookup` дописывает пустой `<name />` после ключа, поэтому сохранённый lookup-файл снова читается `XmlFileLookupRepository`; не-lookup таблицы и существующие записи не затрагиваются.
 - `Xml/Workspace/TableSetWorkspace.cs`: row-based API `GetRow(TableName, WorkspaceRow)`, `SetValue(TableName, WorkspaceRow, ...)`, `DeleteRow(TableName, WorkspaceRow)`.
 
-**Осознанные отличия.** (1) Вместо 19 фиксированных чекбоксов legacy — combo из 80 загруженных инвентарей, у которых нет строки для предмета; это сверхмножество legacy. (2) Удаление подтверждается и пишется как одна undo-транзакция, а не молча при снятии чекбокса. (3) Количество по умолчанию `0` (паритет), но нечисло/отрицательное отклоняется и не пишется; legacy-спиннер зажимал границы. (4) Новая lookup-строка получает `name=""`, как legacy, а не выдуманное имя; дубликат `uiIndex` остаётся предупреждением, данные не перенумеровываются. (5) Если файл дилера пуст, он грузится read-only (`L-STO-034`, M23b8), поэтому добавить первую строку в полностью пустой файл пока нельзя; после reload такой торговец исключается из combo и не показывает ложную ошибку, а в текущей сессии строку можно вернуть Undo. В v4/v5 таких инвентарей нет.
+**Осознанные отличия.** (1) Вместо 19 фиксированных чекбоксов legacy — combo из 80 загруженных инвентарей, у которых нет строки для предмета; это сверхмножество legacy. (2) Удаление подтверждается и пишется как одна undo-транзакция, а не молча при снятии чекбокса. (3) Количество по умолчанию `0` (паритет), но нечисло/отрицательное отклоняется и не пишется; legacy-спиннер зажимал границы. (4) Новая lookup-строка получает `name=""`, как legacy, а не выдуманное имя; дубликат `uiIndex` остаётся предупреждением, данные не перенумеровываются. (5) Если файл дилера пуст, до M23b8 он грузился read-only и после reload торговец исключался из combo. С M23b8 пустой объявленный корень грузится как `Loaded` (`L-STO-034`), поэтому торговец остаётся в combo после переоткрытия и первая строка снова добавляется; Undo и поведение текущей сессии не изменились. В v4/v5 таких инвентарей нет.
 
 **Проверка M23b6.**
 
@@ -936,7 +936,67 @@ WPF-поведение в этой среде не автоматизирует�
 | Тесты M23b7 | `AboutWindowTests.*`, `MainViewModelTests.OpenAbout_ShowsAboutThroughDialogService`, `RequestClose_PersistsWindowPlacement`, `RequestClose_SettingsNotLoaded_DoesNotPersistPlacement`, `RequestClose_CorruptSettingsFile_DoesNotOverwriteIt`, `WindowPlacementTests.*`, `SettingsTests.*WindowPlacement*`, `MainWindowPlacementTests.*`, `CharacterCounterTests.*`, `MetadataTests.ItemTextLimits_DeclareDescriptionCountersAndChineseOverrides`, `ItemWorkspaceViewModelTests.DetailForm_DescriptionsExposeCharacterCounterAndLimit`, `DescriptionLimit_FollowsActiveLanguageOverlay`, `DescriptionOverLimit_IsKeptWithoutTruncation`, `TableEditorViewModelTests.DetailForm_DescriptionsExposeCharacterCounterAndLimit`, `MercGearWorkspaceViewModelTests.KitHeader_FollowsNameAndFallsBackToLocalizedNumber` |
 | `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
 
-**Следующий подшаг:** M23b8 — хранение, копирование и журналирование (`L-STO-034`, `L-OPS-011`, `L-OPS-025`).
+## M23b8 — Хранение, копирование и журналирование
+
+**Дата:** 2026-10-27. **Статус:** выполнен. **Закрытые пробелы:** `L-STO-034`,
+`L-OPS-011`, `L-OPS-025` — 3 записи реестра (3 ID). Матрица и реестр выше остаются
+снимком M23a; факт закрытия фиксирует эта секция. Детали, сверка с legacy и остаточные
+риски — `M23A-PARITY/56-m23b8-implementation-log.md`.
+
+**Реализация.**
+- `Xml/Loading/TableFileLoader.cs`: объявленный корень без дочерних элементов грузится
+  `Loaded` (без диагностики), поэтому после удаления последней строки первая запись
+  снова добавляется. Чужой корень, посторонние дочерние элементы, файл без метаданных
+  и вложенные записи остаются read-only.
+- `Xml/Schema/TableSchemaBuilder.cs`: у mapped-таблицы без записей схема строится из
+  `ColumnHints` (ключевые поля первыми), иначе опустевшая не-lookup таблица не имела
+  бы ни одной колонки. При наличии записей hints по-прежнему не объявляют поля.
+- `App/ViewModels/TableEditorViewModel.cs`: `IsEditable = Workspace.CanEdit`, кроме
+  вложенных записей; корректный статус read-only. Кнопка «Добавить запись» доступна
+  для опустевшей плоской таблицы.
+- `Data/Metadata/Migrations/0017_CopyComparisonFields.sql`: 23 lookup-таблицы получают
+  `ColumnFlags.ComparisonField` у поля `name` (идемпотентный upsert, прочие флаги
+  сохраняются).
+- `Xml/Copy/TableCopyService.cs`: при промахе по ключу ищется строка с тем же сырым
+  значением comparison-поля (ordinal). Единственное совпадение — цель политики
+  Skip/Overwrite/Merge с её собственным ключом; режим `Allocate` тоже сначала ищет
+  совпадение. Неоднозначность даёт добавление с предупреждением в
+  `TableCopyResult.Warnings` (дедуплицировано).
+- `Core/Diagnostics/OperationLogEntry.cs`, `Data/Diagnostics/FileOperationLog.cs`,
+  `App/App.xaml.cs`: фасад журнала, файловый sink
+  `%AppData%\XmlEditorReloaded\XmlEditorReloaded.log` с заголовком сессии
+  (версия/пользователь/ОС/runtime/память), UTC-записями, стеком, ротацией 4 MiB и
+  защитой от падения sink; перехват Dispatcher/AppDomain/необслуженных задач;
+  сообщение о фатальной ошибке показывает путь к журналу.
+- Журналирование подключено на границах: сохранение и загрузка таблиц, lookup-файлы,
+  метаданные, открытие/инициализация вкладки, refresh и смена каталога, каталог
+  таблиц, откаты копирования. RESX en/ru: `LogFileHintFormat`.
+
+**Осознанные отличия.** (1) Журнал — в `%AppData%` (каталог приложения может быть
+только для чтения), имя `XmlEditorReloaded.log`, ротация 4 MiB + один `*.1`; Event Log
+и консоль не ведутся. (2) Необработанное UI-исключение журналируется, показывается и
+оставляется обработанным, чтобы можно было сохранить таблицы; legacy завершал процесс.
+(3) Неоднозначное сравнение по имени добавляет строку с предупреждением, а не берёт
+первую молча. (4) Найденный ключ остаётся главным: при том же `id` и другом `name`
+применяется политика к строке с этим `id` (legacy добавлял вторую строку). (5) Схема
+пустой mapped-таблицы берётся из hints; поля вне hints появятся только после того, как
+попадут в запись. (6) Пустой корень с посторонними элементами и файл без метаданных
+остаются read-only.
+
+**Проверка M23b8.**
+
+| Проверка | Результат |
+|---|---|
+| Сборка `-warnaserror` | 0 ошибок / 0 предупреждений |
+| Базовые тесты | 564/564: Core 57, Data 82, Imaging 24, Xml 214, App 187 |
+| Corpus v4 | 564/564 |
+| Corpus v5 | 564/564 |
+| Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| Тесты M23b8 | `TableFileLoaderTests.Load_EmptyDeclaredRoot_LoadsEditableAndAcceptsFirstRecord`, `Load_RootWithoutChildElements_LoadsEditable`, `Load_EmptyLookupRoot_LoadsEditableAndAddsIdAndName`, `Load_EmptyRootWithoutMetadata_StaysReadOnly`, `Load_EmptyRootWithWrongMetadata_StaysReadOnly`, `Load_RootWithForeignChild_MatchingMetadata_StaysReadOnly`; `TableSchemaBuilderTests.Build_EmptyMappedTable_UsesHintsAsStarterSchema`, `Build_EmptyNestedTable_DoesNotDeclareHintColumns`; `TableEditorViewModelTests.EmptyTable_ReopensEditableAndAddsFirstRow`; `ShopkeeperTab_EmptiedDealerFile_KeepsDealerAfterReload`; `LookupCopy_SkipPolicy_SkipsExistingNameRow`, `LookupCopy_OverwritePolicy_UpdatesExistingNameRow`, `LookupCopy_AbsentDisplayName_AddsRowWithSourceKey`, `LookupCopy_AmbiguousDisplayName_AddsRowAndWarns`, `LookupCopy_AllocateMode_SkipsExistingNameRow`; `MetadataTests.ComparisonField_MarksLookupNamesOnly`, `Migrate_OnExistingDatabase_AppliesNothingAndKeepsComparisonHints`; `RepositoryIntegrationTests.Copy_LookupRowWithAbsentId_MatchesSeededComparisonField`; `OperationLogTests.*`; `FileOperationLogTests.*` |
+| `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
+
+**Следующий шаг:** gate M23b — повторный полный прогон, обновление матрицы, маркер
+full functional parity и коммит `M23: legacy functional parity gate`.
 
 ## Вне паритета (осознанно)
 

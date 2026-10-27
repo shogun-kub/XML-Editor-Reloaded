@@ -1225,11 +1225,11 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
-    /// Removing the only row of a dealer leaves an empty inventory file, which loads read-only: after a
-    /// reload the dealer is not offered for adding and the add command stays unavailable.
+    /// Removing the only row of a dealer leaves an empty inventory file, which stays editable after a
+    /// reload: the dealer is still offered and the first row can be added back.
     /// </summary>
     [Fact]
-    public async Task ShopkeeperTab_EmptiedDealerFile_HidesDealerAfterReload()
+    public async Task ShopkeeperTab_EmptiedDealerFile_KeepsDealerAfterReload()
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
@@ -1242,9 +1242,16 @@ public class ItemWorkspaceViewModelTests
 
         var (reloaded, _) = await CreateWorkspaceAsync(fixture);
         Assert.Empty(reloaded.ShopkeeperEntries);
+        var dealer = Assert.Single(reloaded.ShopkeeperDealerOptions);
+        Assert.Equal("Alberto", dealer.DealerName);
+        Assert.True(reloaded.HasShopkeeperDealerOptions);
+        reloaded.SelectedShopkeeperDealer = dealer;
+        reloaded.NewShopkeeperQuantity = "4";
+        Assert.True(reloaded.AddShopkeeperEntryCommand.CanExecute(null));
+
+        reloaded.AddShopkeeperEntry();
+        Assert.Single(reloaded.ShopkeeperEntries);
         Assert.Empty(reloaded.ShopkeeperDealerOptions);
-        Assert.False(reloaded.HasShopkeeperDealerOptions);
-        Assert.False(reloaded.AddShopkeeperEntryCommand.CanExecute(null));
     }
 
     /// <summary>

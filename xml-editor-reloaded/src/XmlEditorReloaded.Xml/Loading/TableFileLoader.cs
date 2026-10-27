@@ -3,6 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.IO;
@@ -24,6 +25,11 @@ public sealed class TableFileLoader
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the load result.
     /// A malformed XML file is reported as a successful result with
     /// <see cref="TableDocumentStatus.Malformed"/> and diagnostics, not as an operation failure.
+    /// When <paramref name="metadata"/> declares the root and that root contains no child elements, the
+    /// table loads with <see cref="TableDocumentStatus.Loaded"/>, zero records, and no diagnostic, so its
+    /// first record can be added; a non-nested table whose root has other child elements but no record
+    /// element still loads with <see cref="TableDocumentStatus.LoadedReadOnly"/> and
+    /// <c>xml.record_element_missing</c>.
     /// On I/O failure, <c>error_code</c> is <c>io.file_not_found</c>, <c>io.access_denied</c>, or <c>io.error</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is <see langword="null"/>.</exception>
@@ -73,27 +79,27 @@ public sealed class TableFileLoader
         }
         catch (FileNotFoundException)
         {
-            return OperationResult<TableLoadResult>.Failure(
-                ErrorCodes.IoFileNotFound,
-                $"The table file '{path}' does not exist.");
+            var message = $"The table file '{path}' does not exist.";
+            OperationLog.Warning("TableFileLoader", message, ErrorCodes.IoFileNotFound);
+            return OperationResult<TableLoadResult>.Failure(ErrorCodes.IoFileNotFound, message);
         }
         catch (DirectoryNotFoundException)
         {
-            return OperationResult<TableLoadResult>.Failure(
-                ErrorCodes.IoFileNotFound,
-                $"The directory of table file '{path}' does not exist.");
+            var message = $"The directory of table file '{path}' does not exist.";
+            OperationLog.Warning("TableFileLoader", message, ErrorCodes.IoFileNotFound);
+            return OperationResult<TableLoadResult>.Failure(ErrorCodes.IoFileNotFound, message);
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
-            return OperationResult<TableLoadResult>.Failure(
-                ErrorCodes.IoAccessDenied,
-                $"Access to table file '{path}' was denied.");
+            var message = $"Access to table file '{path}' was denied.";
+            OperationLog.Error("TableFileLoader", message, ErrorCodes.IoAccessDenied, exception);
+            return OperationResult<TableLoadResult>.Failure(ErrorCodes.IoAccessDenied, message);
         }
         catch (IOException exception)
         {
-            return OperationResult<TableLoadResult>.Failure(
-                ErrorCodes.IoError,
-                $"The table file '{path}' could not be read: {exception.Message}");
+            var message = $"The table file '{path}' could not be read: {exception.Message}";
+            OperationLog.Error("TableFileLoader", message, ErrorCodes.IoError, exception);
+            return OperationResult<TableLoadResult>.Failure(ErrorCodes.IoError, message);
         }
 
         var format = FileFormatInfo.Detect(bytes);
@@ -142,14 +148,27 @@ public sealed class TableFileLoader
 
         var primaryKeyPath = metadata?.RecordKey?.Primary.Path;
         var recordsAreNested = !string.IsNullOrEmpty(primaryKeyPath);
-        if (requireRecords
-            && !recordsAreNested
-            && !root.Elements().Any(element => string.Equals(element.Name.LocalName, recordElementName, StringComparison.Ordinal)))
+        if (requireRecords && !recordsAreNested)
         {
-            diagnostics.Add(new LoadDiagnostic(
-                ErrorCodes.XmlRecordElementMissing,
-                $"No record elements named '{recordElementName}' were found under the root."));
-            status = TableDocumentStatus.LoadedReadOnly;
+            var childElements = root.Elements();
+            var hasRecordElement = childElements.Any(element => string.Equals(
+                element.Name.LocalName,
+                recordElementName,
+                StringComparison.Ordinal));
+
+            // A declared root without any child element is a table whose last row was deleted, not a
+            // malformed file: it stays editable so the user can add the first record again.
+            var isEmptyDeclaredRoot = metadata is not null
+                && !childElements.Any()
+                && string.Equals(root.Name.LocalName, metadata.XmlRoot, StringComparison.Ordinal);
+
+            if (!hasRecordElement && !isEmptyDeclaredRoot)
+            {
+                diagnostics.Add(new LoadDiagnostic(
+                    ErrorCodes.XmlRecordElementMissing,
+                    $"No record elements named '{recordElementName}' were found under the root."));
+                status = TableDocumentStatus.LoadedReadOnly;
+            }
         }
 
         AddLegacyRepeatedKeyDiagnostic(metadata, root, recordElementName, diagnostics);

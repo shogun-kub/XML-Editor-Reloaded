@@ -63,6 +63,9 @@
   <data name="StatusError" xml:space="preserve">
     <value>Error: {0}</value>
   </data>
+  <data name="LogFileHintFormat" xml:space="preserve">
+    <value>Details were written to: {0}</value>
+  </data>
   <data name="StatusLoaded" xml:space="preserve">
     <value>Loaded</value>
   </data>

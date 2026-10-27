@@ -45,6 +45,37 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// A table whose last row was deleted reopens editable, so the grid can add the first row again and
+    /// save it.
+    /// </summary>
+    [Fact]
+    public async Task EmptyTable_ReopensEditableAndAddsFirstRow()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, descriptor, _, _, _) = await CreateEditorAsync(
+            workspace,
+            includeOverlay: false,
+            emptyTable: true);
+
+        Assert.True(editor.IsEditable);
+        Assert.False(editor.IsReadOnly);
+        Assert.Empty(editor.Rows);
+
+        editor.AddRowCommand.Execute(null);
+
+        Assert.Single(editor.Rows);
+        Assert.Equal("0", editor.SelectedRow!.Key);
+        Assert.True(editor.IsDirty);
+
+        await editor.SaveCommand.ExecuteAsync(null);
+
+        Assert.False(editor.IsDirty);
+        var saved = XDocument.Load(descriptor.FilePath);
+        Assert.Equal("0", Assert.Single(saved.Root!.Elements("ITEM")).Element("uiIndex")?.Value);
+    }
+
+    /// <summary>
     /// Typing into an empty cell adds the field, while invalid numeric text is rejected without changes.
     /// </summary>
     [Fact]
@@ -1713,6 +1744,7 @@ public class TableEditorViewModelTests
         bool includeRelations = false,
         bool includeHighBits = false,
         bool includeDescriptions = false,
+        bool emptyTable = false,
         FakeTableLayoutStore? layoutStore = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
@@ -1742,19 +1774,20 @@ public class TableEditorViewModelTests
         var descriptions = includeDescriptions
             ? "<szItemDesc>Nothing at all.</szItemDesc><szBRDesc>Nothing at all (BR).</szBRDesc>"
             : string.Empty;
-        await File.WriteAllTextAsync(
-            Path.Combine(itemsDirectory, "Items.xml"),
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
-            + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + longNames + descriptions + "<ubWeight>0</ubWeight>"
-            + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + missingRelationTarget + "</ITEM>"
-            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName>"
-            + (includeRelations ? "<szLongItemName>Glock 17</szLongItemName>" : string.Empty)
-            + "<ubWeight>10</ubWeight>"
-            + graphics + nested + unknownLookup + relation + "</ITEM>"
-            + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
-            + (includeRelations ? "<szLongItemName>Knife</szLongItemName>" : string.Empty)
-            + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass>" + unknownRelation + "</ITEM>"
-            + "</ITEMLIST>");
+        var tableBody = emptyTable
+            ? "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST></ITEMLIST>"
+            : "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>"
+              + "<ITEM><uiIndex>0</uiIndex><szItemName>Nothing</szItemName>" + longNames + descriptions + "<ubWeight>0</ubWeight>"
+              + "<AttachmentClass>1</AttachmentClass>" + lookups + boolean + missingRelationTarget + "</ITEM>"
+              + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName>"
+              + (includeRelations ? "<szLongItemName>Glock 17</szLongItemName>" : string.Empty)
+              + "<ubWeight>10</ubWeight>"
+              + graphics + nested + unknownLookup + relation + "</ITEM>"
+              + $"<ITEM><uiIndex>{secondKey}</uiIndex><szItemName>Knife</szItemName>"
+              + (includeRelations ? "<szLongItemName>Knife</szLongItemName>" : string.Empty)
+              + "<ubWeight>2</ubWeight><ItemClass>5</ItemClass>" + unknownRelation + "</ITEM>"
+              + "</ITEMLIST>";
+        await File.WriteAllTextAsync(Path.Combine(itemsDirectory, "Items.xml"), tableBody);
         if (includeOverlay)
         {
             await File.WriteAllTextAsync(

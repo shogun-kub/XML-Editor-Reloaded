@@ -3,6 +3,7 @@ using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Loading;
+using XmlEditorReloaded.Xml.Saving;
 
 namespace XmlEditorReloaded.Xml.Tests;
 
@@ -121,6 +122,208 @@ public class TableFileLoaderTests
         Assert.True(result.IsSuccess);
         Assert.Equal(TableDocumentStatus.LoadedReadOnly, result.Data!.Status);
         Assert.Contains(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlUnexpectedRoot);
+    }
+
+    /// <summary>
+    /// A table whose declared root has no child elements loads as editable, accepts its first record with
+    /// key <c>0</c>, and the saved file reloads with that record.
+    /// </summary>
+    [Fact]
+    public async Task Load_EmptyDeclaredRoot_LoadsEditableAndAcceptsFirstRecord()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Items.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <ITEMLIST></ITEMLIST>
+            """);
+        var loader = new TableFileLoader();
+        var metadata = OverlayTestData.ItemsMetadata();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Items"), metadata);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.Loaded, result.Data!.Status);
+        Assert.Empty(result.Data.Diagnostics);
+        var document = result.Data.GetDocument<TableDocument>();
+        Assert.NotNull(document);
+        Assert.Empty(document.Records);
+
+        var added = document.AddRecord();
+
+        Assert.True(added.IsSuccess, added.ErrorText);
+        var record = added.Data!;
+        Assert.Equal("0", record.GetKey());
+
+        var save = await new TableFileSaver().SaveAsync(document);
+
+        Assert.True(save.IsSuccess, save.ErrorText);
+
+        var reloaded = await loader.LoadAsync(Descriptor(path, "Items.Items"), metadata);
+
+        Assert.True(reloaded.IsSuccess);
+        Assert.Equal(TableDocumentStatus.Loaded, reloaded.Data!.Status);
+        var reloadedDocument = reloaded.Data.GetDocument<TableDocument>();
+        Assert.NotNull(reloadedDocument);
+        Assert.Equal("0", Assert.Single(reloadedDocument.Records).GetKey());
+    }
+
+    /// <summary>
+    /// Comments, processing instructions, and self-closing syntax are not child elements, so they still
+    /// describe an editable empty table.
+    /// </summary>
+    /// <param name="body">XML body written to the table file.</param>
+    [Theory]
+    [InlineData("<ITEMLIST />")]
+    [InlineData("<ITEMLIST><!-- no rows yet --></ITEMLIST>")]
+    [InlineData("<ITEMLIST><?rows none?></ITEMLIST>")]
+    public async Task Load_RootWithoutChildElements_LoadsEditable(string body)
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Items.xml");
+        await File.WriteAllTextAsync(path, body);
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Items"), OverlayTestData.ItemsMetadata());
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.Loaded, result.Data!.Status);
+        Assert.Empty(result.Data.Diagnostics);
+        var document = result.Data.GetDocument<TableDocument>();
+        Assert.NotNull(document);
+        Assert.Empty(document.Records);
+    }
+
+    /// <summary>
+    /// An empty lookup table loads as editable and its first record gets the next id and the empty name
+    /// element required by the lookup file contract.
+    /// </summary>
+    [Fact]
+    public async Task Load_EmptyLookupRoot_LoadsEditableAndAddsIdAndName()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "ItemClass.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <JA2Data></JA2Data>
+            """);
+        var metadata = new TableMetadata(
+            TableName.Parse("Lookup.ItemClass"),
+            "JA2Data",
+            "ItemClass",
+            isLookup: true,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "id") }));
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Lookup.ItemClass"), metadata);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.Loaded, result.Data!.Status);
+        Assert.Empty(result.Data.Diagnostics);
+        var document = result.Data.GetDocument<TableDocument>();
+        Assert.NotNull(document);
+        Assert.Empty(document.Records);
+
+        var added = document.AddRecord();
+
+        Assert.True(added.IsSuccess, added.ErrorText);
+        var record = added.Data!;
+        Assert.Equal(new[] { "id", "name" }, record.FieldNames);
+        Assert.Equal("0", record.GetRawValue("id"));
+        Assert.Equal(string.Empty, record.GetRawValue("name"));
+    }
+
+    /// <summary>
+    /// Without metadata the record element name cannot be verified, so an empty root keeps the read-only
+    /// missing-record diagnostic.
+    /// </summary>
+    [Fact]
+    public async Task Load_EmptyRootWithoutMetadata_StaysReadOnly()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Custom.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <ITEMLIST></ITEMLIST>
+            """);
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Custom.Empty"));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.LoadedReadOnly, result.Data!.Status);
+        Assert.Contains(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlRecordElementMissing);
+        var document = result.Data.GetDocument<TableDocument>();
+        Assert.NotNull(document);
+        var added = document.AddRecord();
+        Assert.False(added.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlNotSaveable, added.ErrorCode);
+    }
+
+    /// <summary>
+    /// An empty root still has to declare the expected root name, so a mismatch keeps both the
+    /// unexpected-root and the missing-record diagnostics.
+    /// </summary>
+    [Fact]
+    public async Task Load_EmptyRootWithWrongMetadata_StaysReadOnly()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Items.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <ITEMLIST></ITEMLIST>
+            """);
+        var metadata = new TableMetadata(
+            TableName.Parse("Items.Items"),
+            "WRONGROOT",
+            "ITEM",
+            isLookup: false,
+            new RecordKeySpec(new[] { new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex") }));
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Items"), metadata);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.LoadedReadOnly, result.Data!.Status);
+        Assert.Contains(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlUnexpectedRoot);
+        Assert.Contains(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlRecordElementMissing);
+    }
+
+    /// <summary>
+    /// A root with child elements that are not records still reports the record element as missing and
+    /// stays read-only.
+    /// </summary>
+    [Fact]
+    public async Task Load_RootWithForeignChild_MatchingMetadata_StaysReadOnly()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "Items.xml");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <ITEMLIST><UNKNOWN /></ITEMLIST>
+            """);
+        var loader = new TableFileLoader();
+
+        var result = await loader.LoadAsync(Descriptor(path, "Items.Items"), OverlayTestData.ItemsMetadata());
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(TableDocumentStatus.LoadedReadOnly, result.Data!.Status);
+        Assert.Contains(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlRecordElementMissing);
+        Assert.DoesNotContain(result.Data.Diagnostics, diagnostic => diagnostic.Code == ErrorCodes.XmlUnexpectedRoot);
+        var document = result.Data.GetDocument<TableDocument>();
+        Assert.NotNull(document);
+        Assert.Empty(document.Records);
+        Assert.False(document.AddRecord().IsSuccess);
     }
 
     /// <summary>

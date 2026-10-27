@@ -3,7 +3,8 @@ using XmlEditorReloaded.Core.Metadata;
 namespace XmlEditorReloaded.Xml.Copy;
 
 /// <summary>
-/// Defines how a copied record is handled when the target table already contains the same key.
+/// Defines how a copied record is handled when the target table already contains the same key or, for a
+/// lookup row whose key is absent, a row with the same comparison field value.
 /// </summary>
 public enum TableCopyConflictPolicy
 {
@@ -71,7 +72,10 @@ public enum TableCopyRemapStatus
 /// <param name="RecordKeys">
 /// Source record keys to copy, or <see langword="null"/> to copy every record of the table.
 /// </param>
-/// <param name="ConflictPolicy">Handling of records whose key already exists in the target.</param>
+/// <param name="ConflictPolicy">
+/// Handling of records whose key already exists in the target, or whose comparison field value matches
+/// an existing target row of a lookup table.
+/// </param>
 /// <param name="KeyMode">Whether to preserve source keys or allocate fresh target keys.</param>
 /// <param name="CopyRelatedRecords">
 /// When <see langword="true"/>, records linked to the copied records through sub-table and child-row

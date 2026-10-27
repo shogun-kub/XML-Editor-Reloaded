@@ -1,13 +1,16 @@
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Data;
+using XmlEditorReloaded.Data.Diagnostics;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml;
 using XmlEditorReloaded.Xml.Comparison;
@@ -20,6 +23,7 @@ namespace XmlEditorReloaded.App;
 public partial class App : Application
 {
     private ServiceProvider? _serviceProvider;
+    private string? _logPath;
 
     /// <summary>
     /// Registers the application services, view models, and shell window.
@@ -58,11 +62,18 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        var appDataDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "XmlEditorReloaded");
+        _logPath = Path.Combine(appDataDirectory, "XmlEditorReloaded.log");
+        OperationLog.Sink = new FileOperationLog(_logPath);
+        RegisterGlobalExceptionHandlers();
+        OperationLog.Info(
+            "App",
+            $"Starting XML Editor Reloaded {typeof(App).Assembly.GetName().Version?.ToString() ?? "unknown"}.");
+
         try
         {
-            var appDataDirectory = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XmlEditorReloaded");
             var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
 
             var services = new ServiceCollection();
@@ -74,11 +85,11 @@ public partial class App : Application
                 .MigrateAsync(databasePath);
             if (!migration.IsSuccess)
             {
-                MessageBox.Show(
-                    Strings.Format("StatusError", migration.ErrorText ?? string.Empty),
-                    Strings.Get("AppTitle"),
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                OperationLog.Fatal(
+                    "DatabaseMigrator",
+                    migration.ErrorText ?? "The metadata database could not be migrated.",
+                    migration.ErrorCode);
+                ShowFatalError(migration.ErrorText ?? string.Empty);
                 Shutdown();
                 return;
             }
@@ -112,11 +123,8 @@ public partial class App : Application
         }
         catch (Exception exception)
         {
-            MessageBox.Show(
-                Strings.Format("StatusError", exception.Message),
-                Strings.Get("AppTitle"),
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            OperationLog.Fatal("App", "The application failed to start.", exception: exception);
+            ShowFatalError(exception.Message);
             Shutdown();
         }
     }
@@ -124,7 +132,69 @@ public partial class App : Application
     /// <inheritdoc />
     protected override void OnExit(ExitEventArgs e)
     {
+        OperationLog.Info("App", "Application exiting.");
         _serviceProvider?.Dispose();
+        OperationLog.Sink = null;
         base.OnExit(e);
+    }
+
+    private void RegisterGlobalExceptionHandlers()
+    {
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+    }
+
+    /// <summary>
+    /// Logs an unhandled UI exception, tells the user where the log is, and keeps the application
+    /// running so the user can still save or close the open tables deliberately.
+    /// </summary>
+    private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        OperationLog.Fatal("Dispatcher", "Unhandled UI exception.", exception: e.Exception);
+        MessageBox.Show(
+            BuildErrorMessage(e.Exception),
+            Strings.Get("AppTitle"),
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+        e.Handled = true;
+    }
+
+    private static void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        var exception = e.ExceptionObject as Exception
+            ?? new InvalidOperationException(e.ExceptionObject?.ToString() ?? "Unknown error.");
+        OperationLog.Fatal(
+            "AppDomain",
+            e.IsTerminating
+                ? "Unhandled exception; the process is terminating."
+                : "Unhandled exception.",
+            exception: exception);
+    }
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        OperationLog.Error(
+            "TaskScheduler",
+            "An unobserved task exception was reported.",
+            exception: e.Exception);
+        e.SetObserved();
+    }
+
+    private void ShowFatalError(string message) =>
+        MessageBox.Show(
+            BuildErrorMessage(message),
+            Strings.Get("AppTitle"),
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+
+    private string BuildErrorMessage(Exception exception) => BuildErrorMessage(exception.Message);
+
+    private string BuildErrorMessage(string message)
+    {
+        var text = Strings.Format("StatusError", message);
+        return string.IsNullOrWhiteSpace(_logPath)
+            ? text
+            : text + Environment.NewLine + Environment.NewLine + Strings.Format("LogFileHintFormat", _logPath);
     }
 }
