@@ -511,6 +511,86 @@ public class UndoAndBulkTests
         }
     }
 
+    /// <summary>
+    /// Undoing an edit of a newly added row must still remove that row when the insertion is undone.
+    /// The edit and insertion snapshots share one XML element, so the history must not replace it.
+    /// </summary>
+    [Fact]
+    public async Task UndoRedo_AddThenEdit_RemovesRowAndRestoresItOnce()
+    {
+        using var fixture = new TestWorkspace();
+        var table = await LoadItemsAsync(fixture);
+        var originalKeys = table.BaseDocument.Records.Select(record => record.GetKey()).ToArray();
+
+        var added = table.AddRecord();
+        Assert.True(added.IsSuccess, added.ErrorText);
+        var key = added.Data!.GetKey()!;
+        Assert.True(table.SetValue(key, "szItemName", "Undo me", addIfMissing: true).IsSuccess);
+
+        Assert.True(table.Undo().IsSuccess);
+        Assert.True(table.Undo().IsSuccess);
+        Assert.False(table.CanUndo);
+        Assert.Null(table.BaseDocument.FindRecord(key));
+        Assert.Equal(originalKeys, table.BaseDocument.Records.Select(record => record.GetKey()));
+
+        Assert.True(table.Redo().IsSuccess);
+        Assert.True(table.Redo().IsSuccess);
+        var restored = Assert.Single(
+            table.BaseDocument.Records,
+            record => string.Equals(record.GetKey(), key, StringComparison.Ordinal));
+        Assert.Equal("Undo me", restored.GetRawValue("szItemName"));
+        Assert.False(table.CanRedo);
+    }
+
+    /// <summary>
+    /// A full add, edit, duplicate, and delete cycle is reversible without leaving duplicate keys,
+    /// lost rows, or a stale insertion snapshot behind.
+    /// </summary>
+    [Fact]
+    public async Task UndoRedo_AddEditDuplicateDelete_RestoresUniqueRowSequence()
+    {
+        using var fixture = new TestWorkspace();
+        var table = await LoadItemsAsync(fixture);
+        var originalKeys = table.BaseDocument.Records.Select(record => record.GetKey()).ToArray();
+
+        var added = table.AddRecord();
+        Assert.True(added.IsSuccess, added.ErrorText);
+        var addedKey = added.Data!.GetKey()!;
+        Assert.True(table.SetValue(addedKey, "szItemName", "Added", addIfMissing: true).IsSuccess);
+
+        var duplicate = table.DuplicateRecord(addedKey);
+        Assert.True(duplicate.IsSuccess, duplicate.ErrorText);
+        var duplicateKey = duplicate.Data!.GetKey()!;
+        Assert.Equal("Added", duplicate.Data.GetRawValue("szItemName"));
+
+        Assert.True(table.DeleteRecord(addedKey).IsSuccess);
+        var expectedAfterDelete = originalKeys.Concat(new[] { duplicateKey }).ToArray();
+        Assert.Equal(expectedAfterDelete, table.BaseDocument.Records.Select(record => record.GetKey()));
+
+        for (var step = 0; step < 4; step++)
+        {
+            Assert.True(table.Undo().IsSuccess);
+        }
+
+        Assert.False(table.CanUndo);
+        Assert.Equal(originalKeys, table.BaseDocument.Records.Select(record => record.GetKey()));
+
+        for (var step = 0; step < 4; step++)
+        {
+            Assert.True(table.Redo().IsSuccess);
+        }
+
+        Assert.False(table.CanRedo);
+        Assert.Equal(expectedAfterDelete, table.BaseDocument.Records.Select(record => record.GetKey()));
+        var restoredDuplicate = Assert.Single(
+            table.BaseDocument.Records,
+            record => string.Equals(record.GetKey(), duplicateKey, StringComparison.Ordinal));
+        Assert.Equal("Added", restoredDuplicate.GetRawValue("szItemName"));
+        Assert.DoesNotContain(
+            table.BaseDocument.Records,
+            record => string.Equals(record.GetKey(), addedKey, StringComparison.Ordinal));
+    }
+
     private static async Task<TableWorkspace> LoadItemsAsync(TestWorkspace fixture)
     {
         var path = fixture.CopyFixture("items-mini.xml");

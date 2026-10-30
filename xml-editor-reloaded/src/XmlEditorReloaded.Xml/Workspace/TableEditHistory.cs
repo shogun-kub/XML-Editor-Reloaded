@@ -188,8 +188,12 @@ internal sealed class TableEditTransaction
 }
 
 /// <summary>
-/// The state of one XML element before and after an edit. The element is replaced with a clone on
-/// undo and redo, which preserves sparse fields, comments, and lexical value forms.
+/// The state of one XML element before and after an edit. Undo and redo restore the recorded content
+/// in place and keep the same <see cref="XElement"/> object attached to the document. Preserving the
+/// object identity matters because several snapshots can refer to one element: an edit of a row that
+/// was just added shares its element with the insertion snapshot. Replacing the element with a clone
+/// would leave the older snapshot pointing to a detached object, so undoing the insertion would
+/// silently do nothing and a later redo could add a duplicate row.
 /// </summary>
 internal sealed class ElementSnapshotState
 {
@@ -278,9 +282,12 @@ internal sealed class ElementSnapshotState
         After = new XElement(element);
     }
 
+    /// <summary>
+    /// Marks the element as deleted while keeping the detached object. The object is reattached on
+    /// undo and removed again on redo, so snapshots that reference the same element stay valid.
+    /// </summary>
     public void MarkRemoved()
     {
-        Current = null;
         After = null;
     }
 
@@ -291,45 +298,87 @@ internal sealed class ElementSnapshotState
     private static int ElementIndex(XElement parent, XElement element) =>
         parent.Elements().TakeWhile(candidate => candidate != element).Count();
 
+    /// <summary>
+    /// Restores one recorded state. A non-null state always updates the existing element's content;
+    /// the element is reattached only when the previous operation detached it. A null state detaches
+    /// the element but keeps the object, which is what redo of a deletion or undo of an insertion needs.
+    /// </summary>
+    /// <param name="snapshot">Recorded element content, or <see langword="null"/> for a removed element.</param>
     private void Apply(XElement? snapshot)
     {
         if (snapshot is null)
         {
-            if (Current is not null && Current.Parent == Parent)
+            if (Current is { } removed && removed.Parent == Parent)
             {
-                Current.Remove();
+                removed.Remove();
             }
 
-            Current = null;
+            return;
+        }
+
+        if (Current is { } current)
+        {
+            ApplyContent(current, snapshot);
+            if (current.Parent != Parent)
+            {
+                if (current.Parent is not null)
+                {
+                    current.Remove();
+                }
+
+                Attach(current);
+            }
+
             return;
         }
 
         var replacement = new XElement(snapshot);
-        if (Current is not null && Current.Parent == Parent)
+        Attach(replacement);
+        Current = replacement;
+    }
+
+    /// <summary>
+    /// Copies the recorded attributes and child nodes into the existing element. Nodes come from a
+    /// temporary clone, so the snapshot stays intact for repeated undo and redo calls.
+    /// </summary>
+    private static void ApplyContent(XElement target, XElement snapshot)
+    {
+        if (target.Name != snapshot.Name)
         {
-            Current.ReplaceWith(replacement);
+            target.Name = snapshot.Name;
         }
-        else if (PreviousNode is not null && PreviousNode.Parent == Parent)
+
+        var content = new XElement(snapshot);
+        target.ReplaceAttributes(content.Attributes());
+        target.ReplaceNodes(content.Nodes());
+    }
+
+    /// <summary>
+    /// Reattaches a detached element next to its recorded neighbour, or at its recorded element index
+    /// when both neighbours were removed by later operations.
+    /// </summary>
+    private void Attach(XElement element)
+    {
+        if (PreviousNode is { } previous && previous.Parent == Parent)
         {
-            PreviousNode.AddAfterSelf(replacement);
+            previous.AddAfterSelf(element);
+            return;
         }
-        else if (NextNode is not null && NextNode.Parent == Parent)
+
+        if (NextNode is { } next && next.Parent == Parent)
         {
-            NextNode.AddBeforeSelf(replacement);
+            next.AddBeforeSelf(element);
+            return;
+        }
+
+        var reference = Parent.Elements().ElementAtOrDefault(Index);
+        if (reference is null || ReferenceEquals(reference, element))
+        {
+            Parent.Add(element);
         }
         else
         {
-            var reference = Parent.Elements().ElementAtOrDefault(Index);
-            if (reference is null)
-            {
-                Parent.Add(replacement);
-            }
-            else
-            {
-                reference.AddBeforeSelf(replacement);
-            }
+            reference.AddBeforeSelf(element);
         }
-
-        Current = replacement;
     }
 }
