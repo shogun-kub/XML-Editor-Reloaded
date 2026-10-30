@@ -21,10 +21,10 @@
    robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13" "$env:TEMP\xer-smoke\v4\Data-1.13" /E
    robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13" "$env:TEMP\xer-smoke\v5\Data-1.13" /E
    ```
-3. Снять хеши оригиналов и копий до начала проверки:
+3. Снять хеши оригиналов и копий до начала проверки. `Get-FileHash` возвращает объекты `FileHashInfo`, а `Set-Content` записывает их строковое представление (имя типа), поэтому в файл пишутся строки `hash  path` — их и сравнивает S50:
    ```powershell
-   Get-ChildItem "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13\TableData","E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | Set-Content "$env:TEMP\xer-smoke\orig-before.txt"
-   Get-ChildItem "$env:TEMP\xer-smoke\v4\Data-1.13\TableData","$env:TEMP\xer-smoke\v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | Set-Content "$env:TEMP\xer-smoke\copy-before.txt"
+   Get-ChildItem "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13\TableData","E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Set-Content "$env:TEMP\xer-smoke\orig-before.txt"
+   Get-ChildItem "$env:TEMP\xer-smoke\v4\Data-1.13\TableData","$env:TEMP\xer-smoke\v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Set-Content "$env:TEMP\xer-smoke\copy-before.txt"
    ```
 4. Запустить приложение:
    ```powershell
@@ -157,12 +157,17 @@
 
 **S49. Повреждённая таблица в compare/copy.** В сравнении v4↔v5 строка `Lookup.AttachmentPoint` имеет статус ошибки/повреждения. В диалоге копирования выбрать `Lookup.AttachmentPoint` и построить предпросмотр: ожидается отказ/предупреждение или недоступность таблицы, без записи в цель. Не нажимать «Копировать», если предпросмотр предлагает перезапись повреждённого файла; зафиксировать фактическое поведение. Ни один файл в `References/` не меняется.
 
-**S50. Итоговая целостность.** Снять хеши после проверки и сравнить:
+**S50. Итоговая целостность.** Снять хеши после проверки и сравнить оригиналы:
    ```powershell
-   Get-ChildItem "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13\TableData","E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | Set-Content "$env:TEMP\xer-smoke\orig-after.txt"
+   Get-ChildItem "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13\TableData","E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Set-Content "$env:TEMP\xer-smoke\orig-after.txt"
    Compare-Object (Get-Content "$env:TEMP\xer-smoke\orig-before.txt") (Get-Content "$env:TEMP\xer-smoke\orig-after.txt")
    ```
-   Ожидаемо: вывод пуст (оригиналы не изменены). Для копий: файлы, которые не редактировались и не сохранялись, имеют прежние хеши; изменены только файлы, явно сохранённые в сценариях (S12, S18, S21–S25, S28–S33, S35, S37–S39), и только в копиях. Проверить, что в git нет `bin/`, `obj/` и пользовательских файлов.
+   Ожидаемо: вывод пуст (оригиналы не изменены). Затем то же для копий:
+   ```powershell
+   Get-ChildItem "$env:TEMP\xer-smoke\v4\Data-1.13\TableData","$env:TEMP\xer-smoke\v5\Data-1.13\TableData" -Recurse -File | Get-FileHash -Algorithm SHA256 | Sort-Object Path | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Set-Content "$env:TEMP\xer-smoke\copy-after.txt"
+   Compare-Object (Get-Content "$env:TEMP\xer-smoke\copy-before.txt") (Get-Content "$env:TEMP\xer-smoke\copy-after.txt")
+   ```
+   Ожидаемо: в выводе только файлы, явно сохранённые в копиях в сценариях (S12, S18, S21–S25, S28–S33, S35, S37–S39); все остальные файлы копий и все оригиналы совпадают побайтно. Проверить, что в git нет `bin/`, `obj/` и пользовательских файлов.
 
 ## 3. Результаты
 
