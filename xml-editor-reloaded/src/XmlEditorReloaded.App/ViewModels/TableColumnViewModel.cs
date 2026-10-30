@@ -261,6 +261,9 @@ public sealed class TableColumnViewModel : ObservableObject
 
     internal void SetVisibleWithoutNotification(bool visible)
     {
-        SetProperty(ref _isVisible, visible);
+        // The caller has already scheduled the layout save, but the column chooser still has to see
+        // IsVisible change: SetProperty cannot infer the property name through this helper, so it has
+        // to be passed explicitly.
+        SetProperty(ref _isVisible, visible, nameof(IsVisible));
     }
 }

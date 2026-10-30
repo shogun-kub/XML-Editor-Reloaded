@@ -522,6 +522,78 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// A transient status message, such as "No changes to save.", is replaced by the idle status after
+    /// the configured delay instead of staying on screen until the next edit (S12).
+    /// </summary>
+    [Fact]
+    public async Task StatusText_TransientMessage_ResetsToIdleAfterDelay()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            statusAutoResetDelay: TimeSpan.FromMilliseconds(50));
+
+        await editor.SaveAsync();
+        Assert.Equal("No changes to save.", editor.StatusText);
+
+        await WaitForStatusAsync(editor, "Ready.");
+        Assert.Equal("Ready.", editor.StatusText);
+    }
+
+    /// <summary>
+    /// A cell-update confirmation is transient too, so the next operation is not reported next to an
+    /// outdated message (S12).
+    /// </summary>
+    [Fact]
+    public async Task StatusText_CellUpdate_ResetsToIdleAfterDelay()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            statusAutoResetDelay: TimeSpan.FromMilliseconds(50));
+
+        Assert.True(editor.SetCellValue(editor.Rows[0], "szItemName", "Edited").IsSuccess);
+        Assert.Equal("szItemName updated in record 0.", editor.StatusText);
+
+        await WaitForStatusAsync(editor, "Ready.");
+        Assert.Equal("Ready.", editor.StatusText);
+    }
+
+    /// <summary>
+    /// Errors must survive the transient-status reset window, otherwise a failed save or a rejected
+    /// value silently looks successful one moment later.
+    /// </summary>
+    [Fact]
+    public async Task StatusText_Error_IsNotAutoCleared()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            statusAutoResetDelay: TimeSpan.FromMilliseconds(50));
+
+        Assert.False(editor.SetCellValue(editor.Rows[0], "ubWeight", "not a number").IsSuccess);
+        var error = editor.StatusText;
+        Assert.Contains("not a valid value", error, StringComparison.Ordinal);
+
+        await Task.Delay(150);
+
+        Assert.Equal(error, editor.StatusText);
+    }
+
+    private static async Task WaitForStatusAsync(TableEditorViewModel editor, string expected)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(2);
+        while (!string.Equals(editor.StatusText, expected, StringComparison.Ordinal)
+               && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10);
+        }
+    }
+
+    /// <summary>
     /// Flag masks are sorted as unsigned 64-bit values, so the signed 64-bit boundary and the largest
     /// mask do not wrap into a negative value or compare as text.
     /// </summary>
@@ -557,7 +629,13 @@ public class TableEditorViewModelTests
         Assert.Equal(4, editor.VisibleColumns.Count);
         Assert.DoesNotContain(editor.VisibleColumns, column => column.Name == "ubWeight");
 
+        var notifications = new List<string?>();
+        weight.PropertyChanged += (_, args) => notifications.Add(args.PropertyName);
         editor.ShowAllColumnsCommand.Execute(null);
+        Assert.True(weight.IsVisible);
+        // The chooser binds checkbox state to IsVisible, so "Show all" must raise exactly this
+        // property; a notification under another name leaves the checkboxes visually unchanged.
+        Assert.Contains(nameof(TableColumnViewModel.IsVisible), notifications);
         Assert.Equal(5, editor.VisibleColumns.Count);
 
         editor.HideAllColumnsCommand.Execute(null);
@@ -1953,7 +2031,8 @@ public class TableEditorViewModelTests
         bool includeHighBits = false,
         bool includeDescriptions = false,
         bool emptyTable = false,
-        FakeTableLayoutStore? layoutStore = null)
+        FakeTableLayoutStore? layoutStore = null,
+        TimeSpan? statusAutoResetDelay = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -2048,7 +2127,14 @@ public class TableEditorViewModelTests
         var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Items.Items");
         var dialog = new FakeDialogService();
         images ??= new TestItemImageService();
-        var editor = new TableEditorViewModel(session, descriptor, language, dialog, images, layoutStore);
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            language,
+            dialog,
+            images,
+            layoutStore,
+            statusAutoResetDelay);
         await editor.InitializeAsync();
         return (editor, descriptor, data13, dialog, images);
     }

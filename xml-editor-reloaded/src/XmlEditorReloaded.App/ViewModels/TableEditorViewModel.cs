@@ -44,6 +44,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private IReadOnlyDictionary<string, IReadOnlySet<string>>? _relationTargetValues;
     private CancellationTokenSource? _imageCts;
     private CancellationTokenSource? _layoutSaveCts;
+    private CancellationTokenSource? _statusResetCts;
+    private readonly TimeSpan _statusAutoResetDelay;
     private RowFilterGroup _filterGroup = RowFilterGroup.Empty;
     private bool _suppressLanguageChange;
     private bool _isChangingLanguage;
@@ -148,13 +150,18 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// <param name="layoutStore">
     /// Optional per-table layout store; when omitted, the editor keeps its layout in memory only.
     /// </param>
+    /// <param name="statusAutoResetDelay">
+    /// How long a transient status message stays visible before it is replaced by the idle status;
+    /// three seconds when omitted.
+    /// </param>
     public TableEditorViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode,
         IDialogService dialogService,
         IItemImageService itemImages,
-        ITableLayoutStore? layoutStore = null)
+        ITableLayoutStore? layoutStore = null,
+        TimeSpan? statusAutoResetDelay = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -167,6 +174,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         _dialogService = dialogService;
         _itemImages = itemImages;
         _layoutStore = layoutStore;
+        _statusAutoResetDelay = statusAutoResetDelay ?? TimeSpan.FromSeconds(3);
 
         DetailImages = new[]
         {
@@ -694,7 +702,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         if (!Workspace.IsDirty)
         {
             IsDirty = false;
-            StatusText = Strings.Get("EditorNoChanges");
+            SetTransientStatus(Strings.Get("EditorNoChanges"));
             return true;
         }
 
@@ -789,7 +797,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         // Picker display text in other editors is cached per target table; the saved values must be
         // visible the next time a target is resolved.
         _session.RelationResolver.Invalidate(Descriptor.TableName);
-        StatusText = Strings.Get("EditorSaved");
+        SetTransientStatus(Strings.Get("EditorSaved"));
     }
 
     /// <summary>
@@ -823,7 +831,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         var added = result.Data!;
         RebuildRows(null, added);
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowAdded", added.KeyDisplay);
+        SetTransientStatus(Strings.Format("EditorRowAdded", added.KeyDisplay));
     }
 
     private bool CanDuplicateRows =>
@@ -867,7 +875,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         var duplicate = result.Data!;
         RebuildRows(duplicate.GetKey());
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowDuplicated", sourceDisplay, duplicate.KeyDisplay);
+        SetTransientStatus(Strings.Format("EditorRowDuplicated", sourceDisplay, duplicate.KeyDisplay));
     }
 
     /// <summary>
@@ -905,7 +913,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IsDirty = Workspace.IsDirty;
         RebuildRows(null);
         RefreshHistoryState();
-        StatusText = Strings.Format("EditorRowDeleted", display);
+        SetTransientStatus(Strings.Format("EditorRowDeleted", display));
     }
 
     /// <summary>
@@ -988,11 +996,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IsDirty = Workspace.IsDirty;
         RebuildRows(SelectedRow?.Key);
         RefreshHistoryState();
-        StatusText = Strings.Format(
+        SetTransientStatus(Strings.Format(
             "EditorBulkAppliedFormat",
             result.Data!.ChangedCount,
             result.Data.FieldName,
-            result.Data.Operand);
+            result.Data.Operand));
     }
 
     /// <summary>
@@ -1131,7 +1139,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         OnPropertyChanged(nameof(HasActiveFilter));
         ApplyRowView(SelectedRow?.Key);
-        StatusText = Strings.Get("EditorLayoutResetDone");
+        SetTransientStatus(Strings.Get("EditorLayoutResetDone"));
     }
 
     /// <summary>
@@ -1487,7 +1495,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             IsDirty = Workspace.IsDirty;
             RebuildRows(selectedKey, selectRecordIndex: selectedIndex >= 0 ? selectedIndex : null);
             RefreshHistoryState();
-            StatusText = Strings.Get(undo ? "EditorUndone" : "EditorRedone");
+            SetTransientStatus(Strings.Get(undo ? "EditorUndone" : "EditorRedone"));
         }
         catch (InvalidOperationException exception)
         {
@@ -1634,9 +1642,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
                 DetailHeader = Strings.Format("DetailHeaderFormat", display);
             }
 
-            StatusText = Workspace.Language is not null && column?.IsTranslatable != true
+            SetTransientStatus(Workspace.Language is not null && column?.IsTranslatable != true
                 ? Strings.Format("EditorBaseCellUpdated", fieldName, display)
-                : Strings.Format("EditorCellUpdated", fieldName, display);
+                : Strings.Format("EditorCellUpdated", fieldName, display));
         }
         else
         {
@@ -1644,6 +1652,44 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Gets the status shown when no operation message is active.
+    /// </summary>
+    private string IdleStatusText => IsEditable
+        ? Strings.Get("EditorReady")
+        : Workspace?.Metadata?.RecordKey?.Primary.Path is { Length: > 0 }
+            ? Strings.Get("EditorReadOnlyNested")
+            : Strings.Get("StatusLoadedReadOnly");
+
+    private void SetTransientStatus(string message)
+    {
+        StatusText = message;
+        _statusResetCts?.Cancel();
+        _statusResetCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _statusResetCts = cts;
+        _ = ResetStatusAfterDelayAsync(message, cts.Token);
+    }
+
+    private async Task ResetStatusAfterDelayAsync(string message, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(_statusAutoResetDelay, cancellationToken).ConfigureAwait(true);
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer status message replaced this one.
+            return;
+        }
+
+        // An error or another status may have replaced the message while the delay was running.
+        if (string.Equals(StatusText, message, StringComparison.Ordinal))
+        {
+            StatusText = IdleStatusText;
+        }
     }
 
     partial void OnIsEditableChanged(bool value)
