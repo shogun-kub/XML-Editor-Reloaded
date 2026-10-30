@@ -52,38 +52,35 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"
-              Margin="0,0,0,6"
-              Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock FontSize="15"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"
-                           Text="{Binding Title}" />
-                <TextBlock Margin="12,0,0,0"
-                           VerticalAlignment="Center"
-                           Foreground="#FF666666"
-                           Text="{Binding LanguageText}" />
-                <TextBlock Margin="12,0,0,0"
-                           VerticalAlignment="Center"
-                           Text="{Binding RecordCountText}" />
-                <TextBlock Margin="12,0,0,0"
-                           VerticalAlignment="Center"
-                           Foreground="#FF666666"
-                           Text="{Binding VisibleColumnCountText}" />
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+        <WrapPanel Grid.Row="0"
+                   Margin="0,0,0,6"
+                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
+            <TextBlock FontSize="15"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Text="{Binding Title}" />
+            <TextBlock Margin="12,0,0,0"
+                       VerticalAlignment="Center"
+                       Foreground="#FF666666"
+                       Text="{Binding LanguageText}" />
+            <TextBlock Margin="12,0,0,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding RecordCountText}" />
+            <StackPanel Margin="12,0,0,0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,0"
                            Text="{Binding SearchLabel}" />
                 <TextBox Width="220"
+                         VerticalAlignment="Center"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-        </Grid>
+            <TextBlock Margin="12,0,0,0"
+                       VerticalAlignment="Center"
+                       Foreground="#FF666666"
+                       Text="{Binding VisibleColumnCountText}" />
+        </WrapPanel>
 
         <WrapPanel Grid.Row="1"
                    Margin="0,0,0,6"

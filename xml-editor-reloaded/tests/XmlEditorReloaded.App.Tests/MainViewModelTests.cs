@@ -432,6 +432,93 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// A rejected folder keeps the previous data set selected, and choosing the active directory
+    /// again clears the old error and reports the loaded table count. The check runs for both
+    /// configured data sets.
+    /// </summary>
+    [Fact]
+    public async Task Browse_RejectedFolderThenActiveDirectory_RestoresLoadedStatus()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, "v4", "First");
+        var second = CreateNotesData(workspace, "v5", "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, first, second);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var missing = workspace.PathOf("missing");
+
+        async Task AssertRejectedBrowseRestoresAsync(string active)
+        {
+            dialog.PickFolderResult = missing;
+            await viewModel.BrowseCommand.ExecuteAsync(null);
+
+            Assert.Equal(active, viewModel.DataDirectory);
+            Assert.Equal(active, viewModel.SelectedDataDirectory!.Path);
+            Assert.Equal(
+                "The selected folder does not contain TableData or Data-1.13\\TableData.",
+                viewModel.StatusText);
+            Assert.Equal(active, (await settingsStore.LoadAsync()).Data!.ActiveDataDirectory);
+
+            dialog.PickFolderResult = active;
+            await viewModel.BrowseCommand.ExecuteAsync(null);
+
+            Assert.Equal(active, viewModel.DataDirectory);
+            Assert.Equal(active, viewModel.SelectedDataDirectory!.Path);
+            Assert.Contains("Loaded", viewModel.StatusText, StringComparison.Ordinal);
+            Assert.DoesNotContain("does not contain", viewModel.StatusText, StringComparison.Ordinal);
+        }
+
+        await AssertRejectedBrowseRestoresAsync(first);
+
+        dialog.PickFolderResult = second;
+        await viewModel.BrowseCommand.ExecuteAsync(null);
+        Assert.Equal(second, viewModel.DataDirectory);
+
+        await AssertRejectedBrowseRestoresAsync(second);
+    }
+
+    /// <summary>
+    /// Selecting an invalid entry in the data-directory list also restores the previous data set,
+    /// while a valid entry switches to it.
+    /// </summary>
+    [Fact]
+    public async Task SelectDataDirectory_RejectedPathRestoresPreviousDataSet()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, "v4", "First");
+        var second = CreateNotesData(workspace, "v5", "Second");
+        var missing = workspace.PathOf("missing");
+        var (provider, catalog, repository, settingsStore) =
+            await CreateServicesAsync(workspace, first, second, missing);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+
+        var missingItem = Assert.Single(
+            viewModel.DataDirectories,
+            item => string.Equals(item.Path, missing, StringComparison.OrdinalIgnoreCase));
+        viewModel.SelectedDataDirectory = missingItem;
+        await WaitUntilAsync(() => !viewModel.IsBusy && SamePath(viewModel.DataDirectory, first));
+
+        Assert.Equal(first, viewModel.SelectedDataDirectory!.Path);
+        Assert.Equal(
+            "The selected folder does not contain TableData or Data-1.13\\TableData.",
+            viewModel.StatusText);
+
+        var secondItem = Assert.Single(
+            viewModel.DataDirectories,
+            item => string.Equals(item.Path, second, StringComparison.OrdinalIgnoreCase));
+        viewModel.SelectedDataDirectory = secondItem;
+        await WaitUntilAsync(() => !viewModel.IsBusy && SamePath(viewModel.DataDirectory, second));
+
+        Assert.Equal(second, viewModel.SelectedDataDirectory!.Path);
+        Assert.Contains("Loaded", viewModel.StatusText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// The copy command passes the selected tab's data set, table, and record key to the dialog.
     /// </summary>
     [Fact]
@@ -970,6 +1057,14 @@ public class MainViewModelTests
         Assert.Fail("The asynchronous shell operation did not complete in time.");
     }
 
+    private static bool SamePath(string? first, string? second) =>
+        !string.IsNullOrWhiteSpace(first)
+        && !string.IsNullOrWhiteSpace(second)
+        && string.Equals(
+            Path.TrimEndingDirectorySeparator(first),
+            Path.TrimEndingDirectorySeparator(second),
+            StringComparison.OrdinalIgnoreCase);
+
     private sealed class FakeDialogService : IDialogService
     {
         public bool ConfirmResult { get; set; } = true;
@@ -990,7 +1085,9 @@ public class MainViewModelTests
 
         public string? LastExternalChangeMessage { get; private set; }
 
-        public string? PickFolder(string title, string? initialDirectory = null) => null;
+        public string? PickFolderResult { get; set; }
+
+        public string? PickFolder(string title, string? initialDirectory = null) => PickFolderResult;
 
         public string? SaveFileResult { get; set; }
 

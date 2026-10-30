@@ -485,6 +485,43 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// A no-match search message is cleared when the search is emptied or yields rows again, while a
+    /// status set after the message (for example a save result) is preserved.
+    /// </summary>
+    [Fact]
+    public async Task Search_NoMatchesStatusClearsWhenRowsReturn()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+
+        editor.SearchText = "zzz";
+        Assert.Empty(editor.Rows);
+        Assert.Equal("No records match the search.", editor.StatusText);
+        Assert.Contains("0 of 3", editor.RecordCountText, StringComparison.Ordinal);
+
+        editor.SearchText = "Glock";
+        Assert.Equal("1", Assert.Single(editor.Rows).Key);
+        Assert.DoesNotContain("No records match", editor.StatusText, StringComparison.Ordinal);
+        Assert.DoesNotContain("0 of 3", editor.RecordCountText, StringComparison.Ordinal);
+
+        editor.SearchText = "zzz";
+        Assert.Equal("No records match the search.", editor.StatusText);
+
+        editor.SearchText = string.Empty;
+        Assert.Equal(3, editor.Rows.Count);
+        Assert.Equal("Ready.", editor.StatusText);
+        Assert.Contains("3 of 3", editor.RecordCountText, StringComparison.Ordinal);
+
+        editor.SearchText = "zzz";
+        editor.StatusText = "Saved.";
+        editor.SearchText = string.Empty;
+
+        Assert.Equal("Saved.", editor.StatusText);
+        Assert.Equal(3, editor.Rows.Count);
+    }
+
+    /// <summary>
     /// Flag masks are sorted as unsigned 64-bit values, so the signed 64-bit boundary and the largest
     /// mask do not wrap into a negative value or compare as text.
     /// </summary>

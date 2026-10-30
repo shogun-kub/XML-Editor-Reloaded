@@ -52,6 +52,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private bool _suppressLayoutPersistence;
     private bool _layoutChangesReady;
     private bool _layoutDirty;
+    private bool _noMatchesStatusShown;
     private const int DefaultColumnBudget = 8;
     private const int LayoutSaveDelayMilliseconds = 500;
     private const NumberStyles DecimalStyles =
@@ -2080,9 +2081,24 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         UpdateRecordCount();
-        if (term.Length > 0 && Rows.Count == 0)
+        var noMatches = term.Length > 0 && Rows.Count == 0;
+        if (noMatches)
         {
+            _noMatchesStatusShown = true;
             StatusText = Strings.Get("EditorNoMatches");
+        }
+        else if (_noMatchesStatusShown)
+        {
+            _noMatchesStatusShown = false;
+
+            // Restore the ordinary status only if the no-match message is still current; an error or
+            // a save message set after it must survive the next filter application.
+            if (string.Equals(StatusText, Strings.Get("EditorNoMatches"), StringComparison.Ordinal))
+            {
+                StatusText = IsEditable
+                    ? Strings.Get("EditorReady")
+                    : Strings.Get("StatusLoadedReadOnly");
+            }
         }
     }
 

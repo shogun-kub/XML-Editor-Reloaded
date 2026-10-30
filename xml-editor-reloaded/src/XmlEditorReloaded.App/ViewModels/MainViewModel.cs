@@ -296,8 +296,8 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        EnsureDataDirectoryItem(folder);
-        DataDirectory = folder;
+        // The path is only committed by a successful activation, so a rejected folder leaves the
+        // active data set and the selector on the last valid directory.
         await ActivateDataDirectoryAsync(folder).ConfigureAwait(true);
     }
 
@@ -745,12 +745,17 @@ public partial class MainViewModel : ObservableObject
         {
             DataDirectory = path;
             SelectDataDirectorySilently(EnsureDataDirectoryItem(path));
+            StatusText = Strings.Format("StatusTablesLoaded", Tables.Count);
             await PersistActiveDataDirectoryAsync(path).ConfigureAwait(true);
             return;
         }
 
+        // Snapshot the last activated directory from the shell state, not from the selector item the
+        // user already moved to, so a failed activation can restore a valid data set.
         var previousDirectory = DataDirectory;
-        var previousItem = SelectedDataDirectory;
+        var previousItem = DataDirectories.FirstOrDefault(item =>
+                SamePath(item.Path, previousDirectory))
+            ?? SelectedDataDirectory;
         var (source, generation) = BeginOperation();
         StatusText = Strings.Get("StatusLoading");
         try
@@ -858,7 +863,8 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        DataDirectory = value.Path;
+        // Do not move DataDirectory before the activation succeeds; the selector is restored to the
+        // previous data set when the new path cannot be opened.
         _ = ActivateDataDirectoryAsync(value.Path);
     }
 
