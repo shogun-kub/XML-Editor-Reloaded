@@ -16,10 +16,10 @@
    dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
    git rev-parse --short HEAD
    ```
-2. Сделать временные копии данных (в копию входит весь `Data-1.13`, потому что для STI-превью нужны `BigItems`, `Interface`, `tilesets`):
+2. Сделать временные копии данных (в копию входит весь `Data-1.13`, потому что для STI-превью нужны `BigItems`, `Interface`, `tilesets`). Команды — для PowerShell: временный каталог задаётся как `$env:TEMP`; запись `%TEMP%` PowerShell не раскрывает — robocopy примет её буквально и создаст папку `%TEMP%` в текущем каталоге:
    ```powershell
-   robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13" "%TEMP%\xer-smoke\v4\Data-1.13" /E
-   robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13" "%TEMP%\xer-smoke\v5\Data-1.13" /E
+   robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v4\Data-1.13" "$env:TEMP\xer-smoke\v4\Data-1.13" /E
+   robocopy "E:\Projects\JA2_1.13 Tools\References\JA 2 1.13 v5\Data-1.13" "$env:TEMP\xer-smoke\v5\Data-1.13" /E
    ```
 3. Снять хеши оригиналов и копий до начала проверки:
    ```powershell
@@ -43,7 +43,7 @@
 
 **S01. Холодный старт.** Запустить без активного каталога (настройки очищены). Ожидаемо: статус «Выберите каталог Data-1.13 для загрузки таблиц.», подсказка «Дважды щёлкните таблицу в списке, чтобы открыть её для редактирования.», список таблиц пуст, окно не падает.
 
-**S02. Добавление v4.** «Обзор...» → `%TEMP%\xer-smoke\v4\Data-1.13`. Ожидаемо: статус «Загружено таблиц: N.», в списке есть `Items.Items`, `Inventory.MercStartingGear`, `NPCInventory.AdditionalDealer_43_Inventory`, `Lookup.AttachmentPoint`; у таблиц с оверлеями колонка «Языки» показывает `ru`, у остальных `—`; «Метаданные» — «Есть»/«Нет»; модальных ошибок нет.
+**S02. Добавление v4.** «Обзор...» → каталог копии из шага 2 — `%TEMP%\xer-smoke\v4\Data-1.13` (в PowerShell это `$env:TEMP\xer-smoke\v4\Data-1.13`). Ожидаемо: статус «Загружено таблиц: N.», в списке есть `Items.Items`, `Inventory.MercStartingGear`, `NPCInventory.AdditionalDealer_43_Inventory`, `Lookup.AttachmentPoint`; у таблиц с оверлеями колонка «Языки» показывает `ru`, у остальных `—`; «Метаданные» — «Есть»/«Нет»; модальных ошибок нет.
 
 **S03. Добавление и переключение v5 без закрытия вкладок.** Добавить `%TEMP%\xer-smoke\v5\Data-1.13`, открыть в v4 generic-таблицу, переключить активный датасет на v5. Ожидаемо: вкладка v4 остаётся открытой с меткой `JA 2 1.13 v4`; список таблиц меняется на v5; можно открыть вторую вкладку v5 с меткой `JA 2 1.13 v5`; переключение не теряет несохранённые правки и не закрывает вкладки.
 
