@@ -1,7 +1,12 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Linq;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
@@ -73,6 +78,69 @@ public class TableEditorViewModelTests
         Assert.False(editor.IsDirty);
         var saved = XDocument.Load(descriptor.FilePath);
         Assert.Equal("0", Assert.Single(saved.Root!.Elements("ITEM")).Element("uiIndex")?.Value);
+    }
+
+    /// <summary>
+    /// A table whose records are nested in the root (Map.Cities keeps them under CITYLIST/CITY) shows
+    /// its real columns and rows, hides the nested structures from the default grid, and keeps every
+    /// row read-only instead of failing with a key error.
+    /// </summary>
+    [Fact]
+    public async Task NestedCityTable_ShowsRowsAndColumnsAndStaysReadOnly()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(data13, "TableData");
+        var mapDirectory = Path.Combine(tableData, "Map");
+        Directory.CreateDirectory(mapDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(mapDirectory, "Cities.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO><CITYLIST>"
+            + "<CITY><uiIndex>1</uiIndex><townName>Omerta</townName><townUsesLoyalty>1</townUsesLoyalty>"
+            + "<baseSector><x>9</x><y>1</y></baseSector></CITY>"
+            + "<CITY><uiIndex>2</uiIndex><townName>Drassen</townName><townUsesLoyalty>1</townUsesLoyalty>"
+            + "<baseSector><x>12</x><y>2</y></baseSector></CITY>"
+            + "</CITYLIST></CITY_INFO>");
+
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, new TableRepository(provider))
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == "Map.Cities");
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            null,
+            new FakeDialogService(),
+            new TestItemImageService());
+
+        await editor.InitializeAsync();
+
+        Assert.Equal(2, editor.Rows.Count);
+        Assert.Equal(new[] { "1", "2" }, editor.Rows.Select(static row => row.Key));
+        Assert.Equal("Omerta", editor.Rows[0]["townName"]);
+        Assert.Equal("Drassen", editor.Rows[1]["townName"]);
+        Assert.NotNull(editor.Columns.Single(column => column.Name == "uiIndex"));
+        Assert.NotNull(editor.Columns.Single(column => column.Name == "townName"));
+        Assert.Equal("uiIndex", editor.VisibleColumns[0].Name);
+
+        var nested = Assert.Single(editor.Columns, column => column.Name == "baseSector");
+        Assert.True(nested.Column.IsNested);
+        Assert.DoesNotContain(editor.VisibleColumns, column => column.Name == "baseSector");
+
+        Assert.False(editor.IsEditable);
+        Assert.True(editor.IsReadOnly);
+        Assert.All(editor.Rows, static row => Assert.False(row.CanEdit));
+
+        editor.Rows[0]["townName"] = "Changed";
+
+        Assert.Equal("Omerta", editor.Rows[0]["townName"]);
+        Assert.Contains("read-only", editor.StatusText, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("key.not_found", editor.StatusText, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -715,6 +783,109 @@ public class TableEditorViewModelTests
 
         Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The grid view test did not finish in time.");
         Assert.Null(failure);
+    }
+
+    /// <summary>
+    /// A right click on a cell of an already selected row keeps the selection and records the clicked
+    /// field, while a right click on another row selects only that row. Individual cell selection is
+    /// never touched, because it throws for full-row selection.
+    /// </summary>
+    [Fact]
+    public async Task View_RightClickSelectsRowWithoutTouchingCellSelection()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace);
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var view = new TableView { DataContext = editor };
+                view.Measure(new Size(1000, 700));
+                view.Arrange(new Rect(0, 0, 1000, 700));
+                view.UpdateLayout();
+                var grid = Assert.IsType<DataGrid>(view.FindName("RowsGrid"));
+                grid.UpdateLayout();
+                var firstRow = Assert.IsType<DataGridRow>(
+                    grid.ItemContainerGenerator.ContainerFromIndex(0));
+                var firstCell = FindColumnCell(firstRow, "uiIndex");
+                Assert.NotNull(VisualTreeHelper.GetParent(firstCell));
+
+                grid.SelectedItem = firstRow.Item;
+
+                InvokeRightClick(view, firstCell);
+
+                Assert.Equal("uiIndex", editor.CurrentCellField);
+                Assert.Same(firstRow.Item, grid.SelectedItem);
+                Assert.Single(grid.SelectedItems);
+
+                var otherRow = Assert.IsType<DataGridRow>(
+                    grid.ItemContainerGenerator.ContainerFromIndex(2));
+                var otherCell = FindColumnCell(otherRow, "uiIndex");
+
+                InvokeRightClick(view, otherCell);
+
+                Assert.Same(otherRow.Item, grid.SelectedItem);
+                Assert.Same(editor.Rows[2], editor.SelectedRow);
+                Assert.Single(grid.SelectedItems);
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        })
+        {
+            IsBackground = true,
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "The right-click grid test did not finish in time.");
+        Assert.Null(failure);
+    }
+
+    private static DataGridCell FindColumnCell(DataGridRow row, string fieldName) =>
+        Assert.Single(
+            FindVisualChildren<DataGridCell>(row),
+            candidate => candidate.Column?.SortMemberPath == fieldName);
+
+    private static void InvokeRightClick(TableView view, DataGridCell cell)
+    {
+        var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Right)
+        {
+            RoutedEvent = UIElement.PreviewMouseRightButtonDownEvent,
+            Source = cell,
+        };
+
+        // A cell has no logical parent, so a synthetic routed event cannot tunnel through the visual
+        // tree to the grid; invoke the real handler with the cell as the event source instead.
+        var handler = typeof(TableView).GetMethod(
+            "OnPreviewMouseRightButtonDown",
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            binder: null,
+            types: new[] { typeof(object), typeof(MouseButtonEventArgs) },
+            modifiers: null);
+        Assert.NotNull(handler);
+        handler.Invoke(view, new object[] { view, args });
+    }
+
+    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            if (child is T match)
+            {
+                yield return match;
+            }
+
+            foreach (var nested in FindVisualChildren<T>(child))
+            {
+                yield return nested;
+            }
+        }
     }
 
     /// <summary>

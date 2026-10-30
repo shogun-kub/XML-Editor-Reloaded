@@ -266,6 +266,59 @@ public class TableSchemaBuilderTests
     }
 
     /// <summary>
+    /// A table whose records live under a nested key path discovers its columns from that path even
+    /// though the direct record list of the document is empty.
+    /// </summary>
+    [Fact]
+    public async Task Build_NestedRecordPath_DiscoversColumnsFromDeclaredPath()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("Overlays/cities-base.xml");
+        var metadata = OverlayTestData.CitiesMetadata();
+        var document = await OverlayTestData.LoadBaseAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        Assert.Empty(document.Records);
+        Assert.Equal(2, schema.RecordCount);
+        Assert.Equal(
+            new[] { "uiIndex", "townName", "townUsesLoyalty" },
+            schema.Columns.Select(static column => column.XmlFieldName));
+        Assert.Equal("uiIndex", schema.KeyColumn!.XmlFieldName);
+        Assert.Equal(2, schema.FindColumn("townName")!.PresenceCount);
+        Assert.Equal(ColumnDataType.Integer, schema.FindColumn("uiIndex")!.DataType);
+        Assert.Equal(ColumnDataType.String, schema.FindColumn("townName")!.DataType);
+    }
+
+    /// <summary>
+    /// Nested fields of a nested record stay in the schema for the detail form but are hidden from the
+    /// default grid until a dedicated nested editor exists, so they do not become empty pseudo-columns.
+    /// </summary>
+    [Fact]
+    public async Task Build_NestedRecordField_IsHiddenNestedColumn()
+    {
+        using var workspace = new TestWorkspace();
+        var path = Path.Combine(workspace.DirectoryPath, "cities-nested.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO><CITYLIST>"
+            + "<CITY><uiIndex>1</uiIndex><townName>Omerta</townName>"
+            + "<baseSector><x>9</x><y>1</y></baseSector></CITY>"
+            + "</CITYLIST></CITY_INFO>");
+        var metadata = OverlayTestData.CitiesMetadata();
+        var document = await OverlayTestData.LoadBaseAsync(path, metadata);
+
+        var schema = new TableSchemaBuilder().Build(document);
+
+        var sector = schema.FindColumn("baseSector")!;
+        Assert.True(sector.IsNested);
+        Assert.Equal(ColumnDataType.Nested, sector.DataType);
+        Assert.True(sector.IsHidden);
+        Assert.True(sector.Flags.HasFlag(ColumnFlags.Hidden));
+        Assert.False(schema.FindColumn("townName")!.IsHidden);
+    }
+
+    /// <summary>
     /// Elements with child nodes are typed as nested and grouped as structures instead of being
     /// inferred from concatenated text.
     /// </summary>
@@ -285,6 +338,7 @@ public class TableSchemaBuilderTests
         var nested = schema.FindColumn("MODIFIERS")!;
 
         Assert.True(nested.IsNested);
+        Assert.True(nested.IsHidden);
         Assert.Equal(ColumnDataType.Nested, nested.DataType);
         Assert.Equal(ColumnEditorKind.SubTableGrid, nested.EditorKind);
         Assert.Equal("nested", nested.GroupKey);

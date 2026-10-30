@@ -1567,6 +1567,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
         }
 
+        if (row.Row.Record is null)
+        {
+            // Rows of a nested record key (for example Map.Cities CITYLIST/CITY) have no base record
+            // that the grid could write to. Report that explicitly instead of a misleading key error.
+            StatusText = Strings.Get("EditorReadOnlyNested");
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "Rows that are not backed by a base record are read-only in the grid.");
+        }
+
         if (row.Key is null)
         {
             StatusText = Strings.Format("StatusError", ErrorCodes.KeyNotFound);

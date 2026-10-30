@@ -13,7 +13,7 @@
 | Задача | Сценарии | Суть | Приоритет | Статус |
 |---|---|---|---|---|
 | **F0** | S10 | Undo/Redo теряет идентичность XML-элемента и оставляет дубли записей | критический | ✅ 2026-10-30 |
-| **F1** | S06, S08 | Колонки вложенных таблиц; падение контекстного меню при `FullRow` | высокий | ☐ |
+| **F1** | S06, S08 | Колонки вложенных таблиц; падение контекстного меню при `FullRow` | высокий | ✅ 2026-10-30 |
 | **F2** | S04, S07 | Статус после неверного/повторного выбора датасета; залипание «Нет записей» | средний | ☐ |
 | **F3** | S11, S12, S01, S03 | Диагностика `io.access_denied` и запуска; удаление датасета из списка | низкий | ☐ |
 
@@ -107,6 +107,17 @@ build и все тесты зелёные; XML после полного undo/re
 отсутствие `IsSelected` в обработчике и покрыть view-model часть (`CurrentCellField`,
 `CanFilterByValue`) unit-тестами. Ручная проверка: правый клик по уже выделенной строке не
 показывает MessageBox и не меняет выделение.
+
+**Статус:** выполнено 2026-10-30. `TableSchemaBuilder` собирает записи по объявленному
+`RecordKey.Primary.Path`, поэтому `Map.Cities` получает колонки `uiIndex`, `townName` и остальные
+поля `CITY`. Вложенные элементы (`baseSector`, `townPoint`, `iconPosition`) остаются в схеме и в
+деталях, но скрыты в сетке по умолчанию до появления nested-редактора (M24a); строки без базовой
+записи read-only — сетка отменяет `BeginningEdit`, а `SetCellValue` возвращает понятный статус
+вместо `key.not_found`. Контекстное меню выделяет строку через `SelectedItem`/`SelectedItems`
+(с Ctrl — добавляет, без Ctrl — заменяет; уже выделенную строку не трогает) и не присваивает
+`DataGridCell.IsSelected`. Добавлены тесты `Build_NestedRecordPath_DiscoversColumnsFromDeclaredPath`,
+`Build_NestedRecordField_IsHiddenNestedColumn`, `NestedCityTable_ShowsRowsAndColumnsAndStaysReadOnly`
+и `View_RightClickSelectsRowWithoutTouchingCellSelection`; полный прогон — 570 тестов, 0 ошибок.
 
 ---
 

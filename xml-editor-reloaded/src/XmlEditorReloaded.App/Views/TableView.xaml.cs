@@ -397,6 +397,19 @@ public partial class TableView : UserControl
         }
     }
 
+    /// <summary>
+    /// Blocks editing of a row that has no base record to write to, for example a city shown from the
+    /// nested <c>CITYLIST</c> container. Column-level rules cannot express this, and trying to write
+    /// such a row would end in a misleading key error.
+    /// </summary>
+    private void OnRowsGridBeginningEdit(object? sender, DataGridBeginningEditEventArgs e)
+    {
+        if (e.Row.Item is TableRowViewModel { CanEdit: false })
+        {
+            e.Cancel = true;
+        }
+    }
+
     private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (_viewModel is null)
@@ -411,12 +424,26 @@ public partial class TableView : UserControl
             return;
         }
 
-        cell.IsSelected = true;
-        cell.Focus();
-        if (!string.IsNullOrEmpty(cell.Column.SortMemberPath))
+        // The grid selects whole rows (SelectionUnit=FullRow). Assigning DataGridCell.IsSelected makes
+        // WPF try to add the cell to SelectedCells, which throws InvalidOperationException when the row
+        // is already selected. Select the row through the grid instead: an already selected row keeps
+        // the whole selection, an unselected row extends it with Ctrl or replaces it without Ctrl.
+        if (FindAncestor<DataGridRow>(cell) is { } row && !row.IsSelected)
         {
-            _viewModel.CurrentCellField = cell.Column.SortMemberPath;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                RowsGrid.SelectedItems.Add(row.Item);
+            }
+            else
+            {
+                RowsGrid.SelectedItem = row.Item;
+            }
         }
+
+        cell.Focus();
+        _viewModel.CurrentCellField = string.IsNullOrEmpty(cell.Column.SortMemberPath)
+            ? null
+            : cell.Column.SortMemberPath;
     }
 
     /// <summary>

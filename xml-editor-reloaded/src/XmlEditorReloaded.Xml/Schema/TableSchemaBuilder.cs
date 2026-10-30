@@ -2,15 +2,17 @@ using System.Globalization;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Overlays;
 
 namespace XmlEditorReloaded.Xml.Schema;
 
 /// <summary>
 /// Builds a <see cref="TableSchema"/> from a loaded document. Fields are discovered as the union of
-/// all records in first-appearance order; curated column metadata overrides types and editor hints,
-/// contributes declared fields that the document does not currently contain, and non-declaring
-/// column hints refine fields that are present. A mapped table with no record at all falls back to
-/// those hints, which then describe the starter fields of the first row to be added.
+/// all records in first-appearance order; records of a nested key path are resolved through metadata.
+/// Curated column metadata overrides types and editor hints, contributes declared fields that the
+/// document does not currently contain, and non-declaring column hints refine fields that are present.
+/// A mapped table with no record at all falls back to those hints, which then describe the starter
+/// fields of the first row to be added.
 /// </summary>
 public sealed class TableSchemaBuilder
 {
@@ -35,16 +37,17 @@ public sealed class TableSchemaBuilder
         var metadata = document.Metadata;
         var statistics = new Dictionary<string, ColumnStatistics>(StringComparer.Ordinal);
         var order = new List<string>();
+        var recordElements = ResolveRecordElements(document);
 
-        foreach (var record in document.Records)
+        foreach (var recordElement in recordElements)
         {
             var occurrences = new Dictionary<string, int>(StringComparer.Ordinal);
-            if (!record.Element.HasElements)
+            if (!recordElement.HasElements)
             {
                 // Some tables store one text value per record instead of a container of fields, for
                 // example <SOUND>SOUNDS\DOOR OPEN 01.wav</SOUND>. Expose that text as a virtual column
                 // so such tables stay editable without inventing XML elements.
-                if (record.Element.Nodes().Any(static node => node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
+                if (recordElement.Nodes().Any(static node => node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
                 {
                     if (!statistics.TryGetValue(RecordFields.RecordText, out var textStats))
                     {
@@ -55,13 +58,13 @@ public sealed class TableSchemaBuilder
 
                     textStats.PresenceCount++;
                     textStats.MaxOccurrences = 1;
-                    ObserveValue(textStats, record.Element.Value);
+                    ObserveValue(textStats, recordElement.Value);
                 }
 
                 continue;
             }
 
-            foreach (var element in record.Element.Elements())
+            foreach (var element in recordElement.Elements())
             {
                 var name = element.Name.LocalName;
                 if (!statistics.TryGetValue(name, out var columnStats))
@@ -167,9 +170,13 @@ public sealed class TableSchemaBuilder
             var isTranslatable = translatableFields?.Contains(name) == true
                 || hint?.Flags?.HasFlag(ColumnFlags.Translatable) == true
                 || declared?.Flags.HasFlag(ColumnFlags.Translatable) == true;
+            // A nested element has no cell editor yet: the grid shows it as an empty read-only
+            // pseudo-column until the dedicated sub-table editor (M24a) exists. It stays in the schema
+            // and the column chooser so the user can inspect or enable it explicitly.
             var isHidden = editorKind == ColumnEditorKind.Hidden
                 || hint?.Flags?.HasFlag(ColumnFlags.Hidden) == true
-                || declared?.Flags.HasFlag(ColumnFlags.Hidden) == true;
+                || declared?.Flags.HasFlag(ColumnFlags.Hidden) == true
+                || columnStats.HasNested;
             var flags = (hint?.Flags ?? ColumnFlags.None) | (declared?.Flags ?? ColumnFlags.None);
             if (isTranslatable)
             {
@@ -214,9 +221,31 @@ public sealed class TableSchemaBuilder
         return new TableSchema(
             document.Descriptor.TableName,
             document.RecordElementName,
-            document.Records.Count,
+            recordElements.Count,
             metadata is null || metadata.Columns.Count == 0,
             columns);
+    }
+
+    /// <summary>
+    /// Returns the elements the schema fields are discovered from. A table with a nested record key
+    /// keeps its records inside a container, for example <c>CITYLIST/CITY</c> in <c>Map.Cities</c>, so
+    /// <see cref="TableDocument.Records"/> is empty; the declared key path is resolved instead so the
+    /// grid shows the real fields of those nested records. An empty nested table still yields no
+    /// elements, which keeps the curated hints from declaring columns for it.
+    /// </summary>
+    private static IReadOnlyList<XElement> ResolveRecordElements(TableDocument document)
+    {
+        if (document.Metadata is { } metadata
+            && metadata.RecordKey?.Primary.Path is { Length: > 0 })
+        {
+            var resolved = new OverlayKeyResolver(metadata).ResolvePrimary(document.Xml);
+            if (resolved.Count > 0)
+            {
+                return resolved.Select(static record => record.Element).ToArray();
+            }
+        }
+
+        return document.Records.Select(static record => record.Element).ToArray();
     }
 
     private static ColumnEditorKind DefaultEditorKind(ColumnDataType dataType) => dataType switch

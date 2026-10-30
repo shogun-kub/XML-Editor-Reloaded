@@ -298,6 +298,7 @@
                   CurrentCellChanged="OnCurrentCellChanged"
                   ColumnReordered="OnColumnReordered"
                   PreviewMouseDoubleClick="OnRowsGridDoubleClick"
+                  BeginningEdit="OnRowsGridBeginningEdit"
                   PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                 <DataGrid.ContextMenu>
                     <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">

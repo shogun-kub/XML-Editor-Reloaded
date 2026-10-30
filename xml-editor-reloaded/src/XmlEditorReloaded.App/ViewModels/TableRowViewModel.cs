@@ -40,9 +40,12 @@ public sealed partial class TableRowViewModel : ObservableObject
     public string KeyDisplay => _row.KeyDisplay;
 
     /// <summary>
-    /// Gets a value indicating whether the row can be edited through the workspace.
+    /// Gets a value indicating whether the row can be edited through the workspace. A row without a
+    /// base record, for example a city exposed from a nested <c>CITYLIST</c> container, is read-only:
+    /// it has nowhere to write a value until the dedicated nested-record editor exists. The grid also
+    /// cancels <c>BeginningEdit</c> for such a row.
     /// </summary>
-    public bool CanEdit => _row.Key is not null;
+    public bool CanEdit => _row.Record is not null && _row.Key is not null;
 
     /// <summary>
     /// Gets or sets a cell value by XML field name.
