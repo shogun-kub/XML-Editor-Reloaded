@@ -20,6 +20,7 @@ JA2_1.13 Tools/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
 ├── References/                      # Read-only reference projects and game data (not in git)
+├── out/                             # Build output: bin/obj of every project (not in git)
 └── xml-editor-reloaded/             # Solution root — all project code
 ```
 
@@ -116,6 +117,13 @@ dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror
 dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
 ```
 
+`Directory.Build.props` sets `ArtifactsPath` to the repository-level `out/` folder, so every build
+writes `out/bin/<Project>/<Configuration>/` and `out/obj/<Project>/<Configuration>/` and no `bin/obj`
+folders appear next to the projects. Run the application from
+`out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`. Keep the output there: an
+executable inside a workspace labeled with low mandatory integrity starts at low integrity and cannot
+write `%APPDATA%` (the metadata migration then fails with `SQLite error 14`).
+
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 
 ## Conventions
@@ -124,7 +132,7 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 - Code, identifiers and XML documentation are English; Russian is the communication language.
 - Public backend APIs carry XML documentation.
 - Long operations are asynchronous and accept a `CancellationToken`.
-- `bin/`, `obj/`, IDE caches and `References/` are not committed. Push only on explicit request.
+- `bin/`, `obj/`, `out/`, IDE caches and `References/` are not committed. Push only on explicit request.
 - Update this document whenever the solution structure or project responsibilities change.
 
 ## Documentation

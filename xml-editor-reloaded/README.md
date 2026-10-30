@@ -8,6 +8,10 @@ Desktop editor for Jagged Alliance 2 1.13 `TableData` XML files and STI item ima
 dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx
 ```
 
+All projects build into the repository-level `out/` folder (`out/bin/<Project>/<Configuration>`,
+`out/obj/...`). Run the application from
+`out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
+
 ## Test
 
 ```

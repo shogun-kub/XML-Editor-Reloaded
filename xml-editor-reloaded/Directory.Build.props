@@ -14,6 +14,17 @@
   </PropertyGroup>
 
   <!--
+    Keep every bin/obj under the repository-level "out" folder. The DSH sandbox marks the session
+    workspace with a low mandatory integrity label, and executables built inside that tree inherit
+    the label: they start at low integrity, where writes to %APPDATA% are denied and the metadata
+    database fails to open (SQLite error 14). "out" is excluded from the label, so the built app
+    starts normally, and build artifacts stay out of the source tree.
+  -->
+  <PropertyGroup>
+    <ArtifactsPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\out'))</ArtifactsPath>
+  </PropertyGroup>
+
+  <!--
     VSTest's testhost opens its parent process with PROCESS_ALL_ACCESS so it can exit when
     vstest.console dies. Inside the DSH sandbox the restricted token only grants the
     workspace SID a file-oriented mask (0x1F01FF), so that OpenProcess fails with
