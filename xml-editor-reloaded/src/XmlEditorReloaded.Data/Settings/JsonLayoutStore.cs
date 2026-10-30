@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Layout;
 
@@ -181,11 +182,11 @@ public sealed class JsonLayoutStore : ITableLayoutStore
         {
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             return OperationResult.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the layouts file '{_layoutsPath}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(_layoutsPath, exception));
         }
         catch (IOException exception)
         {
@@ -266,11 +267,11 @@ public sealed class JsonLayoutStore : ITableLayoutStore
             {
                 Directory.CreateDirectory(directory);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException exception)
             {
                 return OperationResult.Failure(
                     ErrorCodes.IoAccessDenied,
-                    $"Access to the layouts directory '{directory}' was denied.");
+                    FileAccessFailure.DescribeWriteFailure(directory, exception));
             }
             catch (IOException exception)
             {
@@ -297,17 +298,18 @@ public sealed class JsonLayoutStore : ITableLayoutStore
         {
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             return OperationResult.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the layouts file '{_layoutsPath}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(_layoutsPath, exception));
         }
         catch (IOException exception)
         {
-            return OperationResult.Failure(
-                ErrorCodes.IoError,
-                $"The layouts file '{_layoutsPath}' could not be written: {exception.Message}");
+            var code = FileAccessFailure.IsSharingViolation(exception)
+                ? ErrorCodes.IoAccessDenied
+                : ErrorCodes.IoError;
+            return OperationResult.Failure(code, FileAccessFailure.DescribeWriteFailure(_layoutsPath, exception));
         }
         finally
         {

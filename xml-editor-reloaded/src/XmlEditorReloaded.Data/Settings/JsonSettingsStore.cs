@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 
 namespace XmlEditorReloaded.Data.Settings;
 
@@ -84,11 +85,11 @@ public sealed class JsonSettingsStore : ISettingsStore
             {
                 Directory.CreateDirectory(directory);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException exception)
             {
                 return OperationResult.Failure(
                     ErrorCodes.IoAccessDenied,
-                    $"Access to the settings directory '{directory}' was denied.");
+                    FileAccessFailure.DescribeWriteFailure(directory, exception));
             }
             catch (IOException exception)
             {
@@ -111,17 +112,18 @@ public sealed class JsonSettingsStore : ISettingsStore
         {
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             return OperationResult.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the settings file '{_settingsPath}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(_settingsPath, exception));
         }
         catch (IOException exception)
         {
-            return OperationResult.Failure(
-                ErrorCodes.IoError,
-                $"The settings file '{_settingsPath}' could not be written: {exception.Message}");
+            var code = FileAccessFailure.IsSharingViolation(exception)
+                ? ErrorCodes.IoAccessDenied
+                : ErrorCodes.IoError;
+            return OperationResult.Failure(code, FileAccessFailure.DescribeWriteFailure(_settingsPath, exception));
         }
         finally
         {

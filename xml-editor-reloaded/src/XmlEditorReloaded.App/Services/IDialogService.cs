@@ -56,6 +56,15 @@ public interface IDialogService
     bool Confirm(string message, string title);
 
     /// <summary>
+    /// Shows an informational message that the user only has to acknowledge.
+    /// </summary>
+    /// <param name="message">Text shown to the user.</param>
+    /// <param name="title">Dialog title.</param>
+    void ShowMessage(string message, string title)
+    {
+    }
+
+    /// <summary>
     /// Asks whether unsaved changes should be saved, discarded, or kept.
     /// </summary>
     /// <param name="message">Text shown to the user.</param>

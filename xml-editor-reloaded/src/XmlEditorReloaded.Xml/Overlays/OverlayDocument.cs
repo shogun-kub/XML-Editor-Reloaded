@@ -3,6 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
@@ -185,19 +186,22 @@ public sealed class OverlayDocument
             TryDelete(tempPath);
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             TryDelete(tempPath);
             return OperationResult<OverlayDocument>.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to overlay file '{path}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(path, exception));
         }
         catch (IOException exception)
         {
             TryDelete(tempPath);
+            var code = FileAccessFailure.IsSharingViolation(exception)
+                ? ErrorCodes.IoAccessDenied
+                : ErrorCodes.IoError;
             return OperationResult<OverlayDocument>.Failure(
-                ErrorCodes.IoError,
-                $"The overlay file '{path}' could not be created: {exception.Message}");
+                code,
+                FileAccessFailure.DescribeWriteFailure(path, exception));
         }
 
         OperationResult<OverlayDocument> load;

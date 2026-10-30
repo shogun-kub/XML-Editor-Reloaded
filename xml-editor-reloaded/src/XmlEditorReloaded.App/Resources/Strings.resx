@@ -1618,4 +1618,37 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="DetailCharactersOverLimitFormat" xml:space="preserve">
     <value>{0} characters over the limit</value>
   </data>
+  <data name="StartupFailedHeader" xml:space="preserve">
+    <value>The application could not start.</value>
+  </data>
+  <data name="StartupFailureCodeFormat" xml:space="preserve">
+    <value>Error code: {0}</value>
+  </data>
+  <data name="StartupFailureLocationFormat" xml:space="preserve">
+    <value>Path: {0}</value>
+  </data>
+  <data name="StartupFailureTypeFormat" xml:space="preserve">
+    <value>Error type: {0}</value>
+  </data>
+  <data name="StartupTraceHintFormat" xml:space="preserve">
+    <value>Start-up trace: {0}</value>
+  </data>
+  <data name="RemoveDataDirectoryText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveDataDirectoryTooltip" xml:space="preserve">
+    <value>Remove the selected folder from the list. Files on disk are not deleted.</value>
+  </data>
+  <data name="RemoveDataDirectoryTitle" xml:space="preserve">
+    <value>Remove data directory</value>
+  </data>
+  <data name="RemoveDataDirectoryConfirmFormat" xml:space="preserve">
+    <value>Remove the folder from the list? No files will be deleted.&#10;{0}</value>
+  </data>
+  <data name="RemoveDataDirectoryDoneFormat" xml:space="preserve">
+    <value>The folder was removed from the list: {0}</value>
+  </data>
+  <data name="RemoveDataDirectoryTabsOpenFormat" xml:space="preserve">
+    <value>The folder has {1} open tab(s). Close them before removing the folder from the list.&#10;{0}</value>
+  </data>
 </root>

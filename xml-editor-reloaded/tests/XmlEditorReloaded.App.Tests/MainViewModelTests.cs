@@ -922,6 +922,168 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// Removing the active directory activates the remaining valid directory, removes the path from the
+    /// selector, and persists the shortened list; the folder itself is kept on disk.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDataDirectory_ActiveDataSet_SwitchesToRemainingValidDirectory()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, gameFolder: null, text: "First");
+        var second = CreateNotesData(workspace, gameFolder: "v5", text: "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, first, second);
+        Assert.True((await settingsStore.SaveAsync(new AppSettings(
+            new[] { second, first },
+            second,
+            "ru",
+            "en",
+            new[] { second, first }))).IsSuccess);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var activeItem = Assert.IsType<DataDirectoryItem>(viewModel.SelectedDataDirectory);
+        Assert.True(SamePath(activeItem.Path, second));
+        Assert.Single(viewModel.Tables);
+
+        await viewModel.RemoveDataDirectoryCommand.ExecuteAsync(activeItem);
+
+        Assert.True(SamePath(viewModel.DataDirectory, first));
+        var remaining = Assert.Single(viewModel.DataDirectories);
+        Assert.True(SamePath(remaining.Path, first));
+        Assert.True(SamePath(Assert.IsType<DataDirectoryItem>(viewModel.SelectedDataDirectory).Path, first));
+        Assert.Single(viewModel.Tables);
+        Assert.Equal("Loaded 1 tables.", viewModel.StatusText);
+        Assert.True(Directory.Exists(second));
+        Assert.True(File.Exists(Path.Combine(second, "TableData", "Custom", "Notes.xml")));
+
+        var saved = await settingsStore.LoadAsync();
+        Assert.True(saved.IsSuccess);
+        Assert.DoesNotContain(saved.Data!.DataDirectories, path => SamePath(path, second));
+        Assert.DoesNotContain(saved.Data.RecentDataDirectories, path => SamePath(path, second));
+        Assert.True(SamePath(saved.Data.ActiveDataDirectory, first));
+    }
+
+    /// <summary>
+    /// Removing a directory that is not active keeps the active data set and its tables, and stores the
+    /// shortened list.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDataDirectory_Inactive_KeepsActiveDataSet()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateNotesData(workspace, gameFolder: null, text: "First");
+        var second = CreateNotesData(workspace, gameFolder: "v5", text: "Second");
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, first, second);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var inactive = viewModel.DataDirectories.Single(item => SamePath(item.Path, second));
+        Assert.Equal(2, viewModel.DataDirectories.Count);
+
+        await viewModel.RemoveDataDirectoryCommand.ExecuteAsync(inactive);
+
+        Assert.True(SamePath(viewModel.DataDirectory, first));
+        var remaining = Assert.Single(viewModel.DataDirectories);
+        Assert.True(SamePath(remaining.Path, first));
+        Assert.Single(viewModel.Tables);
+        Assert.Contains(second, viewModel.StatusText, StringComparison.Ordinal);
+        Assert.True(Directory.Exists(second));
+
+        var saved = await settingsStore.LoadAsync();
+        Assert.True(saved.IsSuccess);
+        Assert.DoesNotContain(saved.Data!.DataDirectories, path => SamePath(path, second));
+        Assert.True(SamePath(saved.Data.ActiveDataDirectory, first));
+    }
+
+    /// <summary>
+    /// A directory with open editor tabs cannot be removed from the list; the user is told why and
+    /// nothing changes.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDataDirectory_OpenTabs_IsRejected()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        Assert.Single(viewModel.Editors);
+        var item = Assert.IsType<DataDirectoryItem>(viewModel.SelectedDataDirectory);
+
+        await viewModel.RemoveDataDirectoryCommand.ExecuteAsync(item);
+
+        Assert.NotNull(dialog.LastMessage);
+        Assert.Contains(data13, dialog.LastMessage!, StringComparison.Ordinal);
+        Assert.Single(viewModel.DataDirectories);
+        Assert.True(SamePath(viewModel.DataDirectory, data13));
+        Assert.Single(viewModel.Tables);
+    }
+
+    /// <summary>
+    /// Declining the confirmation keeps every entry and the active data set.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDataDirectory_Cancelled_KeepsEntry()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService { ConfirmResult = false };
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var item = Assert.IsType<DataDirectoryItem>(viewModel.SelectedDataDirectory);
+
+        await viewModel.RemoveDataDirectoryCommand.ExecuteAsync(item);
+
+        Assert.Single(viewModel.DataDirectories);
+        Assert.True(SamePath(viewModel.DataDirectory, data13));
+        Assert.Equal("Loaded 1 tables.", viewModel.StatusText);
+
+        var saved = await settingsStore.LoadAsync();
+        Assert.True(saved.IsSuccess);
+        Assert.Contains(saved.Data!.DataDirectories, path => SamePath(path, data13));
+        Assert.True(SamePath(saved.Data.ActiveDataDirectory, data13));
+    }
+
+    /// <summary>
+    /// Removing the last configured directory leaves an empty shell instead of failing, and the folder
+    /// stays on disk.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDataDirectory_LastDataSet_ClearsShellWithoutDeletingFiles()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        var item = Assert.IsType<DataDirectoryItem>(viewModel.SelectedDataDirectory);
+
+        await viewModel.RemoveDataDirectoryCommand.ExecuteAsync(item);
+
+        Assert.Equal(string.Empty, viewModel.DataDirectory);
+        Assert.Empty(viewModel.DataDirectories);
+        Assert.Null(viewModel.SelectedDataDirectory);
+        Assert.Empty(viewModel.Tables);
+        Assert.Equal("No data directory is selected.", viewModel.StatusText);
+        Assert.True(Directory.Exists(data13));
+
+        var saved = await settingsStore.LoadAsync();
+        Assert.True(saved.IsSuccess);
+        Assert.Empty(saved.Data!.DataDirectories);
+        Assert.Null(saved.Data.ActiveDataDirectory);
+    }
+
+    /// <summary>
     /// Cancelling the unsaved-changes dialog during application close aborts the close.
     /// </summary>
     [Fact]
@@ -1094,6 +1256,10 @@ public class MainViewModelTests
         public string? PickSaveFile(string title, string filter, string defaultFileName) => SaveFileResult;
 
         public bool Confirm(string message, string title) => ConfirmResult;
+
+        public string? LastMessage { get; private set; }
+
+        public void ShowMessage(string message, string title) => LastMessage = message;
 
         public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title)
         {

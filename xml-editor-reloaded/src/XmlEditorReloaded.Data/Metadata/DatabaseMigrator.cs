@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using XmlEditorReloaded.Core.Api;
+using XmlEditorReloaded.Core.Diagnostics;
 
 namespace XmlEditorReloaded.Data.Metadata;
 
@@ -38,11 +39,11 @@ public sealed class DatabaseMigrator
                 Directory.CreateDirectory(directory);
             }
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             return OperationResult<int>.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the metadata directory for '{databasePath}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(databasePath, exception));
         }
         catch (IOException exception)
         {
@@ -119,17 +120,17 @@ public sealed class DatabaseMigrator
         {
             throw;
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException exception)
         {
             return OperationResult<int>.Failure(
                 ErrorCodes.IoAccessDenied,
-                $"Access to the metadata database '{databasePath}' was denied.");
+                FileAccessFailure.DescribeWriteFailure(databasePath, exception));
         }
         catch (SqliteException exception)
         {
             return OperationResult<int>.Failure(
                 ErrorCodes.MetadataMigrationError,
-                $"Metadata migration failed: {exception.Message}");
+                $"Metadata migration failed for '{databasePath}': {exception.Message}");
         }
         catch (IOException exception)
         {

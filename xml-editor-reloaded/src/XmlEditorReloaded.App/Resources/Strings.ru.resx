@@ -1618,4 +1618,37 @@
   <data name="DetailCharactersOverLimitFormat" xml:space="preserve">
     <value>Превышение лимита на {0} символов</value>
   </data>
+  <data name="StartupFailedHeader" xml:space="preserve">
+    <value>Не удалось запустить приложение.</value>
+  </data>
+  <data name="StartupFailureCodeFormat" xml:space="preserve">
+    <value>Код ошибки: {0}</value>
+  </data>
+  <data name="StartupFailureLocationFormat" xml:space="preserve">
+    <value>Путь: {0}</value>
+  </data>
+  <data name="StartupFailureTypeFormat" xml:space="preserve">
+    <value>Тип ошибки: {0}</value>
+  </data>
+  <data name="StartupTraceHintFormat" xml:space="preserve">
+    <value>Трасса запуска: {0}</value>
+  </data>
+  <data name="RemoveDataDirectoryText" xml:space="preserve">
+    <value>Убрать</value>
+  </data>
+  <data name="RemoveDataDirectoryTooltip" xml:space="preserve">
+    <value>Убрать выбранный каталог из списка. Файлы на диске не удаляются.</value>
+  </data>
+  <data name="RemoveDataDirectoryTitle" xml:space="preserve">
+    <value>Убрать каталог данных</value>
+  </data>
+  <data name="RemoveDataDirectoryConfirmFormat" xml:space="preserve">
+    <value>Убрать каталог из списка? Файлы на диске удалены не будут.&#10;{0}</value>
+  </data>
+  <data name="RemoveDataDirectoryDoneFormat" xml:space="preserve">
+    <value>Каталог убран из списка: {0}</value>
+  </data>
+  <data name="RemoveDataDirectoryTabsOpenFormat" xml:space="preserve">
+    <value>В этом каталоге открыто вкладок: {1}. Закройте их, прежде чем убирать каталог из списка.&#10;{0}</value>
+  </data>
 </root>

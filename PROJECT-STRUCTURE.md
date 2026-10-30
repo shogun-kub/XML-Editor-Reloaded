@@ -58,7 +58,8 @@ contracts, the standard `OperationResult` (`error_code`, `error_text`, `data`), 
 operation log facade.
 
 Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Imaging`, `Layout`, `Localization`,
-`Metadata`, `Validation`. No file I/O, SQLite, or WPF.
+`Metadata`, `Validation`. No file writing, SQLite, or WPF; the diagnostics helper only reads file
+metadata to explain access failures.
 
 ### XmlEditorReloaded.Xml (`net10.0`)
 

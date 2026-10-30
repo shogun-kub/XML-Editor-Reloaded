@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,10 +9,12 @@ using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 using XmlEditorReloaded.Core;
 using XmlEditorReloaded.Core.Abstractions;
+using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Data;
 using XmlEditorReloaded.Data.Diagnostics;
 using XmlEditorReloaded.Data.Metadata;
+using XmlEditorReloaded.Data.Settings;
 using XmlEditorReloaded.Xml;
 using XmlEditorReloaded.Xml.Comparison;
 
@@ -24,6 +27,7 @@ public partial class App : Application
 {
     private ServiceProvider? _serviceProvider;
     private string? _logPath;
+    private StartupTrace? _startupTrace;
 
     /// <summary>
     /// Registers the application services, view models, and shell window.
@@ -66,16 +70,42 @@ public partial class App : Application
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "XmlEditorReloaded");
         _logPath = Path.Combine(appDataDirectory, "XmlEditorReloaded.log");
+        var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
+
+        // The bootstrap trace is written before the operation log and the service container exist, so
+        // a failure in this window is still visible when the application-data folder is not writable.
+        _startupTrace = new StartupTrace();
+        _startupTrace.Write(
+            $"Starting {typeof(App).Assembly.GetName().Version?.ToString() ?? "unknown"}; "
+            + $"user {Environment.UserDomainName}\\{Environment.UserName}; "
+            + $"elevated {Environment.IsPrivilegedProcess}; "
+            + $"application data '{appDataDirectory}'; log '{_logPath}'; base '{AppContext.BaseDirectory}'.");
+
+        // Probe write access and record the environment before any service is created. The probe and
+        // the metadata below only read attributes; no attribute or ACL is ever changed.
+        var probe = StartupDiagnostics.ProbeWriteAccess(appDataDirectory);
+        _startupTrace.Write($"Write probe: {probe.Message}");
+
         OperationLog.Sink = new FileOperationLog(_logPath);
         RegisterGlobalExceptionHandlers();
         OperationLog.Info(
             "App",
             $"Starting XML Editor Reloaded {typeof(App).Assembly.GetName().Version?.ToString() ?? "unknown"}.");
+        OperationLog.Info(
+            "App",
+            StartupDiagnostics.DescribeEnvironment(
+                appDataDirectory,
+                _logPath,
+                JsonSettingsStore.DefaultSettingsPath,
+                JsonLayoutStore.DefaultLayoutsPath,
+                databasePath));
+        if (!probe.IsWritable)
+        {
+            OperationLog.Warning("App", probe.Message, ErrorCodes.IoAccessDenied);
+        }
 
         try
         {
-            var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
-
             var services = new ServiceCollection();
             ConfigureServices(services, databasePath);
             _serviceProvider = services.BuildServiceProvider();
@@ -85,11 +115,12 @@ public partial class App : Application
                 .MigrateAsync(databasePath);
             if (!migration.IsSuccess)
             {
-                OperationLog.Fatal(
-                    "DatabaseMigrator",
-                    migration.ErrorText ?? "The metadata database could not be migrated.",
-                    migration.ErrorCode);
-                ShowFatalError(migration.ErrorText ?? string.Empty);
+                var migrationMessage = migration.ErrorText ?? "The metadata database could not be migrated.";
+                _startupTrace?.Write(
+                    $"Fatal: metadata migration failed ({migration.ErrorCode ?? "no code"}) "
+                    + $"for '{databasePath}': {migrationMessage}");
+                OperationLog.Fatal("DatabaseMigrator", migrationMessage, migration.ErrorCode);
+                ShowFatalError(migration.ErrorCode, migrationMessage, databasePath);
                 Shutdown();
                 return;
             }
@@ -123,8 +154,10 @@ public partial class App : Application
         }
         catch (Exception exception)
         {
+            _startupTrace?.Write(
+                $"Fatal: {exception.GetType().FullName} at '{AppContext.BaseDirectory}': {exception.Message}");
             OperationLog.Fatal("App", "The application failed to start.", exception: exception);
-            ShowFatalError(exception.Message);
+            ShowFatalError(null, exception.Message, AppContext.BaseDirectory, exception);
             Shutdown();
         }
     }
@@ -181,12 +214,57 @@ public partial class App : Application
         e.SetObserved();
     }
 
-    private void ShowFatalError(string message) =>
+    /// <summary>
+    /// Shows a fatal start-up error with the error code, the affected path, and the exception type, so
+    /// the user and the log identify the failure without elevation or guesswork.
+    /// </summary>
+    /// <param name="errorCode">Stable error code, or <see langword="null"/> when the failure has none.</param>
+    /// <param name="message">Human-readable failure description.</param>
+    /// <param name="location">File or directory involved in the failure, or <see langword="null"/>.</param>
+    /// <param name="exception">Exception that caused the failure, or <see langword="null"/>.</param>
+    private void ShowFatalError(
+        string? errorCode,
+        string message,
+        string? location = null,
+        Exception? exception = null)
+    {
+        var text = new StringBuilder();
+        text.AppendLine(Strings.Get("StartupFailedHeader"));
+        if (!string.IsNullOrWhiteSpace(errorCode))
+        {
+            text.AppendLine(Strings.Format("StartupFailureCodeFormat", errorCode));
+        }
+
+        text.AppendLine(message);
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            text.AppendLine(Strings.Format("StartupFailureLocationFormat", location));
+        }
+
+        if (exception is not null)
+        {
+            text.AppendLine(Strings.Format(
+                "StartupFailureTypeFormat",
+                exception.GetType().FullName ?? exception.GetType().Name));
+        }
+
+        if (!string.IsNullOrWhiteSpace(_logPath))
+        {
+            text.AppendLine();
+            text.AppendLine(Strings.Format("LogFileHintFormat", _logPath));
+            var tracePath = _startupTrace?.FilePath;
+            if (!string.IsNullOrWhiteSpace(tracePath))
+            {
+                text.Append(Strings.Format("StartupTraceHintFormat", tracePath));
+            }
+        }
+
         MessageBox.Show(
-            BuildErrorMessage(message),
+            text.ToString().TrimEnd(),
             Strings.Get("AppTitle"),
             MessageBoxButton.OK,
             MessageBoxImage.Error);
+    }
 
     private string BuildErrorMessage(Exception exception) => BuildErrorMessage(exception.Message);
 

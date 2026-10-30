@@ -140,15 +140,20 @@ public sealed class TableFileSaver
         {
             return Fail(
                 ErrorCodes.IoAccessDenied,
-                $"Access to table file '{path}' was denied.",
+                FileAccessFailure.DescribeWriteFailure(path, exception),
                 OperationLogLevel.Error,
                 exception);
         }
         catch (IOException exception)
         {
+            // A file held open by another process is an access problem for the user, not a generic
+            // I/O error, so the recovery hint is attached and the code says "access denied".
+            var code = FileAccessFailure.IsSharingViolation(exception)
+                ? ErrorCodes.IoAccessDenied
+                : ErrorCodes.IoError;
             return Fail(
-                ErrorCodes.IoError,
-                $"The table file '{path}' could not be written: {exception.Message}",
+                code,
+                FileAccessFailure.DescribeWriteFailure(path, exception),
                 OperationLogLevel.Error,
                 exception);
         }

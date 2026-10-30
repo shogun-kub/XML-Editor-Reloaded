@@ -214,6 +214,34 @@ public class TableFileSaverTests
         Assert.Equal(ErrorCodes.XmlNotSaveable, result.ErrorCode);
     }
 
+    /// <summary>
+    /// A read-only target file is reported as <c>io.access_denied</c> with the path and the read-only
+    /// cause, and the document keeps its unsaved changes.
+    /// </summary>
+    [Fact]
+    public async Task Save_ReadOnlyTargetFile_ReportsAccessDeniedWithPathAndCause()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var document = await LoadAsync(path);
+        Assert.True(document.Records[1].TrySetValue("szItemName", "Glock 18"));
+        File.SetAttributes(path, FileAttributes.ReadOnly);
+        try
+        {
+            var result = await Saver.SaveAsync(document);
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCodes.IoAccessDenied, result.ErrorCode);
+            Assert.Contains(path, result.ErrorText!, StringComparison.Ordinal);
+            Assert.Contains("read-only", result.ErrorText!, StringComparison.OrdinalIgnoreCase);
+            Assert.True(document.IsDirty);
+        }
+        finally
+        {
+            File.SetAttributes(path, FileAttributes.Normal);
+        }
+    }
+
     private static async Task<TableDocument> LoadAsync(string path)
     {
         var load = await Loader.LoadAsync(Descriptor("Items.Items", path, "Items/Items.xml"));

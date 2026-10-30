@@ -42,6 +42,7 @@ public partial class MainViewModel : ObservableObject
     private string _dataDirectory = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveDataDirectoryCommand))]
     private DataDirectoryItem? _selectedDataDirectory;
 
     [ObservableProperty]
@@ -57,6 +58,7 @@ public partial class MainViewModel : ObservableObject
     private string _recordCountText = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveDataDirectoryCommand))]
     private bool _isBusy;
 
     [ObservableProperty]
@@ -110,6 +112,8 @@ public partial class MainViewModel : ObservableObject
         Title = Strings.Get("AppTitle");
         BrowseText = Strings.Get("BrowseText");
         RefreshText = Strings.Get("RefreshText");
+        RemoveDataDirectoryText = Strings.Get("RemoveDataDirectoryText");
+        RemoveDataDirectoryTooltip = Strings.Get("RemoveDataDirectoryTooltip");
         ImagesText = Strings.Get("ImageViewerButton");
         EnemyAmmoText = Strings.Get("EnemyAmmoButton");
         CompareText = Strings.Get("CompareButton");
@@ -145,6 +149,16 @@ public partial class MainViewModel : ObservableObject
     /// Gets the refresh button text.
     /// </summary>
     public string RefreshText { get; }
+
+    /// <summary>
+    /// Gets the text of the button that removes a directory from the list.
+    /// </summary>
+    public string RemoveDataDirectoryText { get; }
+
+    /// <summary>
+    /// Gets the tooltip of the button that removes a directory from the list.
+    /// </summary>
+    public string RemoveDataDirectoryTooltip { get; }
 
     /// <summary>
     /// Gets the item image viewer button text.
@@ -299,6 +313,157 @@ public partial class MainViewModel : ObservableObject
         // The path is only committed by a successful activation, so a rejected folder leaves the
         // active data set and the selector on the last valid directory.
         await ActivateDataDirectoryAsync(folder).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Removes a directory from the list of known data directories after confirmation; files on disk
+    /// are never deleted. The removal is refused while the directory has open editor tabs. When the
+    /// active directory is removed, the closest remaining valid directory becomes active and the
+    /// updated list is stored in the settings file.
+    /// </summary>
+    /// <param name="item">Directory to remove; taken from the selector's selected item.</param>
+    /// <returns>A task that completes when the list, the active data set, and the settings are updated.</returns>
+    [RelayCommand(CanExecute = nameof(CanRemoveDataDirectory))]
+    private async Task RemoveDataDirectoryAsync(DataDirectoryItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        var path = item.Path;
+        if (!_dialogService.Confirm(
+                Strings.Format("RemoveDataDirectoryConfirmFormat", path),
+                Strings.Get("RemoveDataDirectoryTitle")))
+        {
+            return;
+        }
+
+        var tableDirectory = DataSetPaths.ResolveTableDataDirectory(path) ?? path;
+        var openTabs = Editors.Count(editor => SamePath(editor.TableDataDirectory, tableDirectory));
+        if (openTabs > 0)
+        {
+            _dialogService.ShowMessage(
+                Strings.Format("RemoveDataDirectoryTabsOpenFormat", path, openTabs),
+                Strings.Get("RemoveDataDirectoryTitle"));
+            return;
+        }
+
+        // Comparing the resolved TableData directory also catches the same data set configured twice
+        // under a different path, for example a game root and its Data-1.13 folder.
+        var isActive = SamePath(_dataSet?.TableDataDirectory, tableDirectory)
+            || SamePath(DataDirectory, path)
+            || SamePath(_settings.ActiveDataDirectory, path);
+        var replacement = isActive ? FindReplacementDataDirectory(tableDirectory) : null;
+
+        _settings = _settings with
+        {
+            DataDirectories = RemovePath(_settings.DataDirectories, path, tableDirectory),
+            RecentDataDirectories = RemovePath(_settings.RecentDataDirectories, path, tableDirectory),
+            // A replacement becomes the active directory only after it opens successfully.
+            ActiveDataDirectory = isActive ? null : _settings.ActiveDataDirectory,
+        };
+
+        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        var saveError = save.IsSuccess
+            ? null
+            : $"{save.ErrorCode}: {save.ErrorText}";
+
+        if (!isActive)
+        {
+            RebuildDataDirectories();
+            StatusText = Strings.Format("RemoveDataDirectoryDoneFormat", path);
+        }
+        else if (replacement is null)
+        {
+            CancelOperation();
+            ClearActiveDataSet();
+            RebuildDataDirectories();
+            StatusText = Strings.Get("StatusNoDataDirectory");
+        }
+        else
+        {
+            DataDirectory = replacement;
+            RebuildDataDirectories();
+            await ActivateDataDirectoryAsync(replacement).ConfigureAwait(true);
+        }
+
+        if (saveError is not null)
+        {
+            StatusText = Strings.Format("StatusError", saveError);
+        }
+    }
+
+    private bool CanRemoveDataDirectory(DataDirectoryItem? item) => item is not null && !IsBusy;
+
+    /// <summary>
+    /// Finds the closest remaining directory that still contains table data. The entry before the
+    /// removed one is preferred, then the entry after it; stale settings entries are skipped.
+    /// </summary>
+    /// <param name="removedTableDirectory">Resolved <c>TableData</c> directory being removed.</param>
+    private string? FindReplacementDataDirectory(string removedTableDirectory)
+    {
+        var removedIndex = -1;
+        for (var index = 0; index < DataDirectories.Count; index++)
+        {
+            if (SamePath(
+                    DataSetPaths.ResolveTableDataDirectory(DataDirectories[index].Path),
+                    removedTableDirectory))
+            {
+                removedIndex = index;
+                break;
+            }
+        }
+
+        for (var distance = 1; distance <= DataDirectories.Count; distance++)
+        {
+            var before = removedIndex - distance;
+            if (before >= 0 && IsUsableDataDirectory(DataDirectories[before], removedTableDirectory))
+            {
+                return DataDirectories[before].Path;
+            }
+
+            var after = removedIndex + distance;
+            if (after >= 0
+                && after < DataDirectories.Count
+                && IsUsableDataDirectory(DataDirectories[after], removedTableDirectory))
+            {
+                return DataDirectories[after].Path;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsUsableDataDirectory(DataDirectoryItem item, string removedTableDirectory)
+    {
+        var tableDirectory = DataSetPaths.ResolveTableDataDirectory(item.Path);
+        return tableDirectory is not null
+            && !SamePath(tableDirectory, removedTableDirectory);
+    }
+
+    private static string[] RemovePath(
+        IReadOnlyList<string> paths,
+        string removedPath,
+        string removedTableDirectory) =>
+        paths.Where(path =>
+                !SamePath(path, removedPath)
+                && !SamePath(DataSetPaths.ResolveTableDataDirectory(path), removedTableDirectory))
+            .ToArray();
+
+    /// <summary>
+    /// Forgets the active session and empties the table list after the last configured directory was
+    /// removed from the list.
+    /// </summary>
+    private void ClearActiveDataSet()
+    {
+        _dataSet = null;
+        DataDirectory = string.Empty;
+        Tables.Clear();
+        SelectedTable = null;
+        Diagnostics.Clear();
+        RecordCountText = string.Empty;
+        DetailsText = Strings.Get("StatusNoSelection");
     }
 
     [RelayCommand]

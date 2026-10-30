@@ -55,6 +55,14 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public void ShowMessage(string message, string title) =>
+        System.Windows.MessageBox.Show(
+            message,
+            title,
+            System.Windows.MessageBoxButton.OK,
+            System.Windows.MessageBoxImage.Information);
+
+    /// <inheritdoc />
     public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title)
     {
         var window = new Views.UnsavedChangesWindow(message, title);
