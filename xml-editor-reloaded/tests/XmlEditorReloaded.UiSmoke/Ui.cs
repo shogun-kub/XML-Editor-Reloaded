@@ -1,5 +1,6 @@
 using System.Windows.Automation;
 using System.IO;
+using XmlEditorReloaded.UiSmoke.Scenarios;
 
 namespace XmlEditorReloaded.UiSmoke;
 
@@ -255,7 +256,8 @@ internal static class Ui
                 return;
             }
             catch (Exception exception) when (
-                exception is ElementNotAvailableException or System.Runtime.InteropServices.COMException)
+                exception is ElementNotAvailableException or ElementNotEnabledException
+                    or System.Runtime.InteropServices.COMException)
             {
                 // Fall back to a click on the current location.
             }
@@ -294,6 +296,73 @@ internal static class Ui
     }
 
     /// <summary>
+    /// Reads the visible text of the selected item of a combo box. The automation name of a WPF combo box
+    /// with an item template is empty, so the selected item element is read instead.
+    /// </summary>
+    /// <param name="combo">Combo box.</param>
+    /// <returns>Selected item text, or an empty string.</returns>
+    public static string ReadComboSelection(this AutomationElement combo)
+    {
+        if (TryGet(combo, SelectionPattern.Pattern, out SelectionPattern selection))
+        {
+            try
+            {
+                var selected = selection.Current.GetSelection().FirstOrDefault();
+                if (selected is not null)
+                {
+                    var text = selected
+                        .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                        .Select(static element => element.ReadName())
+                        .FirstOrDefault(static value => !string.IsNullOrWhiteSpace(value));
+                    if (text is not null)
+                    {
+                        return text;
+                    }
+                }
+            }
+            catch (ElementNotAvailableException)
+            {
+                // The selection changed while it was being read.
+            }
+        }
+
+        // WPF data-bound combos often expose only the item type name as the automation name, so the
+        // selected row of the expanded list is the reliable source of the visible text.
+        try
+        {
+            combo.ExpandCombo();
+            Thread.Sleep(120);
+            var items = combo
+                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
+                .Cast<AutomationElement>()
+                .ToList();
+            foreach (var item in items)
+            {
+                if (TryGet(item, SelectionItemPattern.Pattern, out SelectionItemPattern itemSelection)
+                    && itemSelection.Current.IsSelected)
+                {
+                    var text = ItemText(item);
+                    ScenarioUi.Collapse(combo);
+                    Thread.Sleep(100);
+                    return text;
+                }
+            }
+
+            ScenarioUi.Collapse(combo);
+        }
+        catch (ElementNotAvailableException)
+        {
+            // The popup closed itself; fall back to the element name.
+        }
+
+        var child = combo
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+            .Select(static element => element.ReadName())
+            .FirstOrDefault(static value => !string.IsNullOrWhiteSpace(value));
+        return child ?? combo.ReadName();
+    }
+
+    /// <summary>
     /// Sets the text of an input control through the value pattern, falling back to the keyboard.
     /// </summary>
     /// <param name="element">Editable element.</param>
@@ -319,6 +388,15 @@ internal static class Ui
         NativeInput.TypeTextIn(element, text);
         Thread.Sleep(60);
     }
+
+    /// <summary>
+    /// Reads the checked state of a check box.
+    /// </summary>
+    /// <param name="checkBox">Check box element.</param>
+    /// <returns><see langword="true"/> when checked; otherwise <see langword="false"/>.</returns>
+    public static bool IsChecked(this AutomationElement checkBox) =>
+        TryGet(checkBox, TogglePattern.Pattern, out TogglePattern toggle)
+        && toggle.Current.ToggleState == ToggleState.On;
 
     /// <summary>
     /// Sets a check box to the requested state through the toggle pattern, with a click fallback.
@@ -408,7 +486,19 @@ internal static class Ui
         string description,
         TimeSpan? timeout)
     {
-        combo.ExpandCombo();
+        try
+        {
+            combo.ExpandCombo();
+        }
+        catch (Exception exception) when (
+            exception is ElementNotEnabledException or ElementNotAvailableException
+                or System.Runtime.InteropServices.COMException)
+        {
+            // The provider may refuse the pattern; a real click on the combo opens the same popup.
+            combo.Click();
+            Thread.Sleep(250);
+        }
+
         var item = WaitFor(
             () => combo
                 .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
@@ -426,7 +516,8 @@ internal static class Ui
                 expand.Collapse();
             }
             catch (Exception exception) when (
-                exception is ElementNotAvailableException or System.Runtime.InteropServices.COMException)
+                exception is ElementNotAvailableException or ElementNotEnabledException
+                    or System.Runtime.InteropServices.COMException)
             {
                 // The popup closes itself when the selection changes.
             }
@@ -607,6 +698,48 @@ internal static class Ui
         Thread.Sleep(60);
         NativeInput.PressIn(grid, NativeInput.VirtualKey.Return);
         Thread.Sleep(200);
+    }
+
+    /// <summary>
+    /// Hovers an element and returns the text of the tooltip window that appears. WPF renders tooltips
+    /// in their own top-level window, so the text has to be read from the desktop tree.
+    /// </summary>
+    /// <param name="element">Element whose tooltip is read.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>Tooltip text.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when no tooltip appears in time.</exception>
+    public static string HoverToolTip(AutomationElement element, TimeSpan? timeout = null)
+    {
+        var processId = element.Current.ProcessId;
+        NativeInput.MoveTo(element);
+        var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(6));
+        try
+        {
+            while (DateTime.UtcNow < deadline)
+            {
+                Thread.Sleep(150);
+                var tip = SafeFindAll(
+                        AutomationElement.RootElement,
+                        TreeScope.Descendants,
+                        new AndCondition(
+                            new PropertyCondition(AutomationElement.ProcessIdProperty, processId),
+                            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ToolTip)))
+                    .FirstOrDefault(candidate => !string.IsNullOrWhiteSpace(candidate.ReadName()));
+                if (tip is not null)
+                {
+                    var text = tip.ReadName();
+                    NativeInput.MoveAway();
+                    Thread.Sleep(150);
+                    return text;
+                }
+            }
+        }
+        finally
+        {
+            NativeInput.MoveAway();
+        }
+
+        throw new UiTimeoutException($"Подсказка элемента «{element.ReadName()}» не появилась.");
     }
 
     /// <summary>

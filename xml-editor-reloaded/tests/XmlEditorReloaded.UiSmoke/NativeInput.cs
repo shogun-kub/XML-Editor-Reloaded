@@ -46,6 +46,9 @@ internal static class NativeInput
         /// <summary>S key.</summary>
         S = 0x53,
 
+        /// <summary>V key.</summary>
+        V = 0x56,
+
         /// <summary>Z key.</summary>
         Z = 0x5A,
 
@@ -327,6 +330,21 @@ internal static class NativeInput
         Send(inputs);
         Thread.Sleep(40);
     }
+
+    /// <summary>
+    /// Moves the mouse pointer to the center of an element without clicking, which shows its tooltip.
+    /// </summary>
+    /// <param name="element">Target element.</param>
+    public static void MoveTo(System.Windows.Automation.AutomationElement element)
+    {
+        var point = Center(element);
+        SetCursorPos(point.X, point.Y);
+    }
+
+    /// <summary>
+    /// Moves the mouse pointer to the top-left corner of the screen so an open tooltip closes.
+    /// </summary>
+    public static void MoveAway() => SetCursorPos(0, 0);
 
     /// <summary>
     /// Clicks the center of the element once.

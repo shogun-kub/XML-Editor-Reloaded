@@ -106,7 +106,8 @@ UI-automation runner for the manual WPF smoke checklist. It starts the real appl
 isolated application-data directory, drives it through UI Automation and synthetic input, compares the
 visible texts with the application RESX files, and writes `report.md`/`report.json`. The reference data
 sets are copied per scenario, and `References/` is hashed before and after the run. It is not an xUnit
-project and is not executed by `test.ps1`.
+project and is not executed by `test.ps1`. Automated scenarios cover parts A–D of the checklist
+(S01–S03, S05–S21, S23–S32, S48, S50); S04, S22, S71–S75, S82 and S83 need a human.
 
 ## Dependency rules
 

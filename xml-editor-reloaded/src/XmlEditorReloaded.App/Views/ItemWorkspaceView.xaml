@@ -94,40 +94,48 @@
         <WrapPanel Grid.Row="0" Margin="0,0,0,6">
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ItemUndoButton"
                     Content="{Binding UndoText}"
                     Command="{Binding UndoCommand}"
                     ToolTip="{Binding UndoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="ItemRedoButton"
                     Content="{Binding RedoText}"
                     Command="{Binding RedoCommand}"
                     ToolTip="{Binding RedoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ItemNewButton"
                     Content="{Binding NewItemText}"
                     Command="{Binding NewItemCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ItemDuplicateButton"
                     Content="{Binding DuplicateItemText}"
                     Command="{Binding DuplicateItemCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="ItemDeleteButton"
                     Content="{Binding DeleteItemText}"
                     Command="{Binding DeleteItemCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ItemSaveButton"
                     Content="{Binding SaveText}"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding IsDirty}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ItemValidateButton"
                     Content="{Binding ValidateText}"
                     Command="{Binding ValidateCommand}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="ItemReloadButton"
                     Content="{Binding ReloadText}"
                     Command="{Binding ReloadCommand}" />
             <TextBlock VerticalAlignment="Center"
@@ -136,6 +144,7 @@
             <ComboBox Width="190"
                       Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="ItemLanguageCombo"
                       ItemsSource="{Binding LanguageOptions}"
                       SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText"
@@ -143,6 +152,7 @@
                       IsEnabled="{Binding IsLanguageSelectorEnabled}" />
             <TextBlock VerticalAlignment="Center"
                        Foreground="#FF666666"
+                       AutomationProperties.AutomationId="ItemCountText"
                        Text="{Binding CountText}" />
         </WrapPanel>
 
@@ -189,6 +199,7 @@
                                    Margin="0,0,6,0"
                                    Text="{Binding SearchLabel}" />
                         <TextBox Grid.Column="1"
+                                 AutomationProperties.AutomationId="ItemSearchBox"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
 
@@ -225,10 +236,12 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding GoToIdText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox AutomationProperties.AutomationId="ItemGoToIdBox"
+                                 Text="{Binding GoToIdText, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Grid.Column="1"
                                 Margin="6,0,0,0"
                                 Padding="10,2"
+                                AutomationProperties.AutomationId="ItemGoToIdButton"
                                 Content="{Binding GoToIdLabel}"
                                 Command="{Binding GoToItemIdCommand}" />
                     </Grid>
@@ -290,6 +303,7 @@
                     </Expander>
 
                     <ListBox Grid.Row="5"
+                             AutomationProperties.AutomationId="ItemList"
                              ItemsSource="{Binding Items}"
                              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                              VirtualizingStackPanel.IsVirtualizing="True"
@@ -359,15 +373,18 @@
                     <TextBlock Grid.Row="0"
                                FontSize="15"
                                FontWeight="Bold"
+                               AutomationProperties.AutomationId="ItemDetailHeader"
                                Text="{Binding DetailHeader}" />
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
                         <TextBlock VerticalAlignment="Center"
                                    Margin="0,0,6,0"
                                    Text="{Binding IdLabel}" />
                         <TextBox Width="90"
+                                 AutomationProperties.AutomationId="ItemIdBox"
                                  Text="{Binding ItemIdText, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Margin="6,0,12,0"
                                 Padding="10,2"
+                                AutomationProperties.AutomationId="ItemChangeIdButton"
                                 Content="{Binding ChangeIdText}"
                                 Command="{Binding ChangeItemIdCommand}"
                                 IsEnabled="{Binding IsEditable}" />
@@ -376,11 +393,12 @@
                                    Text="{Binding ClassLabel}" />
                         <TextBlock VerticalAlignment="Center"
                                    FontWeight="SemiBold"
+                                   AutomationProperties.AutomationId="ItemClassText"
                                    Text="{Binding ItemClassText}" />
                     </StackPanel>
                 </Grid>
 
-                <TabControl Grid.Row="1">
+                <TabControl Grid.Row="1" AutomationProperties.AutomationId="ItemTabs">
                     <TabItem Header="{Binding FieldsTabText}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
@@ -396,6 +414,7 @@
                                     <TextBox Grid.Column="1"
                                              Width="240"
                                              HorizontalAlignment="Left"
+                                             AutomationProperties.AutomationId="ItemFieldFilterBox"
                                              Text="{Binding FieldFilter, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
 
@@ -532,6 +551,7 @@
                             <TextBlock Grid.Row="0"
                                        Margin="0,0,0,6"
                                        Foreground="#FF666666"
+                                       AutomationProperties.AutomationId="ShopkeeperCountText"
                                        Text="{Binding ShopkeeperCountText}" />
                             <Grid Grid.Row="1" Margin="0,0,0,2">
                                 <Grid.ColumnDefinitions>
@@ -548,7 +568,8 @@
                             <ScrollViewer Grid.Row="2"
                                           VerticalScrollBarVisibility="Auto"
                                           HorizontalScrollBarVisibility="Disabled">
-                                <ItemsControl ItemsSource="{Binding ShopkeeperEntries}">
+                                <ItemsControl AutomationProperties.AutomationId="ShopkeeperEntries"
+                                              ItemsSource="{Binding ShopkeeperEntries}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Margin="0,1">
@@ -562,6 +583,8 @@
                                                            Text="{Binding DealerName}" />
                                                 <TextBox Grid.Column="1"
                                                          Margin="8,0,0,0"
+                                                         AutomationProperties.AutomationId="ShopkeeperQuantityBox"
+                                                         AutomationProperties.Name="{Binding DealerName}"
                                                          Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}" />
                                                 <Button Grid.Column="2"
                                                         Margin="8,0,0,0"
@@ -588,6 +611,7 @@
                                            Text="{Binding ShopkeeperAddDealerLabel}" />
                                 <ComboBox Width="200"
                                           Margin="8,0,0,0"
+                                          AutomationProperties.AutomationId="ShopkeeperDealerCombo"
                                           DisplayMemberPath="DealerName"
                                           IsEnabled="{Binding IsEditable}"
                                           ItemsSource="{Binding ShopkeeperDealerOptions}"
@@ -597,11 +621,13 @@
                                            Text="{Binding ShopkeeperQuantityColumn}" />
                                 <TextBox Width="90"
                                          Margin="8,0,0,0"
+                                         AutomationProperties.AutomationId="ShopkeeperNewQuantityBox"
                                          IsEnabled="{Binding IsEditable}"
                                          Text="{Binding NewShopkeeperQuantity, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="{Binding ShopkeeperQuantityColumn}" />
                                 <Button Margin="8,0,0,0"
                                         Padding="10,2"
+                                        AutomationProperties.AutomationId="ShopkeeperAddButton"
                                         Command="{Binding AddShopkeeperEntryCommand}"
                                         Content="{Binding ShopkeeperAddText}" />
                                 <TextBlock Margin="12,0,0,0"
@@ -662,9 +688,11 @@
                                     <TextBlock FontWeight="SemiBold"
                                                Text="{Binding GraphicImageListLabel}" />
                                     <TextBlock Foreground="#FF666666"
+                                               AutomationProperties.AutomationId="ItemGraphicImageListInfo"
                                                Text="{Binding GraphicImageListInfo}" />
                                 </StackPanel>
-                                <ListBox ItemsSource="{Binding GraphicImages}"
+                                <ListBox AutomationProperties.AutomationId="ItemImageList"
+                                         ItemsSource="{Binding GraphicImages}"
                                          SelectedItem="{Binding SelectedGraphicImage, Mode=TwoWay}"
                                          VirtualizingStackPanel.IsVirtualizing="True"
                                          VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -706,6 +734,7 @@
                                                    Text="{Binding GraphicTypeLabel}" />
                                         <ComboBox Width="180"
                                                   VerticalAlignment="Center"
+                                                  AutomationProperties.AutomationId="ItemGraphicTypeCombo"
                                                   ItemsSource="{Binding GraphicTypes}"
                                                   SelectedItem="{Binding SelectedGraphicType, Mode=TwoWay}"
                                                   DisplayMemberPath="Text" />
@@ -762,10 +791,12 @@
 
         <Expander Grid.Row="3"
                   Margin="0,6,0,0"
+                  AutomationProperties.AutomationId="ItemValidationExpander"
                   Header="{Binding ValidationLabel}"
                   IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
             <ListBox Height="110"
                      Margin="4,4,0,0"
+                     AutomationProperties.AutomationId="ItemValidationList"
                      ItemsSource="{Binding ValidationIssues}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -796,6 +827,7 @@
             </ProgressBar>
             <TextBlock Grid.Row="1"
                        Margin="0,4,0,0"
+                       AutomationProperties.AutomationId="ItemStatus"
                        TextWrapping="Wrap"
                        Text="{Binding StatusText}" />
         </Grid>

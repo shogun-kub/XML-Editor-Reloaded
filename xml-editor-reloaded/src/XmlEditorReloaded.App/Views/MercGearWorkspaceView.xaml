@@ -29,25 +29,30 @@
         <WrapPanel Grid.Row="0" Margin="0,0,0,6">
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="MercUndoButton"
                     Content="{Binding UndoText}"
                     Command="{Binding UndoCommand}"
                     ToolTip="{Binding UndoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="MercRedoButton"
                     Content="{Binding RedoText}"
                     Command="{Binding RedoCommand}"
                     ToolTip="{Binding RedoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="MercSaveButton"
                     Content="{Binding SaveText}"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding IsDirty}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="MercValidateButton"
                     Content="{Binding ValidateText}"
                     Command="{Binding ValidateCommand}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="MercReloadButton"
                     Content="{Binding ReloadText}"
                     Command="{Binding ReloadCommand}" />
             <TextBlock VerticalAlignment="Center"
@@ -56,6 +61,7 @@
             <ComboBox Width="190"
                       Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="MercLanguageCombo"
                       ItemsSource="{Binding LanguageOptions}"
                       SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText"
@@ -63,6 +69,7 @@
                       IsEnabled="{Binding IsLanguageSelectorEnabled}" />
             <TextBlock VerticalAlignment="Center"
                        Foreground="#FF666666"
+                       AutomationProperties.AutomationId="MercCountText"
                        Text="{Binding CountText}" />
         </WrapPanel>
 
@@ -103,9 +110,11 @@
                                    Margin="0,0,6,0"
                                    Text="{Binding SearchLabel}" />
                         <TextBox Grid.Column="1"
+                                 AutomationProperties.AutomationId="MercSearchBox"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                     <ListBox Grid.Row="1"
+                             AutomationProperties.AutomationId="MercList"
                              ItemsSource="{Binding Mercs}"
                              SelectedItem="{Binding SelectedMerc, Mode=TwoWay}"
                              VirtualizingStackPanel.IsVirtualizing="True"
@@ -132,9 +141,11 @@
                            Margin="0,0,0,6"
                            FontSize="15"
                            FontWeight="Bold"
+                           AutomationProperties.AutomationId="MercDetailHeader"
                            Text="{Binding DetailHeader}" />
 
                 <TabControl Grid.Row="1"
+                            AutomationProperties.AutomationId="MercKitTabs"
                             ItemsSource="{Binding Kits}"
                             IsEnabled="{Binding IsEditable}">
                     <TabControl.ItemTemplate>
@@ -169,6 +180,7 @@
                                         <TextBox Grid.Row="0"
                                                  Grid.Column="1"
                                                  MinWidth="220"
+                                                 AutomationProperties.AutomationId="MercKitNameBox"
                                                  MaxLength="{Binding NameMaxLength}"
                                                  Text="{Binding Name, UpdateSourceTrigger=LostFocus}" />
                                         <TextBlock Grid.Row="0"
@@ -187,6 +199,7 @@
                                         <TextBox Grid.Row="0"
                                                  Grid.Column="4"
                                                  Width="70"
+                                                 AutomationProperties.AutomationId="MercPriceModBox"
                                                  Text="{Binding PriceMod, UpdateSourceTrigger=LostFocus}" />
                                         <TextBlock Grid.Row="1"
                                                    Grid.Column="3"
@@ -197,6 +210,7 @@
                                                  Grid.Column="4"
                                                  Width="70"
                                                  Margin="0,4,0,0"
+                                                 AutomationProperties.AutomationId="MercAbsolutePriceBox"
                                                  Text="{Binding AbsolutePrice, UpdateSourceTrigger=LostFocus}" />
                                     </Grid>
 
@@ -242,6 +256,7 @@
                                                                Text="{Binding Label}" />
                                                     <views:RelationPicker Grid.Column="1"
                                                                           VerticalAlignment="Center"
+                                                                          AutomationId="{Binding ItemField}"
                                                                           RelationData="{Binding Relation}"
                                                                           SelectedValue="{Binding ItemId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                           Visibility="{Binding HasRelation, Converter={StaticResource BoolToVisibility}}" />
@@ -252,16 +267,19 @@
                                                     <TextBox Grid.Column="2"
                                                              Margin="6,0,0,0"
                                                              VerticalAlignment="Center"
+                                                             AutomationProperties.AutomationId="{Binding StatusField}"
                                                              Text="{Binding Status, UpdateSourceTrigger=LostFocus}" />
                                                     <TextBox Grid.Column="3"
                                                              Margin="6,0,0,0"
                                                              VerticalAlignment="Center"
+                                                             AutomationProperties.AutomationId="{Binding QuantityField}"
                                                              Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}"
                                                              Visibility="{Binding SupportsQuantity, Converter={StaticResource BoolToVisibility}}" />
                                                     <CheckBox Grid.Column="4"
                                                               Margin="6,0,0,0"
                                                               HorizontalAlignment="Center"
                                                               VerticalAlignment="Center"
+                                                              AutomationProperties.AutomationId="{Binding DropField}"
                                                               IsChecked="{Binding IsDrop, Mode=TwoWay}"
                                                               Visibility="{Binding SupportsDrop, Converter={StaticResource BoolToVisibility}}" />
                                                 </Grid>
@@ -278,10 +296,12 @@
 
         <Expander Grid.Row="3"
                   Margin="0,6,0,0"
+                  AutomationProperties.AutomationId="MercValidationExpander"
                   Header="{Binding ValidationLabel}"
                   IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
             <ListBox Height="110"
                      Margin="4,4,0,0"
+                     AutomationProperties.AutomationId="MercValidationList"
                      ItemsSource="{Binding ValidationIssues}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -312,6 +332,7 @@
             </ProgressBar>
             <TextBlock Grid.Row="1"
                        Margin="0,4,0,0"
+                       AutomationProperties.AutomationId="MercStatus"
                        TextWrapping="Wrap"
                        Text="{Binding StatusText}" />
         </Grid>

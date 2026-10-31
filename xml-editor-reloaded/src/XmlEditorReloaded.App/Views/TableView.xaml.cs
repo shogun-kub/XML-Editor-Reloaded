@@ -251,6 +251,7 @@ public partial class TableView : UserControl
     {
         var picker = new FrameworkElementFactory(typeof(RelationPicker));
         picker.SetValue(RelationPicker.RelationDataProperty, relation);
+        picker.SetValue(RelationPicker.AutomationIdProperty, fieldName);
         picker.SetBinding(RelationPicker.SelectedValueProperty, new Binding($"[{fieldName}]")
         {
             Mode = BindingMode.TwoWay,

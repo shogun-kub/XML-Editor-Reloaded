@@ -26,6 +26,7 @@
             <TextBlock VerticalAlignment="Center" Text="{Binding IdLabel}" />
             <TextBox Grid.Column="1"
                      VerticalAlignment="Center"
+                     AutomationProperties.AutomationId="ItemCreationIdBox"
                      Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
@@ -37,6 +38,7 @@
             <TextBlock VerticalAlignment="Center" Text="{Binding NameLabel}" />
             <TextBox Grid.Column="1"
                      VerticalAlignment="Center"
+                     AutomationProperties.AutomationId="ItemCreationNameBox"
                      Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
@@ -48,6 +50,7 @@
             <TextBlock VerticalAlignment="Center" Text="{Binding ClassLabel}" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="ItemCreationClassCombo"
                       ItemsSource="{Binding Classes}"
                       SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText" />
@@ -58,12 +61,14 @@
                     HorizontalAlignment="Right">
             <Button Margin="0,8,8,0"
                     Padding="16,4"
+                    AutomationProperties.AutomationId="ItemCreationOkButton"
                     IsDefault="True"
                     IsEnabled="{Binding IsValid}"
                     Content="{Binding OkText}"
                     Click="OnOk" />
             <Button Margin="0,8,0,0"
                     Padding="16,4"
+                    AutomationProperties.AutomationId="ItemCreationCancelButton"
                     IsCancel="True"
                     Content="{Binding CancelText}"
                     Click="OnCancel" />

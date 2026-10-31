@@ -33,6 +33,23 @@ internal static class ScenarioCatalog
         new CloseDirtyTabScenario(),
         new SaveAllAndCloseScenario(),
         new MalformedTableScenario(),
+        new ItemWorkspaceScenario(),
+        new ItemSearchScenario(),
+        new ItemAttachmentsScenario(),
+        new ItemFieldEditScenario(),
+        new ItemSubTablesScenario(),
+        new ItemChildRowsScenario(),
+        new ItemNestedScenario(),
+        new ItemOverlayScenario(),
+        new ItemUntranslatedScenario(),
+        new ItemLifecycleScenario(),
+        new MercGearScenario(),
+        new MercKitsScenario(),
+        new MercSlotsScenario(),
+        new MercOverlayScenario(),
+        new ShopkeeperScenario(),
+        new ShopkeeperEditScenario(),
+        new ShopkeeperDuplicateScenario(),
     ];
 
     /// <summary>

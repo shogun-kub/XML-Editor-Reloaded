@@ -190,9 +190,11 @@ internal static class ScenarioUi
                 Thread.Sleep(80);
             }
         }
-        catch (ElementNotAvailableException)
+        catch (Exception exception) when (
+            exception is ElementNotAvailableException or ElementNotEnabledException
+                or System.Runtime.InteropServices.COMException)
         {
-            // The control is being rebuilt.
+            // The control was rebuilt, or the popup closed itself.
         }
     }
 
@@ -557,6 +559,49 @@ internal static class ScenarioUi
         });
         Thread.Sleep(400);
     }
+
+    /// <summary>
+    /// Closes the first editor tab. The header of a master-detail workspace tab exposes the type name of
+    /// its view model instead of the table name, so it cannot be found by name like a generic table tab.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <exception cref="UiTimeoutException">Thrown when no editor tab or close button exists.</exception>
+    public static void CloseActiveEditorTab(AutomationElement window)
+    {
+        var tab = window.WaitById("EditorsTabs")
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FirstOrDefault()
+            ?? throw new UiTimeoutException("Открытых вкладок нет.");
+        var close = tab.FindFirst(TreeScope.Descendants, Ui.ByName("✕"))
+            ?? throw new UiTimeoutException("Кнопка закрытия вкладки не найдена.");
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                close.InvokeButton();
+            }
+            catch (Exception exception) when (exception is UiTimeoutException or ElementNotAvailableException)
+            {
+                // The tab disappeared before the invoke returned.
+            }
+        });
+        Thread.Sleep(400);
+    }
+
+    /// <summary>
+    /// Waits until the editor tab strip holds the expected number of tabs.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <param name="expected">Expected tab count.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the count does not match in time.</exception>
+    public static void WaitForEditorTabCount(AutomationElement window, int expected, TimeSpan? timeout = null) =>
+        Ui.WaitUntil(
+            () => window.WaitById("EditorsTabs")
+                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+                .Count == expected,
+            $"в редакторе {expected} вкладок",
+            timeout);
 
     /// <summary>
     /// Waits until the tab with the given table name is closed.

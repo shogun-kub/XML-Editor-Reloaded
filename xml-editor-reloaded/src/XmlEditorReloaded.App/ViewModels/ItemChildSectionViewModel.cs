@@ -37,6 +37,9 @@ public sealed partial class ItemChildSectionViewModel : ObservableObject
         Member = member;
         Label = label;
         Editor = editor;
+        // A row added, removed, or restored by undo rebuilds the filtered rows after the history
+        // notification has already fired, so the header counter follows the collection directly.
+        editor.Rows.CollectionChanged += (_, _) => RefreshCount();
     }
 
     /// <summary>

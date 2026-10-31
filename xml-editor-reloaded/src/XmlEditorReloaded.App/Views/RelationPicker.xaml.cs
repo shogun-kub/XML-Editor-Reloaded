@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using XmlEditorReloaded.App.ViewModels;
@@ -43,6 +44,15 @@ public partial class RelationPicker : UserControl
         typeof(RelationPicker),
         new PropertyMetadata(false, OnIsReadOnlyChanged));
 
+    /// <summary>
+    /// Identifies the <see cref="AutomationId"/> dependency property.
+    /// </summary>
+    public static readonly DependencyProperty AutomationIdProperty = DependencyProperty.Register(
+        nameof(AutomationId),
+        typeof(string),
+        typeof(RelationPicker),
+        new PropertyMetadata(null, OnAutomationIdChanged));
+
     private bool _suppressText;
     private bool _committing;
 
@@ -82,6 +92,16 @@ public partial class RelationPicker : UserControl
         set => SetValue(IsReadOnlyProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the automation identifier assigned to the embedded value text box, so the picker
+    /// can be driven by UI automation.
+    /// </summary>
+    public string? AutomationId
+    {
+        get => (string?)GetValue(AutomationIdProperty);
+        set => SetValue(AutomationIdProperty, value);
+    }
+
     private static void OnRelationDataChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
         var picker = (RelationPicker)sender;
@@ -97,6 +117,12 @@ public partial class RelationPicker : UserControl
         var picker = (RelationPicker)sender;
         picker.ValueBox.IsReadOnly = picker.IsReadOnly;
         picker.DropDownButton.IsEnabled = !picker.IsReadOnly;
+    }
+
+    private static void OnAutomationIdChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+    {
+        var picker = (RelationPicker)sender;
+        AutomationProperties.SetAutomationId(picker.ValueBox, e.NewValue as string ?? string.Empty);
     }
 
     private void UpdateText()
