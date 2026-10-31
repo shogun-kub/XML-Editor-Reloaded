@@ -89,10 +89,45 @@
 
 ## 🔨 Сборка и проверка
 
-- Сборка: `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx`.
+- Сборка: `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -m:1 --no-restore` (вне песочницы
+  допустимо без `-m:1`; в песочнице без него сборка падает без диагностики — см. «Песочница»).
 - Вывод сборки — `out/bin` и `out/obj` в корне репозитория (`ArtifactsPath` в `Directory.Build.props`); `bin/obj` в каталогах проектов не создаются. Приложение запускайте из `out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
 - Не возвращайте вывод сборки в каталоги проектов: песочница агента помечает рабочее дерево меткой целостности Low, и exe, собранный внутри него, стартует с пониженными правами — запись в `%APPDATA%` запрещена, миграция метабазы падает с `SQLite error 14`. `out/` от этой метки свободен.
 - После milestone и зелёных `dotnet build`/`dotnet test` — локальный коммит `Mx: …`; push — только по просьбе.
 - Не редактируйте сгенерированные файлы (`obj/`, `*.g.cs`, `*.Designer.cs`).
 - Для новой логики парсинга, сохранения и декодирования добавляйте unit-тесты.
 - Перед завершением: сборка зелёная, round-trip без потерь, переводы только в оверлее.
+
+## 🧪 Песочница агента (DSH): проверенные обходы
+
+Песочница запрещает named pipes и запись вне рабочего каталога, поэтому часть штатных команд
+деградирует молча (сборка с кодом 1 и «Ошибок: 0», зависший `dotnet test`, `SecurityError` у
+скриптов). Проверенные рабочие формы:
+
+- **Сборка** — всегда одним узлом MSBuild и без неявного restore:
+  ```sh
+  dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -m:1 --no-restore
+  ```
+  Без `-m:1` узлы MSBuild не могут открыть свои pipes: команда завершается кодом 1 без единой
+  диагностики. Restore при необходимости — отдельно (`dotnet msbuild ... -t:Restore -m:1`).
+- **Тесты** — `dotnet test` на всём решении в песочнице зависает (testhost и воркеры MSBuild).
+  Запускайте `xml-editor-reloaded/test.ps1` (он собирает решение с `-m:1` и гоняет каждый
+  `*.Tests.csproj` с `--no-build --no-restore`) или один проект вручную:
+  ```sh
+  dotnet test xml-editor-reloaded/tests/XmlEditorReloaded.Xml.Tests/XmlEditorReloaded.Xml.Tests.csproj --no-build --no-restore
+  ```
+- **Политика PowerShell** — `test.ps1` и другие скрипты репозитория не подписаны, поэтому
+  `pwsh -File ...` падает с `SecurityError: файл не содержит цифровой подписи`. Обход:
+  ```sh
+  pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
+  ```
+  `-ExecutionPolicy Bypass` действует только на процесс и не меняет системную политику.
+- **Запись вне рабочего каталога** — песочница её блокирует (нужно подтверждение); настройки,
+  метабаза и `.tmp` должны оставаться внутри репозитория. Поэтому приложение и UI-smoke
+  запускаются только из `out/` (иначе Low integrity и `SQLite error 14`, см. раздел выше).
+- **UI-smoke** — нужен интерактивный рабочий стол и фокус; одновременно допустим только один
+  прогон, и во время него нельзя собирать решение (занятые `exe`/`dll`, а синтетические клики
+  уходят в другое окно). Запуск: `out/bin/XmlEditorReloaded.UiSmoke/<Configuration>/XmlEditorReloaded.UiSmoke.exe`
+  с `--work .tmp/ui-smoke/<run>` и `--keep` для разбора падений.
+- **Node.js и pipe-вывод** — в песочнице `child_process.spawn` с `stdio: 'pipe'` падает с `EPERM`
+  (named pipes запрещены). Используйте `stdio: 'inherit'`/`'ignore'` или перенаправление в файл.
