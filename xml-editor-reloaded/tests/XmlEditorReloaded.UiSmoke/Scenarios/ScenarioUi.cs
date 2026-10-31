@@ -204,20 +204,98 @@ internal static class ScenarioUi
     /// <returns>The dialog window, which contains the dialog-specific automation identifiers.</returns>
     /// <exception cref="UiTimeoutException">Thrown when no dialog appears in time.</exception>
     public static AutomationElement WaitForDialog(UiApp app, TimeSpan? timeout = null) =>
+        Ui.WaitFor(() => FindDialog(app), "диалог подтверждения", timeout);
+
+    /// <summary>
+    /// Waits until a modal dialog whose message contains the given text appears. Several save dialogs
+    /// open one after another during application close, so the text distinguishes them.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="fragment">Text expected inside the dialog message.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The matching dialog window.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when no matching dialog appears in time.</exception>
+    public static AutomationElement WaitForDialogWithText(
+        UiApp app,
+        string fragment,
+        TimeSpan? timeout = null) =>
         Ui.WaitFor(
             () =>
             {
-                var windows = AutomationElement.RootElement.FindAll(
+                var dialog = FindDialog(app);
+                return dialog?.FindById("MessageText") is { } message
+                    && message.ReadName().Contains(fragment, StringComparison.Ordinal)
+                    ? dialog
+                    : null;
+            },
+            $"диалог с текстом «{fragment}»",
+            timeout);
+
+    /// <summary>
+    /// Waits until no modal dialog of the application is open, or the application exits.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the dialog stays open.</exception>
+    public static void WaitForDialogClosed(UiApp app, TimeSpan? timeout = null)
+    {
+        var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
+        while (DateTime.UtcNow < deadline)
+        {
+            if (app.HasExited || FindDialog(app) is null)
+            {
+                return;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        throw new UiTimeoutException("Диалог подтверждения не закрылся.");
+    }
+
+    /// <summary>
+    /// Selects an open editor tab by the table name in its header.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <param name="tableName">Table name shown in the tab header.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the tab is not open.</exception>
+    public static void ActivateTab(AutomationElement window, string tableName)
+    {
+        var tab = window.WaitById("EditorsTabs")
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FirstOrDefault(candidate => candidate.ReadName().Contains(tableName, StringComparison.Ordinal)
+                || candidate
+                    .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                    .Any(text => text.ReadName().Contains(tableName, StringComparison.Ordinal)))
+            ?? throw new UiTimeoutException($"Вкладка {tableName} не найдена.");
+        tab.SelectItem();
+        Thread.Sleep(250);
+    }
+
+    /// <summary>
+    /// Finds the visible modal dialog of the application, if one is open.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <returns>The dialog window, or <see langword="null"/>.</returns>
+    private static AutomationElement? FindDialog(UiApp app)
+    {
+        try
+        {
+            return AutomationElement.RootElement
+                .FindAll(
                     TreeScope.Children,
                     new AndCondition(
                         new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
-                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)));
-                return windows
-                    .Cast<AutomationElement>()
-                    .FirstOrDefault(static window => window.FindById("MessageText") is not null);
-            },
-            "диалог подтверждения",
-            timeout);
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(static window => window.FindById("MessageText") is not null);
+        }
+        catch (Exception exception) when (
+            exception is ElementNotAvailableException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>
     /// Counts the top-level windows of a process; a modal dialog adds a second window.

@@ -165,6 +165,64 @@ internal sealed class UiApp : IDisposable
     }
 
     /// <summary>
+    /// Gets a value indicating whether the application process has exited.
+    /// </summary>
+    public bool HasExited => _process.HasExited;
+
+    /// <summary>
+    /// Requests a normal window close without waiting for the result. The close may show unsaved-change
+    /// dialogs, which block the UI thread, so the request runs in the background.
+    /// </summary>
+    public void RequestClose()
+    {
+        var window = Window;
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                if (window.TryGetCurrentPattern(WindowPattern.Pattern, out var pattern)
+                    && pattern is WindowPattern windowPattern)
+                {
+                    windowPattern.Close();
+                    return;
+                }
+            }
+            catch (Exception exception) when (
+                exception is ElementNotAvailableException
+                    or InvalidOperationException
+                    or System.Runtime.InteropServices.COMException)
+            {
+                // The window already closed; the process exit is checked by the scenario.
+            }
+
+            try
+            {
+                _process.CloseMainWindow();
+            }
+            catch (InvalidOperationException)
+            {
+                // The process already exited.
+            }
+        });
+        Thread.Sleep(400);
+    }
+
+    /// <summary>
+    /// Waits until the application process exits.
+    /// </summary>
+    /// <param name="timeout">How long to wait.</param>
+    /// <returns><see langword="true"/> when the process exited in time.</returns>
+    public bool WaitForExit(TimeSpan timeout)
+    {
+        if (_process.HasExited)
+        {
+            return true;
+        }
+
+        return _process.WaitForExit((int)timeout.TotalMilliseconds);
+    }
+
+    /// <summary>
     /// Closes the application through the window-pattern close command and waits for the process to
     /// exit.
     /// </summary>

@@ -21,11 +21,13 @@ internal static class ScenarioCatalog
     [
         new ColdStartScenario(),
         new DatasetListScenario(),
+        new DatasetSwitchScenario(),
         new OpenGenericTableScenario(),
         new TableDetailsScenario(),
         new GridSearchScenario(),
         new SaveDirtyTabScenario(),
         new CloseDirtyTabScenario(),
+        new SaveAllAndCloseScenario(),
         new MalformedTableScenario(),
     ];
 
