@@ -32,7 +32,15 @@ internal static class Program
                 return 0;
             }
 
-            return new SmokeRunner(options, strings, catalog).Run();
+            NativeInput.KeepDisplayOn();
+            try
+            {
+                return new SmokeRunner(options, strings, catalog).Run();
+            }
+            finally
+            {
+                NativeInput.AllowDisplaySleep();
+            }
         }
         catch (ArgumentException exception)
         {

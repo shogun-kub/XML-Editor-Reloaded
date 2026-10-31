@@ -57,6 +57,18 @@ internal static class Ui
         SafeFindAll(root, TreeScope.Descendants, condition);
 
     /// <summary>
+    /// Finds every descendant with the given automation identifier. Repeated identifiers occur inside
+    /// data templates, for example one filter row per criterion.
+    /// </summary>
+    /// <param name="root">Root element.</param>
+    /// <param name="automationId">Identifier assigned by the application.</param>
+    /// <returns>The matching elements in UI Automation order.</returns>
+    public static IReadOnlyList<AutomationElement> FindAllById(
+        this AutomationElement root,
+        string automationId) =>
+        SafeFindAll(root, TreeScope.Descendants, ById(automationId));
+
+    /// <summary>
     /// Waits until a descendant with the given automation identifier exists.
     /// </summary>
     /// <param name="root">Root element.</param>
@@ -253,6 +265,35 @@ internal static class Ui
     }
 
     /// <summary>
+    /// Adds an element to the current selection through the selection-item pattern. Used for
+    /// multi-select grids when no keyboard input is involved.
+    /// </summary>
+    /// <param name="element">Selectable element.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the element does not support multi-selection.</exception>
+    public static void AddToSelection(this AutomationElement element)
+    {
+        if (TryGet(element, SelectionItemPattern.Pattern, out SelectionItemPattern selection))
+        {
+            try
+            {
+                selection.AddToSelection();
+                Thread.Sleep(60);
+                return;
+            }
+            catch (Exception exception) when (
+                exception is ElementNotAvailableException
+                    or InvalidOperationException
+                    or System.Runtime.InteropServices.COMException)
+            {
+                throw new UiTimeoutException(
+                    $"The control '{element.ReadName()}' does not support adding to the selection: {exception.Message}");
+            }
+        }
+
+        throw new UiTimeoutException($"The control '{element.ReadName()}' does not support selection.");
+    }
+
+    /// <summary>
     /// Sets the text of an input control through the value pattern, falling back to the keyboard.
     /// </summary>
     /// <param name="element">Editable element.</param>
@@ -274,9 +315,31 @@ internal static class Ui
         }
 
         element.SetFocus();
-        NativeInput.Press(NativeInput.VirtualKey.A, control: true);
-        NativeInput.TypeText(text);
+        NativeInput.PressIn(element, NativeInput.VirtualKey.A, control: true);
+        NativeInput.TypeTextIn(element, text);
         Thread.Sleep(60);
+    }
+
+    /// <summary>
+    /// Sets a check box to the requested state through the toggle pattern, with a click fallback.
+    /// </summary>
+    /// <param name="checkBox">Check box element.</param>
+    /// <param name="isChecked">Whether the check box should be checked.</param>
+    public static void SetChecked(this AutomationElement checkBox, bool isChecked)
+    {
+        if (TryGet(checkBox, TogglePattern.Pattern, out TogglePattern toggle))
+        {
+            var current = toggle.Current.ToggleState == ToggleState.On;
+            if (current != isChecked)
+            {
+                toggle.Toggle();
+                Thread.Sleep(120);
+            }
+
+            return;
+        }
+
+        checkBox.Click();
     }
 
     /// <summary>
@@ -316,14 +379,41 @@ internal static class Ui
     /// <param name="text">Text of the item to select.</param>
     /// <param name="timeout">Optional timeout.</param>
     /// <exception cref="UiTimeoutException">Thrown when the item cannot be found.</exception>
-    public static void SelectComboItem(this AutomationElement combo, string text, TimeSpan? timeout = null)
+    public static void SelectComboItem(this AutomationElement combo, string text, TimeSpan? timeout = null) =>
+        combo.SelectComboItemCore(
+            candidate => string.Equals(ItemText(candidate), text, StringComparison.Ordinal),
+            $"combo item '{text}'",
+            timeout);
+
+    /// <summary>
+    /// Selects an item of a combo box whose visible text starts with the given prefix. Useful for
+    /// display texts that combine a field name and a localized type, such as bulk-edit columns.
+    /// </summary>
+    /// <param name="combo">Combo box.</param>
+    /// <param name="prefix">Prefix of the item text.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the item cannot be found.</exception>
+    public static void SelectComboItemStartingWith(
+        this AutomationElement combo,
+        string prefix,
+        TimeSpan? timeout = null) =>
+        combo.SelectComboItemCore(
+            candidate => ItemText(candidate).StartsWith(prefix, StringComparison.Ordinal),
+            $"combo item starting with '{prefix}'",
+            timeout);
+
+    private static void SelectComboItemCore(
+        this AutomationElement combo,
+        Func<AutomationElement, bool> matches,
+        string description,
+        TimeSpan? timeout)
     {
         combo.ExpandCombo();
         var item = WaitFor(
             () => combo
                 .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
-                .FirstOrDefault(candidate => string.Equals(ItemText(candidate), text, StringComparison.Ordinal)),
-            $"combo item '{text}'",
+                .FirstOrDefault(matches),
+            description,
             timeout);
         item.SelectItem();
         Thread.Sleep(120);
@@ -389,6 +479,26 @@ internal static class Ui
             {
                 scroll.SetScrollPercent(ScrollPattern.NoScroll, 0);
                 Thread.Sleep(150);
+            }
+            catch (InvalidOperationException)
+            {
+                // A grid that does not need scrolling rejects the call.
+            }
+        }
+    }
+
+    /// <summary>
+    /// Scrolls a grid to the bottom when it supports the scroll pattern.
+    /// </summary>
+    /// <param name="grid">Grid element.</param>
+    public static void ScrollToBottom(this AutomationElement grid)
+    {
+        if (TryGet(grid, ScrollPattern.Pattern, out ScrollPattern scroll))
+        {
+            try
+            {
+                scroll.SetScrollPercent(ScrollPattern.NoScroll, 100);
+                Thread.Sleep(200);
             }
             catch (InvalidOperationException)
             {
@@ -484,14 +594,18 @@ internal static class Ui
     public static void EditCell(this AutomationElement grid, int row, int column, string value)
     {
         var cell = grid.Cell(row, column);
+        // A real mouse click both activates the window and makes the cell current; UIA focus alone does
+        // not always give the window the foreground, and without it synthetic keys go elsewhere.
+        cell.Click();
+        Thread.Sleep(150);
         cell.SetFocus();
         Thread.Sleep(120);
-        NativeInput.Press(NativeInput.VirtualKey.F2);
+        NativeInput.PressIn(grid, NativeInput.VirtualKey.F2);
         Thread.Sleep(150);
-        NativeInput.Press(NativeInput.VirtualKey.A, control: true);
-        NativeInput.TypeText(value);
+        NativeInput.PressIn(grid, NativeInput.VirtualKey.A, control: true);
+        NativeInput.TypeTextIn(grid, value);
         Thread.Sleep(60);
-        NativeInput.Press(NativeInput.VirtualKey.Return);
+        NativeInput.PressIn(grid, NativeInput.VirtualKey.Return);
         Thread.Sleep(200);
     }
 

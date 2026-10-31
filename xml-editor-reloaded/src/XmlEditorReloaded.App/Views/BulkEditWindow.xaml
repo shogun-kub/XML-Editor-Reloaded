@@ -46,6 +46,7 @@
                       Grid.Row="0"
                       Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="BulkEditColumnCombo"
                       ItemsSource="{Binding Columns}"
                       SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText" />
@@ -58,6 +59,7 @@
                       Grid.Row="0"
                       Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="BulkEditOperationCombo"
                       ItemsSource="{Binding Operations}"
                       SelectedItem="{Binding SelectedOperation, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText" />
@@ -69,6 +71,7 @@
             <TextBox Grid.Column="5"
                      Grid.Row="0"
                      VerticalAlignment="Center"
+                     AutomationProperties.AutomationId="BulkEditOperandBox"
                      Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}"
                      IsEnabled="{Binding IsOperandEnabled}" />
             <TextBlock Grid.Column="5"
@@ -97,15 +100,18 @@
         <TextBlock Grid.Row="2"
                    Margin="0,0,0,2"
                    Foreground="#FF666666"
+                   AutomationProperties.AutomationId="BulkEditTarget"
                    Text="{Binding TargetText}" />
 
         <TextBlock Grid.Row="3"
                    Margin="0,0,0,6"
                    FontWeight="SemiBold"
+                   AutomationProperties.AutomationId="BulkEditSummary"
                    Text="{Binding SummaryText}" />
 
         <DataGrid x:Name="PreviewGrid"
                   Grid.Row="4"
+                  AutomationProperties.AutomationId="BulkEditPreviewGrid"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -128,6 +134,7 @@
                    Margin="0,6,0,0"
                    Foreground="#FFB00020"
                    TextWrapping="Wrap"
+                   AutomationProperties.AutomationId="BulkEditError"
                    Text="{Binding ErrorText}"
                    Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}" />
 
@@ -137,12 +144,14 @@
             <Button Margin="0,10,8,0"
                     Padding="16,4"
                     IsDefault="True"
+                    AutomationProperties.AutomationId="BulkEditApplyButton"
                     Content="{Binding ApplyText}"
                     IsEnabled="{Binding CanApply}"
                     Click="OnApply" />
             <Button Margin="0,10,0,0"
                     Padding="16,4"
                     IsCancel="True"
+                    AutomationProperties.AutomationId="BulkEditCancelButton"
                     Content="{Binding CancelText}"
                     Click="OnCancel" />
         </StackPanel>

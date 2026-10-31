@@ -207,6 +207,189 @@ internal static class ScenarioUi
         Ui.WaitFor(() => FindDialog(app), "диалог подтверждения", timeout);
 
     /// <summary>
+    /// Waits until a native message box of the application appears, for example the delete-row
+    /// confirmation created by <c>MessageBox.Show</c>.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The message-box window.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when no message box appears in time.</exception>
+    public static AutomationElement WaitForMessageBox(UiApp app, TimeSpan? timeout = null) =>
+        Ui.WaitFor(() => FindMessageBox(app), "окно подтверждения удаления", timeout);
+
+    /// <summary>
+    /// Answers a native message box. The Yes button is identified by the Win32 control identifier
+    /// and, as a fallback, by its localized caption.
+    /// </summary>
+    /// <param name="messageBox">Message-box window.</param>
+    /// <param name="yes">Whether to press Yes; otherwise No.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the requested button is not found.</exception>
+    public static void AnswerMessageBox(AutomationElement messageBox, bool yes)
+    {
+        var expectedId = yes ? "6" : "7";
+        var buttons = messageBox
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button));
+        var button = buttons.FirstOrDefault(candidate =>
+                string.Equals(candidate.Current.AutomationId, expectedId, StringComparison.Ordinal))
+            ?? buttons.FirstOrDefault(candidate => IsYesNoCaption(candidate.ReadName(), yes))
+            ?? throw new UiTimeoutException($"Кнопка {(yes ? "«Да»" : "«Нет»")} не найдена в окне подтверждения.");
+        button.InvokeButton();
+        Thread.Sleep(200);
+    }
+
+    /// <summary>
+    /// Returns the visible text of a native message box, combining every text descendant.
+    /// </summary>
+    /// <param name="messageBox">Message-box window.</param>
+    /// <returns>Message text with single spaces.</returns>
+    public static string ReadMessageBoxText(AutomationElement messageBox) =>
+        string.Join(
+            " ",
+            messageBox
+                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                .Select(static text => text.ReadName())
+                .Where(static text => !string.IsNullOrWhiteSpace(text)));
+
+    private static bool IsYesNoCaption(string caption, bool yes)
+    {
+        var trimmed = caption.Replace("&", string.Empty, StringComparison.Ordinal).Trim();
+        return yes
+            ? trimmed is "Да" or "Yes" or "OK"
+            : trimmed is "Нет" or "No" or "Cancel" or "Отмена";
+    }
+
+    /// <summary>
+    /// Expands or collapses a WPF expander.
+    /// </summary>
+    /// <param name="expander">Expander element.</param>
+    /// <param name="expanded">Whether the expander should be expanded.</param>
+    public static void SetExpanded(AutomationElement expander, bool expanded)
+    {
+        if (expander.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out var raw)
+            && raw is ExpandCollapsePattern pattern)
+        {
+            var state = pattern.Current.ExpandCollapseState;
+            if (expanded && state != ExpandCollapseState.Expanded)
+            {
+                pattern.Expand();
+            }
+            else if (!expanded && state != ExpandCollapseState.Collapsed)
+            {
+                pattern.Collapse();
+            }
+
+            Thread.Sleep(250);
+            return;
+        }
+
+        expander.Click();
+    }
+
+    /// <summary>
+    /// Waits until the context-menu item with the given caption appears and returns it.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="caption">Menu item caption.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The menu item.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the item does not appear in time.</exception>
+    public static AutomationElement WaitForMenuItem(
+        UiApp app,
+        string caption,
+        TimeSpan? timeout = null) =>
+        Ui.WaitFor(
+            () => AutomationElement.RootElement
+                .FindAll(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(item => string.Equals(item.ReadName(), caption, StringComparison.Ordinal)),
+            $"пункт меню «{caption}»",
+            timeout);
+
+    /// <summary>
+    /// Waits until the grid shows the column header with the given caption.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <param name="caption">Column header caption.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The header element.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the header does not appear in time.</exception>
+    public static AutomationElement WaitForColumnHeader(
+        AutomationElement window,
+        string caption,
+        TimeSpan? timeout = null) =>
+        Ui.WaitFor(
+            () => window.WaitById("RowsGrid")
+                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.HeaderItem))
+                .FirstOrDefault(header => string.Equals(header.ReadName(), caption, StringComparison.Ordinal)),
+            $"заголовок колонки «{caption}»",
+            timeout);
+
+    /// <summary>
+    /// Returns the captions of the visible grid column headers in display order.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <returns>Header captions.</returns>
+    public static List<string> ColumnHeaderCaptions(AutomationElement window) =>
+        window.WaitById("RowsGrid")
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.HeaderItem))
+            .Select(static header => header.ReadName())
+            .Where(static caption => !string.IsNullOrEmpty(caption))
+            .ToList();
+
+    /// <summary>
+    /// Waits until no native message box of the application is open.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the message box stays open.</exception>
+    public static void WaitForMessageBoxClosed(UiApp app, TimeSpan? timeout = null)
+    {
+        var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
+        while (DateTime.UtcNow < deadline)
+        {
+            if (app.HasExited || FindMessageBox(app) is null)
+            {
+                return;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        throw new UiTimeoutException("Окно подтверждения не закрылось.");
+    }
+
+    private static AutomationElement? FindMessageBox(UiApp app)
+    {
+        try
+        {
+            // A message box is owned by the main window, so the automation tree may nest it under that
+            // window instead of listing it among the root's children.
+            return AutomationElement.RootElement
+                .FindAll(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(static window => window.FindById("StatusText") is null
+                    && window.FindById("MessageText") is null
+                    && window.FindById("BulkEditApplyButton") is null
+                    && window.FindFirst(
+                        TreeScope.Descendants,
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)) is not null);
+        }
+        catch (Exception exception) when (
+            exception is ElementNotAvailableException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Waits until a modal dialog whose message contains the given text appears. Several save dialogs
     /// open one after another during application close, so the text distinguishes them.
     /// </summary>
@@ -230,6 +413,76 @@ internal static class ScenarioUi
             },
             $"диалог с текстом «{fragment}»",
             timeout);
+
+    /// <summary>
+    /// Waits until any top-level window of the application contains the given automation identifier,
+    /// for example a modeless dialog with its own controls.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="automationId">Identifier that identifies the dialog.</param>
+    /// <param name="description">Description used in the timeout message.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The window that contains the identifier.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the window does not appear in time.</exception>
+    public static AutomationElement WaitForWindowWithId(
+        UiApp app,
+        string automationId,
+        string description,
+        TimeSpan? timeout = null) =>
+        Ui.WaitFor(
+            () => AutomationElement.RootElement
+                .FindAll(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(window => window.FindById(automationId) is not null),
+            description,
+            timeout);
+
+    /// <summary>
+    /// Waits until no top-level window of the application contains the given automation identifier.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="automationId">Identifier that identifies the dialog.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the window stays open.</exception>
+    public static void WaitForWindowWithIdClosed(UiApp app, string automationId, TimeSpan? timeout = null)
+    {
+        var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
+        while (DateTime.UtcNow < deadline)
+        {
+            if (app.HasExited || FindWindowWithId(app, automationId) is null)
+            {
+                return;
+            }
+
+            Thread.Sleep(100);
+        }
+
+        throw new UiTimeoutException($"Окно с элементом '{automationId}' не закрылось.");
+    }
+
+    private static AutomationElement? FindWindowWithId(UiApp app, string automationId)
+    {
+        try
+        {
+            return AutomationElement.RootElement
+                .FindAll(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(window => window.FindById(automationId) is not null);
+        }
+        catch (Exception exception) when (
+            exception is ElementNotAvailableException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>
     /// Waits until no modal dialog of the application is open, or the application exits.
@@ -270,6 +523,53 @@ internal static class ScenarioUi
             ?? throw new UiTimeoutException($"Вкладка {tableName} не найдена.");
         tab.SelectItem();
         Thread.Sleep(250);
+    }
+
+    /// <summary>
+    /// Clicks the close button of an editor tab. The click is dispatched in the background because a
+    /// dirty tab blocks the UI thread with the unsaved-changes dialog until the caller answers it.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <param name="tableName">Table name shown in the tab header.</param>
+    /// <exception cref="UiTimeoutException">Thrown when the tab or its close button is not found.</exception>
+    public static void CloseTab(AutomationElement window, string tableName)
+    {
+        var tab = window.WaitById("EditorsTabs")
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FirstOrDefault(candidate => candidate.ReadName().Contains(tableName, StringComparison.Ordinal)
+                || candidate
+                    .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                    .Any(text => text.ReadName().Contains(tableName, StringComparison.Ordinal)))
+            ?? throw new UiTimeoutException($"Вкладка {tableName} не найдена.");
+        var close = tab.FindFirst(TreeScope.Descendants, Ui.ByName("✕"))
+            ?? throw new UiTimeoutException("Кнопка закрытия вкладки не найдена.");
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                close.InvokeButton();
+            }
+            catch (Exception exception) when (
+                exception is UiTimeoutException or ElementNotAvailableException)
+            {
+                // The tab disappeared before the invoke returned.
+            }
+        });
+        Thread.Sleep(400);
+    }
+
+    /// <summary>
+    /// Waits until the tab with the given table name is closed.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    /// <param name="tableName">Table name shown in the tab header.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    public static void WaitForTabClosed(AutomationElement window, string tableName, TimeSpan? timeout = null)
+    {
+        Ui.WaitUntil(
+            () => !TabNames(window).Any(name => name.Contains(tableName, StringComparison.Ordinal)),
+            $"вкладка {tableName} закрыта",
+            timeout);
     }
 
     /// <summary>

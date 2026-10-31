@@ -179,6 +179,7 @@
                     <ComboBox Width="150"
                               Margin="12,0,6,0"
                               VerticalAlignment="Center"
+                              AutomationProperties.AutomationId="FilterLogicalOperatorCombo"
                               ItemsSource="{Binding Filter.LogicalOperators}"
                               SelectedItem="{Binding Filter.SelectedLogicalOperator, Mode=TwoWay}"
                               DisplayMemberPath="DisplayText"
@@ -194,6 +195,7 @@
                             Content="{Binding FilterClearText}"
                             Command="{Binding ClearFilterCommand}" />
                     <Button Padding="10,2"
+                            AutomationProperties.AutomationId="ResetLayoutButton"
                             Content="{Binding ResetLayoutText}"
                             ToolTip="{Binding ResetLayoutTooltip}"
                             Command="{Binding ResetLayoutCommand}" />
@@ -203,19 +205,23 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="0,1">
                                 <ComboBox Width="230"
+                                          AutomationProperties.AutomationId="FilterColumnCombo"
                                           ItemsSource="{Binding Columns}"
                                           SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"
                                           DisplayMemberPath="Name" />
                                 <ComboBox Width="150"
                                           Margin="6,0,0,0"
+                                          AutomationProperties.AutomationId="FilterOperatorCombo"
                                           ItemsSource="{Binding Operators}"
                                           SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
                                           DisplayMemberPath="DisplayText" />
                                 <TextBox Width="180"
                                          Margin="6,0,0,0"
+                                         AutomationProperties.AutomationId="FilterOperandBox"
                                          Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Margin="6,0,0,0"
                                         Padding="8,0"
+                                        AutomationProperties.AutomationId="FilterRemoveButton"
                                         Content="×"
                                         Command="{Binding RemoveCommand}" />
                             </StackPanel>
@@ -260,6 +266,7 @@
                            Text="{Binding VisibleColumnCountText}" />
                 <ListBox Grid.Row="2"
                          Height="180"
+                         AutomationProperties.AutomationId="ColumnsList"
                          ItemsSource="{Binding Columns}"
                          VirtualizingStackPanel.IsVirtualizing="True"
                          VirtualizingStackPanel.VirtualizationMode="Recycling"

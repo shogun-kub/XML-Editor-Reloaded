@@ -122,6 +122,9 @@ internal sealed class UiApp : IDisposable
 
                 var started = new UiApp(process, window, appDataDirectory);
                 started.Activate();
+                // Synthetic clicks must reach the application even when another window is raised during
+                // the run; the topmost flag is removed with the window when the application closes.
+                NativeInput.KeepOnTop(started.WindowHandle);
                 return started;
             }
         }
