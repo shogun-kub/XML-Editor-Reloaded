@@ -40,12 +40,10 @@ public sealed class JsonLayoutStore : ITableLayoutStore
     }
 
     /// <summary>
-    /// Gets the default layouts file path under the current user's application-data directory.
+    /// Gets the default layouts file path under the current user's application-data directory, or
+    /// under the directory named by <c>XER_APP_DATA</c> when that variable is set.
     /// </summary>
-    public static string DefaultLayoutsPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XmlEditorReloaded",
-        "layouts.json");
+    public static string DefaultLayoutsPath => AppPaths.LayoutsFilePath;
 
     /// <inheritdoc />
     public async Task<OperationResult<TableLayout>> LoadAsync(

@@ -15,7 +15,7 @@ JA2_1.13 Tools/
 ├── M22C-COMPOSITE-KEYS-PLAN.md      # Compound record keys plan
 ├── M23A-PARITY-AUDIT-PLAN.md        # Parity audit plan, substeps and agent protocol
 ├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
-├── M23A-PARITY/                     # Parity audit sections and inventories
+├── M23A-PARITY/                     # Parity audit sections, inventories and the manual smoke checklist
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
@@ -46,7 +46,8 @@ xml-editor-reloaded/
     ├── XmlEditorReloaded.Xml.Tests/
     ├── XmlEditorReloaded.Data.Tests/
     ├── XmlEditorReloaded.Imaging.Tests/
-    └── XmlEditorReloaded.App.Tests/
+    ├── XmlEditorReloaded.App.Tests/
+    └── XmlEditorReloaded.UiSmoke/      # Console UI-smoke runner (not a test project)
 ```
 
 ## Projects
@@ -74,6 +75,9 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 
 SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
 persistence of application settings and per-table grid layouts, and the file-backed operation log.
+`Settings/AppPaths` resolves the application-data directory (`%AppData%\XmlEditorReloaded`) for the
+settings, layouts, metadata database and log, and honours the `XER_APP_DATA` environment variable,
+which the UI smoke uses to isolate each scenario.
 
 Folders: `Catalog`, `Diagnostics`, `Localization`, `Metadata`, `Settings`.
 
@@ -96,6 +100,14 @@ Folders: `Imaging`, `Resources`, `Services`, `ViewModels`, `Views`. All UI strin
 Five xUnit projects mirror the source projects. Fixtures contain small real samples; corpus and
 performance tests are environment-gated and never write to reference data.
 
+### XmlEditorReloaded.UiSmoke (`net10.0-windows`, console)
+
+UI-automation runner for the manual WPF smoke checklist. It starts the real application with an
+isolated application-data directory, drives it through UI Automation and synthetic input, compares the
+visible texts with the application RESX files, and writes `report.md`/`report.json`. The reference data
+sets are copied per scenario, and `References/` is hashed before and after the run. It is not an xUnit
+project and is not executed by `test.ps1`.
+
 ## Dependency rules
 
 ```
@@ -114,8 +126,22 @@ XmlEditorReloaded.Core ──>  (none)
 
 ```sh
 dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror
-dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
+pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
 ```
+
+`test.ps1` builds with one MSBuild node and runs the five xUnit projects sequentially. In the agent
+sandbox a plain `dotnet build` exits with code 1 and zero reported errors because MSBuild worker nodes
+cannot open their named pipes; use one node (`-m:1 -nodeReuse:false`) there. The same restriction makes
+`dotnet test` on the whole solution hang; run `test.ps1` or `dotnet test <project>.csproj` instead.
+
+The UI smoke runs on an interactive desktop and takes focus:
+
+```sh
+out/bin/XmlEditorReloaded.UiSmoke/debug/XmlEditorReloaded.UiSmoke.exe [--only S01,S12] [--keep] [--list]
+```
+
+It creates fixtures in `.tmp/ui-smoke/<timestamp>/`, redirects the application settings through the
+`XER_APP_DATA` environment variable, and leaves the result in `report.md` there.
 
 `Directory.Build.props` sets `ArtifactsPath` to the repository-level `out/` folder, so every build
 writes `out/bin/<Project>/<Configuration>/` and `out/obj/<Project>/<Configuration>/` and no `bin/obj`

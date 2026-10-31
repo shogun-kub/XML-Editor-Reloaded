@@ -101,7 +101,7 @@ if (-not $NoBuild) {
     }
 }
 
-$projects = Get-ChildItem $testsDirectory -Filter '*.csproj' -Recurse | Sort-Object Name
+$projects = Get-ChildItem $testsDirectory -Filter '*.Tests.csproj' -Recurse | Sort-Object Name
 $failed = @()
 
 foreach ($project in $projects) {

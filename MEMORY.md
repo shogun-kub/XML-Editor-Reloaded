@@ -54,3 +54,4 @@
 | Полировка grid | [memory/ja2-editor-grid-polish.md](memory/ja2-editor-grid-polish.md) | M22a фильтры/layout, M22b recovery, M22c составные ключи, F1 вложенные таблицы/контекстное меню |
 | Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b7 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
+| UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста: сценарии, запуск, изоляция `%AppData%`, грабли UIA |

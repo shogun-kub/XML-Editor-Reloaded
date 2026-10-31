@@ -32,12 +32,10 @@ public sealed class JsonSettingsStore : ISettingsStore
     }
 
     /// <summary>
-    /// Gets the default settings file path under the current user's application-data directory.
+    /// Gets the default settings file path under the current user's application-data directory, or
+    /// under the directory named by <c>XER_APP_DATA</c> when that variable is set.
     /// </summary>
-    public static string DefaultSettingsPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XmlEditorReloaded",
-        "settings.json");
+    public static string DefaultSettingsPath => AppPaths.SettingsFilePath;
 
     /// <inheritdoc />
     public async Task<OperationResult<AppSettings>> LoadAsync(CancellationToken cancellationToken = default)

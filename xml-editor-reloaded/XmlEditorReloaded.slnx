@@ -11,6 +11,7 @@
     <Project Path="tests/XmlEditorReloaded.Core.Tests/XmlEditorReloaded.Core.Tests.csproj" />
     <Project Path="tests/XmlEditorReloaded.Data.Tests/XmlEditorReloaded.Data.Tests.csproj" />
     <Project Path="tests/XmlEditorReloaded.Imaging.Tests/XmlEditorReloaded.Imaging.Tests.csproj" />
+    <Project Path="tests/XmlEditorReloaded.UiSmoke/XmlEditorReloaded.UiSmoke.csproj" />
     <Project Path="tests/XmlEditorReloaded.Xml.Tests/XmlEditorReloaded.Xml.Tests.csproj" />
   </Folder>
 </Solution>

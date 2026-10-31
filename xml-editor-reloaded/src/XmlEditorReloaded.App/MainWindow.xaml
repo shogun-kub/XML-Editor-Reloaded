@@ -26,7 +26,9 @@
 
         <Menu Grid.Row="0" Margin="0,0,0,8">
             <MenuItem Header="{Binding HelpMenuText}">
-                <MenuItem Header="{Binding AboutMenuText}" Command="{Binding OpenAboutCommand}" />
+                <MenuItem Header="{Binding AboutMenuText}"
+                          AutomationProperties.AutomationId="AboutMenuItem"
+                          Command="{Binding OpenAboutCommand}" />
             </MenuItem>
         </Menu>
 
@@ -49,6 +51,7 @@
                        Margin="0,0,8,0"
                        Text="{Binding DataDirectoryLabel}" />
             <ComboBox Grid.Column="1"
+                      AutomationProperties.AutomationId="DataDirectoryCombo"
                       VerticalAlignment="Center"
                       ItemsSource="{Binding DataDirectories}"
                       SelectedItem="{Binding SelectedDataDirectory, Mode=TwoWay}"
@@ -57,11 +60,13 @@
             <Button Grid.Column="2"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="BrowseDataDirectoryButton"
                     Content="{Binding BrowseText}"
                     Command="{Binding BrowseCommand}" />
             <Button Grid.Column="3"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="RemoveDataDirectoryButton"
                     Content="{Binding RemoveDataDirectoryText}"
                     ToolTip="{Binding RemoveDataDirectoryTooltip}"
                     Command="{Binding RemoveDataDirectoryCommand}"
@@ -69,36 +74,43 @@
             <Button Grid.Column="4"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="RefreshTablesButton"
                     Content="{Binding RefreshText}"
                     Command="{Binding RefreshCommand}" />
             <Button Grid.Column="5"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="ItemImagesButton"
                     Content="{Binding ImagesText}"
                     Command="{Binding OpenImageViewerCommand}" />
             <Button Grid.Column="6"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="CompareButton"
                     Content="{Binding CompareText}"
                     Command="{Binding CompareVersionsCommand}" />
             <Button Grid.Column="7"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="CopyDataButton"
                     Content="{Binding CopyText}"
                     Command="{Binding CopyDataCommand}" />
             <Button Grid.Column="8"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="SaveAllButton"
                     Content="{Binding SaveAllText}"
                     Command="{Binding SaveAllCommand}" />
             <Button Grid.Column="9"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="SettingsButton"
                     Content="{Binding SettingsText}"
                     Command="{Binding OpenSettingsCommand}" />
             <Button Grid.Column="10"
                     Margin="8,0,0,0"
                     Padding="12,4"
+                    AutomationProperties.AutomationId="EnemyAmmoButton"
                     Content="{Binding EnemyAmmoText}"
                     Command="{Binding OpenEnemyAmmoCommand}" />
         </Grid>
@@ -148,11 +160,13 @@
                             Margin="0,6,0,0"
                             Padding="12,4"
                             HorizontalAlignment="Left"
+                            AutomationProperties.AutomationId="OpenTableButton"
                             Content="{Binding OpenTableText}"
                             Command="{Binding OpenTableCommand}" />
 
                     <Expander Grid.Row="2"
                               Margin="0,8,0,0"
+                              AutomationProperties.AutomationId="DetailsExpander"
                               Header="{Binding DetailsLabel}"
                               IsExpanded="True">
                         <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
@@ -160,13 +174,16 @@
                                 <TextBlock FontWeight="Bold"
                                            Text="{Binding SelectedTable.TableName}" />
                                 <TextBlock Margin="0,6,0,0"
+                                           AutomationProperties.AutomationId="DetailsText"
                                            Text="{Binding DetailsText}" />
                                 <TextBlock Margin="0,4,0,0"
+                                           AutomationProperties.AutomationId="DetailsRecordCount"
                                            Text="{Binding RecordCountText}" />
                                 <TextBlock Margin="0,12,0,4"
                                            FontWeight="Bold"
                                            Text="{Binding DiagnosticsLabel}" />
-                                <ItemsControl ItemsSource="{Binding Diagnostics}">
+                                <ItemsControl AutomationProperties.AutomationId="DiagnosticsList"
+                                          ItemsSource="{Binding Diagnostics}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Margin="0,0,0,4"
@@ -182,7 +199,8 @@
             </GroupBox>
 
             <Grid Grid.Column="1">
-                <TabControl ItemsSource="{Binding Editors}"
+                <TabControl AutomationProperties.AutomationId="EditorsTabs"
+                            ItemsSource="{Binding Editors}"
                             SelectedItem="{Binding SelectedEditor, Mode=TwoWay}">
                     <TabControl.ItemTemplate>
                         <DataTemplate>
@@ -242,6 +260,7 @@
                      Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <TextBlock Grid.Row="4"
+                   AutomationProperties.AutomationId="StatusText"
                    Margin="0,8,0,0"
                    TextWrapping="Wrap"
                    Text="{Binding StatusText}" />

@@ -66,10 +66,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var appDataDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "XmlEditorReloaded");
-        _logPath = Path.Combine(appDataDirectory, "XmlEditorReloaded.log");
+        var appDataDirectory = AppPaths.ApplicationDataDirectory;
+        _logPath = AppPaths.LogFilePath;
         var databasePath = Path.Combine(appDataDirectory, "metadata.sqlite");
 
         // The bootstrap trace is written before the operation log and the service container exist, so

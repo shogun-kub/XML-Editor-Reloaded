@@ -42,12 +42,10 @@ public sealed class FileOperationLog : IOperationLog
     }
 
     /// <summary>
-    /// Gets the default log file path under the current user's application-data directory.
+    /// Gets the default log file path under the current user's application-data directory, or under
+    /// the directory named by <c>XER_APP_DATA</c> when that variable is set.
     /// </summary>
-    public static string DefaultFilePath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XmlEditorReloaded",
-        "XmlEditorReloaded.log");
+    public static string DefaultFilePath => XmlEditorReloaded.Data.Settings.AppPaths.LogFilePath;
 
     /// <summary>
     /// Gets the absolute path of the log file.

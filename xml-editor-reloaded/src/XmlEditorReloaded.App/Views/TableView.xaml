@@ -56,6 +56,7 @@
                    Margin="0,0,0,6"
                    Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
             <TextBlock FontSize="15"
+                       AutomationProperties.AutomationId="TableTitle"
                        FontWeight="Bold"
                        VerticalAlignment="Center"
                        Text="{Binding Title}" />
@@ -65,6 +66,7 @@
                        Text="{Binding LanguageText}" />
             <TextBlock Margin="12,0,0,0"
                        VerticalAlignment="Center"
+                       AutomationProperties.AutomationId="TableRecordCount"
                        Text="{Binding RecordCountText}" />
             <StackPanel Margin="12,0,0,0"
                         Orientation="Horizontal"
@@ -74,6 +76,7 @@
                            Text="{Binding SearchLabel}" />
                 <TextBox Width="220"
                          VerticalAlignment="Center"
+                         AutomationProperties.AutomationId="SearchBox"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </WrapPanel>
@@ -83,50 +86,60 @@
                    Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="UndoButton"
                     Content="{Binding UndoText}"
                     Command="{Binding UndoCommand}"
                     ToolTip="{Binding UndoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="RedoButton"
                     Content="{Binding RedoText}"
                     Command="{Binding RedoCommand}"
                     ToolTip="{Binding RedoButtonTooltip}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="AddRowButton"
                     Content="{Binding AddRowText}"
                     Command="{Binding AddRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="DuplicateRowButton"
                     Content="{Binding DuplicateRowText}"
                     Command="{Binding DuplicateRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="DeleteRowButton"
                     Content="{Binding DeleteRowText}"
                     Command="{Binding DeleteRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="BulkEditButton"
                     Content="{Binding BulkEditText}"
                     Command="{Binding BulkEditCommand}"
                     ToolTip="{Binding BulkEditTooltip}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="SaveButton"
                     Content="{Binding SaveText}"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding IsDirty}" />
             <TextBlock VerticalAlignment="Center"
                        Margin="0,0,12,0"
                        Foreground="#FF666666"
+                       AutomationProperties.AutomationId="SelectedRowCount"
                        Text="{Binding SelectedRowCountText}" />
             <Button Padding="10,3"
                     Margin="0,0,6,0"
+                    AutomationProperties.AutomationId="ValidateButton"
                     Content="{Binding ValidateText}"
                     Command="{Binding ValidateCommand}" />
             <Button Padding="10,3"
                     Margin="0,0,12,0"
+                    AutomationProperties.AutomationId="ReloadButton"
                     Content="{Binding ReloadText}"
                     Command="{Binding ReloadCommand}" />
             <TextBlock VerticalAlignment="Center"
@@ -135,6 +148,7 @@
             <ComboBox Width="210"
                       Margin="0,0,12,0"
                       VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="LanguageCombo"
                       ItemsSource="{Binding LanguageOptions}"
                       SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
                       DisplayMemberPath="DisplayText"
@@ -153,12 +167,14 @@
         <Expander Grid.Row="2"
                   Margin="0,0,0,6"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
+                  AutomationProperties.AutomationId="FilterExpander"
                   Header="{Binding FilterLabel}"
                   IsExpanded="{Binding IsFilterVisible, Mode=TwoWay}">
             <StackPanel Margin="4,4,0,0">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                     <TextBlock VerticalAlignment="Center"
                                Foreground="#FF666666"
+                               AutomationProperties.AutomationId="FilterSummary"
                                Text="{Binding Filter.SummaryText}" />
                     <ComboBox Width="150"
                               Margin="12,0,6,0"
@@ -169,10 +185,12 @@
                               Visibility="{Binding Filter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
                     <Button Padding="10,2"
                             Margin="0,0,6,0"
+                            AutomationProperties.AutomationId="FilterAddButton"
                             Content="{Binding FilterAddText}"
                             Command="{Binding Filter.AddCriterionCommand}" />
                     <Button Padding="10,2"
                             Margin="0,0,12,0"
+                            AutomationProperties.AutomationId="FilterClearButton"
                             Content="{Binding FilterClearText}"
                             Command="{Binding ClearFilterCommand}" />
                     <Button Padding="10,2"
@@ -210,6 +228,7 @@
         <Expander Grid.Row="3"
                   Margin="0,0,0,6"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
+                  AutomationProperties.AutomationId="ColumnsExpander"
                   Header="{Binding ColumnsLabel}">
             <Grid Margin="4,4,0,0">
                 <Grid.RowDefinitions>
@@ -222,18 +241,22 @@
                                Margin="0,0,6,0"
                                Text="{Binding ColumnSearchLabel}" />
                     <TextBox Width="220"
+                             AutomationProperties.AutomationId="ColumnSearchBox"
                              Text="{Binding ColumnSearchText, UpdateSourceTrigger=PropertyChanged}" />
                     <Button Margin="10,0,6,0"
                             Padding="10,2"
+                            AutomationProperties.AutomationId="DefaultColumnsButton"
                             Content="{Binding DefaultColumnsText}"
                             Command="{Binding ShowDefaultColumnsCommand}" />
                     <Button Padding="10,2"
+                            AutomationProperties.AutomationId="AllColumnsButton"
                             Content="{Binding AllColumnsText}"
                             Command="{Binding ShowAllColumnsCommand}" />
                 </StackPanel>
                 <TextBlock Grid.Row="1"
                            Margin="0,2,0,2"
                            Foreground="#FF666666"
+                           AutomationProperties.AutomationId="VisibleColumnCount"
                            Text="{Binding VisibleColumnCountText}" />
                 <ListBox Grid.Row="2"
                          Height="180"
@@ -371,6 +394,7 @@
                                            Margin="0,0,6,0"
                                            Text="{Binding DetailFilterLabel}" />
                                 <TextBox Grid.Column="1"
+                                         AutomationProperties.AutomationId="DetailFilterBox"
                                          Text="{Binding DetailFilter, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
 
@@ -409,10 +433,12 @@
         <Expander Grid.Row="5"
                   Margin="0,6,0,0"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
+                  AutomationProperties.AutomationId="ValidationExpander"
                   Header="{Binding ValidationLabel}"
                   IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
             <ListBox Height="130"
                      Margin="4,4,0,0"
+                     AutomationProperties.AutomationId="ValidationList"
                      ItemsSource="{Binding ValidationIssues}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -446,6 +472,7 @@
             <TextBlock Grid.Row="1"
                        Margin="0,4,0,0"
                        TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="EditorStatus"
                        Text="{Binding StatusText}" />
         </Grid>
     </Grid>
