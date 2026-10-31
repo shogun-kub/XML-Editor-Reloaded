@@ -1,15 +1,10 @@
 # План исправлений после ручного smoke S01–S14
 
-Документ фиксирует дефекты, найденные при ручном прогоне S01–S12 (2026-10-29) и повторной
-проверке части A S01–S14 (2026-10-30), и порядок их исправления. Нумерация **F0–F9** относится
-только к этим исправлениям; **P0–P3** в `PLAN.md` остаются нумерацией общего плана и не
-пересекаются с ней. **F4** — вне smoke: вывод сборки в `out` и обход Low-integrity при запуске
-(коммит `7a01a6b`).
-
-Источник дефектов — таблицы ручного прогона S01–S12 (2026-10-29) и S01–S14 (2026-10-30) и разбор
-кода от 2026-10-30. Правила
-целостности XML из `AGENTS.md` действуют без исключений: исправления не должны менять
-неотредактированные файлы, терять поля или нормализовать значения.
+Документ фиксирует дефекты ручного прогона S01–S12 (2026-10-29) и повторной проверки S01–S14
+(2026-10-30) и порядок их исправления. Нумерация **F0–F9** относится только к этим исправлениям;
+**P0–P3** в `PLAN.md` — общая нумерация плана. **F4** — вне smoke: вывод сборки в `out` и обход
+Low-integrity при запуске (коммит `7a01a6b`). Правила XML-целостности и сборки — в `AGENTS.md`,
+результаты сценариев — в `MANUAL-SMOKE-CHECKLIST.md`.
 
 ## Сводка
 
@@ -25,10 +20,10 @@
 | **F8** | S11 | Галочки колонок не обновляются после «Все» до прокрутки | средний | ✅ 2026-10-30 |
 | **F9** | S12 | Статусы «Нет изменений…» и «… обновлено…» не сбрасываются | средний | ✅ 2026-10-30 |
 
-Порядок выполнения: **F0 → F1 → F2 → F3** (закрыты), затем **F5 → F6 → F7 → F8 → F9**. F0, F1,
-F8 и F9 меняют поведение редактора и должны завершаться зелёными `dotnet build`/`dotnet test`;
-F2, F3, F5–F7 — точечные правки UI и диагностики. Замечания S08 и S09 о выпадающих допустимых
-значениях — не дефекты, а единообразие редакторов; они вынесены в бэклог `PLAN.md` (B1–B2).
+Все задачи закрыты; порядок был **F0 → F1 → F2 → F3**, затем **F5 → F9**. F0, F1, F8 и F9 меняли
+поведение редактора и завершались зелёными build/test; F2, F3, F5–F7 — точечные правки UI и
+диагностики. Замечания S08/S09 о выпадающих значениях — не дефекты, а единообразие редакторов:
+бэклог `PLAN.md` (B1–B2).
 
 ---
 
@@ -66,11 +61,8 @@ F2, F3, F5–F7 — точечные правки UI и диагностики. 
 build и все тесты зелёные; XML после полного undo/redo побайтно соответствует ожидаемому
 (в тестах — структурно, с сохранением лексических значений).
 
-**Статус:** выполнено 2026-10-30. `ElementSnapshotState` восстанавливает содержимое на месте и
-переиспользует отсоединённый `XElement`; `MarkRemoved` сохраняет объект для повторного
-подключения. Добавлены тесты `UndoRedo_AddThenEdit_RemovesRowAndRestoresItOnce` и
-`UndoRedo_AddEditDuplicateDelete_RestoresUniqueRowSequence`; полный прогон — 566 тестов, 0
-ошибок.
+**Статус:** выполнено 2026-10-30; тесты `UndoRedo_AddThenEdit_RemovesRowAndRestoresItOnce`,
+`UndoRedo_AddEditDuplicateDelete_RestoresUniqueRowSequence`; полный прогон — 566 тестов.
 
 ---
 
@@ -118,16 +110,9 @@ build и все тесты зелёные; XML после полного undo/re
 `CanFilterByValue`) unit-тестами. Ручная проверка: правый клик по уже выделенной строке не
 показывает MessageBox и не меняет выделение.
 
-**Статус:** выполнено 2026-10-30. `TableSchemaBuilder` собирает записи по объявленному
-`RecordKey.Primary.Path`, поэтому `Map.Cities` получает колонки `uiIndex`, `townName` и остальные
-поля `CITY`. Вложенные элементы (`baseSector`, `townPoint`, `iconPosition`) остаются в схеме и в
-деталях, но скрыты в сетке по умолчанию до появления nested-редактора (M24a); строки без базовой
-записи read-only — сетка отменяет `BeginningEdit`, а `SetCellValue` возвращает понятный статус
-вместо `key.not_found`. Контекстное меню выделяет строку через `SelectedItem`/`SelectedItems`
-(с Ctrl — добавляет, без Ctrl — заменяет; уже выделенную строку не трогает) и не присваивает
-`DataGridCell.IsSelected`. Добавлены тесты `Build_NestedRecordPath_DiscoversColumnsFromDeclaredPath`,
-`Build_NestedRecordField_IsHiddenNestedColumn`, `NestedCityTable_ShowsRowsAndColumnsAndStaysReadOnly`
-и `View_RightClickSelectsRowWithoutTouchingCellSelection`; полный прогон — 570 тестов, 0 ошибок.
+**Статус:** выполнено 2026-10-30; тесты `Build_NestedRecordPath_DiscoversColumnsFromDeclaredPath`,
+`Build_NestedRecordField_IsHiddenNestedColumn`, `NestedCityTable_ShowsRowsAndColumnsAndStaysReadOnly`,
+`View_RightClickSelectsRowWithoutTouchingCellSelection`; полный прогон — 570 тестов.
 
 ---
 
@@ -172,16 +157,9 @@ build и все тесты зелёные; XML после полного undo/re
   поиск и «Записей: X из Y» читались вместе; правый блок шапки убрать.
 - Проверить, что при узком окне элементы не наезжают друг на друга (WrapPanel/Grid).
 
-**Статус:** выполнено 2026-10-30. `BrowseAsync` и обработчик выбора датасета больше не меняют
-`DataDirectory`/`SelectedDataDirectory` до успешной активации, а снимок прежнего состояния берётся
-из фактического активного каталога. Ветка «выбранный путь уже активен» явно выставляет
-`StatusTablesLoaded` и тем самым снимает старую ошибку. `ApplyRowView` хранит признак показанного
-no-match и снимает его, когда совпадения появились или строка поиска очищена, не затирая более
-поздний статус (ошибку, сохранение). `SearchLabel` и поле поиска перенесены в левую группу
-заголовка сразу после счётчика записей, а `WrapPanel` разрешает перенос элементов в узком окне.
-Добавлены тесты `Browse_RejectedFolderThenActiveDirectory_RestoresLoadedStatus`,
-`SelectDataDirectory_RejectedPathRestoresPreviousDataSet` и
-`Search_NoMatchesStatusClearsWhenRowsReturn`; полный прогон — 573 теста, 0 ошибок.
+**Статус:** выполнено 2026-10-30; тесты `Browse_RejectedFolderThenActiveDirectory_RestoresLoadedStatus`,
+`SelectDataDirectory_RejectedPathRestoresPreviousDataSet`, `Search_NoMatchesStatusClearsWhenRowsReturn`;
+полный прогон — 573 теста.
 
 ---
 
@@ -222,26 +200,18 @@ no-match и снимает его, когда совпадения появил�
 
 **Статус:** выполнено 2026-10-30.
 
-- **F3.1.** В `Core.Diagnostics` добавлен `FileAccessFailure`: сбой записи классифицируется как
-  read-only файл, запрет Windows-разрешений (ACL) или файл, занятый другим процессом (sharing/lock
-  violation по `IOException.HResult`), и превращается в сообщение с путём и следующим шагом.
-  Он используется в сохранении таблиц (`TableFileSaver`), создании оверлеев, записи `settings.json`,
-  `layouts.json` и миграции метабазы; sharing violation теперь отдаётся как `io.access_denied`, а не
-  `io.error`. Атрибуты и ACL не изменяются.
-- **F3.1/F3.2.** Preflight при старте (`StartupDiagnostics`) создаёт и удаляет пробный файл в
-  `%AppData%\XmlEditorReloaded`, логирует пользователя, факт elevation, каталоги, а также
-  существование, размер, атрибуты и владельца лога, настроек, layouts и метабазы. `StartupTrace`
-  пишет bootstrap-строки в `%TEMP%\XmlEditorReloaded-bootstrap.log` до создания DI и основного лога;
-  фатальные ошибки старта и миграции показывают код, путь, тип исключения и ссылку на трассу.
-  Манифеста с `requestedExecutionLevel` в приложении нет, поэтому запуск идёт asInvoker и elevation
-  не требуется; `elevated = yes` в логе сразу показывает отклонение от штатного профиля.
-- **F3.3.** В шапке появилась кнопка «Убрать» для выбранного каталога: подтверждение, запрет при
-  открытых вкладках этого датасета, обновление списка в `settings.json`. Если убирается активный
-  каталог, активируется ближайший оставшийся валидный (сначала предыдущий, затем следующий); если
-  валидных больше нет, shell очищается до состояния «каталог не выбран». Файлы на диске не удаляются.
-- **Тесты.** `FileAccessFailureTests` (5), `StartupDiagnosticsTests` (6), `StartupTraceTests` (3),
-  `Save_ReadOnlyTargetFile_ReportsAccessDeniedWithPathAndCause`, `RemoveDataDirectory_*` (5); полный
-  прогон — 593 теста, 0 ошибок. Ручная перепроверка S01, S03, S11 и S12 входит в повторный smoke.
+- **F3.1.** `FileAccessFailure` в `Core.Diagnostics` различает read-only, ACL и файл, занятый другим
+  процессом (sharing violation по `IOException.HResult`), и отдаёт сообщение с путём и следующим шагом;
+  используется при сохранении таблиц, создании оверлеев, записи `settings.json`/`layouts.json` и
+  миграции метабазы. ACL и атрибуты не меняются.
+- **F3.1/F3.2.** `StartupDiagnostics` создаёт пробный файл в `%AppData%\XmlEditorReloaded` и логирует
+  пользователя, elevation, каталоги и владельцев файлов; `StartupTrace` пишет bootstrap-строки в
+  `%TEMP%` до DI и основного лога, а фатальные ошибки показывают код, путь, тип и ссылку на трассу.
+  Манифеста elevation нет — запуск asInvoker.
+- **F3.3.** «Убрать» удаляет каталог из списка (файлы не трогает), запрещена при открытых вкладках,
+  пишет `settings.json` и активирует ближайший валидный датасет.
+- **Тесты:** `FileAccessFailureTests`, `StartupDiagnosticsTests`, `StartupTraceTests`,
+  `Save_ReadOnlyTargetFile_ReportsAccessDeniedWithPathAndCause`, `RemoveDataDirectory_*`; прогон 593.
 
 ---
 
@@ -331,20 +301,11 @@ layout» сохранено: колбэк `_visibilityChanged` по-прежне
 
 ## Общие критерии завершения
 
-1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -m:1` — 0 ошибок/0 предупреждений.
-2. `dotnet test` через `xml-editor-reloaded/test.ps1` — все проекты зелёные (в песочнице
-   использовать `test.ps1`, а не прямой `dotnet test`).
-3. Round-trip: загрузка → сохранение без правок не меняет файл; undo/redo не создаёт дублей
-   ключей и не теряет поля.
-4. Каждый F-этап или группа связанных этапов — локальный коммит `F#: …`; push — только по просьбе.
-5. `PLAN.md` и `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` обновляются после закрытия этапа;
-   нумерация P0–P3 в `PLAN.md` не затрагивается.
+Гейты — в `AGENTS.md` («Сборка и проверка»), полный список проверок — в `PLAN.md`. Каждый F-этап
+или группа — локальный коммит `F#: …`; `PLAN.md` и чек-лист обновляются после закрытия этапа;
+нумерация P0–P3 не затрагивается.
 
 ## Вне рамок F0–F9
 
-- Выпадающие допустимые значения в фильтрах и массовой правке (S08/S09) — бэклог `PLAN.md` B1–B2.
-- Ветка ошибки сохранения при закрытии вкладки (S13) — не проверялась, входит в повторный smoke.
-- Полноценный nested-редактор `Map.Cities`/`FacilityTypes` — M24a.
-- Массовое редактирование вложенных записей и root-singleton — M24b.
-- Управление lookup-таблицами (создание/удаление значений) — M26a.
-- Packaging/подпись/установщик — M27a–M27b.
+Выпадающие значения фильтров и массовой правки — бэклог B1–B2 (`PLAN.md`); ветка ошибки S13 —
+повторный smoke; nested-редактор, сравнение v2 и lookup management — M24–M26; packaging — M27.

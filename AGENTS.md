@@ -104,12 +104,8 @@
 деградирует молча (сборка с кодом 1 и «Ошибок: 0», зависший `dotnet test`, `SecurityError` у
 скриптов). Проверенные рабочие формы:
 
-- **Сборка** — всегда одним узлом MSBuild и без неявного restore:
-  ```sh
-  dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -m:1 --no-restore
-  ```
-  Без `-m:1` узлы MSBuild не могут открыть свои pipes: команда завершается кодом 1 без единой
-  диагностики. Restore при необходимости — отдельно (`dotnet msbuild ... -t:Restore -m:1`).
+- **Сборка** — команда выше; `-m:1 --no-restore` обязателен, restore при необходимости отдельно:
+  `dotnet msbuild xml-editor-reloaded/XmlEditorReloaded.slnx -t:Restore -m:1`.
 - **Тесты** — `dotnet test` на всём решении в песочнице зависает (testhost и воркеры MSBuild).
   Запускайте `xml-editor-reloaded/test.ps1` (он собирает решение с `-m:1` и гоняет каждый
   `*.Tests.csproj` с `--no-build --no-restore`) или один проект вручную:
@@ -122,9 +118,8 @@
   pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
   ```
   `-ExecutionPolicy Bypass` действует только на процесс и не меняет системную политику.
-- **Запись вне рабочего каталога** — песочница её блокирует (нужно подтверждение); настройки,
-  метабаза и `.tmp` должны оставаться внутри репозитория. Поэтому приложение и UI-smoke
-  запускаются только из `out/` (иначе Low integrity и `SQLite error 14`, см. раздел выше).
+- **Запись вне рабочего каталога** блокируется (нужно подтверждение): настройки, метабаза и `.tmp`
+  остаются в репозитории, приложение запускается из `out/` (см. «Сборка и проверка»).
 - **UI-smoke** — нужен интерактивный рабочий стол и фокус; одновременно допустим только один
   прогон, и во время него нельзя собирать решение (занятые `exe`/`dll`, а синтетические клики
   уходят в другое окно). Запуск: `out/bin/XmlEditorReloaded.UiSmoke/<Configuration>/XmlEditorReloaded.UiSmoke.exe`

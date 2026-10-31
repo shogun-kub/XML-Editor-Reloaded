@@ -14,6 +14,7 @@ JA2_1.13 Tools/
 ├── M14.5-METADATA-REPORT.md         # Metadata verification report
 ├── M22C-COMPOSITE-KEYS-PLAN.md      # Compound record keys plan
 ├── M23A-PARITY-AUDIT-PLAN.md        # Parity audit plan, substeps and agent protocol
+├── MANUAL-SMOKE-FIX-PLAN.md         # Fix plan for the S01–S14 manual smoke findings
 ├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
 ├── M23A-PARITY/                     # Parity audit sections, inventories and the manual smoke checklist
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
@@ -126,30 +127,20 @@ XmlEditorReloaded.Core ──>  (none)
 ## Build and test
 
 ```sh
-dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror
+dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror -m:1 --no-restore
 pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
 ```
 
-`test.ps1` builds with one MSBuild node and runs the five xUnit projects sequentially. In the agent
-sandbox a plain `dotnet build` exits with code 1 and zero reported errors because MSBuild worker nodes
-cannot open their named pipes; use one node (`-m:1 -nodeReuse:false`) there. The same restriction makes
-`dotnet test` on the whole solution hang; run `test.ps1` or `dotnet test <project>.csproj` instead.
+`test.ps1` builds with one MSBuild node and runs the five xUnit projects sequentially. Sandbox
+restrictions and their workarounds are described in `AGENTS.md` («Песочница»).
 
 The UI smoke runs on an interactive desktop and takes focus:
+`out/bin/XmlEditorReloaded.UiSmoke/debug/XmlEditorReloaded.UiSmoke.exe [--only S12,S25] [--work .tmp/ui-smoke/run] [--keep] [--list]`.
+Fixtures and `report.md` go to `.tmp/ui-smoke/<run>/`, and settings are isolated with `XER_APP_DATA`.
 
-```sh
-out/bin/XmlEditorReloaded.UiSmoke/debug/XmlEditorReloaded.UiSmoke.exe [--only S01,S12] [--keep] [--list]
-```
-
-It creates fixtures in `.tmp/ui-smoke/<timestamp>/`, redirects the application settings through the
-`XER_APP_DATA` environment variable, and leaves the result in `report.md` there.
-
-`Directory.Build.props` sets `ArtifactsPath` to the repository-level `out/` folder, so every build
-writes `out/bin/<Project>/<Configuration>/` and `out/obj/<Project>/<Configuration>/` and no `bin/obj`
-folders appear next to the projects. Run the application from
-`out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`. Keep the output there: an
-executable inside a workspace labeled with low mandatory integrity starts at low integrity and cannot
-write `%APPDATA%` (the metadata migration then fails with `SQLite error 14`).
+`Directory.Build.props` puts every build output under `out/`; run the application from
+`out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`. Keep it there: a copy inside
+the workspace starts at low integrity and cannot write `%APPDATA%` (`SQLite error 14`).
 
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 
@@ -161,15 +152,3 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 - Long operations are asynchronous and accept a `CancellationToken`.
 - `bin/`, `obj/`, `out/`, IDE caches and `References/` are not committed. Push only on explicit request.
 - Update this document whenever the solution structure or project responsibilities change.
-
-## Documentation
-
-- `AGENTS.md` — working rules and mandatory XML-integrity constraints.
-- `PLAN.md` — roadmap, current status and verification commands.
-- `M14.5-METADATA-REPORT.md` — how the metadata seed was verified.
-- `M22C-COMPOSITE-KEYS-PLAN.md` — implementation plan for compound record keys.
-- `M23A-PARITY-AUDIT-PLAN.md` — M23a substeps, section format and subagent protocol.
-- `LEGACY-PARITY-REPORT.md` — legacy parity matrix and gap register (M23a).
-- `M23A-PARITY/` — per-area audit sections and inventories used to build the report.
-- `REFERENCE-PROJECTS-STRUCTURE.md` — contents and roles of the read-only `References/` folder.
-- `MEMORY.md` — index of the project memory; the topic notes it links live in `memory/`.
