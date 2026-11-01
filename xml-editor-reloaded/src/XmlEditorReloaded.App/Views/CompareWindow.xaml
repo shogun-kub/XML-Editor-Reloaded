@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="{Binding Title}"
+        AutomationProperties.AutomationId="CompareWindow"
         Width="1220"
         Height="780"
         MinWidth="900"
@@ -37,6 +38,7 @@
                        Text="{Binding LeftLabel}" />
             <TextBox Grid.Column="1"
                      VerticalAlignment="Center"
+                     AutomationProperties.AutomationId="CompareLeftBox"
                      Text="{Binding LeftDirectory, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="2"
                     Margin="6,0,16,0"
@@ -49,6 +51,7 @@
                        Text="{Binding RightLabel}" />
             <TextBox Grid.Column="4"
                      VerticalAlignment="Center"
+                     AutomationProperties.AutomationId="CompareRightBox"
                      Text="{Binding RightDirectory, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="5"
                     Margin="6,0,0,0"
@@ -67,11 +70,13 @@
             <Button Grid.Column="0"
                     Padding="16,4"
                     IsDefault="True"
+                    AutomationProperties.AutomationId="CompareRunButton"
                     Content="{Binding CompareText}"
                     Command="{Binding CompareCommand}" />
             <Button Grid.Column="1"
                     Margin="8,0,0,0"
                     Padding="16,4"
+                    AutomationProperties.AutomationId="CompareCancelButton"
                     Content="{Binding CancelText}"
                     Command="{Binding CancelCompareCommand}" />
             <ProgressBar Grid.Column="2"
@@ -85,12 +90,14 @@
                        Margin="12,0,0,0"
                        VerticalAlignment="Center"
                        TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="CompareStatusText"
                        Text="{Binding StatusText}" />
         </Grid>
 
         <StackPanel Grid.Row="2" Margin="0,0,0,8">
             <TextBlock FontWeight="SemiBold"
                        TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="CompareSummaryText"
                        Text="{Binding SummaryText}" />
             <TextBlock Margin="0,2,0,0"
                        Foreground="#FF666666"
@@ -250,11 +257,13 @@
                     HorizontalAlignment="Right">
             <Button Margin="0,10,8,0"
                     Padding="16,4"
+                    AutomationProperties.AutomationId="CompareExportButton"
                     Content="{Binding ExportText}"
                     Command="{Binding ExportCommand}" />
             <Button Margin="0,10,0,0"
                     Padding="16,4"
                     IsCancel="True"
+                    AutomationProperties.AutomationId="CompareCloseButton"
                     Content="{Binding CloseText}"
                     Click="OnClose" />
         </StackPanel>

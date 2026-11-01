@@ -50,6 +50,10 @@ internal static class ScenarioCatalog
         new ShopkeeperScenario(),
         new ShopkeeperEditScenario(),
         new ShopkeeperDuplicateScenario(),
+        new AuxTableScenario(),
+        new LookupComboScenario(),
+        new LookupEditScenario(),
+        new LookupDiagnosticsScenario(),
     ];
 
     /// <summary>
