@@ -6,6 +6,7 @@
         xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
         mc:Ignorable="d"
         Title="{Binding Title}"
+        AutomationProperties.AutomationId="EnemyAmmoWindow"
         Width="1100"
         Height="620"
         MinWidth="700"

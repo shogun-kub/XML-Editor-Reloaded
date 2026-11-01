@@ -8,6 +8,9 @@ internal static class ScenarioCatalog
     private static readonly Dictionary<string, string> Manual = new(StringComparer.Ordinal)
     {
         ["S22"] = "визуальная проверка STI-превью: кадр и его пиксели оценивает человек",
+        ["S53"] = "двойной щёлчок по заголовку строки требует мыши",
+        ["S55"] = "правка и добавление значений списка BarrelConfiguration требуют ввода",
+        ["S57"] = "смена ключа симметричной пары требует ввода",
         ["S71"] = "визуальная проверка превью и миниатюры кадра",
         ["S72"] = "визуальная проверка перестроенного списка кадров",
         ["S73"] = "проверка сообщений у поля индекса вместе с отрисовкой превью",
@@ -66,6 +69,11 @@ internal static class ScenarioCatalog
         new ExternalChangeCancelScenario(),
         new ExternalChangeResolveScenario(),
         new MalformedCopyScenario(),
+        new AttachableItemsScenario(),
+        new AmmunitionSectionScenario(),
+        new CompatibleFaceItemsScenario(),
+        new DictColumnsScenario(),
+        new EnemyAmmoScenario(),
     ];
 
     /// <summary>

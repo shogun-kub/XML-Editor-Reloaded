@@ -274,14 +274,14 @@
 
 | № | Сценарий | v4 | v5 | Примечание |
 |---|---|---|---|---|
-| S51 | «Attachable items»: предмет, используемый как вложение, показывает строки по `attachmentIndex` | ☐ | ☐ | Обратное направление legacy `AttachToGrid` |
-| S52 | «Ammunition»: пусковая показывает запускаемые боеприпасы по `itemIndex` | ☐ | ☐ | Legacy `LaunchableGrid`; для класса Launcher |
-| S53 | Двойной клик по заголовку строки `Attachments`/`Launchables` открывает связанный предмет | ☐ | ☐ | Второй способ — контекстное меню |
-| S54 | `CompatibleFaceItems` фильтруется по `itemIndex` выбранного лица | ☐ | ☐ | Строка показывает `compatiblefaceitemIndex` |
-| S55 | `BarrelConfiguration` в секции Weapons: правка/добавление/удаление без `BarrelConfigurationN` | ☐ | ☐ | Предметы 686/711/754 |
-| S56 | Dict-колонки `ItemCapacityPerSizeN` (Pockets) и `itemN` (RandomItem) редактируются, picker работает | ☐ | ☐ | Bulk по конкретной колонке разрешён |
-| S57 | Пара `IncompatibleAttachments`/`CompatibleFaceItems`: добавление, удаление и смена ключа сохраняют обратную строку | ☐ | ☐ | Validation не показывает `validation.asymmetric_pair` |
-| S58 | «Enemy ammo»: 7 строк, значения Ball/HP/AP, правка пишет только один файл, закрытие спрашивает о сохранении | ☐ | ☐ | `uiIndex=19` в 7 item-choice файлах |
+| S51 | «Attachable items»: предмет, используемый как вложение, показывает строки по `attachmentIndex` | ✅ | ☐ | автотест v4: item 37, 122 строки |
+| S52 | «Ammunition»: пусковая показывает запускаемые боеприпасы по `itemIndex` | ✅ | ☐ | автотест v4: item 41, 5 строк |
+| S53 | Двойной клик по заголовку строки `Attachments`/`Launchables` открывает связанный предмет | ☐ | ☐ | нужен двойной щелчок мышью |
+| S54 | `CompatibleFaceItems` фильтруется по `itemIndex` выбранного лица | ✅ | ☐ | автотест v4: item 213, 8 строк |
+| S55 | `BarrelConfiguration` в секции Weapons: правка/добавление/удаление без `BarrelConfigurationN` | ☐ | ☐ | требуется ввод в список |
+| S56 | Dict-колонки `ItemCapacityPerSizeN` (Pockets) и `itemN` (RandomItem) редактируются, picker работает | ✅ | ☐ | автотест v4: правка Pockets и picker item1; выбор в picker — вручную |
+| S57 | Пара `IncompatibleAttachments`/`CompatibleFaceItems`: добавление, удаление и смена ключа сохраняют обратную строку | ☐ | ☐ | смена ключа требует ввода |
+| S58 | «Enemy ammo»: 7 строк, значения Ball/HP/AP, правка пишет только один файл, закрытие спрашивает о сохранении | ✅ | ☐ | автотест v4: 7 строк и слоты; правка и запрос — вручную |
 
 ## 3b. Дополнительные сценарии M23b3
 
