@@ -115,13 +115,6 @@
                     Command="{Binding DeleteRowCommand}"
                     IsEnabled="{Binding IsEditable}" />
             <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="BulkEditButton"
-                    Content="{Binding BulkEditText}"
-                    Command="{Binding BulkEditCommand}"
-                    ToolTip="{Binding BulkEditTooltip}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
                     Margin="0,0,6,0"
                     AutomationProperties.AutomationId="SaveButton"
                     Content="{Binding SaveText}"
@@ -154,11 +147,6 @@
                       DisplayMemberPath="DisplayText"
                       ToolTip="{Binding SelectedLanguageOption.Tooltip}"
                       IsEnabled="{Binding IsLanguageSelectorEnabled}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    Content="{Binding TranslationReportText}"
-                    Command="{Binding ShowTranslationReportCommand}"
-                    IsEnabled="{Binding IsTranslationMode}" />
             <CheckBox VerticalAlignment="Center"
                       Content="{Binding DetailLabel}"
                       IsChecked="{Binding ShowDetails, Mode=TwoWay}" />
@@ -194,11 +182,6 @@
                             AutomationProperties.AutomationId="FilterClearButton"
                             Content="{Binding FilterClearText}"
                             Command="{Binding ClearFilterCommand}" />
-                    <Button Padding="10,2"
-                            AutomationProperties.AutomationId="ResetLayoutButton"
-                            Content="{Binding ResetLayoutText}"
-                            ToolTip="{Binding ResetLayoutTooltip}"
-                            Command="{Binding ResetLayoutCommand}" />
                 </StackPanel>
                 <ItemsControl ItemsSource="{Binding Filter.Criteria}">
                     <ItemsControl.ItemTemplate>

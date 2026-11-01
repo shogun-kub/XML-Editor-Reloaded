@@ -22,12 +22,12 @@ internal sealed class UiLanguageScenario : SmokeScenario
         var hashBefore = SaveDirtyTabScenario.HashFile(file);
         var english = UiStrings.Load(ResourcesDirectory(context), "en");
 
-        var russianSettings = context.Strings.Get("SettingsButton");
+        var russianSaveAll = context.Strings.Get("EditorSaveAllText");
         Ui.WaitUntil(
-            () => context.Window.WaitById("SettingsButton").ReadName() == russianSettings,
+            () => context.Window.WaitById("SaveAllButton").ReadName() == russianSaveAll,
             "стартовый интерфейс на русском",
             TimeSpan.FromSeconds(30));
-        context.Recorder.Check("Стартовый интерфейс на русском", true, russianSettings);
+        context.Recorder.Check("Стартовый интерфейс на русском", true, russianSaveAll);
 
         // Switch to English and accept the dialog; the running UI keeps the old language.
         var dialog = SettingsUi.Open(context);
@@ -55,12 +55,12 @@ internal sealed class UiLanguageScenario : SmokeScenario
 
         // Restart with the saved language; the editor comes up in English.
         context.RestartApp(englishSettings);
-        var englishSettingsButton = english.Get("SettingsButton");
+        var englishSaveAll = english.Get("EditorSaveAllText");
         Ui.WaitUntil(
-            () => context.Window.WaitById("SettingsButton").ReadName() == englishSettingsButton,
+            () => context.Window.WaitById("SaveAllButton").ReadName() == englishSaveAll,
             "интерфейс переключился на английский после перезапуска",
             TimeSpan.FromSeconds(60));
-        context.Recorder.Check("После перезапуска интерфейс на английском", true, englishSettingsButton);
+        context.Recorder.Check("После перезапуска интерфейс на английском", true, englishSaveAll);
 
         var englishLoaded = ScenarioUi.FormatPrefix(english.Get("StatusTablesLoaded"));
         ScenarioUi.WaitForStatus(
@@ -106,10 +106,10 @@ internal sealed class UiLanguageScenario : SmokeScenario
 
         context.RestartApp(russianSettingsAfter);
         Ui.WaitUntil(
-            () => context.Window.WaitById("SettingsButton").ReadName() == russianSettings,
+            () => context.Window.WaitById("SaveAllButton").ReadName() == russianSaveAll,
             "интерфейс вернулся к русскому после перезапуска",
             TimeSpan.FromSeconds(60));
-        context.Recorder.Check("Обратное переключение на русский после перезапуска", true, russianSettings);
+        context.Recorder.Check("Обратное переключение на русский после перезапуска", true, russianSaveAll);
         var russianLoaded = ScenarioUi.FormatPrefix(context.Strings.Get("StatusTablesLoaded"));
         ScenarioUi.WaitForStatus(
             context,

@@ -288,6 +288,65 @@ internal static class ScenarioUi
     }
 
     /// <summary>
+    /// Expands a top-level menu so its items are realized in the automation tree.
+    /// </summary>
+    /// <param name="menu">Top-level menu item.</param>
+    public static void ExpandMenu(AutomationElement menu)
+    {
+        if (menu.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out var raw)
+            && raw is ExpandCollapsePattern pattern)
+        {
+            if (pattern.Current.ExpandCollapseState == ExpandCollapseState.Collapsed)
+            {
+                pattern.Expand();
+            }
+
+            Thread.Sleep(250);
+            return;
+        }
+
+        menu.Click();
+    }
+
+    /// <summary>
+    /// Waits until the menu item with the given automation identifier appears in an open menu popup.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="automationId">Identifier of the menu item.</param>
+    /// <param name="timeout">Optional timeout.</param>
+    /// <returns>The menu item.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the item does not appear in time.</exception>
+    public static AutomationElement WaitForMenuItemById(
+        UiApp app,
+        string automationId,
+        TimeSpan? timeout = null) =>
+        Ui.WaitFor(
+            () => AutomationElement.RootElement
+                .FindAll(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem),
+                        new PropertyCondition(AutomationElement.AutomationIdProperty, automationId)))
+                .Cast<AutomationElement>()
+                .FirstOrDefault(),
+            $"пункт меню «{automationId}»",
+            timeout);
+
+    /// <summary>
+    /// Opens a top-level menu and invokes one of its items.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="menuId">Automation identifier of the top-level menu.</param>
+    /// <param name="itemId">Automation identifier of the item inside that menu.</param>
+    public static void OpenMenuItem(ScenarioContext context, string menuId, string itemId)
+    {
+        ExpandMenu(context.Window.WaitById(menuId));
+        WaitForMenuItemById(context.App, itemId).InvokeButton();
+        Thread.Sleep(200);
+    }
+
+    /// <summary>
     /// Waits until the context-menu item with the given caption appears and returns it.
     /// </summary>
     /// <param name="app">Running application.</param>

@@ -54,7 +54,7 @@ internal sealed class BulkEditScenario : SmokeScenario
             .Select(row => grid.Cell(row, column).ReadName())
             .ToList();
 
-        window.WaitById("BulkEditButton").InvokeButton();
+        ScenarioUi.OpenMenuItem(context, "EditMenu", "BulkEditButton");
         var dialog = ScenarioUi.WaitForWindowWithId(
             context.App,
             "BulkEditColumnCombo",

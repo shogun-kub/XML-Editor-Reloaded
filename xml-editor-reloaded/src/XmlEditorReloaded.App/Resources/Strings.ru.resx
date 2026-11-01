@@ -1591,6 +1591,18 @@
   <data name="EnemyAmmoClosePrompt" xml:space="preserve">
     <value>Есть несохранённые изменения боеприпасов. Сохранить их перед закрытием?</value>
   </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Файл</value>
+  </data>
+  <data name="MenuEdit" xml:space="preserve">
+    <value>_Правка</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Вид</value>
+  </data>
+  <data name="MenuData" xml:space="preserve">
+    <value>_Данные</value>
+  </data>
   <data name="MenuHelp" xml:space="preserve">
     <value>_Справка</value>
   </data>

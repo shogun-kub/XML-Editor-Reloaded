@@ -6,7 +6,7 @@
 - [JA2 source needs permission](ja2-source-needs-permission.md) — 5.4 GB C++ source, ask before exploring
 - [JA2 v4/v5 data facts](ja2-v4-v5-data-facts.md) — same tag sets, different data, sparse records, one malformed lookup, Fire Extinguisher burst-sound anomaly
 - [JA2 localization overlay model](ja2-localization-overlay-model.md) — v4 Russian / v5 English by design; `Russian.*` overlays merged by key, edits go to the overlay
-- [Editor status and roadmap](ja2-editor-status.md) — M0–M23b5 done, 488 tests green; next manual smoke + M23b6; M18–M27 roadmap
+- [Editor status and roadmap](ja2-editor-status.md) — M0–M23b8 and M23a done, 600 tests green, UI smoke A–G automated; next M23b gate; M18–M27 roadmap
 - [Editor architecture and build](ja2-editor-architecture.md) — solution, packages, DI wiring, corpus/perf gates, repo hygiene
 - [XML round-trip](ja2-editor-xml-roundtrip.md) — byte patching, XmlWriter normalization, structural patching, editing API
 - [Metadata layer](ja2-editor-metadata.md) — SQLite schema/seed, validation, ColumnHints vs Columns, 64-bit lookups, flag mappings
@@ -16,7 +16,7 @@
 - [Bulk edits and compare](ja2-editor-editing-operations.md) — M16 bulk/undo, M17 cross-version compare and export
 - [Relations and copy](ja2-editor-relations-copy.md) — M18 relation pickers, M21 multi-dataset copy/remap
 - [Grid polish and keys](ja2-editor-grid-polish.md) — M22a filters/layout, M22b recovery, M22c compound keys
-- [Legacy parity](ja2-editor-parity.md) — M23a0–M23a7 audits, gap register, M23b1–M23b2 fixes
+- [Legacy parity](ja2-editor-parity.md) — M23a0–M23a7 audits, gap register, M23b1–M23b8 fixes
 - [STI imaging](ja2-editor-imaging.md) — STI parser/ETRLE/catalog and the image viewer
 - [Documentation stays compact](documentation-stays-compact.md) — PLAN.md and PROJECT-STRUCTURE.md are summaries; implementation detail lives in code/tests/git
 - [Read before edit](read-before-edit.md) — global one-paragraph rule in `~/.zcode/AGENTS.md`: `Read` before `Edit` only (not `Write`), keep it terse

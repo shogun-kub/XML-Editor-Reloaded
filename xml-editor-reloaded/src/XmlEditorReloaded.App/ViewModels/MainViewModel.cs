@@ -62,6 +62,9 @@ public partial class MainViewModel : ObservableObject
     private bool _isBusy;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BulkEditCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ResetLayoutCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowTranslationReportCommand))]
     private IEditorTab? _selectedEditor;
 
     /// <summary>
@@ -121,6 +124,13 @@ public partial class MainViewModel : ObservableObject
         SettingsText = Strings.Get("SettingsButton");
         HelpMenuText = Strings.Get("MenuHelp");
         AboutMenuText = Strings.Get("MenuAbout");
+        FileMenuText = Strings.Get("MenuFile");
+        EditMenuText = Strings.Get("MenuEdit");
+        ViewMenuText = Strings.Get("MenuView");
+        DataMenuText = Strings.Get("MenuData");
+        BulkEditText = Strings.Get("EditorBulkEditText");
+        ResetLayoutText = Strings.Get("EditorResetLayoutText");
+        TranslationReportText = Strings.Get("EditorTranslationReportText");
         OpenTableText = Strings.Get("EditorOpenText");
         SaveAllText = Strings.Get("EditorSaveAllText");
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
@@ -194,6 +204,41 @@ public partial class MainViewModel : ObservableObject
     /// Gets the Help &gt; About menu item text.
     /// </summary>
     public string AboutMenuText { get; }
+
+    /// <summary>
+    /// Gets the File menu header.
+    /// </summary>
+    public string FileMenuText { get; }
+
+    /// <summary>
+    /// Gets the Edit menu header.
+    /// </summary>
+    public string EditMenuText { get; }
+
+    /// <summary>
+    /// Gets the View menu header.
+    /// </summary>
+    public string ViewMenuText { get; }
+
+    /// <summary>
+    /// Gets the Data menu header.
+    /// </summary>
+    public string DataMenuText { get; }
+
+    /// <summary>
+    /// Gets the Edit &gt; Bulk edit menu item text.
+    /// </summary>
+    public string BulkEditText { get; }
+
+    /// <summary>
+    /// Gets the View &gt; Reset layout menu item text.
+    /// </summary>
+    public string ResetLayoutText { get; }
+
+    /// <summary>
+    /// Gets the Data &gt; Translations menu item text.
+    /// </summary>
+    public string TranslationReportText { get; }
 
     /// <summary>
     /// Gets the open-table button text.
@@ -561,6 +606,50 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     [RelayCommand]
     private void OpenAbout() => _dialogService.ShowAbout();
+
+    /// <summary>
+    /// Opens the bulk edit dialog of the active table editor. The command is disabled when the active
+    /// tab is not an editable table.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanBulkEdit))]
+    private void BulkEdit()
+    {
+        if (SelectedEditor is TableEditorViewModel editor)
+        {
+            editor.BulkEditCommand.Execute(null);
+        }
+    }
+
+    /// <summary>
+    /// Resets the grid layout of the active table editor.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanResetLayout))]
+    private void ResetLayout()
+    {
+        if (SelectedEditor is TableEditorViewModel editor)
+        {
+            editor.ResetLayoutCommand.Execute(null);
+        }
+    }
+
+    /// <summary>
+    /// Shows the translation report of the active table editor; the editor reports the missing
+    /// overlay language itself.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanShowTranslationReport))]
+    private void ShowTranslationReport()
+    {
+        if (SelectedEditor is TableEditorViewModel editor)
+        {
+            editor.ShowTranslationReportCommand.Execute(null);
+        }
+    }
+
+    private bool CanBulkEdit() => SelectedEditor is TableEditorViewModel { IsEditable: true };
+
+    private bool CanResetLayout() => SelectedEditor is TableEditorViewModel;
+
+    private bool CanShowTranslationReport() => SelectedEditor is TableEditorViewModel;
 
     [RelayCommand]
     private async Task OpenSettingsAsync()

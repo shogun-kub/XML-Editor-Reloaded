@@ -31,19 +31,7 @@ internal static class SettingsUi
     /// <exception cref="UiTimeoutException">Thrown when the dialog does not appear in time.</exception>
     public static AutomationElement Open(ScenarioContext context)
     {
-        var button = context.Window.WaitById("SettingsButton");
-        _ = Task.Run(() =>
-        {
-            try
-            {
-                button.InvokeButton();
-            }
-            catch (Exception exception) when (
-                exception is UiTimeoutException or ElementNotAvailableException)
-            {
-                // The button is disabled while the modal dialog runs; the dialog itself is the result.
-            }
-        });
+        ScenarioUi.OpenMenuItem(context, "FileMenu", "SettingsButton");
 
         var dialog = ScenarioUi.WaitForWindowWithId(
             context.App,

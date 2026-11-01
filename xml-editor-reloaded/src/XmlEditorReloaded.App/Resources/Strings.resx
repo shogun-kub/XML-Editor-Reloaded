@@ -1591,6 +1591,18 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="EnemyAmmoClosePrompt" xml:space="preserve">
     <value>Enemy ammunition has unsaved changes. Save them before closing?</value>
   </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_File</value>
+  </data>
+  <data name="MenuEdit" xml:space="preserve">
+    <value>_Edit</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_View</value>
+  </data>
+  <data name="MenuData" xml:space="preserve">
+    <value>_Data</value>
+  </data>
   <data name="MenuHelp" xml:space="preserve">
     <value>_Help</value>
   </data>

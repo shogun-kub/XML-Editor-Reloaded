@@ -52,6 +52,6 @@
 | Массовые правки и сравнение | [memory/ja2-editor-editing-operations.md](memory/ja2-editor-editing-operations.md) | M16 bulk/undo, M17 сравнение версий и экспорт |
 | Связи и копирование | [memory/ja2-editor-relations-copy.md](memory/ja2-editor-relations-copy.md) | M18 pickers связей, M21 multi-dataset copy/remap |
 | Полировка grid | [memory/ja2-editor-grid-polish.md](memory/ja2-editor-grid-polish.md) | M22a фильтры/layout, M22b recovery, M22c составные ключи, F1 вложенные таблицы/контекстное меню |
-| Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b7 |
+| Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b8 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
 | UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–G): запуск, изоляция `%AppData%`, грабли UIA |

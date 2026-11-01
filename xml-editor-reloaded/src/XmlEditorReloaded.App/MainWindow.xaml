@@ -25,6 +25,47 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Margin="0,0,0,8">
+            <MenuItem Header="{Binding FileMenuText}"
+                      AutomationProperties.AutomationId="FileMenu">
+                <MenuItem Header="{Binding SaveAllText}"
+                          AutomationProperties.AutomationId="MenuSaveAll"
+                          Command="{Binding SaveAllCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding SettingsText}"
+                          AutomationProperties.AutomationId="SettingsButton"
+                          Command="{Binding OpenSettingsCommand}" />
+            </MenuItem>
+            <MenuItem Header="{Binding EditMenuText}"
+                      AutomationProperties.AutomationId="EditMenu">
+                <MenuItem Header="{Binding BulkEditText}"
+                          AutomationProperties.AutomationId="BulkEditButton"
+                          Command="{Binding BulkEditCommand}" />
+            </MenuItem>
+            <MenuItem Header="{Binding ViewMenuText}"
+                      AutomationProperties.AutomationId="ViewMenu">
+                <MenuItem Header="{Binding ResetLayoutText}"
+                          AutomationProperties.AutomationId="ResetLayoutButton"
+                          Command="{Binding ResetLayoutCommand}" />
+            </MenuItem>
+            <MenuItem Header="{Binding DataMenuText}"
+                      AutomationProperties.AutomationId="DataMenu">
+                <MenuItem Header="{Binding CompareText}"
+                          AutomationProperties.AutomationId="CompareButton"
+                          Command="{Binding CompareVersionsCommand}" />
+                <MenuItem Header="{Binding CopyText}"
+                          AutomationProperties.AutomationId="CopyDataButton"
+                          Command="{Binding CopyDataCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding ImagesText}"
+                          AutomationProperties.AutomationId="ItemImagesButton"
+                          Command="{Binding OpenImageViewerCommand}" />
+                <MenuItem Header="{Binding EnemyAmmoText}"
+                          AutomationProperties.AutomationId="EnemyAmmoButton"
+                          Command="{Binding OpenEnemyAmmoCommand}" />
+                <MenuItem Header="{Binding TranslationReportText}"
+                          AutomationProperties.AutomationId="TranslationReportButton"
+                          Command="{Binding ShowTranslationReportCommand}" />
+            </MenuItem>
             <MenuItem Header="{Binding HelpMenuText}">
                 <MenuItem Header="{Binding AboutMenuText}"
                           AutomationProperties.AutomationId="AboutMenuItem"
@@ -32,88 +73,40 @@
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0"
-                       VerticalAlignment="Center"
+        <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+            <TextBlock VerticalAlignment="Center"
                        Margin="0,0,8,0"
                        Text="{Binding DataDirectoryLabel}" />
-            <ComboBox Grid.Column="1"
+            <ComboBox Width="320"
                       AutomationProperties.AutomationId="DataDirectoryCombo"
                       VerticalAlignment="Center"
                       ItemsSource="{Binding DataDirectories}"
                       SelectedItem="{Binding SelectedDataDirectory, Mode=TwoWay}"
                       DisplayMemberPath="DisplayName"
                       ToolTip="{Binding DataDirectory}" />
-            <Button Grid.Column="2"
-                    Margin="8,0,0,0"
+            <Button Margin="8,0,0,0"
                     Padding="12,4"
                     AutomationProperties.AutomationId="BrowseDataDirectoryButton"
                     Content="{Binding BrowseText}"
                     Command="{Binding BrowseCommand}" />
-            <Button Grid.Column="3"
-                    Margin="8,0,0,0"
+            <Button Margin="8,0,0,0"
                     Padding="12,4"
                     AutomationProperties.AutomationId="RemoveDataDirectoryButton"
                     Content="{Binding RemoveDataDirectoryText}"
                     ToolTip="{Binding RemoveDataDirectoryTooltip}"
                     Command="{Binding RemoveDataDirectoryCommand}"
                     CommandParameter="{Binding SelectedDataDirectory}" />
-            <Button Grid.Column="4"
-                    Margin="8,0,0,0"
+            <Button Margin="8,0,0,0"
                     Padding="12,4"
                     AutomationProperties.AutomationId="RefreshTablesButton"
                     Content="{Binding RefreshText}"
                     Command="{Binding RefreshCommand}" />
-            <Button Grid.Column="5"
-                    Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="ItemImagesButton"
-                    Content="{Binding ImagesText}"
-                    Command="{Binding OpenImageViewerCommand}" />
-            <Button Grid.Column="6"
-                    Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="CompareButton"
-                    Content="{Binding CompareText}"
-                    Command="{Binding CompareVersionsCommand}" />
-            <Button Grid.Column="7"
-                    Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="CopyDataButton"
-                    Content="{Binding CopyText}"
-                    Command="{Binding CopyDataCommand}" />
-            <Button Grid.Column="8"
-                    Margin="8,0,0,0"
+            <Button Margin="8,0,0,0"
                     Padding="12,4"
                     AutomationProperties.AutomationId="SaveAllButton"
                     Content="{Binding SaveAllText}"
                     Command="{Binding SaveAllCommand}" />
-            <Button Grid.Column="9"
-                    Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="SettingsButton"
-                    Content="{Binding SettingsText}"
-                    Command="{Binding OpenSettingsCommand}" />
-            <Button Grid.Column="10"
-                    Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="EnemyAmmoButton"
-                    Content="{Binding EnemyAmmoText}"
-                    Command="{Binding OpenEnemyAmmoCommand}" />
-        </Grid>
+        </WrapPanel>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

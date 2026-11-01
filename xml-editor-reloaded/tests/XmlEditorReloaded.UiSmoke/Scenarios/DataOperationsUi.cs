@@ -27,19 +27,7 @@ internal static class DataOperationsUi
             "список таблиц главного окна загружен",
             TimeSpan.FromSeconds(120));
 
-        var button = window.WaitById("CopyDataButton");
-        _ = Task.Run(() =>
-        {
-            try
-            {
-                button.InvokeButton();
-            }
-            catch (Exception exception) when (
-                exception is UiTimeoutException or ElementNotAvailableException)
-            {
-                // The button disappeared while the modal dialog was opening.
-            }
-        });
+        ScenarioUi.OpenMenuItem(context, "DataMenu", "CopyDataButton");
 
         var dialog = ScenarioUi.WaitForWindowWithId(
             context.App,
@@ -273,7 +261,8 @@ internal static class DataOperationsUi
     /// <returns>The comparison window.</returns>
     public static AutomationElement OpenCompareWindow(ScenarioContext context)
     {
-        context.Window.WaitById("CompareButton").InvokeButton();
+        context.Window.WaitById("TablesGrid");
+        ScenarioUi.OpenMenuItem(context, "DataMenu", "CompareButton");
         var window = ScenarioUi.WaitForWindowWithId(
             context.App,
             "CompareRunButton",

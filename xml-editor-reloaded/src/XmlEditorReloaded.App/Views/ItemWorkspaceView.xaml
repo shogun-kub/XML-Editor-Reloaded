@@ -340,22 +340,6 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <StackPanel Grid.Row="6" Margin="0,6,0,0" Orientation="Horizontal">
-                        <Button Padding="10,3"
-                                Margin="0,0,6,0"
-                                Content="{Binding NewItemText}"
-                                Command="{Binding NewItemCommand}"
-                                IsEnabled="{Binding IsEditable}" />
-                        <Button Padding="10,3"
-                                Margin="0,0,6,0"
-                                Content="{Binding DuplicateItemText}"
-                                Command="{Binding DuplicateItemCommand}"
-                                IsEnabled="{Binding IsEditable}" />
-                        <Button Padding="10,3"
-                                Content="{Binding DeleteItemText}"
-                                Command="{Binding DeleteItemCommand}"
-                                IsEnabled="{Binding IsEditable}" />
-                    </StackPanel>
                 </Grid>
             </GroupBox>
 

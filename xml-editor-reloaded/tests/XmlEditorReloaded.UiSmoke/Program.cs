@@ -32,6 +32,19 @@ internal static class Program
                 return 0;
             }
 
+            if (options.ShotsDirectory is not null)
+            {
+                NativeInput.KeepDisplayOn();
+                try
+                {
+                    return Screenshots.Run(options);
+                }
+                finally
+                {
+                    NativeInput.AllowDisplaySleep();
+                }
+            }
+
             NativeInput.KeepDisplayOn();
             try
             {

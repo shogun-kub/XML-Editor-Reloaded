@@ -197,7 +197,7 @@ internal sealed class ColumnLayoutScenario : SmokeScenario
 
         // Reset removes the stored layout and restores defaults.
         ScenarioUi.SetExpanded(window.WaitById("FilterExpander"), expanded: true);
-        window.WaitById("ResetLayoutButton").InvokeButton();
+        ScenarioUi.OpenMenuItem(context, "ViewMenu", "ResetLayoutButton");
         ScenarioUi.WaitForEditorStatus(
             context,
             text => text == context.Strings.Get("EditorLayoutResetDone"),

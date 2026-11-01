@@ -4,7 +4,7 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M23b8 и M23a завершены; следующий шаг — gate M23b. Части A–G ручного smoke автоматизированы (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 48 сценариев: S01–S03, S05–S21, S23–S49 плюс целостность S50; части E–G — S33–S49 с 2026-11-01); вручную остаются S04, S22, S71–S75, S82–S83 и ветка ошибки сохранения S13. Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
+**Состояние:** M0–M23b8 и M23a завершены; следующий шаг — gate M23b. Части A–G ручного smoke автоматизированы (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 48 сценариев: S01–S03, S05–S21, S23–S49 плюс целостность S50; части E–G — S33–S49 с 2026-11-01); вручную остаются S04, S22, ветка ошибки сохранения S13 и сценарии M23b1–M23b8 (S51–S92, включая S71–S75 и S82–S83). Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
 
 **Реализовано:** датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. Валидация предупреждает о границах legacy-спиннеров, группах флагов и карманах LBE, ничего не обнуляя; lookup-id и маски `Flags` 64-битные; Images показывает кадры типа, границы индекса и live-миниатюры; shopkeeper адресует строки дилера точной записью. Ошибки и preflight пишутся в лог с путями и причиной. Подробности — в коде, тестах и чек-листе.
 

@@ -50,6 +50,12 @@ internal sealed class SmokeOptions
     public bool List { get; init; }
 
     /// <summary>
+    /// Gets the directory that receives reference screenshots, or <see langword="null"/> when the
+    /// runner executes scenarios.
+    /// </summary>
+    public string? ShotsDirectory { get; init; }
+
+    /// <summary>
     /// Gets the timeout applied to one application start.
     /// </summary>
     public TimeSpan StartupTimeout { get; init; } = TimeSpan.FromSeconds(90);
@@ -70,6 +76,7 @@ internal sealed class SmokeOptions
         string? only = null;
         var keep = false;
         var list = false;
+        string? shots = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -106,6 +113,9 @@ internal sealed class SmokeOptions
                     break;
                 case "--list":
                     list = true;
+                    break;
+                case "--shots":
+                    shots = NextValue();
                     break;
                 case "--help":
                 case "-h":
@@ -148,6 +158,7 @@ internal sealed class SmokeOptions
             Only = only,
             Keep = keep,
             List = list,
+            ShotsDirectory = shots is null ? null : Path.GetFullPath(shots),
         };
     }
 
@@ -161,6 +172,7 @@ internal sealed class SmokeOptions
           --only <ids>    Comma-separated scenario ids, for example S01,S06
           --keep          Keep the work directory after a successful run
           --list          Print the scenario catalog and exit
+          --shots <path>  Capture reference screenshots into <path> and exit
         """;
 
     /// <summary>
