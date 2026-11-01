@@ -299,6 +299,21 @@ internal static class DataOperationsUi
     }
 
     /// <summary>
+    /// Fills the left and right directory boxes of the comparison window with arbitrary directories.
+    /// </summary>
+    /// <param name="window">Comparison window.</param>
+    /// <param name="leftDirectory">Absolute left <c>TableData</c> directory.</param>
+    /// <param name="rightDirectory">Absolute right <c>TableData</c> directory.</param>
+    public static void SetCompareDirectories(
+        AutomationElement window,
+        string leftDirectory,
+        string rightDirectory)
+    {
+        SetCompareDirectory(window.WaitById("CompareLeftBox"), leftDirectory);
+        SetCompareDirectory(window.WaitById("CompareRightBox"), rightDirectory);
+    }
+
+    /// <summary>
     /// Waits until the comparison summary appears after the compare button was pressed.
     /// </summary>
     /// <param name="context">Scenario context.</param>
