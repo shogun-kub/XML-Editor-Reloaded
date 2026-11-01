@@ -8,6 +8,9 @@ MSBuild node because confined environments (the DSH sandbox) deny the named
 pipes MSBuild worker nodes use; a normal `dotnet test` on the solution therefore
 hangs there. Outside such an environment the stock commands remain valid.
 
+The script lives in `util-scripts/` beside the solution and resolves every path
+from the repository root, so it can be started from any working directory.
+
 Every run uses its own temporary root under `.tmp` because the App tests create
 workspaces in `%TEMP%`; a shared tree accumulates copies of the game data. Old
 `run-*` roots are removed before the run starts. A successful run removes its
@@ -28,10 +31,10 @@ Keep the temporary root after a successful run, for example to inspect copied
 corpora. Failed runs are always kept.
 
 .EXAMPLE
-./test.ps1
+./util-scripts/test.ps1
 
 .EXAMPLE
-./test.ps1 -Filter "FullyQualifiedName~TableValidator"
+./util-scripts/test.ps1 -Filter "FullyQualifiedName~TableValidator"
 
 .NOTES
 Exit code is zero only when the build and all test projects succeed.
@@ -45,10 +48,16 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$root = $PSScriptRoot
+$repo = Split-Path -Parent $PSScriptRoot
+$root = Join-Path $repo 'xml-editor-reloaded'
 $solution = Join-Path $root 'XmlEditorReloaded.slnx'
 $testsDirectory = Join-Path $root 'tests'
-$tmpBase = Join-Path $root '.tmp'
+$tmpBase = Join-Path $repo '.tmp'
+
+if (-not (Test-Path -LiteralPath $solution)) {
+    Write-Host "test.ps1: solution not found at $solution" -ForegroundColor Red
+    exit 1
+}
 
 function Remove-TestTemp {
     param([string]$Path)

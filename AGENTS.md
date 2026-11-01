@@ -96,7 +96,9 @@
 - После milestone и зелёных `dotnet build`/`dotnet test` — локальный коммит `Mx: …`; push — только по просьбе.
 - Не редактируйте сгенерированные файлы (`obj/`, `*.g.cs`, `*.Designer.cs`).
 - Для новой логики парсинга, сохранения и декодирования добавляйте unit-тесты.
-- Перед завершением: сборка зелёная, round-trip без потерь, переводы только в оверлее.
+- Перед завершением: сборка зелёная, round-trip без потерь, переводы только в оверлее, `.tmp` очищен
+  (`pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/clean-tmp.ps1`; там же `-WhatIf`,
+  `-KeepHours`, `-KeepUiSmoke`, `-Keep`).
 
 ## 🧪 Песочница агента (DSH): проверенные обходы
 
@@ -107,7 +109,7 @@
 - **Сборка** — команда выше; `-m:1 --no-restore` обязателен, restore при необходимости отдельно:
   `dotnet msbuild xml-editor-reloaded/XmlEditorReloaded.slnx -t:Restore -m:1`.
 - **Тесты** — `dotnet test` на всём решении в песочнице зависает (testhost и воркеры MSBuild).
-  Запускайте `xml-editor-reloaded/test.ps1` (он собирает решение с `-m:1` и гоняет каждый
+  Запускайте `util-scripts/test.ps1` (он собирает решение с `-m:1` и гоняет каждый
   `*.Tests.csproj` с `--no-build --no-restore`) или один проект вручную:
   ```sh
   dotnet test xml-editor-reloaded/tests/XmlEditorReloaded.Xml.Tests/XmlEditorReloaded.Xml.Tests.csproj --no-build --no-restore
@@ -115,7 +117,7 @@
 - **Политика PowerShell** — `test.ps1` и другие скрипты репозитория не подписаны, поэтому
   `pwsh -File ...` падает с `SecurityError: файл не содержит цифровой подписи`. Обход:
   ```sh
-  pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
+  pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1
   ```
   `-ExecutionPolicy Bypass` действует только на процесс и не меняет системную политику.
 - **Запись вне рабочего каталога** блокируется (нужно подтверждение): настройки, метабаза и `.tmp`

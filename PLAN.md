@@ -126,7 +126,7 @@
 
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений
    (в песочнице — `-m:1 --no-restore`, см. `AGENTS.md`).
-2. `pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1` — сборка одним узлом и
+2. `pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1` — сборка одним узлом и
    598 тестов в пяти xUnit-проектах, все зелёные (обход политики PowerShell — там же).
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 598 тестов на каждом
    корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение

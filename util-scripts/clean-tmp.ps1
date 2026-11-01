@@ -38,17 +38,17 @@ example `-Keep 'probe*','*.log'`.
 Do not list every removed item; print the summary only.
 
 .EXAMPLE
-./clean-tmp.ps1 -WhatIf
+./util-scripts/clean-tmp.ps1 -WhatIf
 
 Shows what would be removed without deleting anything.
 
 .EXAMPLE
-./clean-tmp.ps1
+./util-scripts/clean-tmp.ps1
 
 Removes everything older than an hour, keeping the two newest UI smoke runs.
 
 .EXAMPLE
-./clean-tmp.ps1 -KeepHours 0 -KeepUiSmoke 0
+./util-scripts/clean-tmp.ps1 -KeepHours 0 -KeepUiSmoke 0
 
 Empties `.tmp` completely.
 

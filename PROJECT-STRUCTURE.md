@@ -20,13 +20,15 @@ JA2_1.13 Tools/
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
+├── util-scripts/                    # Repository scripts: build+test runner and `.tmp` cleanup
 ├── References/                      # Read-only reference projects and game data (not in git)
 ├── out/                             # Build output: bin/obj of every project (not in git)
 └── xml-editor-reloaded/             # Solution root — all project code
 ```
 
-`References/` is read-only and never referenced by the solution. Other repository-root files are
-documentation and configuration only.
+`References/` is read-only and never referenced by the solution. `util-scripts/` holds the scripts
+that operate on the repository as a whole; it is not part of the solution. Other repository-root
+files are documentation and configuration only.
 
 ## Solution layout
 
@@ -128,10 +130,11 @@ XmlEditorReloaded.Core ──>  (none)
 
 ```sh
 dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror -m:1 --no-restore
-pwsh -NoProfile -ExecutionPolicy Bypass -File xml-editor-reloaded/test.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1
 ```
 
-`test.ps1` builds with one MSBuild node and runs the five xUnit projects sequentially. Sandbox
+`util-scripts/test.ps1` builds with one MSBuild node and runs the five xUnit projects sequentially;
+it resolves the solution and `.tmp` from the repository root, so it works from any directory. Sandbox
 restrictions and their workarounds are described in `AGENTS.md` («Песочница»).
 
 The UI smoke runs on an interactive desktop and takes focus:
