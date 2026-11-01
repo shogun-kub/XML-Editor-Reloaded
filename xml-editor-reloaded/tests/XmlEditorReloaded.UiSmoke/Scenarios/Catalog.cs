@@ -58,6 +58,14 @@ internal static class ScenarioCatalog
         new CopyRelatedScenario(),
         new CopyPoliciesScenario(),
         new CompareRunScenario(),
+        new CompareDetailsScenario(),
+        new CompareExportScenario(),
+        new SettingsScenario(),
+        new UiLanguageScenario(),
+        new ResetLayoutsScenario(),
+        new ExternalChangeCancelScenario(),
+        new ExternalChangeResolveScenario(),
+        new MalformedCopyScenario(),
     ];
 
     /// <summary>

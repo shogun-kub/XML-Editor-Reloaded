@@ -185,7 +185,10 @@ internal static class NativeInput
             return;
         }
 
-        var monitor = MonitorFromWindow(windowHandle, MonitorDefaultToPrimary);
+        // The primary display always starts at the virtual origin, while secondary displays can lie above
+        // or to the left of it. Resolving the monitor of the window would return that secondary display
+        // and keep the window there, so the primary monitor is resolved from the origin instead.
+        var monitor = MonitorFromPoint(new Point(0, 0), MonitorDefaultToPrimary);
         if (monitor == IntPtr.Zero)
         {
             return;
@@ -722,7 +725,7 @@ internal static class NativeInput
     private static extern bool GetWindowRect(IntPtr window, out Rect rectangle);
 
     [DllImport("user32.dll")]
-    private static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
+    private static extern IntPtr MonitorFromPoint(Point point, uint flags);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     [return: MarshalAs(UnmanagedType.Bool)]

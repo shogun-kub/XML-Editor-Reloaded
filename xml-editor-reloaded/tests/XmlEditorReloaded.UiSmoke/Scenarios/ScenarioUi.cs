@@ -466,6 +466,16 @@ internal static class ScenarioUi
         throw new UiTimeoutException($"Окно с элементом '{automationId}' не закрылось.");
     }
 
+    /// <summary>
+    /// Determines whether any top-level window of the application contains the given automation
+    /// identifier.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="automationId">Identifier that identifies the dialog.</param>
+    /// <returns><see langword="true"/> while such a window exists.</returns>
+    public static bool IsWindowWithIdOpen(UiApp app, string automationId) =>
+        FindWindowWithId(app, automationId) is not null;
+
     private static AutomationElement? FindWindowWithId(UiApp app, string automationId)
     {
         try

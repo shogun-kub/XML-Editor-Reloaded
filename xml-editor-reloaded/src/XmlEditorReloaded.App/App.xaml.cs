@@ -132,7 +132,11 @@ public partial class App : Application
             {
                 try
                 {
-                    CultureInfo.CurrentUICulture = new CultureInfo(uiLanguage);
+                    var culture = new CultureInfo(uiLanguage);
+                    CultureInfo.CurrentUICulture = culture;
+                    // The interface language is an application setting, so the strings are resolved from
+                    // it explicitly instead of the ambient culture of whichever thread creates a window.
+                    Strings.SetUiCulture(culture);
                 }
                 catch (CultureNotFoundException)
                 {
