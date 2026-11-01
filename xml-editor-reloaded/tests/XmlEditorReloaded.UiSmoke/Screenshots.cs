@@ -1,5 +1,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Automation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using XmlEditorReloaded.UiSmoke.Scenarios;
@@ -60,6 +61,20 @@ internal static class Screenshots
             window.WaitById("RowsGrid", TimeSpan.FromSeconds(60));
             Thread.Sleep(600);
             CaptureMainWindow(app, Path.Combine(directory, "03-table-editor.png"));
+
+            ResizeWidth(app.WindowHandle, 1100);
+            Thread.Sleep(500);
+            CaptureMainWindow(app, Path.Combine(directory, "04-table-editor-min.png"));
+
+            var toggle = window.WaitById("DetailsToggleButton");
+            if (toggle.TryGetCurrentPattern(TogglePattern.Pattern, out var raw)
+                && raw is TogglePattern pattern)
+            {
+                pattern.Toggle();
+            }
+
+            Thread.Sleep(500);
+            CaptureMainWindow(app, Path.Combine(directory, "05-table-editor-details-hidden.png"));
         }
         finally
         {
@@ -76,6 +91,26 @@ internal static class Screenshots
         Thread.Sleep(250);
         CaptureWindow(app.WindowHandle, path);
         Console.WriteLine($"Screenshot: {path}");
+    }
+
+    private static void ResizeWidth(IntPtr windowHandle, int width)
+    {
+        if (!GetWindowRect(windowHandle, out var bounds))
+        {
+            return;
+        }
+
+        const uint NoMove = 0x0002;
+        const uint NoZOrder = 0x0004;
+        const uint NoActivate = 0x0010;
+        SetWindowPos(
+            windowHandle,
+            IntPtr.Zero,
+            0,
+            0,
+            width,
+            bounds.Bottom - bounds.Top,
+            NoMove | NoZOrder | NoActivate);
     }
 
     private static void CaptureWindow(IntPtr windowHandle, string path)
@@ -185,6 +220,16 @@ internal static class Screenshots
 
     [DllImport("user32.dll")]
     private static extern bool GetWindowRect(IntPtr window, out NativeRect rectangle);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(
+        IntPtr window,
+        IntPtr insertAfter,
+        int x,
+        int y,
+        int width,
+        int height,
+        uint flags);
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetDC(IntPtr window);

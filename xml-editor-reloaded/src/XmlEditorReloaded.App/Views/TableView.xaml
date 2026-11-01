@@ -81,76 +81,83 @@
             </StackPanel>
         </WrapPanel>
 
-        <WrapPanel Grid.Row="1"
-                   Margin="0,0,0,6"
-                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="UndoButton"
-                    Content="{Binding UndoText}"
-                    Command="{Binding UndoCommand}"
-                    ToolTip="{Binding UndoButtonTooltip}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="RedoButton"
-                    Content="{Binding RedoText}"
-                    Command="{Binding RedoCommand}"
-                    ToolTip="{Binding RedoButtonTooltip}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="AddRowButton"
-                    Content="{Binding AddRowText}"
-                    Command="{Binding AddRowCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="DuplicateRowButton"
-                    Content="{Binding DuplicateRowText}"
-                    Command="{Binding DuplicateRowCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="DeleteRowButton"
-                    Content="{Binding DeleteRowText}"
-                    Command="{Binding DeleteRowCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="SaveButton"
-                    Content="{Binding SaveText}"
-                    Command="{Binding SaveCommand}"
-                    IsEnabled="{Binding IsDirty}" />
-            <TextBlock VerticalAlignment="Center"
-                       Margin="0,0,12,0"
-                       Foreground="#FF666666"
-                       AutomationProperties.AutomationId="SelectedRowCount"
-                       Text="{Binding SelectedRowCountText}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ValidateButton"
-                    Content="{Binding ValidateText}"
-                    Command="{Binding ValidateCommand}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="ReloadButton"
-                    Content="{Binding ReloadText}"
-                    Command="{Binding ReloadCommand}" />
-            <TextBlock VerticalAlignment="Center"
-                       Margin="0,0,6,0"
-                       Text="{Binding LanguageLabel}" />
-            <ComboBox Width="210"
-                      Margin="0,0,12,0"
-                      VerticalAlignment="Center"
-                      AutomationProperties.AutomationId="LanguageCombo"
-                      ItemsSource="{Binding LanguageOptions}"
-                      SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
-                      DisplayMemberPath="DisplayText"
-                      ToolTip="{Binding SelectedLanguageOption.Tooltip}"
-                      IsEnabled="{Binding IsLanguageSelectorEnabled}" />
-            <CheckBox VerticalAlignment="Center"
-                      Content="{Binding DetailLabel}"
-                      IsChecked="{Binding ShowDetails, Mode=TwoWay}" />
-        </WrapPanel>
+        <Grid Grid.Row="1"
+              Margin="0,0,0,6"
+              Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Column="0">
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="UndoButton"
+                        Content="{Binding UndoText}"
+                        Command="{Binding UndoCommand}"
+                        ToolTip="{Binding UndoButtonTooltip}" />
+                <Button Padding="10,3"
+                        Margin="0,0,12,0"
+                        AutomationProperties.AutomationId="RedoButton"
+                        Content="{Binding RedoText}"
+                        Command="{Binding RedoCommand}"
+                        ToolTip="{Binding RedoButtonTooltip}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="AddRowButton"
+                        Content="{Binding AddRowText}"
+                        Command="{Binding AddRowCommand}"
+                        IsEnabled="{Binding IsEditable}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="DuplicateRowButton"
+                        Content="{Binding DuplicateRowText}"
+                        Command="{Binding DuplicateRowCommand}"
+                        IsEnabled="{Binding IsEditable}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="DeleteRowButton"
+                        Content="{Binding DeleteRowText}"
+                        Command="{Binding DeleteRowCommand}"
+                        IsEnabled="{Binding IsEditable}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="SaveButton"
+                        Content="{Binding SaveText}"
+                        Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding IsDirty}" />
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0,0,12,0"
+                           Foreground="#FF666666"
+                           AutomationProperties.AutomationId="SelectedRowCount"
+                           Text="{Binding SelectedRowCountText}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="ValidateButton"
+                        Content="{Binding ValidateText}"
+                        Command="{Binding ValidateCommand}" />
+                <Button Padding="10,3"
+                        Margin="0,0,12,0"
+                        AutomationProperties.AutomationId="ReloadButton"
+                        Content="{Binding ReloadText}"
+                        Command="{Binding ReloadCommand}" />
+            </WrapPanel>
+            <StackPanel Grid.Column="1"
+                        Margin="16,0,0,0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top">
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Text="{Binding LanguageLabel}" />
+                <ComboBox Width="210"
+                          VerticalAlignment="Center"
+                          AutomationProperties.AutomationId="LanguageCombo"
+                          ItemsSource="{Binding LanguageOptions}"
+                          SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayText"
+                          ToolTip="{Binding SelectedLanguageOption.Tooltip}"
+                          IsEnabled="{Binding IsLanguageSelectorEnabled}" />
+            </StackPanel>
+        </Grid>
 
         <Expander Grid.Row="2"
                   Margin="0,0,0,6"
@@ -275,6 +282,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="RowsGrid"
                   Grid.Column="0"
@@ -321,9 +329,40 @@
                 </DataGrid.ContextMenu>
             </DataGrid>
 
-            <Border Grid.Column="1"
+            <ToggleButton Grid.Column="1"
+                          Width="22"
+                          Margin="4,0,0,0"
+                          VerticalAlignment="Stretch"
+                          HorizontalAlignment="Center"
+                          Focusable="False"
+                          Cursor="Hand"
+                          AutomationProperties.AutomationId="DetailsToggleButton"
+                          AutomationProperties.Name="{Binding DetailToggleText}"
+                          ToolTip="{Binding DetailToggleText}"
+                          IsChecked="{Binding ShowDetails, Mode=TwoWay}"
+                          Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="Foreground" Value="#FF555555" />
+                        <Setter Property="Content" Value="◀" />
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Content" Value="▶" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFE8E8E8" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+
+            <Border Grid.Column="2"
                     Width="340"
-                    Margin="6,0,0,0"
+                    Margin="4,0,0,0"
                     BorderBrush="#FFB0B0B0"
                     BorderThickness="1"
                     Visibility="{Binding ShowDetails, Converter={StaticResource BoolToVisibility}}">

@@ -398,6 +398,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     public string DetailLabel { get; }
 
     /// <summary>
+    /// Gets the tooltip of the button that shows or hides the detail panel.
+    /// </summary>
+    public string DetailToggleText =>
+        Strings.Get(ShowDetails ? "DetailsHideText" : "DetailsShowText");
+
+    /// <summary>
     /// Gets the detail field filter label.
     /// </summary>
     public string DetailFilterLabel { get; }
@@ -1697,6 +1703,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         OnPropertyChanged(nameof(IsReadOnly));
         DuplicateRowCommand.NotifyCanExecuteChanged();
     }
+
+    partial void OnShowDetailsChanged(bool value) =>
+        OnPropertyChanged(nameof(DetailToggleText));
 
     partial void OnIsDirtyChanged(bool value) =>
         DisplayName = value ? Title + " *" : Title;

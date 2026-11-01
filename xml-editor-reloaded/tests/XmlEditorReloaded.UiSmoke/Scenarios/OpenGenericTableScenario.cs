@@ -51,6 +51,8 @@ internal sealed class OpenGenericTableScenario : SmokeScenario
                 && languages.Any(static option => option.StartsWith("Russian", StringComparison.OrdinalIgnoreCase)),
             "варианты: " + string.Join(", ", languages));
 
+        CheckDetailsToggle(context, window);
+
         // Switch the active data set without closing the v4 tab.
         ScenarioUi.SelectDataDirectory(window, context.Data(DatasetKind.V5).DataDirectory);
         var template = context.Strings.Get("StatusTablesLoaded");
@@ -78,5 +80,24 @@ internal sealed class OpenGenericTableScenario : SmokeScenario
 
         var v5Rows = window.WaitById("RowsGrid").RowCount();
         context.Recorder.Check("Сетка Lookup.Cursor содержит строки", v5Rows > 0, $"строк: {v5Rows}");
+    }
+
+    private static void CheckDetailsToggle(ScenarioContext context, AutomationElement window)
+    {
+        var toggle = window.WaitById("DetailsToggleButton");
+        context.Recorder.Check(
+            "Кнопка панели деталей подписана «Скрыть панель деталей»",
+            toggle.ReadName() == context.Strings.Get("DetailsHideText"),
+            toggle.ReadName());
+
+        toggle.SetChecked(false);
+        Ui.WaitUntil(() => window.FindById("DetailFilterBox") is null, "панель деталей скрыта");
+        context.Recorder.Check(
+            "Скрытая панель меняет подсказку на «Показать панель деталей»",
+            window.WaitById("DetailsToggleButton").ReadName() == context.Strings.Get("DetailsShowText"),
+            window.WaitById("DetailsToggleButton").ReadName());
+
+        window.WaitById("DetailsToggleButton").SetChecked(true);
+        Ui.WaitUntil(() => window.FindById("DetailFilterBox") is not null, "панель деталей показана");
     }
 }

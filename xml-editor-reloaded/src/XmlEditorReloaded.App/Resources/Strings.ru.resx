@@ -285,6 +285,12 @@
   <data name="DetailLabel" xml:space="preserve">
     <value>Детали</value>
   </data>
+  <data name="DetailsShowText" xml:space="preserve">
+    <value>Показать панель деталей</value>
+  </data>
+  <data name="DetailsHideText" xml:space="preserve">
+    <value>Скрыть панель деталей</value>
+  </data>
   <data name="DetailFilterLabel" xml:space="preserve">
     <value>Найти поле</value>
   </data>
