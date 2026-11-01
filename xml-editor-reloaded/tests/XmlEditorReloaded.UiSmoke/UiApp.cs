@@ -121,6 +121,9 @@ internal sealed class UiApp : IDisposable
                 }
 
                 var started = new UiApp(process, window, appDataDirectory);
+                // The window is centred on the display under the mouse cursor, which may be a secondary
+                // screen that swallows the synthetic input of the run.
+                NativeInput.PlaceOnPrimaryScreen(started.WindowHandle);
                 started.Activate();
                 // Synthetic clicks must reach the application even when another window is raised during
                 // the run; the topmost flag is removed with the window when the application closes.

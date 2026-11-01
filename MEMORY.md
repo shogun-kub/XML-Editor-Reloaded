@@ -42,7 +42,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b8 и M23a готовы, F0–F9 закрыты, 598 тестов, UI-smoke A–D; далее gate M23b; roadmap M18–M27 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M23b8 и M23a готовы, F0–F9 закрыты, 598 тестов, UI-smoke A–F; далее gate M23b; roadmap M18–M27 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
@@ -54,4 +54,4 @@
 | Полировка grid | [memory/ja2-editor-grid-polish.md](memory/ja2-editor-grid-polish.md) | M22a фильтры/layout, M22b recovery, M22c составные ключи, F1 вложенные таблицы/контекстное меню |
 | Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b7 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
-| UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–D): запуск, изоляция `%AppData%`, грабли UIA |
+| UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–F): запуск, изоляция `%AppData%`, грабли UIA |

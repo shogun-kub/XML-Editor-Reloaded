@@ -172,6 +172,62 @@ internal static class NativeInput
     }
 
     /// <summary>
+    /// Moves and resizes a window into the work area of the primary display when it was opened on another
+    /// monitor. WPF centres a window without an owner on the monitor that holds the mouse cursor, so a
+    /// secondary or virtual display can capture the window of the run; synthetic input does not reach
+    /// every such display, and the run then fails with swallowed clicks instead of a real defect.
+    /// </summary>
+    /// <param name="windowHandle">Native window handle.</param>
+    public static void PlaceOnPrimaryScreen(IntPtr windowHandle)
+    {
+        if (windowHandle == IntPtr.Zero || !GetWindowRect(windowHandle, out var bounds))
+        {
+            return;
+        }
+
+        var monitor = MonitorFromWindow(windowHandle, MonitorDefaultToPrimary);
+        if (monitor == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var info = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+        if (!GetMonitorInfo(monitor, ref info))
+        {
+            return;
+        }
+
+        var work = info.Work;
+        var width = bounds.Right - bounds.Left;
+        var height = bounds.Bottom - bounds.Top;
+        if (bounds.Left >= work.Left
+            && bounds.Top >= work.Top
+            && bounds.Right <= work.Right
+            && bounds.Bottom <= work.Bottom)
+        {
+            return;
+        }
+
+        var restore = IsZoomed(windowHandle);
+        if (restore)
+        {
+            ShowWindow(windowHandle, RestoreWindow);
+        }
+
+        width = Math.Min(width, work.Right - work.Left);
+        height = Math.Min(height, work.Bottom - work.Top);
+        var x = work.Left + Math.Max(0, (work.Right - work.Left - width) / 2);
+        var y = work.Top + Math.Max(0, (work.Bottom - work.Top - height) / 2);
+        SetWindowPos(windowHandle, HwndTop, x, y, width, height, SwpNoZOrder | SwpNoActivate);
+        Thread.Sleep(150);
+        if (restore)
+        {
+            ShowWindow(windowHandle, MaximizeWindow);
+            Thread.Sleep(150);
+        }
+    }
+
+    /// <summary>
     /// Keeps a window above other applications for the rest of the run. Synthetic input otherwise lands
     /// in whatever window is on top, and an application that raises itself, such as a chat client, can
     /// also take the keyboard focus away between two clicks.
@@ -580,6 +636,15 @@ internal static class NativeInput
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public int Size;
+        public Rect Monitor;
+        public Rect Work;
+        public uint Flags;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     private struct Input
     {
         public uint Type;
@@ -656,6 +721,17 @@ internal static class NativeInput
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetWindowRect(IntPtr window, out Rect rectangle);
 
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool IsZoomed(IntPtr window);
+
     [DllImport("kernel32.dll")]
     private static extern uint SetThreadExecutionState(uint flags);
 
@@ -682,6 +758,8 @@ internal static class NativeInput
     private static extern IntPtr SetActiveWindow(IntPtr window);
 
     private const int RestoreWindow = 9;
+    private const int MaximizeWindow = 3;
+    private const uint MonitorDefaultToPrimary = 0x00000001;
     private const int GwlExStyle = -20;
     private const long WsExTopMost = 0x00000008;
     private const uint EsSystemRequired = 0x00000001;
@@ -694,6 +772,7 @@ internal static class NativeInput
     private static readonly IntPtr HwndTopMost = new(-1);
     private const uint SwpNoSize = 0x0001;
     private const uint SwpNoMove = 0x0002;
+    private const uint SwpNoZOrder = 0x0004;
     private const uint SwpNoActivate = 0x0010;
     private const uint SwpShowWindow = 0x0040;
 }

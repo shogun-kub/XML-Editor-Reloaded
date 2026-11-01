@@ -102,7 +102,6 @@ internal static class DataOperationsUi
     /// <param name="tableName">Dotted table name.</param>
     public static void SelectCopyTable(ScenarioContext context, AutomationElement dialog, string tableName)
     {
-        WaitCopyTablesLoaded(context, dialog);
         dialog.WaitById("CopyTableCombo").SelectComboItem(tableName);
         Ui.WaitUntil(
             () => dialog.WaitById("CopyPreviewButton").IsEnabled(),
@@ -173,7 +172,7 @@ internal static class DataOperationsUi
     }
 
     /// <summary>
-    /// Returns the text of one cell of the preview grid.
+    /// Returns the text of one cell of the preview grid, or an empty string when the cell shows nothing.
     /// </summary>
     /// <param name="dialog">Copy dialog.</param>
     /// <param name="row">Zero-based row index.</param>
@@ -188,7 +187,33 @@ internal static class DataOperationsUi
             Thread.Sleep(100);
         }
 
-        return WorkspaceUi.ReadCell(grid, row, column);
+        return GridCellText(grid, row, column);
+    }
+
+    /// <summary>
+    /// Reads the visible text of a data-grid cell. An empty cell exposes only its automation name, which
+    /// is a data-template description, so only text and edit descendants are considered.
+    /// </summary>
+    /// <param name="grid">Data grid.</param>
+    /// <param name="row">Zero-based row index.</param>
+    /// <param name="column">Zero-based column index.</param>
+    /// <returns>Cell text, or an empty string for an empty cell.</returns>
+    public static string GridCellText(AutomationElement grid, int row, int column)
+    {
+        var cell = grid.Cell(row, column);
+        var text = cell
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+            .Select(static element => element.ReadName())
+            .FirstOrDefault(static value => !string.IsNullOrWhiteSpace(value));
+        if (text is not null)
+        {
+            return text.Trim();
+        }
+
+        var editor = cell.FindFirst(
+            TreeScope.Descendants,
+            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+        return editor is null ? string.Empty : editor.ReadValue().Trim();
     }
 
     /// <summary>
@@ -349,7 +374,7 @@ internal static class DataOperationsUi
         var rows = grid.RowCount();
         for (var row = 0; row < rows; row++)
         {
-            if (string.Equals(WorkspaceUi.ReadCell(grid, row, 0).Trim(), key, StringComparison.Ordinal))
+            if (string.Equals(GridCellText(grid, row, 0), key, StringComparison.Ordinal))
             {
                 return row;
             }

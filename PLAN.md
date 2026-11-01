@@ -4,13 +4,13 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M23b8 и M23a завершены; следующий шаг — gate M23b. Части A–D ручного smoke автоматизированы 2026-10-31 (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 32 сценария: S01–S03, S05–S21, S23–S32, S48 плюс целостность S50); вручную остаются S04, S22, S71–S75, S82–S83 и ветка ошибки сохранения S13. Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
+**Состояние:** M0–M23b8 и M23a завершены; следующий шаг — gate M23b. Части A–F ручного smoke автоматизированы (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 40 сценариев: S01–S03, S05–S21, S23–S40, S48 плюс целостность S50; части E–F — S33–S40 с 2026-11-01); вручную остаются S04, S22, S71–S75, S82–S83 и ветка ошибки сохранения S13. Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
 
 **Реализовано:** датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. Валидация предупреждает о границах legacy-спиннеров, группах флагов и карманах LBE, ничего не обнуляя; lookup-id и маски `Flags` 64-битные; Images показывает кадры типа, границы индекса и live-миниатюры; shopkeeper адресует строки дилера точной записью. Ошибки и preflight пишутся в лог с путями и причиной. Подробности — в коде, тестах и чек-листе.
 
 **Метаданные:** 173 таблицы, 1042 `TableRelations`, 1981 `ColumnHint` (123 с границами min/max, 23 с `ComparisonField`), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 7 `ColumnTextLimits` (лимиты ввода и счётчики символов, с китайским переопределением), 17 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
 
-**Проверка:** build `-warnaserror` (0/0), 598 тестов в базовом прогоне (`test.ps1`), UI-smoke частей A–D (32 сценария, включая S50) зелёный; корпусные прогоны v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v5) — на gate M23b. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 598 тестов в базовом прогоне (`test.ps1`), UI-smoke частей A–F (40 сценариев, включая S50) зелёный; корпусные прогоны v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v5) — на gate M23b. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила:** XML-целостность, `References/`, кодировка и коммиты — в `AGENTS.md`; здесь не дублируются.
 
@@ -135,7 +135,7 @@
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с.
 7. **Автоматический UI-smoke:** `out/bin/XmlEditorReloaded.UiSmoke/debug/XmlEditorReloaded.UiSmoke.exe`
-   — 32 сценария частей A–D (S01–S03, S05–S21, S23–S32, S48 + целостность S50); запускать на
+   — 40 сценариев частей A–F (S01–S03, S05–S21, S23–S40, S48 + целостность S50); запускать на
    интерактивном рабочем столе (`--only`, `--list`, `--keep`), результат — `report.md` в `.tmp/ui-smoke/<timestamp>/`.
 8. **Ручной smoke (выполняет пользователь):** `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` — S04, S22,
    S71–S75, S82–S83, ветка ошибки сохранения S13 и сценарии M23b1–M23b8. Результат и подпись вносятся

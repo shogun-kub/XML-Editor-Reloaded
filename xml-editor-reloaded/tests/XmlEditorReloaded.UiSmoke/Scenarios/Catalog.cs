@@ -54,6 +54,10 @@ internal static class ScenarioCatalog
         new LookupComboScenario(),
         new LookupEditScenario(),
         new LookupDiagnosticsScenario(),
+        new CopyRecordScenario(),
+        new CopyRelatedScenario(),
+        new CopyPoliciesScenario(),
+        new CompareRunScenario(),
     ];
 
     /// <summary>

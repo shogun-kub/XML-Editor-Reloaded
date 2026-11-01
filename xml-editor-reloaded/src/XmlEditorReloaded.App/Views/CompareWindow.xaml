@@ -102,6 +102,7 @@
             <TextBlock Margin="0,2,0,0"
                        Foreground="#FF666666"
                        TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="CompareSummaryFieldsText"
                        Text="{Binding SummaryFieldsText}" />
         </StackPanel>
 
