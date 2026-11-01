@@ -46,6 +46,15 @@ internal sealed class DatasetListScenario : SmokeScenario
             itemsCells.ElementAtOrDefault(2) == context.Strings.Get("Mapped"),
             $"колонки: {string.Join(" | ", itemsCells)}");
 
+        // Data that exists only in the other version must not appear in this list, and overlay files are
+        // not standalone tables.
+        context.Recorder.Check(
+            "Таблица, которой нет в v4, отсутствует в списке",
+            ScenarioUi.FindTableRow(window, "Email.EmailSenderNameList") is null);
+        context.Recorder.Check(
+            "Файл русского оверлея не показан как таблица",
+            ScenarioUi.FindTableRow(window, "Russian.Items") is null);
+
         foreach (var (name, expectedLanguage) in new[]
                  {
                      ("Inventory.MercStartingGear", "ru"),

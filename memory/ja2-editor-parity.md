@@ -18,7 +18,7 @@ metadata:
   duplicated here.
 - **M23b1–M23b8 closed (2026-10-24…27):** item filters/class-aware fields, relations/navigation/list-dict
   editors, value sources and pickers, validation limits and 64-bit masks, images, shopkeeper/lookup
-  identity, shell/field UI/merc polish, storage/copy/logging. Baseline before the gate: 598 tests,
+  identity, shell/field UI/merc polish, storage/copy/logging. Baseline before the gate: 600 tests,
   corpus v4/v5, compare v4↔v5 and copy v4→v5 1/1, perf 9/9, `References/` untouched.
 - **Known residuals:** big-image corner-colour transparency and nested stance limits are out of scope;
   empty lookup names have no duplicate/usage protection (M26a/M26b); `CONTROL` tables are excluded on

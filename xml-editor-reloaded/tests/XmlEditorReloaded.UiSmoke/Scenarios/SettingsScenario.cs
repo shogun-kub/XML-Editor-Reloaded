@@ -30,6 +30,11 @@ internal sealed class SettingsScenario : SmokeScenario
             "Backgrounds открыт");
         ScenarioUi.WaitForEditorTabCount(context.Window, 1);
 
+        // The table exists only in v5, so the v4 list must not offer it.
+        context.Recorder.Check(
+            "В списке v4 нет таблицы, которой нет в этой версии",
+            ScenarioUi.FindTableRow(context.Window, "Email.EmailSenderNameList") is null);
+
         var addable = CreateAddableDirectory(context, v4);
 
         var dialog = SettingsUi.Open(context);
@@ -129,6 +134,13 @@ internal sealed class SettingsScenario : SmokeScenario
             "Селектор главного окна показывает v5",
             SamePath(context.Window.WaitById("DataDirectoryCombo").ReadComboSelection(), v5.DataDirectory),
             context.Window.WaitById("DataDirectoryCombo").ReadComboSelection());
+        Ui.WaitUntil(
+            () => ScenarioUi.FindTableRow(context.Window, "Email.EmailSenderNameList") is not null,
+            "список v5 содержит таблицу, которой нет в v4",
+            TimeSpan.FromSeconds(30));
+        context.Recorder.Check(
+            "В списке v5 появилась таблица, которой нет в v4",
+            ScenarioUi.FindTableRow(context.Window, "Email.EmailSenderNameList") is not null);
 
         var settingsAfterOk = SettingsUi.ReadSettings(context.App);
         context.Recorder.Check(

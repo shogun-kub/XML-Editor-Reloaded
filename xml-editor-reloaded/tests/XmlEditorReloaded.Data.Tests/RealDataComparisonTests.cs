@@ -69,6 +69,12 @@ public class RealDataComparisonTests
             report.Tables,
             table => table.Status == TableComparisonStatus.RightOnly);
         Assert.Equal("Email.EmailSenderNameList", rightOnly.TableName.Value);
+        Assert.Null(rightOnly.Left);
+        var expectedRightOnlyRecords = System.Xml.Linq.XDocument
+            .Load(Path.Combine(rightDirectory, "Email", "EmailSenderNameList.xml"))
+            .Root!.Elements()
+            .Count();
+        Assert.Equal(expectedRightOnlyRecords, rightOnly.Right!.Snapshot!.RecordCount);
 
         var attachmentPoint = Assert.Single(
             report.Tables,
@@ -112,6 +118,8 @@ public class RealDataComparisonTests
         var markdown = TableComparisonReportFormatter.FormatMarkdown(report);
         Assert.Contains("| Items.Items | Both (changed)", markdown, StringComparison.Ordinal);
         Assert.Contains("Lookup.AttachmentPoint", markdown, StringComparison.Ordinal);
+        Assert.Contains("| Email.EmailSenderNameList | Only right", markdown, StringComparison.Ordinal);
+        Assert.Contains("Left: not present", markdown, StringComparison.Ordinal);
         Assert.Equal(before, Snapshot(leftDirectory).Concat(Snapshot(rightDirectory)).ToArray());
     }
 

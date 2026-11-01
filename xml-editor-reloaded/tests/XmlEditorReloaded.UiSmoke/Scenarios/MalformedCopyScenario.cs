@@ -42,6 +42,16 @@ internal sealed class MalformedCopyScenario : SmokeScenario
         DataOperationsUi.SelectCopyDirectory(dialog, "CopySourceCombo", v4);
         DataOperationsUi.SelectCopyDirectory(dialog, "CopyTargetCombo", v5);
         DataOperationsUi.WaitCopyTablesLoaded(context, dialog);
+
+        // The copy dialog lists only the tables common to both data sets; a v5-only table is not offered
+        // when v4 is the target.
+        context.Recorder.Check(
+            "Таблица, отсутствующая в приёмнике v4, не предлагается к копированию",
+            !DataOperationsUi.IsCopyTableOffered(dialog, "Email.EmailSenderNameList"));
+        context.Recorder.Check(
+            "Общие таблицы предлагаются к копированию",
+            DataOperationsUi.IsCopyTableOffered(dialog, "Items.Items"));
+
         DataOperationsUi.SelectCopyTable(context, dialog, "Lookup.AttachmentPoint");
 
         dialog.WaitById("CopyPreviewButton").InvokeButton();
@@ -68,6 +78,14 @@ internal sealed class MalformedCopyScenario : SmokeScenario
             "Копирование не предлагается",
             !dialog.WaitById("CopyApplyButton").IsEnabled(),
             $"IsEnabled: {dialog.WaitById("CopyApplyButton").IsEnabled()}");
+
+        // The same asymmetry from the other direction: v5 has the table, v4 does not.
+        DataOperationsUi.SelectCopyDirectory(dialog, "CopySourceCombo", v5);
+        DataOperationsUi.SelectCopyDirectory(dialog, "CopyTargetCombo", v4);
+        DataOperationsUi.WaitCopyTablesLoaded(context, dialog);
+        context.Recorder.Check(
+            "Таблица, которой нет в v4, не предлагается и при источнике v5",
+            !DataOperationsUi.IsCopyTableOffered(dialog, "Email.EmailSenderNameList"));
 
         DataOperationsUi.CloseCopyDialog(context, dialog);
 

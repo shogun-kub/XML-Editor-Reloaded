@@ -10,7 +10,7 @@
 
 **Метаданные:** 173 таблицы, 1042 `TableRelations`, 1981 `ColumnHint` (123 с границами min/max, 23 с `ComparisonField`), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 7 `ColumnTextLimits` (лимиты ввода и счётчики символов, с китайским переопределением), 17 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
 
-**Проверка:** build `-warnaserror` (0/0), 598 тестов в базовом прогоне (`test.ps1`), UI-smoke частей A–G (48 сценариев, включая S50) зелёный; корпусные прогоны v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v5) — на gate M23b. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 600 тестов в базовом прогоне (`test.ps1`), UI-smoke частей A–G (48 сценариев, включая S50) зелёный; корпусные прогоны v4/v5, сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v5) — на gate M23b. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила:** XML-целостность, `References/`, кодировка и коммиты — в `AGENTS.md`; здесь не дублируются.
 
@@ -127,8 +127,8 @@
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений
    (в песочнице — `-m:1 --no-restore`, см. `AGENTS.md`).
 2. `pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1` — сборка одним узлом и
-   598 тестов в пяти xUnit-проектах, все зелёные (обход политики PowerShell — там же).
-3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 598 тестов на каждом
+   600 тестов в пяти xUnit-проектах, все зелёные (обход политики PowerShell — там же).
+3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 600 тестов на каждом
    корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение
    диапазона — `mSmall1Status=600` (mIndex 237, kit 5) в обеих версиях.
 4. Сравнение: `XER_COMPARE_LEFT_DIR=<v4> XER_COMPARE_RIGHT_DIR=<v5>` — `RealDataComparisonTests`.

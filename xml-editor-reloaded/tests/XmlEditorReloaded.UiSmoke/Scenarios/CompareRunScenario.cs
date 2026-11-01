@@ -64,6 +64,31 @@ internal sealed class CompareRunScenario : SmokeScenario
                 string.Join(" | ", cells));
         }
 
+        // A table that exists only in v5 has no left side; the record count comes from the file itself.
+        var rightOnlyFile = v5.TableFile("Email/EmailSenderNameList.xml");
+        var rightOnlyRecords = System.Xml.Linq.XDocument.Load(rightOnlyFile).Root?.Elements().Count() ?? 0;
+        var rightOnly = ScenarioUi.FindTableRow(window, "Email.EmailSenderNameList");
+        context.Recorder.Check(
+            "Таблица, которой нет в v4, есть в списке сравнения",
+            rightOnly is not null);
+        if (rightOnly is not null)
+        {
+            var cells = rightOnly.ReadRowCells();
+            context.Recorder.Check(
+                "Статус таблицы — «Только справа»",
+                cells.ElementAtOrDefault(1) == context.Strings.Get("CompareStatusRightOnly"),
+                string.Join(" | ", cells));
+            context.Recorder.Check(
+                "Слева записей нет",
+                cells.ElementAtOrDefault(2) == "—",
+                string.Join(" | ", cells));
+            context.Recorder.Check(
+                "Справа показано число записей файла",
+                cells.ElementAtOrDefault(3) == rightOnlyRecords.ToString(
+                    System.Globalization.CultureInfo.CurrentCulture),
+                $"{cells.ElementAtOrDefault(3)} против {rightOnlyRecords}");
+        }
+
         // Selecting a table fills the read-only details without any save control.
         items?.SelectItem();
         Thread.Sleep(500);

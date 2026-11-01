@@ -86,6 +86,10 @@ internal sealed class SmokeRunner
     private readonly List<ScenarioResult> _results = [];
     private readonly Dictionary<string, ScenarioResult> _byId = new(StringComparer.Ordinal);
     private readonly List<DatasetKind> _originalDatasets = [DatasetKind.V4, DatasetKind.V5];
+    private readonly List<string> _copyIntegrityProblems = [];
+    private int _originalFileCount;
+    private int _copyChangedFileCount;
+    private int _copyExpectedChangeCount;
     private UiApp? _lastApp;
 
     /// <summary>
@@ -115,6 +119,7 @@ internal sealed class SmokeRunner
         Console.WriteLine();
 
         var originalsBefore = HashOriginals();
+        _originalFileCount = originalsBefore.Count;
         var selected = SelectScenarios();
         foreach (var scenario in selected)
         {
@@ -344,6 +349,16 @@ internal sealed class SmokeRunner
 
             var unexpected = changed.Where(path => !expected.Contains(path)).ToList();
             var missing = expected.Where(path => !changed.Contains(path, StringComparer.OrdinalIgnoreCase)).ToList();
+            _copyChangedFileCount += changed.Count;
+            _copyExpectedChangeCount += expected.Count;
+            if (unexpected.Count > 0 || missing.Count > 0)
+            {
+                _copyIntegrityProblems.Add(
+                    $"{scenario.Id} ({FixtureBuilder.FolderName(kind)}): "
+                    + $"лишние: {string.Join(", ", unexpected)}; "
+                    + $"отсутствуют: {string.Join(", ", missing)}");
+            }
+
             result.Checks.Add(new CheckResult(
                 $"Изменения файлов {FixtureBuilder.FolderName(kind)} соответствуют ожидаемым",
                 unexpected.Count == 0 && missing.Count == 0,
@@ -361,17 +376,80 @@ internal sealed class SmokeRunner
         {
             Id = "S50",
             Title = _catalog.TitleOf("S50"),
-            Status = originalsChanged.Count == 0 ? ScenarioStatus.Passed : ScenarioStatus.Failed,
         };
         result.Checks.Add(new CheckResult(
             "Оригиналы в References не изменились",
             originalsChanged.Count == 0,
             originalsChanged.Count == 0 ? null : string.Join(", ", originalsChanged)));
+        result.Checks.Add(new CheckResult(
+            "Все изменения копий заявлены сценариями",
+            _copyIntegrityProblems.Count == 0,
+            _copyIntegrityProblems.Count == 0
+                ? null
+                : string.Join(" | ", _copyIntegrityProblems.Take(10))));
+        var artifacts = FindGitArtifacts();
+        result.Checks.Add(new CheckResult(
+            "В git нет артефактов сборки и пользовательских файлов",
+            artifacts.Count == 0,
+            artifacts.Count == 0 ? null : string.Join(", ", artifacts.Take(10))));
+        result.Status = result.Checks.All(static check => check.Passed)
+            ? ScenarioStatus.Passed
+            : ScenarioStatus.Failed;
         result.Notes.Add(
-            "Проверены SHA-256 всех файлов TableData в References/JA 2 1.13 v4 и v5 до и после прогона.");
+            $"Проверены SHA-256 файлов TableData в References/JA 2 1.13 v4 и v5: {_originalFileCount}.");
+        result.Notes.Add(
+            $"Изменено файлов в копиях: {_copyChangedFileCount}; заявлено сценариями: {_copyExpectedChangeCount}.");
         _results.RemoveAll(static item => item.Id == "S50");
         _results.Add(result);
         _byId["S50"] = result;
+    }
+
+    /// <summary>
+    /// Returns the paths reported by git that must never be committed: build output, IDE caches, and
+    /// per-user files. Ignored paths do not appear in <c>git status</c>, so only real candidates remain.
+    /// </summary>
+    /// <returns>Offending repository-relative paths.</returns>
+    private IReadOnlyList<string> FindGitArtifacts()
+    {
+        var output = RunGit("status --porcelain");
+        if (string.IsNullOrWhiteSpace(output))
+        {
+            return [];
+        }
+
+        var artifacts = new List<string>();
+        foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = line.TrimEnd('\r');
+            if (trimmed.Length <= 3)
+            {
+                continue;
+            }
+
+            foreach (var part in trimmed[3..].Split(" -> ", StringSplitOptions.TrimEntries))
+            {
+                var path = part.Trim('"').Replace('\\', '/');
+                if (IsBuildArtifact(path))
+                {
+                    artifacts.Add(path);
+                }
+            }
+        }
+
+        return artifacts;
+    }
+
+    private static bool IsBuildArtifact(string path)
+    {
+        var segments = path.Split('/');
+        if (segments.Any(static segment =>
+                segment is "bin" or "obj" or ".vs" or ".idea"))
+        {
+            return true;
+        }
+
+        return path.EndsWith(".user", StringComparison.OrdinalIgnoreCase)
+            || path.EndsWith(".suo", StringComparison.OrdinalIgnoreCase);
     }
 
     private Dictionary<string, string> HashOriginals()

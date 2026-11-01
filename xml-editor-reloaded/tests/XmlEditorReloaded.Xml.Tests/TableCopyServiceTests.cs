@@ -73,6 +73,79 @@ public class TableCopyServiceTests
     }
 
     /// <summary>
+    /// A table that exists only in the source data set cannot be copied into a data set without it: both
+    /// the preview and the apply fail with the dedicated "target table missing" error, and nothing is
+    /// written into either data set.
+    /// </summary>
+    [Fact]
+    public async Task TargetTableMissing_FailsWithoutWriting()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        File.Delete(data.TargetDescriptor.FilePath);
+        var sourceBefore = await File.ReadAllBytesAsync(data.SourceDescriptor.FilePath);
+        var targetFilesBefore = SnapshotFiles(data.TargetDirectory);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+        var request = new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            TableName.Parse("Items.Items"),
+            new[] { "5" },
+            TableCopyConflictPolicy.Skip);
+
+        var preview = await service.PreviewAsync(request);
+
+        Assert.False(preview.IsSuccess);
+        Assert.Equal(ErrorCodes.CopyTargetTableMissing, preview.ErrorCode);
+        Assert.Contains("Items.Items", preview.ErrorText, StringComparison.Ordinal);
+
+        var apply = await service.ApplyAsync(request);
+
+        Assert.False(apply.IsSuccess);
+        Assert.Equal(ErrorCodes.CopyTargetTableMissing, apply.ErrorCode);
+        Assert.False(File.Exists(data.TargetDescriptor.FilePath));
+        Assert.Equal(targetFilesBefore, SnapshotFiles(data.TargetDirectory));
+        Assert.Equal(sourceBefore, await File.ReadAllBytesAsync(data.SourceDescriptor.FilePath));
+    }
+
+    /// <summary>
+    /// A table that exists only in the target data set is not a source table either: the request fails
+    /// with a file-not-found error and the target keeps its bytes.
+    /// </summary>
+    [Fact]
+    public async Task SourceTableMissing_FailsWithoutWriting()
+    {
+        using var workspace = new TestWorkspace();
+        var data = CreateData(workspace);
+        File.Delete(data.SourceDescriptor.FilePath);
+        var targetBefore = await File.ReadAllBytesAsync(data.TargetDescriptor.FilePath);
+        var service = new TableCopyService(new DirectoryCatalog(), new TestMetadataProvider());
+
+        var preview = await service.PreviewAsync(new TableCopyRequest(
+            data.SourceDirectory,
+            data.TargetDirectory,
+            TableName.Parse("Items.Items"),
+            new[] { "5" },
+            TableCopyConflictPolicy.Skip));
+
+        Assert.False(preview.IsSuccess);
+        Assert.Equal(ErrorCodes.IoFileNotFound, preview.ErrorCode);
+        Assert.False(File.Exists(data.SourceDescriptor.FilePath));
+        Assert.Equal(targetBefore, await File.ReadAllBytesAsync(data.TargetDescriptor.FilePath));
+    }
+
+    /// <summary>
+    /// Snapshot of the file names and bytes of a data directory.
+    /// </summary>
+    /// <param name="directory">Directory to snapshot.</param>
+    /// <returns>Relative path and content pairs in ordinal order.</returns>
+    private static List<string> SnapshotFiles(string directory) =>
+        Directory.EnumerateFiles(directory, "*.xml", SearchOption.AllDirectories)
+            .OrderBy(static path => path, StringComparer.Ordinal)
+            .Select(path => $"{Path.GetRelativePath(directory, path)}|{Convert.ToHexString(File.ReadAllBytes(path))}")
+            .ToList();
+
+    /// <summary>
     /// Overwrite copies every source field, keeps target-only fields, and remaps lookup and relation
     /// references by display text without touching the source.
     /// </summary>

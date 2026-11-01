@@ -74,6 +74,7 @@ internal sealed class CompareDetailsScenario : SmokeScenario
             profileText);
 
         VerifyFieldsTab(context, window, added, removed, typeChanged);
+        VerifyMissingSide(context, window);
         VerifyLookupTab(context, window);
 
         context.Recorder.Check(
@@ -143,8 +144,60 @@ internal sealed class CompareDetailsScenario : SmokeScenario
             $"добавлено {added}, удалено {removed}, типы {typeChanged}, полей {fieldCount}");
     }
 
-    private static void VerifyLookupTab(ScenarioContext context, AutomationElement window)
+    /// <summary>
+    /// Selects the table that exists only in v5 and verifies that the details show a missing left side
+    /// instead of an empty or broken record.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="window">Comparison window.</param>
+    private static void VerifyMissingSide(ScenarioContext context, AutomationElement window)
     {
+        const string TableName = "Email.EmailSenderNameList";
+        var row = ScenarioUi.FindTableRow(window, TableName);
+        context.Recorder.Check("Таблица, которой нет в v4, есть в списке", row is not null);
+        if (row is null)
+        {
+            return;
+        }
+
+        row.SelectItem();
+        Thread.Sleep(500);
+        var status = context.Strings.Get("CompareStatusRightOnly");
+        var header = FindText(
+            window,
+            text => text.Contains(TableName, StringComparison.Ordinal)
+                && text.Contains(status, StringComparison.Ordinal));
+        context.Recorder.Check("Детали показывают статус «Только справа»", header is not null, header);
+
+        var profile = ReadProfile(context, window) ?? string.Empty;
+        var missingLeft = context.Strings.Format(
+            "CompareProfileMissing",
+            context.Strings.Get("CompareSideLeft"));
+        context.Recorder.Check(
+            "Профиль сообщает об отсутствии левой стороны",
+            profile.Contains(missingLeft, StringComparison.Ordinal),
+            profile);
+        context.Recorder.Check(
+            "Профиль показывает правую сторону",
+            profile.Contains(context.Strings.Get("CompareSideRight") + ":", StringComparison.Ordinal),
+            profile);
+
+        var fields = window.WaitById("FieldsGrid");
+        var fieldCount = fields.RowCount();
+        var rightOnlyField = context.Strings.Get("CompareFieldRightOnly");
+        var statuses = new List<string>();
+        for (var index = 0; index < Math.Min(5, fieldCount); index++)
+        {
+            statuses.Add(DataOperationsUi.GridCellText(fields, index, 1));
+        }
+
+        context.Recorder.Check(
+            "Поля таблицы без левой стороны помечены как «Только справа»",
+            fieldCount > 0 && statuses.All(status => status == rightOnlyField),
+            $"строк: {fieldCount}; статусы: {string.Join(" | ", statuses)}");
+    }
+
+    private static void VerifyLookupTab(ScenarioContext context, AutomationElement window)    {
         var header = context.Strings.Get("CompareLookupTab");
         var tab = window
             .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))

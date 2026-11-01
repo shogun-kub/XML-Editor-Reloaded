@@ -95,6 +95,26 @@ internal static class DataOperationsUi
     }
 
     /// <summary>
+    /// Determines whether the copy dialog offers a table. The list contains only the tables present in
+    /// both data sets, so a table that exists in one version only is not offered.
+    /// </summary>
+    /// <param name="dialog">Copy dialog.</param>
+    /// <param name="tableName">Dotted table name.</param>
+    /// <returns><see langword="true"/> when the table can be selected.</returns>
+    public static bool IsCopyTableOffered(AutomationElement dialog, string tableName)
+    {
+        try
+        {
+            dialog.WaitById("CopyTableCombo").SelectComboItem(tableName, TimeSpan.FromSeconds(3));
+            return true;
+        }
+        catch (UiTimeoutException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Selects a table in the copy dialog and waits until the dialog can build a preview again.
     /// </summary>
     /// <param name="context">Scenario context.</param>
