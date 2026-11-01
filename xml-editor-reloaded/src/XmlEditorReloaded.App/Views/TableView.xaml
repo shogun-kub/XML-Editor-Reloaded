@@ -82,61 +82,60 @@
         </WrapPanel>
 
         <Grid Grid.Row="1"
-              Margin="0,0,0,6"
+              Margin="0,0,0,0"
               Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <WrapPanel Grid.Column="0">
+                <WrapPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="0,0,6,8" />
+                    </Style>
+                </WrapPanel.Resources>
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="UndoButton"
                         Content="{Binding UndoText}"
                         Command="{Binding UndoCommand}"
                         ToolTip="{Binding UndoButtonTooltip}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,12,8"
                         AutomationProperties.AutomationId="RedoButton"
                         Content="{Binding RedoText}"
                         Command="{Binding RedoCommand}"
                         ToolTip="{Binding RedoButtonTooltip}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="AddRowButton"
                         Content="{Binding AddRowText}"
                         Command="{Binding AddRowCommand}"
                         IsEnabled="{Binding IsEditable}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="DuplicateRowButton"
                         Content="{Binding DuplicateRowText}"
                         Command="{Binding DuplicateRowCommand}"
                         IsEnabled="{Binding IsEditable}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="DeleteRowButton"
                         Content="{Binding DeleteRowText}"
                         Command="{Binding DeleteRowCommand}"
                         IsEnabled="{Binding IsEditable}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="SaveButton"
                         Content="{Binding SaveText}"
                         Command="{Binding SaveCommand}"
                         IsEnabled="{Binding IsDirty}" />
                 <TextBlock VerticalAlignment="Center"
-                           Margin="0,0,12,0"
+                           Margin="0,0,12,8"
                            Foreground="#FF666666"
                            AutomationProperties.AutomationId="SelectedRowCount"
                            Text="{Binding SelectedRowCountText}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
                         AutomationProperties.AutomationId="ValidateButton"
                         Content="{Binding ValidateText}"
                         Command="{Binding ValidateCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,12,8"
                         AutomationProperties.AutomationId="ReloadButton"
                         Content="{Binding ReloadText}"
                         Command="{Binding ReloadCommand}" />
