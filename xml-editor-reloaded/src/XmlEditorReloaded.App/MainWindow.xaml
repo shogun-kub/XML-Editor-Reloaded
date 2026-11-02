@@ -34,12 +34,10 @@
                 <MenuItem Header="{Binding SettingsText}"
                           AutomationProperties.AutomationId="SettingsButton"
                           Command="{Binding OpenSettingsCommand}" />
-            </MenuItem>
-            <MenuItem Header="{Binding EditMenuText}"
-                      AutomationProperties.AutomationId="EditMenu">
-                <MenuItem Header="{Binding BulkEditText}"
-                          AutomationProperties.AutomationId="BulkEditButton"
-                          Command="{Binding BulkEditCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding ExitMenuText}"
+                          AutomationProperties.AutomationId="ExitMenuItem"
+                          Click="OnExitMenuClick" />
             </MenuItem>
             <MenuItem Header="{Binding ViewMenuText}"
                       AutomationProperties.AutomationId="ViewMenu">
@@ -49,6 +47,10 @@
             </MenuItem>
             <MenuItem Header="{Binding DataMenuText}"
                       AutomationProperties.AutomationId="DataMenu">
+                <MenuItem Header="{Binding BulkEditText}"
+                          AutomationProperties.AutomationId="BulkEditButton"
+                          Command="{Binding BulkEditCommand}" />
+                <Separator />
                 <MenuItem Header="{Binding CompareText}"
                           AutomationProperties.AutomationId="CompareButton"
                           Command="{Binding CompareVersionsCommand}" />

@@ -152,6 +152,8 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnExitMenuClick(object sender, RoutedEventArgs e) => Close();
+
     private void OnTablesGridDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (DataContext is not MainViewModel viewModel || viewModel.SelectedTable is null)

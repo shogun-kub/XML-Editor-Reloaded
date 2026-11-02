@@ -125,7 +125,7 @@ public partial class MainViewModel : ObservableObject
         HelpMenuText = Strings.Get("MenuHelp");
         AboutMenuText = Strings.Get("MenuAbout");
         FileMenuText = Strings.Get("MenuFile");
-        EditMenuText = Strings.Get("MenuEdit");
+        ExitMenuText = Strings.Get("MenuExit");
         ViewMenuText = Strings.Get("MenuView");
         DataMenuText = Strings.Get("MenuData");
         BulkEditText = Strings.Get("EditorBulkEditText");
@@ -211,9 +211,9 @@ public partial class MainViewModel : ObservableObject
     public string FileMenuText { get; }
 
     /// <summary>
-    /// Gets the Edit menu header.
+    /// Gets the File &gt; Exit menu item text.
     /// </summary>
-    public string EditMenuText { get; }
+    public string ExitMenuText { get; }
 
     /// <summary>
     /// Gets the View menu header.
@@ -226,7 +226,7 @@ public partial class MainViewModel : ObservableObject
     public string DataMenuText { get; }
 
     /// <summary>
-    /// Gets the Edit &gt; Bulk edit menu item text.
+    /// Gets the Data &gt; Bulk edit menu item text.
     /// </summary>
     public string BulkEditText { get; }
 

@@ -47,6 +47,15 @@ internal sealed class ColdStartScenario : SmokeScenario
             saveAll is not null,
             null);
 
+        ScenarioUi.ExpandMenu(window.WaitById("FileMenu"));
+        var exit = ScenarioUi.WaitForMenuItemById(context.App, "ExitMenuItem");
+        context.Recorder.Check("В меню «Файл» есть «Выход»", exit is not null, exit?.ReadName());
+        ScenarioUi.Collapse(window.WaitById("FileMenu"));
+        context.Recorder.Check(
+            "Отдельного меню «Правка» больше нет",
+            window.FindById("EditMenu") is null,
+            null);
+
         context.Recorder.Check(
             "Окно не упало и отвечает",
             window.Current.IsEnabled,

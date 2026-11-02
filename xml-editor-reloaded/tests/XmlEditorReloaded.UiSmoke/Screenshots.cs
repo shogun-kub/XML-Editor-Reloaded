@@ -45,6 +45,11 @@ internal static class Screenshots
             itemsRow.SelectItem();
             window.WaitById("OpenTableButton").InvokeButton();
             window.WaitById("ItemTabs", TimeSpan.FromSeconds(60));
+            var itemList = window.WaitById("ItemList");
+            Ui.WaitUntil(
+                () => WorkspaceUi.ListItemTexts(itemList).Count > 0,
+                "the item list is populated",
+                TimeSpan.FromSeconds(60));
             window.WaitById("ItemGoToIdBox").SetText("12");
             window.WaitById("ItemGoToIdButton").InvokeButton();
             Ui.WaitUntil(

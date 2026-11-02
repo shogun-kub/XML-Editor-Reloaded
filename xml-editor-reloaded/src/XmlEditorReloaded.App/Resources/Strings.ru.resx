@@ -1600,8 +1600,8 @@
   <data name="MenuFile" xml:space="preserve">
     <value>_Файл</value>
   </data>
-  <data name="MenuEdit" xml:space="preserve">
-    <value>_Правка</value>
+  <data name="MenuExit" xml:space="preserve">
+    <value>В_ыход</value>
   </data>
   <data name="MenuView" xml:space="preserve">
     <value>_Вид</value>

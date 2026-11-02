@@ -69,6 +69,41 @@ internal sealed class ItemWorkspaceScenario : SmokeScenario
                 && deleteButton.IsEnabled(),
             $"{newButton.ReadName()} / {duplicateButton.ReadName()} / {deleteButton.ReadName()}");
 
+        var layoutChecked = false;
+        if (window.TryGetCurrentPattern(TransformPattern.Pattern, out var transformRaw)
+            && transformRaw is TransformPattern transform
+            && transform.Current.CanResize)
+        {
+            transform.Resize(1100, 720);
+            Thread.Sleep(500);
+            layoutChecked = true;
+        }
+
+        if (layoutChecked)
+        {
+            var undo = window.WaitById("ItemUndoButton").Current.BoundingRectangle;
+            var language = window.WaitById("ItemLanguageCombo").Current.BoundingRectangle;
+            context.Recorder.Check(
+                "При минимальной ширине язык остаётся в верхней строке",
+                Math.Abs(undo.Top - language.Top) <= 12,
+                $"undo.Top={undo.Top:F0}, language.Top={language.Top:F0}");
+
+            var search = window.WaitById("ItemSearchBox").Current.BoundingRectangle;
+            var counter = window.WaitById("ItemCountText").Current.BoundingRectangle;
+            context.Recorder.Check(
+                "Счётчик предметов стоит рядом с поиском",
+                Math.Abs((search.Top + (search.Height / 2)) - (counter.Top + (counter.Height / 2))) <= 6
+                    && counter.Left > search.Left,
+                $"search={search}, counter={counter}");
+
+            var listBounds = window.WaitById("ItemList").Current.BoundingRectangle;
+            var newBounds = window.WaitById("ItemNewButton").Current.BoundingRectangle;
+            context.Recorder.Check(
+                "Кнопки создания, дублирования и удаления стоят под списком",
+                newBounds.Top >= listBounds.Bottom - 2,
+                $"list.Bottom={listBounds.Bottom:F0}, new.Top={newBounds.Top:F0}");
+        }
+
         var header = window.WaitById("ItemDetailHeader").ReadName();
         var id = window.WaitById("ItemIdBox").ReadValue();
         context.Recorder.Check(

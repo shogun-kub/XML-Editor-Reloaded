@@ -91,70 +91,58 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <WrapPanel Grid.Row="0" Margin="0,0,0,6">
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ItemUndoButton"
-                    Content="{Binding UndoText}"
-                    Command="{Binding UndoCommand}"
-                    ToolTip="{Binding UndoButtonTooltip}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="ItemRedoButton"
-                    Content="{Binding RedoText}"
-                    Command="{Binding RedoCommand}"
-                    ToolTip="{Binding RedoButtonTooltip}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ItemNewButton"
-                    Content="{Binding NewItemText}"
-                    Command="{Binding NewItemCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ItemDuplicateButton"
-                    Content="{Binding DuplicateItemText}"
-                    Command="{Binding DuplicateItemCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="ItemDeleteButton"
-                    Content="{Binding DeleteItemText}"
-                    Command="{Binding DeleteItemCommand}"
-                    IsEnabled="{Binding IsEditable}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ItemSaveButton"
-                    Content="{Binding SaveText}"
-                    Command="{Binding SaveCommand}"
-                    IsEnabled="{Binding IsDirty}" />
-            <Button Padding="10,3"
-                    Margin="0,0,6,0"
-                    AutomationProperties.AutomationId="ItemValidateButton"
-                    Content="{Binding ValidateText}"
-                    Command="{Binding ValidateCommand}" />
-            <Button Padding="10,3"
-                    Margin="0,0,12,0"
-                    AutomationProperties.AutomationId="ItemReloadButton"
-                    Content="{Binding ReloadText}"
-                    Command="{Binding ReloadCommand}" />
-            <TextBlock VerticalAlignment="Center"
-                       Margin="0,0,6,0"
-                       Text="{Binding LanguageLabel}" />
-            <ComboBox Width="190"
-                      Margin="0,0,12,0"
-                      VerticalAlignment="Center"
-                      AutomationProperties.AutomationId="ItemLanguageCombo"
-                      ItemsSource="{Binding LanguageOptions}"
-                      SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
-                      DisplayMemberPath="DisplayText"
-                      ToolTip="{Binding SelectedLanguageOption.Tooltip}"
-                      IsEnabled="{Binding IsLanguageSelectorEnabled}" />
-            <TextBlock VerticalAlignment="Center"
-                       Foreground="#FF666666"
-                       AutomationProperties.AutomationId="ItemCountText"
-                       Text="{Binding CountText}" />
-        </WrapPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Column="0">
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="ItemUndoButton"
+                        Content="{Binding UndoText}"
+                        Command="{Binding UndoCommand}"
+                        ToolTip="{Binding UndoButtonTooltip}" />
+                <Button Padding="10,3"
+                        Margin="0,0,12,0"
+                        AutomationProperties.AutomationId="ItemRedoButton"
+                        Content="{Binding RedoText}"
+                        Command="{Binding RedoCommand}"
+                        ToolTip="{Binding RedoButtonTooltip}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="ItemSaveButton"
+                        Content="{Binding SaveText}"
+                        Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding IsDirty}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,0"
+                        AutomationProperties.AutomationId="ItemValidateButton"
+                        Content="{Binding ValidateText}"
+                        Command="{Binding ValidateCommand}" />
+                <Button Padding="10,3"
+                        Margin="0,0,12,0"
+                        AutomationProperties.AutomationId="ItemReloadButton"
+                        Content="{Binding ReloadText}"
+                        Command="{Binding ReloadCommand}" />
+            </WrapPanel>
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top"
+                        Margin="8,2,0,0">
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Text="{Binding LanguageLabel}" />
+                <ComboBox Width="160"
+                          VerticalAlignment="Center"
+                          AutomationProperties.AutomationId="ItemLanguageCombo"
+                          ItemsSource="{Binding LanguageOptions}"
+                          SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayText"
+                          ToolTip="{Binding SelectedLanguageOption.Tooltip}"
+                          IsEnabled="{Binding IsLanguageSelectorEnabled}" />
+            </StackPanel>
+        </Grid>
 
         <TextBlock Grid.Row="1"
                    Margin="0,0,0,6"
@@ -194,13 +182,25 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock VerticalAlignment="Center"
                                    Margin="0,0,6,0"
                                    Text="{Binding SearchLabel}" />
                         <TextBox Grid.Column="1"
+                                 MinWidth="40"
                                  AutomationProperties.AutomationId="ItemSearchBox"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Column="2"
+                                   MaxWidth="140"
+                                   Margin="6,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="11"
+                                   Foreground="#FF666666"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding CountText}"
+                                   AutomationProperties.AutomationId="ItemCountText"
+                                   Text="{Binding CountText}" />
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0,0,0,4">
@@ -339,6 +339,28 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+
+                    <StackPanel Grid.Row="6"
+                                Orientation="Horizontal"
+                                Margin="0,6,0,0">
+                        <Button Padding="10,3"
+                                Margin="0,0,6,0"
+                                AutomationProperties.AutomationId="ItemNewButton"
+                                Content="{Binding NewItemText}"
+                                Command="{Binding NewItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                        <Button Padding="10,3"
+                                Margin="0,0,6,0"
+                                AutomationProperties.AutomationId="ItemDuplicateButton"
+                                Content="{Binding DuplicateItemText}"
+                                Command="{Binding DuplicateItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                        <Button Padding="10,3"
+                                AutomationProperties.AutomationId="ItemDeleteButton"
+                                Content="{Binding DeleteItemText}"
+                                Command="{Binding DeleteItemCommand}"
+                                IsEnabled="{Binding IsEditable}" />
+                    </StackPanel>
 
                 </Grid>
             </GroupBox>

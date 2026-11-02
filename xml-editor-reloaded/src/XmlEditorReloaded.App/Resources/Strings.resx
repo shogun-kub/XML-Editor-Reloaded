@@ -1600,8 +1600,8 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="MenuFile" xml:space="preserve">
     <value>_File</value>
   </data>
-  <data name="MenuEdit" xml:space="preserve">
-    <value>_Edit</value>
+  <data name="MenuExit" xml:space="preserve">
+    <value>E_xit</value>
   </data>
   <data name="MenuView" xml:space="preserve">
     <value>_View</value>
