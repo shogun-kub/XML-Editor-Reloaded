@@ -116,6 +116,9 @@ public sealed partial class ItemWorkspaceViewModel :
     private string _countText = string.Empty;
 
     [ObservableProperty]
+    private string _countShortText = string.Empty;
+
+    [ObservableProperty]
     private string _languageText = string.Empty;
 
     [ObservableProperty]
@@ -2062,6 +2065,7 @@ public sealed partial class ItemWorkspaceViewModel :
             }
 
             CountText = Strings.Format("ItemCountFormat", Items.Count, _allItems.Count);
+            CountShortText = Strings.Format("ItemCountShortFormat", Items.Count, _allItems.Count);
         }
         finally
         {

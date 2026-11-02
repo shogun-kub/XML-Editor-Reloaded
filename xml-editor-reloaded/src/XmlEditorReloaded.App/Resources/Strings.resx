@@ -876,6 +876,9 @@
   <data name="ItemCountFormat" xml:space="preserve">
     <value>{0} of {1} items</value>
   </data>
+  <data name="ItemCountShortFormat" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
   <data name="ItemWorkspaceNoMetadata" xml:space="preserve">
     <value>The Items table has no metadata, so the item workspace cannot load related tables.</value>
   </data>

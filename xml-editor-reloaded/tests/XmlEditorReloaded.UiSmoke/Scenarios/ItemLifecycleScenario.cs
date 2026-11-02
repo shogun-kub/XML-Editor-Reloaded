@@ -23,6 +23,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
     {
         var window = context.Window;
         var data = context.Data(DatasetKind.V4);
+        string ItemCount(int value) => context.Strings.Format("ItemCountShortFormat", value, value);
         WorkspaceUi.OpenItemWorkspace(context);
         WorkspaceUi.SelectItem(context, "12", "Commando");
 
@@ -38,7 +39,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             window.WaitById("ItemDetailHeader").ReadName());
         context.Recorder.Check(
             "Счётчик вырос до 1777 предметов",
-            window.WaitById("ItemCountText").ReadName() == "1777 из 1777 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1777),
             window.WaitById("ItemCountText").ReadName());
         var attachments = context.Strings.Get("ItemSection.Items_Attachments");
         WorkspaceUi.SelectChildSection(
@@ -56,13 +57,13 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
         WorkspaceUi.WaitItemStatus(context, context.Strings.Get("EditorUndone"));
         context.Recorder.Check(
             "Undo удаляет дубликат",
-            window.WaitById("ItemCountText").ReadName() == "1776 из 1776 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1776),
             window.WaitById("ItemCountText").ReadName());
         window.WaitById("ItemRedoButton").InvokeButton();
         WorkspaceUi.WaitItemStatus(context, context.Strings.Get("EditorRedone"));
         context.Recorder.Check(
             "Redo возвращает дубликат",
-            window.WaitById("ItemCountText").ReadName() == "1777 из 1777 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1777),
             window.WaitById("ItemCountText").ReadName());
 
         // Delete the duplicate: the confirmation names the dependent rows that disappear with it.
@@ -82,11 +83,11 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             TimeSpan.FromSeconds(20));
         context.Recorder.Check(
             "Удаление возвращает 1776 предметов",
-            window.WaitById("ItemCountText").ReadName() == "1776 из 1776 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1776),
             window.WaitById("ItemCountText").ReadName());
         window.WaitById("ItemUndoButton").InvokeButton();
         Ui.WaitUntil(
-            () => window.WaitById("ItemCountText").ReadName() == "1777 из 1777 предметов",
+            () => window.WaitById("ItemCountText").ReadName() == ItemCount(1777),
             "Undo удаления возвращает предмет",
             TimeSpan.FromSeconds(20));
         context.Recorder.Check("Undo возвращает удалённый предмет", true);
@@ -94,7 +95,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
         WorkspaceUi.UndoAll(context, "ItemUndoButton", "ItemSaveButton");
         context.Recorder.Check(
             "Все правки отменены перед сменой ID",
-            window.WaitById("ItemCountText").ReadName() == "1776 из 1776 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1776),
             window.WaitById("ItemCountText").ReadName());
 
         // Rename to a free key and back: dependent rows follow the key in memory.
@@ -192,7 +193,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             $"заголовок: {window.WaitById("ItemDetailHeader").ReadName()}, класс: {window.WaitById("ItemClassText").ReadName()}");
         context.Recorder.Check(
             "Создание добавляет предмет в список",
-            window.WaitById("ItemCountText").ReadName() == "1777 из 1777 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1777),
             window.WaitById("ItemCountText").ReadName());
 
         window.WaitById("ItemDeleteButton").InvokeButton();
@@ -206,7 +207,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
         WorkspaceUi.UndoAll(context, "ItemUndoButton", "ItemSaveButton");
         context.Recorder.Check(
             "Создание и удаление отменены",
-            window.WaitById("ItemCountText").ReadName() == "1776 из 1776 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1776),
             window.WaitById("ItemCountText").ReadName());
 
         // Final duplicate is saved: only the three tables that own the copied rows may change.
@@ -277,7 +278,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             TimeSpan.FromSeconds(60));
         ScenarioUi.OpenTable(context, "Items.Items");
         Ui.WaitUntil(
-            () => window.WaitById("ItemCountText").ReadName() == "1775 из 1775 предметов",
+            () => window.WaitById("ItemCountText").ReadName() == ItemCount(1775),
             "рабочее место предмета v5 загружено",
             TimeSpan.FromSeconds(90));
         WorkspaceUi.WaitForStatus(
@@ -305,12 +306,12 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             TimeSpan.FromSeconds(20));
         context.Recorder.Check(
             "Создание предмета на v5 добавляет запись",
-            window.WaitById("ItemCountText").ReadName() == "1776 из 1776 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1776),
             window.WaitById("ItemCountText").ReadName());
         WorkspaceUi.UndoAll(context, "ItemUndoButton", "ItemSaveButton");
         context.Recorder.Check(
             "Undo возвращает v5 к исходным 1775 предметам",
-            window.WaitById("ItemCountText").ReadName() == "1775 из 1775 предметов",
+            window.WaitById("ItemCountText").ReadName() == ItemCount(1775),
             window.WaitById("ItemCountText").ReadName());
     }
 

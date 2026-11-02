@@ -19,7 +19,7 @@ internal sealed class ItemWorkspaceScenario : SmokeScenario
     {
         var window = context.Window;
         var count = WorkspaceUi.OpenItemWorkspace(context);
-        var expectedCount = context.Strings.Format("ItemCountFormat", 1776, 1776);
+        var expectedCount = context.Strings.Format("ItemCountShortFormat", 1776, 1776);
         context.Recorder.Check(
             "Счётчик показывает все 1776 предметов",
             count == expectedCount,

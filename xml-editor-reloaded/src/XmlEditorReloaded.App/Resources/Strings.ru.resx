@@ -876,6 +876,9 @@
   <data name="ItemCountFormat" xml:space="preserve">
     <value>{0} из {1} предметов</value>
   </data>
+  <data name="ItemCountShortFormat" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
   <data name="ItemWorkspaceNoMetadata" xml:space="preserve">
     <value>У таблицы Items нет метаданных, поэтому рабочее место предмета не может загрузить связанные таблицы.</value>
   </data>

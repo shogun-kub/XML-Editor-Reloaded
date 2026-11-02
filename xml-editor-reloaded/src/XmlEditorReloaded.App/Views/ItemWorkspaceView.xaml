@@ -192,15 +192,16 @@
                                  AutomationProperties.AutomationId="ItemSearchBox"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Column="2"
-                                   MaxWidth="140"
+                                   MaxWidth="90"
                                    Margin="6,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="11"
                                    Foreground="#FF666666"
                                    TextTrimming="CharacterEllipsis"
                                    ToolTip="{Binding CountText}"
+                                   AutomationProperties.HelpText="{Binding CountText}"
                                    AutomationProperties.AutomationId="ItemCountText"
-                                   Text="{Binding CountText}" />
+                                   Text="{Binding CountShortText}" />
                     </Grid>
 
                     <Grid Grid.Row="1" Margin="0,0,0,4">

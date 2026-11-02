@@ -23,7 +23,7 @@ internal sealed class ItemSearchScenario : SmokeScenario
         var search = window.WaitById("ItemSearchBox");
 
         WorkspaceUi.SetTextAndCommit(search, "Commando");
-        var byName = context.Strings.Format("ItemCountFormat", 2, 1776);
+        var byName = context.Strings.Format("ItemCountShortFormat", 2, 1776);
         Ui.WaitUntil(
             () => window.WaitById("ItemCountText").ReadName() == byName,
             $"поиск по имени оставляет две записи («{byName}»)",
@@ -38,7 +38,7 @@ internal sealed class ItemSearchScenario : SmokeScenario
             string.Join(" | ", names));
 
         WorkspaceUi.SetTextAndCommit(search, "901");
-        var byId = context.Strings.Format("ItemCountFormat", 1, 1776);
+        var byId = context.Strings.Format("ItemCountShortFormat", 1, 1776);
         Ui.WaitUntil(
             () => window.WaitById("ItemCountText").ReadName() == byId,
             $"поиск по ID оставляет одну запись («{byId}»)",
@@ -63,7 +63,7 @@ internal sealed class ItemSearchScenario : SmokeScenario
             longNameValue == "Colt M4 Commando",
             longNameValue);
 
-        var fullCount = context.Strings.Format("ItemCountFormat", 1776, 1776);
+        var fullCount = context.Strings.Format("ItemCountShortFormat", 1776, 1776);
         Ui.WaitUntil(
             () => window.WaitById("ItemCountText").ReadName() == fullCount,
             "переход к ID сбрасывает поиск");
