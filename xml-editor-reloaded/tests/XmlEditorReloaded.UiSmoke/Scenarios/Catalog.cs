@@ -74,6 +74,13 @@ internal static class ScenarioCatalog
         new CompatibleFaceItemsScenario(),
         new DictColumnsScenario(),
         new EnemyAmmoScenario(),
+        new RobotSkillGrantScenario(),
+        new WeaponSoundPickerScenario(),
+        new ExplosiveAnimationScenario(),
+        new LbePocketPickerScenario(),
+        new ExplosionSoundPickerScenario(),
+        new SoundTextScenario(),
+        new NoRewriteScenario(),
     ];
 
     /// <summary>

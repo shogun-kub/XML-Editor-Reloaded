@@ -27,22 +27,68 @@ internal static class DetailsUi
         string field,
         string value)
     {
+        var editor = ShowField(context, grid, row, field);
+        editor.SetText(value);
+        Thread.Sleep(200);
+
+        // The field text box updates its binding when it loses the keyboard focus.
+        context.Window.WaitById("DetailFilterBox").SetFocus();
+        Thread.Sleep(300);
+        return editor;
+    }
+
+    /// <summary>
+    /// Selects a grid row, filters the details panel to one field, expands the field groups, and returns
+    /// that field editor without changing its value.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="grid">Rows grid of the active editor.</param>
+    /// <param name="row">Zero-based row index to select.</param>
+    /// <param name="field">XML field name, also used as the automation identifier of its editor.</param>
+    /// <param name="timeout">Optional timeout for the field editor.</param>
+    /// <returns>The field editor.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the field editor cannot be found.</exception>
+    public static AutomationElement ShowField(
+        ScenarioContext context,
+        AutomationElement grid,
+        int row,
+        string field,
+        TimeSpan? timeout = null)
+    {
+        var rowElement = grid
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem))
+            .ElementAtOrDefault(row)
+            ?? throw new UiTimeoutException($"Строка {row} не реализована в сетке.");
+        return ShowField(context, grid, rowElement, field, timeout);
+    }
+
+    /// <summary>
+    /// Selects an already realized grid row, filters the details panel to one field, expands the field
+    /// groups, and returns that field editor without changing its value.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="grid">Rows grid of the active editor.</param>
+    /// <param name="row">Row element to select.</param>
+    /// <param name="field">XML field name, also used as the automation identifier of its editor.</param>
+    /// <param name="timeout">Optional timeout for the field editor.</param>
+    /// <returns>The field editor.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the field editor cannot be found.</exception>
+    public static AutomationElement ShowField(
+        ScenarioContext context,
+        AutomationElement grid,
+        AutomationElement row,
+        string field,
+        TimeSpan? timeout = null)
+    {
         var window = context.Window;
-        grid.Cell(row, 0).SelectItem();
+        row.SelectItem();
         Thread.Sleep(300);
 
         window.WaitById("DetailFilterBox").SetText(field);
         Thread.Sleep(400);
         ExpandDetailGroups(window);
 
-        var editor = window.WaitById(field, TimeSpan.FromSeconds(20));
-        editor.SetText(value);
-        Thread.Sleep(200);
-
-        // The field text box updates its binding when it loses the keyboard focus.
-        window.WaitById("DetailFilterBox").SetFocus();
-        Thread.Sleep(300);
-        return editor;
+        return window.WaitById(field, timeout ?? TimeSpan.FromSeconds(20));
     }
 
     private static void ExpandDetailGroups(AutomationElement window)

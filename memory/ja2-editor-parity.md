@@ -23,7 +23,8 @@ metadata:
 - **Known residuals:** big-image corner-colour transparency and nested stance limits are out of scope;
   empty lookup names have no duplicate/usage protection (M26a/M26b); `CONTROL` tables are excluded on
   purpose. **Gate M23b (2026-11-01):** automated gates green — build, 600 tests, corpus v4/v5
-  (600/600), compare 1/1, copy 1/1, perf 9/9 both versions, 23 sandbox UI scenarios; see
-  `LEGACY-PARITY-REPORT.md`, «Проверка M23b (gate)». Marker `M23: legacy functional parity gate` is
-  pending the user-signed manual smoke (25 A–G scenarios + S51–S92). See [[ja2-editor-status]],
+  (600/600), compare 1/1, copy 1/1, perf 9/9 both versions, 35 sandbox UI scenarios (S59–S65 added
+  2026-11-02); see `LEGACY-PARITY-REPORT.md`, «Проверка M23b (gate)». Marker
+  `M23: legacy functional parity gate` is pending the user-signed manual smoke (25 A–G scenarios +
+  S53, S55, S57, S66–S92). See [[ja2-editor-status]],
   [[ja2-editor-grid-polish]], [[ja2-editor-item-merc]], [[ja2-editor-metadata]].
