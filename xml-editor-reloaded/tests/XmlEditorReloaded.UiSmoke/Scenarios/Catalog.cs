@@ -7,6 +7,7 @@ internal static class ScenarioCatalog
 {
     private static readonly Dictionary<string, string> Manual = new(StringComparer.Ordinal)
     {
+        ["S04"] = "выбор папки без TableData выполняется через нативный диалог обзора",
         ["S22"] = "визуальная проверка STI-превью: кадр и его пиксели оценивает человек",
         ["S53"] = "двойной щёлчок по заголовку строки требует мыши",
         ["S55"] = "правка и добавление значений списка BarrelConfiguration требуют ввода",
@@ -53,6 +54,11 @@ internal static class ScenarioCatalog
         new ShopkeeperScenario(),
         new ShopkeeperEditScenario(),
         new ShopkeeperDuplicateScenario(),
+        new ShopkeeperRemoveScenario(),
+        new ShopkeeperDuplicateEditScenario(),
+        new ShopkeeperAddScenario(),
+        new ShopkeeperDuplicateRemoveScenario(),
+        new LookupRowCrudScenario(),
         new AuxTableScenario(),
         new LookupComboScenario(),
         new LookupEditScenario(),

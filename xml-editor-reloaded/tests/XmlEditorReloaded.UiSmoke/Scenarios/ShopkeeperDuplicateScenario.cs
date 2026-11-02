@@ -45,7 +45,7 @@ internal sealed class ShopkeeperDuplicateScenario : SmokeScenario
             tony.ReadValue() == "1",
             tony.ReadValue());
 
-        WorkspaceUi.SetTextAndCommit(dealer, "7");
+        WorkspaceUi.SetShopkeeperQuantity(context, "AdditionalDealer_43_", "7");
         WorkspaceUi.WaitItemStatus(
             context,
             context.Strings.Format("EditorCellUpdated", "ubOptimalNumber", "26"),

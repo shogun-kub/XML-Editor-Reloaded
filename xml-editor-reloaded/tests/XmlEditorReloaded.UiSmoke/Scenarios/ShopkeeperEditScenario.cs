@@ -40,7 +40,7 @@ internal sealed class ShopkeeperEditScenario : SmokeScenario
 
         var quantity = WorkspaceUi.ShopkeeperQuantity(context, "AdditionalDealer_43_");
         context.Recorder.Check("Количество дилера равно 6", quantity.ReadValue() == "6", quantity.ReadValue());
-        WorkspaceUi.SetTextAndCommit(quantity, "9");
+        WorkspaceUi.SetShopkeeperQuantity(context, "AdditionalDealer_43_", "9");
         WorkspaceUi.WaitItemStatus(
             context,
             context.Strings.Format("EditorCellUpdated", "ubOptimalNumber", "26"),

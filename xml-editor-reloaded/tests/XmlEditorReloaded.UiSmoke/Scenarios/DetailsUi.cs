@@ -38,6 +38,31 @@ internal static class DetailsUi
     }
 
     /// <summary>
+    /// Edits a field of an already realized grid row through the details panel.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="grid">Rows grid of the active editor.</param>
+    /// <param name="row">Grid row element to select.</param>
+    /// <param name="field">XML field name, also used as the automation identifier of its editor.</param>
+    /// <param name="value">New field value.</param>
+    /// <returns>The field editor, after the value was committed.</returns>
+    /// <exception cref="UiTimeoutException">Thrown when the field editor cannot be found.</exception>
+    public static AutomationElement EditField(
+        ScenarioContext context,
+        AutomationElement grid,
+        AutomationElement row,
+        string field,
+        string value)
+    {
+        var editor = ShowField(context, grid, row, field);
+        editor.SetText(value);
+        Thread.Sleep(200);
+        context.Window.WaitById("DetailFilterBox").SetFocus();
+        Thread.Sleep(300);
+        return editor;
+    }
+
+    /// <summary>
     /// Selects a grid row, filters the details panel to one field, expands the field groups, and returns
     /// that field editor without changing its value.
     /// </summary>

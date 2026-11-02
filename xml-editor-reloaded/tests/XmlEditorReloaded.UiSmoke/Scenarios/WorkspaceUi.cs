@@ -369,6 +369,24 @@ internal static class WorkspaceUi
         ?? throw new UiTimeoutException($"Строка торговца {dealerName} не найдена.");
 
     /// <summary>
+    /// Replaces the quantity of an existing dealer row and commits it by moving the keyboard focus to the
+    /// item search box. The shopkeeper text box writes its binding on lost focus, so this avoids the
+    /// synthetic Tab that is unreliable when the window does not own the foreground.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="dealerName">Dealer whose quantity is edited.</param>
+    /// <param name="value">New quantity text.</param>
+    public static void SetShopkeeperQuantity(ScenarioContext context, string dealerName, string value)
+    {
+        var box = ShopkeeperQuantity(context, dealerName);
+        box.Focus();
+        Thread.Sleep(150);
+        box.SetText(value);
+        context.Window.WaitById("ItemSearchBox").SetFocus();
+        Thread.Sleep(300);
+    }
+
+    /// <summary>
     /// Returns the visible texts of every row of a list box.
     /// </summary>
     /// <param name="list">List box.</param>
