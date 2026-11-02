@@ -81,6 +81,11 @@ internal static class ScenarioCatalog
         new ExplosionSoundPickerScenario(),
         new SoundTextScenario(),
         new NoRewriteScenario(),
+        new LbeClassLimitScenario(),
+        new ExclusiveLauncherFlagsScenario(),
+        new MercStatusRangeScenario(),
+        new FlagBitEditorScenario(),
+        new ValidationUndoScenario(),
     ];
 
     /// <summary>
