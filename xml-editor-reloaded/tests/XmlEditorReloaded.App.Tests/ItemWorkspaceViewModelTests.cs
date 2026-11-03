@@ -980,6 +980,28 @@ public class ItemWorkspaceViewModelTests
     }
 
     /// <summary>
+    /// A non-integer image index is rejected before it reaches the document, so a textual value cannot
+    /// replace the numeric <c>ubGraphicNum</c> and does not dirty the item.
+    /// </summary>
+    [Fact]
+    public async Task SetItemValue_GraphicIndexNotInteger_IsRejected()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var images = new TestItemImageService { FrameCount = 12 };
+        var (viewModel, _) = await CreateWorkspaceAsync(CreateFixture(workspace), images: images);
+        await WaitUntilAsync(() => viewModel.GraphicIndexMaximum == 11);
+
+        var result = viewModel.SetItemValue("ubGraphicNum", "1.5");
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.XmlInvalidNumber, result.ErrorCode);
+        Assert.Equal("1", viewModel.SelectedItem!.Row["ubGraphicNum"]);
+        Assert.False(viewModel.IsDirty);
+        Assert.Equal("The image index must be an integer.", viewModel.StatusText);
+    }
+
+    /// <summary>
     /// Changing <c>ubGraphicType</c> asks the catalog for the new sheet, rebuilds the chooser with that
     /// sheet's frames, and keeps an index that only exists in the new sheet unselected.
     /// </summary>

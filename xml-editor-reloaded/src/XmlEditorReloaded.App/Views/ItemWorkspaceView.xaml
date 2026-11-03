@@ -766,6 +766,7 @@
                                                                    HorizontalAlignment="Right"
                                                                    Foreground="#FF666666"
                                                                    TextTrimming="CharacterEllipsis"
+                                                                   AutomationProperties.AutomationId="{Binding InfoAutomationId}"
                                                                    Text="{Binding InfoText}" />
                                                     </Grid>
                                                     <Border Grid.Row="1"

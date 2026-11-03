@@ -1496,9 +1496,14 @@ public sealed partial class ItemWorkspaceViewModel :
         }
 
         if (table == _descriptor.TableName
-            && string.Equals(fieldName, GraphicIndexField, StringComparison.Ordinal)
-            && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var requestedIndex))
+            && string.Equals(fieldName, GraphicIndexField, StringComparison.Ordinal))
         {
+            if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var requestedIndex))
+            {
+                StatusText = Strings.Get("ItemImageIndexInvalid");
+                return OperationResult.Failure(ErrorCodes.XmlInvalidNumber, StatusText);
+            }
+
             if (requestedIndex < 0)
             {
                 StatusText = Strings.Get("ItemImageIndexNegative");

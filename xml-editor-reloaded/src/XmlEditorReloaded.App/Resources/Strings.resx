@@ -984,6 +984,9 @@
   <data name="ItemImageIndexNegative" xml:space="preserve">
     <value>The image index cannot be negative.</value>
   </data>
+  <data name="ItemImageIndexInvalid" xml:space="preserve">
+    <value>The image index must be an integer.</value>
+  </data>
   <data name="ItemImageListLoading" xml:space="preserve">
     <value>The image list is still loading; try again.</value>
   </data>

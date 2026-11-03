@@ -34,6 +34,12 @@ public sealed partial class DetailImagePanelViewModel : ObservableObject
     public string Label { get; }
 
     /// <summary>
+    /// Gets the automation identifier of the panel info text, derived from the image size so the
+    /// decoded dimensions or the error text can be read by UI automation.
+    /// </summary>
+    public string InfoAutomationId => $"ItemImage{Size}Info";
+
+    /// <summary>
     /// Gets the height of the image viewport in device-independent pixels.
     /// </summary>
     public double PanelHeight { get; }

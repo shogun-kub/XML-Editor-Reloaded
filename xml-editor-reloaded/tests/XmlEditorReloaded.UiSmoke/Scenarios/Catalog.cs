@@ -12,11 +12,7 @@ internal static class ScenarioCatalog
         ["S53"] = "двойной щёлчок по заголовку строки требует мыши",
         ["S55"] = "правка и добавление значений списка BarrelConfiguration требуют ввода",
         ["S57"] = "смена ключа симметричной пары требует ввода",
-        ["S71"] = "визуальная проверка превью и миниатюры кадра",
-        ["S72"] = "визуальная проверка перестроенного списка кадров",
-        ["S73"] = "проверка сообщений у поля индекса вместе с отрисовкой превью",
         ["S74"] = "визуальная проверка обновления миниатюр без перезагрузки",
-        ["S75"] = "визуальная проверка выбранного кадра после повторного открытия",
         ["S83"] = "поведение при отключении монитора и испорченных настройках требует ручных действий",
     };
 
@@ -96,6 +92,10 @@ internal static class ScenarioCatalog
         new ItemDescriptionCounterScenario(),
         new ItemOverlayCounterScenario(),
         new ItemNameLimitScenario(),
+        new ImageFrameScenario(),
+        new ImageTypeScenario(),
+        new ImageIndexValidationScenario(),
+        new ImageFramePersistenceScenario(),
         new MercKitRenameScenario(),
         new UnsavedChangesCloseScenario(),
         new EmptyDealerFileScenario(),

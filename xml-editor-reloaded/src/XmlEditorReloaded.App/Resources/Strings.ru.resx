@@ -984,6 +984,9 @@
   <data name="ItemImageIndexNegative" xml:space="preserve">
     <value>Индекс изображения не может быть отрицательным.</value>
   </data>
+  <data name="ItemImageIndexInvalid" xml:space="preserve">
+    <value>Индекс изображения должен быть целым числом.</value>
+  </data>
   <data name="ItemImageListLoading" xml:space="preserve">
     <value>Список изображений ещё загружается; повторите попытку.</value>
   </data>
