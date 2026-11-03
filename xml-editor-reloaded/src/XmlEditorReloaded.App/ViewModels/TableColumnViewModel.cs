@@ -173,7 +173,10 @@ public sealed class TableColumnViewModel : ObservableObject
             if (Relation is { IsAvailable: true } && Relation.Options.Count > 0)
             {
                 return Relation.Options
-                    .Select(static option => new AllowedValueOption(option.Value, option.DropdownText))
+                    .Select(static option => new AllowedValueOption(
+                        option.Value,
+                        option.DisplayText,
+                        option.DropdownText))
                     .ToArray();
             }
 
@@ -181,7 +184,10 @@ public sealed class TableColumnViewModel : ObservableObject
                 && (HasLookupCombo || DataType == ColumnDataType.Flags))
             {
                 return LookupOptions
-                    .Select(static option => new AllowedValueOption(option.IdText, option.DropdownText))
+                    .Select(static option => new AllowedValueOption(
+                        option.IdText,
+                        option.DisplayText,
+                        option.DropdownText))
                     .ToArray();
             }
 

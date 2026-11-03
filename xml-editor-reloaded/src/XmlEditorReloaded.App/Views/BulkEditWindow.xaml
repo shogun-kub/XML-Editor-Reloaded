@@ -75,11 +75,13 @@
                       IsTextSearchEnabled="False"
                       AutomationProperties.AutomationId="BulkEditOperandBox"
                       ItemsSource="{Binding AllowedValues}"
-                      Text="{Binding Operand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      IsEnabled="{Binding IsOperandEnabled}">
+                      Text="{Binding OperandText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding IsOperandEnabled}"
+                      IsKeyboardFocusWithinChanged="OnOperandFocusWithinChanged"
+                      DropDownClosed="OnOperandDropDownClosed">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding DisplayText}" />
+                        <TextBlock Text="{Binding ListText}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

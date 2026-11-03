@@ -144,19 +144,22 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     /// </summary>
     public string OperandText
     {
-        get => _isOperandEditing ? Operand : GetOperandDisplay(Operand);
+        get => _isOperandEditing ? Operand : AllowedValueOption.GetDisplay(Operand, _allowedValues);
         set
         {
             // WPF can echo the displayed text back into the source after a selection is normalized;
             // that is not a user edit, so it must not turn the raw identifier back on.
             if (!_isOperandEditing
-                && string.Equals(value, GetOperandDisplay(Operand), StringComparison.Ordinal))
+                && string.Equals(
+                    value,
+                    AllowedValueOption.GetDisplay(Operand, _allowedValues),
+                    StringComparison.Ordinal))
             {
                 return;
             }
 
             _isOperandEditing = true;
-            var resolved = ResolveOperand(value);
+            var resolved = AllowedValueOption.Resolve(value, _allowedValues);
             if (!string.Equals(Operand, resolved, StringComparison.Ordinal))
             {
                 Operand = resolved;
@@ -263,50 +266,6 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(OperandText));
         }
-    }
-
-    private string GetOperandDisplay(string value)
-    {
-        if (value.Length == 0)
-        {
-            return value;
-        }
-
-        foreach (var option in _allowedValues)
-        {
-            if (string.Equals(option.Value, value, StringComparison.Ordinal))
-            {
-                return option.DisplayText;
-            }
-        }
-
-        return value;
-    }
-
-    private string ResolveOperand(string text)
-    {
-        if (text.Length == 0)
-        {
-            return text;
-        }
-
-        foreach (var option in _allowedValues)
-        {
-            if (string.Equals(option.Value, text, StringComparison.Ordinal))
-            {
-                return option.Value;
-            }
-        }
-
-        foreach (var option in _allowedValues)
-        {
-            if (string.Equals(option.DisplayText, text, StringComparison.Ordinal))
-            {
-                return option.Value;
-            }
-        }
-
-        return text;
     }
 
     private void RebuildOperators()

@@ -35,6 +35,20 @@ public partial class BulkEditWindow : Window
     /// </summary>
     public BulkEditRequest? Request { get; private set; }
 
+    private void OnOperandFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is true)
+        {
+            _viewModel.BeginOperandEdit();
+        }
+        else
+        {
+            _viewModel.EndOperandEdit();
+        }
+    }
+
+    private void OnOperandDropDownClosed(object? sender, EventArgs e) => _viewModel.EndOperandEdit();
+
     private void OnApply(object sender, RoutedEventArgs e)
     {
         var request = _viewModel.CreateRequest();

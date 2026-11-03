@@ -134,8 +134,8 @@ public class BulkEditViewModelTests
                     ColumnDataType.Lookup,
                     new[]
                     {
-                        new AllowedValueOption("1", "None (1)"),
-                        new AllowedValueOption("2", "Gun (2)"),
+                        new AllowedValueOption("1", "None", "None (1)"),
+                        new AllowedValueOption("2", "Gun", "Gun (2)"),
                     }),
                 new BulkEditColumnOption("szItemName", "String", ColumnDataType.String),
             },
@@ -150,6 +150,13 @@ public class BulkEditViewModelTests
         var viewModel = new BulkEditViewModel(context);
 
         Assert.Equal(new[] { "1", "2" }, viewModel.AllowedValues.Select(option => option.Value));
+
+        viewModel.Operand = "1";
+        Assert.Equal("None", viewModel.OperandText);
+        viewModel.BeginOperandEdit();
+        Assert.Equal("1", viewModel.OperandText);
+        viewModel.EndOperandEdit();
+        Assert.Equal("None", viewModel.OperandText);
 
         viewModel.SelectedColumn = viewModel.Columns[1];
 

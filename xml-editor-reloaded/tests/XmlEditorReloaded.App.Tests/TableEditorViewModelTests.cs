@@ -723,16 +723,17 @@ public class TableEditorViewModelTests
 
         Assert.True(criterion.HasAllowedValues);
         Assert.Equal(new[] { "1", "2" }, criterion.AllowedValues.Select(option => option.Value));
-        Assert.Contains(criterion.AllowedValues, option => option.DisplayText == "NAS (2)");
+        Assert.Contains(criterion.AllowedValues, option => option.DisplayText == "NAS");
+        Assert.Contains(criterion.AllowedValues, option => option.ListText == "NAS (2)");
         criterion.Operand = "2";
 
-        Assert.Equal("NAS (2)", criterion.OperandText);
+        Assert.Equal("NAS", criterion.OperandText);
         criterion.BeginOperandEdit();
         Assert.Equal("2", criterion.OperandText);
-        criterion.OperandText = "None (1)";
+        criterion.OperandText = "None";
         Assert.Equal("1", criterion.Operand);
         criterion.EndOperandEdit();
-        Assert.Equal("None (1)", criterion.OperandText);
+        Assert.Equal("None", criterion.OperandText);
 
         criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "AllowClimbing");
 
@@ -754,7 +755,9 @@ public class TableEditorViewModelTests
         Assert.True(criterion.HasAllowedValues);
         Assert.Contains(
             criterion.AllowedValues,
-            option => option.Value == "1" && option.DisplayText == "Glock 17 (1)");
+            option => option.Value == "1"
+                && option.DisplayText == "Glock 17"
+                && option.ListText == "Glock 17 (1)");
         Assert.Contains(
             criterion.AllowedValues,
             option => option.Value == "99" && option.DisplayText == "99 (unknown)");
@@ -790,13 +793,16 @@ public class TableEditorViewModelTests
         var context = Assert.IsType<BulkEditContext>(dialog.LastBulkContext);
         var attachment = Assert.Single(context.Columns, column => column.FieldName == "AttachmentSystem");
         Assert.Equal(new[] { "1", "2" }, attachment.ValueOptions.Select(option => option.Value));
-        Assert.Contains(attachment.ValueOptions, option => option.DisplayText == "None (1)");
+        Assert.Contains(attachment.ValueOptions, option => option.DisplayText == "None");
+        Assert.Contains(attachment.ValueOptions, option => option.ListText == "None (1)");
         var climbing = Assert.Single(context.Columns, column => column.FieldName == "AllowClimbing");
         Assert.Equal(new[] { "0", "1" }, climbing.ValueOptions.Select(option => option.Value));
         var launcher = Assert.Single(context.Columns, column => column.FieldName == "DiscardedLauncherItem");
         Assert.Contains(
             launcher.ValueOptions,
-            option => option.Value == "1" && option.DisplayText == "Glock 17 (1)");
+            option => option.Value == "1"
+                && option.DisplayText == "Glock 17"
+                && option.ListText == "Glock 17 (1)");
         var name = Assert.Single(context.Columns, column => column.FieldName == "szItemName");
         Assert.Empty(name.ValueOptions);
     }
@@ -1561,7 +1567,20 @@ public class TableEditorViewModelTests
         var cursorField = Assert.Single(FlattenDetailFields(editor), field => field.Name == "ubCursor");
         Assert.True(cursorField.IsLookup);
         Assert.Contains(cursorField.LookupOptions, option => option.IdText == "99" && option.IsUnknown);
-        cursorField.Value = "3";
+        Assert.Contains(
+            cursorField.AllowedValues,
+            option => option.Value == "2" && option.DisplayText == "Hand" && option.ListText == "Hand (2)");
+        Assert.Equal("Hand", cursorField.ValueText);
+        cursorField.BeginValueEdit();
+        Assert.Equal("2", cursorField.ValueText);
+        cursorField.ValueText = "Hand (2)";
+        Assert.Equal("2", cursorField.Value);
+        cursorField.ValueText = "3";
+        Assert.Equal("3", cursorField.Value);
+        cursorField.ValueText = "not a cursor";
+        Assert.Equal("3", cursorField.Value);
+        cursorField.EndValueEdit();
+        Assert.Equal("Use", cursorField.ValueText);
         Assert.Equal("3", editor.Workspace!.BaseDocument.Records[0].GetRawValue("ubCursor"));
 
         var inseparableField = Assert.Single(FlattenDetailFields(editor), field => field.Name == "Inseparable");

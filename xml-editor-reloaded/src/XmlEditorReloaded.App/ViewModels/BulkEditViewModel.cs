@@ -15,6 +15,7 @@ public partial class BulkEditViewModel : ObservableObject
 {
     private readonly Func<BulkEditRequest, OperationResult<BulkEditPreview>> _preview;
     private readonly IReadOnlyList<string> _recordKeys;
+    private bool _isOperandEditing;
 
     [ObservableProperty]
     private BulkEditColumnOption? _selectedColumn;
@@ -193,6 +194,52 @@ public partial class BulkEditViewModel : ObservableObject
     public bool HasError => ErrorText.Length > 0;
 
     /// <summary>
+    /// Gets or sets the text shown by the value field. While the field is edited it shows the raw value
+    /// used by arithmetic; after editing it shows the semantic name of a known lookup, Boolean, or
+    /// relation value and leaves plain text unchanged.
+    /// </summary>
+    public string OperandText
+    {
+        get => _isOperandEditing ? Operand : AllowedValueOption.GetDisplay(Operand, AllowedValues);
+        set
+        {
+            if (!_isOperandEditing
+                && string.Equals(
+                    value,
+                    AllowedValueOption.GetDisplay(Operand, AllowedValues),
+                    StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _isOperandEditing = true;
+            var resolved = AllowedValueOption.Resolve(value, AllowedValues);
+            if (!string.Equals(Operand, resolved, StringComparison.Ordinal))
+            {
+                Operand = resolved;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Switches the value field to raw editing.
+    /// </summary>
+    public void BeginOperandEdit()
+    {
+        _isOperandEditing = true;
+        OnPropertyChanged(nameof(OperandText));
+    }
+
+    /// <summary>
+    /// Leaves value editing and shows the semantic name of the current value when one is known.
+    /// </summary>
+    public void EndOperandEdit()
+    {
+        _isOperandEditing = false;
+        OnPropertyChanged(nameof(OperandText));
+    }
+
+    /// <summary>
     /// Gets a hint that explains the meaning of an empty operand for the current operation.
     /// </summary>
     public string OperandHintText => SelectedOperation?.Kind == BulkEditOperation.Set
@@ -257,7 +304,22 @@ public partial class BulkEditViewModel : ObservableObject
         RefreshPreview();
     }
 
-    partial void OnOperandChanged(string value) => RefreshPreview();
+    partial void OnOperandChanged(string value)
+    {
+        RefreshPreview();
+        if (!_isOperandEditing)
+        {
+            OnPropertyChanged(nameof(OperandText));
+        }
+    }
+
+    partial void OnAllowedValuesChanged(IReadOnlyList<AllowedValueOption> value)
+    {
+        if (!_isOperandEditing)
+        {
+            OnPropertyChanged(nameof(OperandText));
+        }
+    }
 
     partial void OnIncludeMissingFieldsChanged(bool value) => RefreshPreview();
 

@@ -1,4 +1,6 @@
+using System.Windows;
 using System.Windows.Controls;
+using XmlEditorReloaded.App.ViewModels;
 
 namespace XmlEditorReloaded.App.Views;
 
@@ -14,5 +16,30 @@ public partial class FieldEditor : UserControl
     public FieldEditor()
     {
         InitializeComponent();
+    }
+
+    private void OnValueFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: DetailFieldViewModel field })
+        {
+            return;
+        }
+
+        if (e.NewValue is true)
+        {
+            field.BeginValueEdit();
+        }
+        else
+        {
+            field.EndValueEdit();
+        }
+    }
+
+    private void OnValueDropDownClosed(object? sender, EventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: DetailFieldViewModel field })
+        {
+            field.EndValueEdit();
+        }
     }
 }

@@ -54,12 +54,20 @@
                   Margin="4,0,0,0"
                   VerticalAlignment="Center"
                   AutomationProperties.AutomationId="{Binding PathText}"
-                  ItemsSource="{Binding LookupOptions}"
-                  DisplayMemberPath="DropdownText"
-                  SelectedValuePath="IdText"
-                  SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding AllowedValues}"
+                  IsEditable="True"
+                  IsTextSearchEnabled="False"
+                  Text="{Binding ValueText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding IsEditable}"
-                  Visibility="{Binding IsLookup, Converter={StaticResource BoolToVisibility}}" />
+                  Visibility="{Binding IsLookup, Converter={StaticResource BoolToVisibility}}"
+                  IsKeyboardFocusWithinChanged="OnValueFocusWithinChanged"
+                  DropDownClosed="OnValueDropDownClosed">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ListText}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
         <TextBox x:Name="ValueTextBox"
                  Grid.Column="2"
                  Margin="4,0,0,0"

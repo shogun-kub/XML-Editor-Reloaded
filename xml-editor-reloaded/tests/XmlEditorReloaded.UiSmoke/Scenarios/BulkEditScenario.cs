@@ -62,8 +62,8 @@ internal sealed class BulkEditScenario : SmokeScenario
         dialog.WaitById("BulkEditColumnCombo").SelectComboItemStartingWith("ubWeaponClass");
         dialog.WaitById("BulkEditOperandBox").SelectComboItem("Submachinegun (2)");
         context.Recorder.Check(
-            "Поле массовой правки предлагает lookup-имя",
-            dialog.WaitById("BulkEditOperandBox").ReadValue() == "2",
+            "Поле массовой правки показывает lookup-имя",
+            dialog.WaitById("BulkEditOperandBox").ReadValue() == "Submachinegun",
             dialog.WaitById("BulkEditOperandBox").ReadValue());
         dialog.WaitById("BulkEditColumnCombo").SelectComboItemStartingWith("szWeaponName");
         dialog.WaitById("BulkEditOperationCombo").SelectComboItem(context.Strings.Get("BulkEditOperationSet"));

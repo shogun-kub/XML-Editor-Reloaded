@@ -1,6 +1,8 @@
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Schema;
 
@@ -13,6 +15,7 @@ namespace XmlEditorReloaded.App.ViewModels;
 public sealed partial class DetailFieldViewModel : ObservableObject
 {
     private readonly IDetailFieldHost _host;
+    private bool _isValueEditing;
 
     private DetailFieldViewModel(
         IDetailFieldHost host,
@@ -55,6 +58,21 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         IsRelation = relation is { IsAvailable: true };
         HasRelationError = relation is { IsAvailable: false };
         IsPlainText = !IsBoolean && !IsLookup && !IsRelation;
+        AllowedValues = IsRelation
+            ? relation!.Options
+                .Select(static option => new AllowedValueOption(
+                    option.Value,
+                    option.DisplayText,
+                    option.DropdownText))
+                .ToArray()
+            : IsLookup
+                ? lookup!.Options
+                    .Select(static option => new AllowedValueOption(
+                        option.IdText,
+                        option.DisplayText,
+                        option.DropdownText))
+                    .ToArray()
+                : Array.Empty<AllowedValueOption>();
         CanEditBits = canEditBits;
         MaxTextLength = maxTextLength;
         ShowCharacterCounter = showCharacterCounter && maxTextLength > 0;
@@ -299,6 +317,12 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         Lookup?.Options ?? Array.Empty<LookupOption>();
 
     /// <summary>
+    /// Gets the selectable semantic values of a lookup or relation field, or an empty list for other
+    /// fields. The dropdown keeps identifiers visible while the closed field shows the semantic name.
+    /// </summary>
+    public IReadOnlyList<AllowedValueOption> AllowedValues { get; }
+
+    /// <summary>
     /// Gets a value indicating whether the bit editor is available for this field.
     /// </summary>
     public bool CanEditBits { get; }
@@ -346,7 +370,52 @@ public sealed partial class DetailFieldViewModel : ObservableObject
             OnPropertyChanged(nameof(BooleanValue));
             OnPropertyChanged(nameof(BooleanTooltip));
             OnPropertyChanged(nameof(CanGoToTarget));
+            if (!_isValueEditing)
+            {
+                OnPropertyChanged(nameof(ValueText));
+            }
+
             GoToTargetCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the text shown by a lookup field. While the field is edited it shows the raw
+    /// identifier; otherwise it shows the lookup name. Typed text that matches an option or a numeric
+    /// identifier is committed immediately; unmatched text stays in the editor and reverts when
+    /// editing ends. Plain and relation fields keep their own editors.
+    /// </summary>
+    public string ValueText
+    {
+        get => _isValueEditing ? Value : AllowedValueOption.GetDisplay(Value, AllowedValues);
+        set
+        {
+            if (!_isValueEditing
+                && string.Equals(
+                    value,
+                    AllowedValueOption.GetDisplay(Value, AllowedValues),
+                    StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _isValueEditing = true;
+            var resolved = AllowedValueOption.Resolve(value, AllowedValues);
+            var matchesOption = !string.Equals(resolved, value, StringComparison.Ordinal)
+                || AllowedValues.Any(option =>
+                    string.Equals(option.Value, value, StringComparison.Ordinal));
+            var isNumeric = long.TryParse(
+                value,
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
+                out _);
+            if (value.Length == 0 || matchesOption || isNumeric)
+            {
+                if (!string.Equals(Value, resolved, StringComparison.Ordinal))
+                {
+                    Value = resolved;
+                }
+            }
         }
     }
 
@@ -400,11 +469,30 @@ public sealed partial class DetailFieldViewModel : ObservableObject
         && !string.IsNullOrEmpty(Row[PathText]);
 
     /// <summary>
+    /// Switches a lookup field to raw editing; other fields ignore this call.
+    /// </summary>
+    public void BeginValueEdit()
+    {
+        _isValueEditing = true;
+        OnPropertyChanged(nameof(ValueText));
+    }
+
+    /// <summary>
+    /// Leaves lookup editing and shows the semantic name of the current value when one is known.
+    /// </summary>
+    public void EndValueEdit()
+    {
+        _isValueEditing = false;
+        OnPropertyChanged(nameof(ValueText));
+    }
+
+    /// <summary>
     /// Re-reads the value and derived state after the underlying record changed.
     /// </summary>
     internal void Refresh()
     {
         OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(ValueText));
         OnPropertyChanged(nameof(IsTranslated));
         OnPropertyChanged(nameof(IsUntranslated));
         OnPropertyChanged(nameof(BooleanValue));

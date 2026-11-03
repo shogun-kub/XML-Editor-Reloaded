@@ -215,7 +215,7 @@
                                           DropDownClosed="OnFilterOperandDropDownClosed">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding DisplayText}" />
+                                            <TextBlock Text="{Binding ListText}" />
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>

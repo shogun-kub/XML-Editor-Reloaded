@@ -71,15 +71,25 @@ internal sealed class LookupEditScenario : SmokeScenario
         WorkspaceUi.OpenItemWorkspace(context);
         WorkspaceUi.SelectItem(context, "0", "Nada");
         var field = ShowField(context, "ubCursor");
-        var selection = field.ReadComboSelection();
+        var selection = field.ReadValue();
         context.Recorder.Check(
             "Потребитель справочника показывает новое имя",
-            selection.Contains("Punch Smoke", StringComparison.Ordinal),
+            string.Equals(selection, "Punch Smoke", StringComparison.Ordinal),
             "выбрано: «" + selection + "»");
+        var itemHasIdentifier = true;
+        try
+        {
+            field.SelectComboItem("Punch Smoke (2)");
+        }
+        catch (UiTimeoutException)
+        {
+            itemHasIdentifier = false;
+        }
+
         context.Recorder.Check(
-            "Идентификатор в потребителе не изменился",
-            selection.Contains("(2)", StringComparison.Ordinal),
-            "выбрано: «" + selection + "»");
+            "Список потребителя по-прежнему показывает идентификатор",
+            itemHasIdentifier,
+            itemHasIdentifier ? "Punch Smoke (2)" : "элемент «Punch Smoke (2)» не найден");
     }
 
     /// <summary>
