@@ -724,16 +724,30 @@ public class TableEditorViewModelTests
         Assert.True(criterion.HasAllowedValues);
         Assert.Equal(new[] { "1", "2" }, criterion.AllowedValues.Select(option => option.Value));
         Assert.Contains(criterion.AllowedValues, option => option.DisplayText == "NAS (2)");
+        criterion.Operand = "2";
+
+        Assert.Equal("NAS (2)", criterion.OperandText);
+        criterion.BeginOperandEdit();
+        Assert.Equal("2", criterion.OperandText);
+        criterion.OperandText = "None (1)";
+        Assert.Equal("1", criterion.Operand);
+        criterion.EndOperandEdit();
+        Assert.Equal("None (1)", criterion.OperandText);
 
         criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "AllowClimbing");
 
         Assert.Equal(new[] { "0", "1" }, criterion.AllowedValues.Select(option => option.Value));
         Assert.Equal(new[] { "No", "Yes" }, criterion.AllowedValues.Select(option => option.DisplayText));
+        Assert.Equal("Yes", criterion.OperandText);
 
         criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "szItemName");
 
         Assert.Empty(criterion.AllowedValues);
         Assert.False(criterion.HasAllowedValues);
+        Assert.Equal("1", criterion.OperandText);
+        criterion.OperandText = "foo";
+        criterion.EndOperandEdit();
+        Assert.Equal("foo", criterion.OperandText);
 
         criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "DiscardedLauncherItem");
 
@@ -746,6 +760,12 @@ public class TableEditorViewModelTests
             option => option.Value == "99" && option.DisplayText == "99 (unknown)");
         criterion.Operand = "99";
 
+        Assert.Equal("99 (unknown)", criterion.OperandText);
+        criterion.Load(new RowFilterCriterion(
+            "DiscardedLauncherItem",
+            RowFilterOperator.Equals,
+            "99"));
+        Assert.Equal("99 (unknown)", criterion.OperandText);
         Assert.Equal(new[] { "2" }, editor.Rows.Select(row => row.Key));
     }
 

@@ -210,7 +210,9 @@
                                           IsTextSearchEnabled="False"
                                           AutomationProperties.AutomationId="FilterOperandBox"
                                           ItemsSource="{Binding AllowedValues}"
-                                          Text="{Binding Operand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                          Text="{Binding OperandText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsKeyboardFocusWithinChanged="OnFilterOperandFocusWithinChanged"
+                                          DropDownClosed="OnFilterOperandDropDownClosed">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding DisplayText}" />

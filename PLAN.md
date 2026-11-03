@@ -154,8 +154,10 @@ B1–B2 реализованы. `TableColumnViewModel.AllowedValues` отдаё�
 флагов и enum через lookup-таблицу), пары Boolean и записи связанных таблиц (`ubCalibre` →
 `Items.AmmoStrings`); редактируемый ComboBox в фильтре и в форме
 массовой правки показывает имена, но сохраняет в поле сырой идентификатор (`ToString` = raw),
-поэтому сравнение и операции идут по тем же значениям, что и редактор ячейки. Свободный ввод для
-остальных колонок сохранён; для арифметических операций остаётся числовой текст. Проверка: App-тесты
-`Filter_OffersLookupAndBooleanAllowedValues`, `BulkEdit_ProvidesAllowedValuesForLookupColumns`,
-`AllowedValues_FollowSelectedColumn`; UI-smoke S08 и S09 дополнены выбором lookup-имени из списка.
+поэтому сравнение и операции идут по тем же значениям, что и редактор ячейки. Вне редактирования
+поле фильтра показывает семантическое имя (`NAS (2)`, `9x19mm (2)`), при получении фокуса — сырой
+идентификатор для правки; свободный ввод для остальных колонок сохранён, для арифметических операций
+остаётся числовой текст. Проверка: App-тесты `Filter_OffersLookupAndBooleanAllowedValues`,
+`BulkEdit_ProvidesAllowedValuesForLookupColumns`, `AllowedValues_FollowSelectedColumn`; UI-smoke S08 и
+S09 дополнены выбором lookup-имени из списка; S08 проверяет показ имён в закрытом поле.
 

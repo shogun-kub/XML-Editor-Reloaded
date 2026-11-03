@@ -52,8 +52,8 @@ internal sealed class GridFilterScenario : SmokeScenario
         WaitForRowCount(context, 48, total);
         context.Recorder.Check("Фильтр по ubWeaponClass=2 оставляет 48 строк", true, CounterText(window));
         context.Recorder.Check(
-            "Поле значения предлагает lookup-имя класса оружия",
-            window.FindAllById("FilterOperandBox")[0].ReadValue() == "2",
+            "Поле значения показывает lookup-имя класса оружия",
+            window.FindAllById("FilterOperandBox")[0].ReadValue() == "Submachinegun (2)",
             window.FindAllById("FilterOperandBox")[0].ReadValue());
 
         add.InvokeButton();
@@ -67,8 +67,8 @@ internal sealed class GridFilterScenario : SmokeScenario
         WaitForRowCount(context, 25, total);
         context.Recorder.Check("Два условия объединяются через «И»: 25 строк", true, CounterText(window));
         context.Recorder.Check(
-            "Поле значения предлагает имя калибра из связанной таблицы",
-            window.FindAllById("FilterOperandBox")[1].ReadValue() == "2",
+            "Поле значения показывает имя калибра из связанной таблицы",
+            window.FindAllById("FilterOperandBox")[1].ReadValue() == "9x19mm (2)",
             window.FindAllById("FilterOperandBox")[1].ReadValue());
         context.Recorder.Check(
             "Сводка показывает два условия",

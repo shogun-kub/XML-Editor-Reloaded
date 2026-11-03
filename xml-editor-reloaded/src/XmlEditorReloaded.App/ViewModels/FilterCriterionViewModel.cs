@@ -70,6 +70,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     private readonly Action _changed;
     private readonly Action<FilterCriterionViewModel> _remove;
     private bool _isLoading;
+    private bool _isOperandEditing;
     private IReadOnlyList<AllowedValueOption> _allowedValues = Array.Empty<AllowedValueOption>();
 
     [ObservableProperty]
@@ -116,8 +117,8 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     public ObservableCollection<FilterOperatorOption> Operators { get; } = new();
 
     /// <summary>
-    /// Gets the values offered by the operand field: lookup entries or Boolean choices of the selected
-    /// column. An empty list keeps free text input.
+    /// Gets the values offered by the operand field: relation, lookup, or Boolean choices of the
+    /// selected column. An empty list keeps free text input.
     /// </summary>
     public IReadOnlyList<AllowedValueOption> AllowedValues
     {
@@ -134,6 +135,53 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     /// Gets a value indicating whether the operand field offers a value dropdown.
     /// </summary>
     public bool HasAllowedValues => _allowedValues.Count > 0;
+
+    /// <summary>
+    /// Gets or sets the text shown by the operand field. While the field is being edited it shows the
+    /// raw value, because the dropdown and free input write raw identifiers; when editing ends it
+    /// shows the semantic name of a known lookup, Boolean, or relation value. Unknown raw values and
+    /// plain text columns are shown unchanged.
+    /// </summary>
+    public string OperandText
+    {
+        get => _isOperandEditing ? Operand : GetOperandDisplay(Operand);
+        set
+        {
+            // WPF can echo the displayed text back into the source after a selection is normalized;
+            // that is not a user edit, so it must not turn the raw identifier back on.
+            if (!_isOperandEditing
+                && string.Equals(value, GetOperandDisplay(Operand), StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _isOperandEditing = true;
+            var resolved = ResolveOperand(value);
+            if (!string.Equals(Operand, resolved, StringComparison.Ordinal))
+            {
+                Operand = resolved;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Switches the operand field to raw editing: a selected lookup or relation name is replaced by
+    /// the identifier the dropdown writes back, and free text stays untouched.
+    /// </summary>
+    public void BeginOperandEdit()
+    {
+        _isOperandEditing = true;
+        OnPropertyChanged(nameof(OperandText));
+    }
+
+    /// <summary>
+    /// Leaves operand editing and shows the semantic name of the current value when one is known.
+    /// </summary>
+    public void EndOperandEdit()
+    {
+        _isOperandEditing = false;
+        OnPropertyChanged(nameof(OperandText));
+    }
 
     /// <summary>
     /// Removes this criterion from its parent group.
@@ -201,10 +249,65 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
         {
             _changed();
         }
+
+        if (!_isOperandEditing)
+        {
+            OnPropertyChanged(nameof(OperandText));
+        }
     }
 
-    private void RebuildAllowedValues() =>
+    private void RebuildAllowedValues()
+    {
         AllowedValues = SelectedColumn?.AllowedValues ?? Array.Empty<AllowedValueOption>();
+        if (!_isOperandEditing)
+        {
+            OnPropertyChanged(nameof(OperandText));
+        }
+    }
+
+    private string GetOperandDisplay(string value)
+    {
+        if (value.Length == 0)
+        {
+            return value;
+        }
+
+        foreach (var option in _allowedValues)
+        {
+            if (string.Equals(option.Value, value, StringComparison.Ordinal))
+            {
+                return option.DisplayText;
+            }
+        }
+
+        return value;
+    }
+
+    private string ResolveOperand(string text)
+    {
+        if (text.Length == 0)
+        {
+            return text;
+        }
+
+        foreach (var option in _allowedValues)
+        {
+            if (string.Equals(option.Value, text, StringComparison.Ordinal))
+            {
+                return option.Value;
+            }
+        }
+
+        foreach (var option in _allowedValues)
+        {
+            if (string.Equals(option.DisplayText, text, StringComparison.Ordinal))
+            {
+                return option.Value;
+            }
+        }
+
+        return text;
+    }
 
     private void RebuildOperators()
     {

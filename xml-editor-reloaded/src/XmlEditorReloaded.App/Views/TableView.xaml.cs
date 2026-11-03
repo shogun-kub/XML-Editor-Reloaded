@@ -318,6 +318,33 @@ public partial class TableView : UserControl
         return style;
     }
 
+    private void OnFilterOperandFocusWithinChanged(
+        object sender,
+        DependencyPropertyChangedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: FilterCriterionViewModel criterion })
+        {
+            return;
+        }
+
+        if (e.NewValue is true)
+        {
+            criterion.BeginOperandEdit();
+        }
+        else
+        {
+            criterion.EndOperandEdit();
+        }
+    }
+
+    private void OnFilterOperandDropDownClosed(object? sender, EventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: FilterCriterionViewModel criterion })
+        {
+            criterion.EndOperandEdit();
+        }
+    }
+
     private void OnSorting(object sender, DataGridSortingEventArgs e)
     {
         if (_viewModel is null || string.IsNullOrEmpty(e.Column.SortMemberPath))
