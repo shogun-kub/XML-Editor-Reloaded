@@ -53,12 +53,17 @@ internal sealed class UiApp : IDisposable
     /// <param name="options">Runner options.</param>
     /// <param name="appDataDirectory">Directory that receives settings, layouts, the database, and the log.</param>
     /// <param name="settings">Settings to write before start, or <see langword="null"/> for a cold start.</param>
+    /// <param name="rawSettingsJson">
+    /// Exact <c>settings.json</c> content to write before start, including deliberately malformed values.
+    /// When supplied, <paramref name="settings"/> is ignored and the file is never deleted.
+    /// </param>
     /// <returns>The started application.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the application exits or shows no window.</exception>
     public static UiApp Start(
         SmokeOptions options,
         string appDataDirectory,
-        SettingsModel? settings)
+        SettingsModel? settings,
+        string? rawSettingsJson = null)
     {
         if (!File.Exists(options.ApplicationPath))
         {
@@ -68,7 +73,11 @@ internal sealed class UiApp : IDisposable
 
         Directory.CreateDirectory(appDataDirectory);
         var settingsPath = Path.Combine(appDataDirectory, "settings.json");
-        if (settings is null)
+        if (rawSettingsJson is not null)
+        {
+            File.WriteAllText(settingsPath, rawSettingsJson);
+        }
+        else if (settings is null)
         {
             if (File.Exists(settingsPath))
             {

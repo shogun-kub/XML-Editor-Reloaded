@@ -147,6 +147,7 @@ internal sealed class SmokeCheckException : Exception
 internal sealed class ScenarioContext
 {
     private readonly Func<SettingsModel?, UiApp> _restartApp;
+    private readonly Func<string, UiApp> _restartAppWithJson;
     private readonly Dictionary<DatasetKind, DatasetFixture> _datasets;
     private readonly List<(DatasetKind Kind, string RelativePath)> _expectedChanges = [];
 
@@ -160,6 +161,7 @@ internal sealed class ScenarioContext
     /// <param name="datasets">Resolved data sets.</param>
     /// <param name="app">Started application.</param>
     /// <param name="restartApp">Restarts the application with the given or the current settings.</param>
+    /// <param name="restartAppWithJson">Restarts the application with exact settings JSON.</param>
     public ScenarioContext(
         SmokeOptions options,
         UiStrings strings,
@@ -167,7 +169,8 @@ internal sealed class ScenarioContext
         string directory,
         Dictionary<DatasetKind, DatasetFixture> datasets,
         UiApp app,
-        Func<SettingsModel?, UiApp> restartApp)
+        Func<SettingsModel?, UiApp> restartApp,
+        Func<string, UiApp> restartAppWithJson)
     {
         Options = options;
         Strings = strings;
@@ -175,6 +178,7 @@ internal sealed class ScenarioContext
         Directory = directory;
         _datasets = datasets;
         _restartApp = restartApp;
+        _restartAppWithJson = restartAppWithJson;
         App = app;
     }
 
@@ -234,4 +238,11 @@ internal sealed class ScenarioContext
     /// <param name="settings">Settings to write before the restart, or <see langword="null"/> to keep
     /// the current settings file.</param>
     public void RestartApp(SettingsModel? settings = null) => App = _restartApp(settings);
+
+    /// <summary>
+    /// Closes the application and starts it again with exact <c>settings.json</c> content, which may be
+    /// malformed on purpose.
+    /// </summary>
+    /// <param name="settingsJson">Exact settings JSON to write before the restart.</param>
+    public void RestartAppWithJson(string settingsJson) => App = _restartAppWithJson(settingsJson);
 }

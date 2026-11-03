@@ -237,6 +237,21 @@ internal sealed class SmokeRunner
                 return next;
             }
 
+            UiApp RestartWithJson(string settingsJson)
+            {
+                app.Close();
+                app.Dispose();
+                var next = UiApp.Start(
+                    _options,
+                    appDataDirectory,
+                    settings: null,
+                    rawSettingsJson: settingsJson);
+                app = next;
+                running = next;
+                _lastApp = next;
+                return next;
+            }
+
             var context = new ScenarioContext(
                 _options,
                 _strings,
@@ -244,7 +259,8 @@ internal sealed class SmokeRunner
                 scenarioDirectory,
                 datasets,
                 app,
-                Restart);
+                Restart,
+                RestartWithJson);
             try
             {
                 scenario.Run(context);

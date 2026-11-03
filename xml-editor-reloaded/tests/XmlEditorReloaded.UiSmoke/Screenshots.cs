@@ -89,7 +89,19 @@ internal static class Screenshots
         return 0;
     }
 
-    private static void CaptureMainWindow(UiApp app, string path)
+    /// <summary>
+    /// Enables per-monitor DPI awareness so the captured window and the virtual-screen bounds use the
+    /// same physical coordinate space.
+    /// </summary>
+    public static void EnableDpiAwareness() => TryEnablePerMonitorDpi();
+
+    /// <summary>
+    /// Captures the current main window into a PNG file. Used by smoke scenarios that keep visual
+    /// evidence for geometry or layout checks.
+    /// </summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="path">Absolute PNG path.</param>
+    public static void Capture(UiApp app, string path)
     {
         app.RefreshWindow();
         app.Activate();
@@ -97,6 +109,8 @@ internal static class Screenshots
         CaptureWindow(app.WindowHandle, path);
         Console.WriteLine($"Screenshot: {path}");
     }
+
+    private static void CaptureMainWindow(UiApp app, string path) => Capture(app, path);
 
     private static void ResizeWidth(IntPtr windowHandle, int width)
     {

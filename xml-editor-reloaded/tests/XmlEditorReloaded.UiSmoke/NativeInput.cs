@@ -182,6 +182,37 @@ internal static class NativeInput
     }
 
     /// <summary>
+    /// Reads the screen rectangle of a window in the same physical coordinate space as
+    /// <see cref="VirtualScreenBounds"/>.
+    /// </summary>
+    /// <param name="windowHandle">Native window handle.</param>
+    /// <returns>The window rectangle, or an empty rectangle when the handle is invalid.</returns>
+    public static System.Windows.Rect WindowBounds(IntPtr windowHandle)
+    {
+        if (windowHandle == IntPtr.Zero || !GetWindowRect(windowHandle, out var bounds))
+        {
+            return System.Windows.Rect.Empty;
+        }
+
+        return new System.Windows.Rect(
+            bounds.Left,
+            bounds.Top,
+            bounds.Right - bounds.Left,
+            bounds.Bottom - bounds.Top);
+    }
+
+    /// <summary>
+    /// Reads the rectangle of the whole virtual screen, including secondary monitors with negative
+    /// coordinates.
+    /// </summary>
+    /// <returns>The virtual-screen rectangle in physical pixels.</returns>
+    public static System.Windows.Rect VirtualScreenBounds() => new(
+        GetSystemMetrics(SmXVirtualScreen),
+        GetSystemMetrics(SmYVirtualScreen),
+        GetSystemMetrics(SmCxVirtualScreen),
+        GetSystemMetrics(SmCyVirtualScreen));
+
+    /// <summary>
     /// Raises a window to the top of the band it belongs to without changing its topmost state.
     /// </summary>
     /// <param name="windowHandle">Native window handle.</param>
@@ -746,6 +777,9 @@ internal static class NativeInput
     private static extern bool GetWindowRect(IntPtr window, out Rect rectangle);
 
     [DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int index);
+
+    [DllImport("user32.dll")]
     private static extern IntPtr MonitorFromPoint(Point point, uint flags);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -783,6 +817,10 @@ internal static class NativeInput
 
     private const int RestoreWindow = 9;
     private const int MaximizeWindow = 3;
+    private const int SmXVirtualScreen = 76;
+    private const int SmYVirtualScreen = 77;
+    private const int SmCxVirtualScreen = 78;
+    private const int SmCyVirtualScreen = 79;
     private const uint MonitorDefaultToPrimary = 0x00000001;
     private const int GwlExStyle = -20;
     private const long WsExTopMost = 0x00000008;

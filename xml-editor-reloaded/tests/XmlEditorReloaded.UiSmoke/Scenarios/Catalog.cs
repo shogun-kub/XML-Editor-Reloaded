@@ -11,7 +11,6 @@ internal static class ScenarioCatalog
         ["S22"] = "визуальная проверка STI-превью: кадр и его пиксели оценивает человек",
         ["S53"] = "двойной щёлчок по заголовку строки требует мыши",
         ["S74"] = "визуальная проверка обновления миниатюр без перезагрузки",
-        ["S83"] = "поведение при отключении монитора и испорченных настройках требует ручных действий",
     };
 
     private static readonly SmokeScenario[] Scenarios =
@@ -87,6 +86,7 @@ internal static class ScenarioCatalog
         new ValidationUndoScenario(),
         new AboutScenario(),
         new WindowGeometryScenario(),
+        new PlacementRecoveryScenario(),
         new ItemDescriptionCounterScenario(),
         new ItemOverlayCounterScenario(),
         new ItemNameLimitScenario(),
