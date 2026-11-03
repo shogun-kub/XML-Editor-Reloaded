@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Filtering;
 using XmlEditorReloaded.Core.Metadata;
 
@@ -69,6 +70,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     private readonly Action _changed;
     private readonly Action<FilterCriterionViewModel> _remove;
     private bool _isLoading;
+    private IReadOnlyList<AllowedValueOption> _allowedValues = Array.Empty<AllowedValueOption>();
 
     [ObservableProperty]
     private TableColumnViewModel? _selectedColumn;
@@ -100,6 +102,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
         _remove = remove;
         _selectedColumn = columns.FirstOrDefault();
         RebuildOperators();
+        RebuildAllowedValues();
     }
 
     /// <summary>
@@ -111,6 +114,26 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     /// Gets the operators supported by the selected column.
     /// </summary>
     public ObservableCollection<FilterOperatorOption> Operators { get; } = new();
+
+    /// <summary>
+    /// Gets the values offered by the operand field: lookup entries or Boolean choices of the selected
+    /// column. An empty list keeps free text input.
+    /// </summary>
+    public IReadOnlyList<AllowedValueOption> AllowedValues
+    {
+        get => _allowedValues;
+        private set
+        {
+            _allowedValues = value;
+            OnPropertyChanged(nameof(AllowedValues));
+            OnPropertyChanged(nameof(HasAllowedValues));
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the operand field offers a value dropdown.
+    /// </summary>
+    public bool HasAllowedValues => _allowedValues.Count > 0;
 
     /// <summary>
     /// Removes this criterion from its parent group.
@@ -157,6 +180,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
     partial void OnSelectedColumnChanged(TableColumnViewModel? value)
     {
         RebuildOperators();
+        RebuildAllowedValues();
         if (!_isLoading)
         {
             _changed();
@@ -178,6 +202,9 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
             _changed();
         }
     }
+
+    private void RebuildAllowedValues() =>
+        AllowedValues = SelectedColumn?.AllowedValues ?? Array.Empty<AllowedValueOption>();
 
     private void RebuildOperators()
     {

@@ -1735,4 +1735,10 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="NestedEditorListRemove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="AllowedValueFalse" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="AllowedValueTrue" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

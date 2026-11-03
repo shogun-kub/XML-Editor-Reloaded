@@ -68,12 +68,21 @@
                        VerticalAlignment="Center"
                        Margin="0,0,6,0"
                        Text="{Binding ValueLabel}" />
-            <TextBox Grid.Column="5"
-                     Grid.Row="0"
-                     VerticalAlignment="Center"
-                     AutomationProperties.AutomationId="BulkEditOperandBox"
-                     Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}"
-                     IsEnabled="{Binding IsOperandEnabled}" />
+            <ComboBox Grid.Column="5"
+                      Grid.Row="0"
+                      VerticalAlignment="Center"
+                      IsEditable="True"
+                      IsTextSearchEnabled="False"
+                      AutomationProperties.AutomationId="BulkEditOperandBox"
+                      ItemsSource="{Binding AllowedValues}"
+                      Text="{Binding Operand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding IsOperandEnabled}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayText}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <TextBlock Grid.Column="5"
                        Grid.Row="1"
                        Margin="0,2,0,0"

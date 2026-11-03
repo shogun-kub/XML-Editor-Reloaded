@@ -42,9 +42,19 @@ internal sealed class GridFilterScenario : SmokeScenario
         var add = window.WaitById("FilterAddButton");
         add.InvokeButton();
 
-        SelectCriterion(window, 0, "ubWeaponClass", context.Strings.Get("FilterOperatorEquals"), "2");
+        SelectCriterion(
+            window,
+            0,
+            "ubWeaponClass",
+            context.Strings.Get("FilterOperatorEquals"),
+            "2",
+            lookupItem: "Submachinegun (2)");
         WaitForRowCount(context, 48, total);
         context.Recorder.Check("Фильтр по ubWeaponClass=2 оставляет 48 строк", true, CounterText(window));
+        context.Recorder.Check(
+            "Поле значения предлагает lookup-имя класса оружия",
+            window.FindAllById("FilterOperandBox")[0].ReadValue() == "2",
+            window.FindAllById("FilterOperandBox")[0].ReadValue());
 
         add.InvokeButton();
         SelectCriterion(window, 1, "ubCalibre", context.Strings.Get("FilterOperatorEquals"), "2");
@@ -107,7 +117,8 @@ internal sealed class GridFilterScenario : SmokeScenario
         int index,
         string column,
         string operation,
-        string operand)
+        string operand,
+        string? lookupItem = null)
     {
         var columns = window.FindAllById("FilterColumnCombo");
         var operations = window.FindAllById("FilterOperatorCombo");
@@ -115,6 +126,11 @@ internal sealed class GridFilterScenario : SmokeScenario
         columns[index].SelectComboItem(column);
         operations[index].SelectComboItem(operation);
         operands[index].SetText(operand);
+        if (lookupItem is not null)
+        {
+            operands[index].SelectComboItem(lookupItem);
+        }
+
         Thread.Sleep(300);
     }
 

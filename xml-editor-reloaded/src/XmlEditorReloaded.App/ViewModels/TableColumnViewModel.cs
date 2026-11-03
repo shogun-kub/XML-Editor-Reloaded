@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Schema;
 
@@ -150,6 +151,36 @@ public sealed class TableColumnViewModel : ObservableObject
     /// </summary>
     public IReadOnlyList<LookupOption> LookupOptions =>
         Lookup?.Options ?? Array.Empty<LookupOption>();
+
+    /// <summary>
+    /// Gets the values offered by filter and bulk-edit value fields: Boolean choices, or the lookup
+    /// entries of a lookup/flag column. Columns without a finite value set return an empty list and
+    /// keep free text input.
+    /// </summary>
+    public IReadOnlyList<AllowedValueOption> AllowedValues
+    {
+        get
+        {
+            if (IsBoolean)
+            {
+                return new[]
+                {
+                    new AllowedValueOption("0", Strings.Get("AllowedValueFalse")),
+                    new AllowedValueOption("1", Strings.Get("AllowedValueTrue")),
+                };
+            }
+
+            if (Lookup is { IsAvailable: true }
+                && (HasLookupCombo || DataType == ColumnDataType.Flags))
+            {
+                return LookupOptions
+                    .Select(static option => new AllowedValueOption(option.IdText, option.DropdownText))
+                    .ToArray();
+            }
+
+            return Array.Empty<AllowedValueOption>();
+        }
+    }
 
     /// <summary>
     /// Gets the column header tooltip, including a lookup or relation load error when one occurred.

@@ -966,7 +966,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         var columns = _allColumns
             .Where(static column => !column.IsReadOnly && !column.IsKey)
-            .Select(static column => new BulkEditColumnOption(column.Name, column.TypeText, column.DataType))
+            .Select(static column => new BulkEditColumnOption(
+                column.Name,
+                column.TypeText,
+                column.DataType,
+                column.AllowedValues))
             .ToArray();
         if (columns.Length == 0)
         {

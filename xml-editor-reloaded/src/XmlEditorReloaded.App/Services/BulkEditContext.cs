@@ -72,7 +72,12 @@ public sealed class BulkEditContext
 /// <param name="FieldName">Exact XML field name.</param>
 /// <param name="TypeText">Display name of the column type.</param>
 /// <param name="DataType">Column data type used to enable arithmetic operations.</param>
-public sealed record BulkEditColumnOption(string FieldName, string TypeText, ColumnDataType DataType)
+/// <param name="AllowedValues">Values offered by the operand field; an empty list keeps free input.</param>
+public sealed record BulkEditColumnOption(
+    string FieldName,
+    string TypeText,
+    ColumnDataType DataType,
+    IReadOnlyList<AllowedValueOption>? AllowedValues = null)
 {
     /// <summary>
     /// Gets the text shown in the column selector.
@@ -83,4 +88,10 @@ public sealed record BulkEditColumnOption(string FieldName, string TypeText, Col
     /// Gets a value indicating whether add and multiply are meaningful for this column.
     /// </summary>
     public bool SupportsArithmetic => DataType is ColumnDataType.Integer or ColumnDataType.Decimal;
+
+    /// <summary>
+    /// Gets the values offered by the operand field; empty for a column with free text input.
+    /// </summary>
+    public IReadOnlyList<AllowedValueOption> ValueOptions =>
+        AllowedValues ?? Array.Empty<AllowedValueOption>();
 }

@@ -1735,4 +1735,10 @@
   <data name="NestedEditorListRemove" xml:space="preserve">
     <value>Удалить</value>
   </data>
+  <data name="AllowedValueFalse" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="AllowedValueTrue" xml:space="preserve">
+    <value>Да</value>
+  </data>
 </root>

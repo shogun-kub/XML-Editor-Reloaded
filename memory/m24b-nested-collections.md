@@ -25,7 +25,7 @@
 ## Проверка
 
 - `dotnet build -warnaserror` — 0/0.
-- `util-scripts/test.ps1` — 618 тестов; новые backend-тесты: `AddNestedRecord_Assignment_*`,
+- `util-scripts/test.ps1` — 621 тест; новые backend-тесты: `AddNestedRecord_Assignment_*`,
   `DeleteNestedRecord_RemovesAssignmentAndOverlayEntry`,
   `RepeatedBlock_AddAndDeleteProductionLine`,
   `SetNestedRepeatedValues_DrugItems_ReplacesOnlyTargetChildren`,

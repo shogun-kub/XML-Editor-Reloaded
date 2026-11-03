@@ -26,6 +26,9 @@ public partial class BulkEditViewModel : ObservableObject
     private string _operand = string.Empty;
 
     [ObservableProperty]
+    private IReadOnlyList<AllowedValueOption> _allowedValues = Array.Empty<AllowedValueOption>();
+
+    [ObservableProperty]
     private bool _includeMissingFields;
 
     [ObservableProperty]
@@ -219,6 +222,7 @@ public partial class BulkEditViewModel : ObservableObject
 
     partial void OnSelectedColumnChanged(BulkEditColumnOption? value)
     {
+        AllowedValues = value?.ValueOptions ?? Array.Empty<AllowedValueOption>();
         if (value is { SupportsArithmetic: false }
             && SelectedOperation is { Kind: not BulkEditOperation.Set })
         {

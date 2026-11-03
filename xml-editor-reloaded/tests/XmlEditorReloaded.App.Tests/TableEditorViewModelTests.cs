@@ -702,6 +702,67 @@ public class TableEditorViewModelTests
     }
 
     /// <summary>
+    /// Filter value fields offer the same finite values as the cell editor: lookup names for lookup
+    /// columns and localized choices for Booleans, while text columns keep free input.
+    /// </summary>
+    [Fact]
+    public async Task Filter_OffersLookupAndBooleanAllowedValues()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            includeLookups: true,
+            includeBooleans: true);
+        var filter = Assert.IsType<TableFilterViewModel>(editor.Filter);
+        filter.AddCriterionCommand.Execute(null);
+        var criterion = Assert.Single(filter.Criteria);
+
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "AttachmentSystem");
+
+        Assert.True(criterion.HasAllowedValues);
+        Assert.Equal(new[] { "1", "2" }, criterion.AllowedValues.Select(option => option.Value));
+        Assert.Contains(criterion.AllowedValues, option => option.DisplayText == "NAS (2)");
+
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "AllowClimbing");
+
+        Assert.Equal(new[] { "0", "1" }, criterion.AllowedValues.Select(option => option.Value));
+        Assert.Equal(new[] { "No", "Yes" }, criterion.AllowedValues.Select(option => option.DisplayText));
+
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "szItemName");
+
+        Assert.Empty(criterion.AllowedValues);
+        Assert.False(criterion.HasAllowedValues);
+    }
+
+    /// <summary>
+    /// The bulk edit dialog receives allowed values for lookup and Boolean columns and none for plain
+    /// text columns.
+    /// </summary>
+    [Fact]
+    public async Task BulkEdit_ProvidesAllowedValuesForLookupColumns()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, dialog, _) = await CreateEditorAsync(
+            workspace,
+            includeLookups: true,
+            includeBooleans: true);
+        dialog.BulkEditHandler = _ => null;
+
+        editor.BulkEditCommand.Execute(null);
+
+        var context = Assert.IsType<BulkEditContext>(dialog.LastBulkContext);
+        var attachment = Assert.Single(context.Columns, column => column.FieldName == "AttachmentSystem");
+        Assert.Equal(new[] { "1", "2" }, attachment.ValueOptions.Select(option => option.Value));
+        Assert.Contains(attachment.ValueOptions, option => option.DisplayText == "None (1)");
+        var climbing = Assert.Single(context.Columns, column => column.FieldName == "AllowClimbing");
+        Assert.Equal(new[] { "0", "1" }, climbing.ValueOptions.Select(option => option.Value));
+        var name = Assert.Single(context.Columns, column => column.FieldName == "szItemName");
+        Assert.Empty(name.ValueOptions);
+    }
+
+    /// <summary>
     /// Filtering by the current cell value adds an equality or exclusion condition.
     /// </summary>
     [Fact]

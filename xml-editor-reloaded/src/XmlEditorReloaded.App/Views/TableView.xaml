@@ -204,10 +204,19 @@
                                           ItemsSource="{Binding Operators}"
                                           SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
                                           DisplayMemberPath="DisplayText" />
-                                <TextBox Width="180"
-                                         Margin="6,0,0,0"
-                                         AutomationProperties.AutomationId="FilterOperandBox"
-                                         Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
+                                <ComboBox Width="180"
+                                          Margin="6,0,0,0"
+                                          IsEditable="True"
+                                          IsTextSearchEnabled="False"
+                                          AutomationProperties.AutomationId="FilterOperandBox"
+                                          ItemsSource="{Binding AllowedValues}"
+                                          Text="{Binding Operand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayText}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                                 <Button Margin="6,0,0,0"
                                         Padding="8,0"
                                         AutomationProperties.AutomationId="FilterRemoveButton"

@@ -117,6 +117,46 @@ public class BulkEditViewModelTests
     }
 
     /// <summary>
+    /// The operand dropdown follows the selected column: a lookup column offers its entries and a
+    /// plain text column offers nothing.
+    /// </summary>
+    [Fact]
+    public void AllowedValues_FollowSelectedColumn()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        var context = new BulkEditContext(
+            "Bulk edit",
+            new[]
+            {
+                new BulkEditColumnOption(
+                    "ItemClass",
+                    "Lookup",
+                    ColumnDataType.Lookup,
+                    new[]
+                    {
+                        new AllowedValueOption("1", "None (1)"),
+                        new AllowedValueOption("2", "Gun (2)"),
+                    }),
+                new BulkEditColumnOption("szItemName", "String", ColumnDataType.String),
+            },
+            new[] { "0" },
+            request => OperationResult<BulkEditPreview>.Success(new BulkEditPreview(
+                request.FieldName,
+                request.Operation,
+                request.Operand,
+                request.IncludeMissingFields,
+                Array.Empty<BulkEditPreviewRow>())));
+
+        var viewModel = new BulkEditViewModel(context);
+
+        Assert.Equal(new[] { "1", "2" }, viewModel.AllowedValues.Select(option => option.Value));
+
+        viewModel.SelectedColumn = viewModel.Columns[1];
+
+        Assert.Empty(viewModel.AllowedValues);
+    }
+
+    /// <summary>
     /// A backend preview failure is shown and blocks Apply.
     /// </summary>
     [Fact]
