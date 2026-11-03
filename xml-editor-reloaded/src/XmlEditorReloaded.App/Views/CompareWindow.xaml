@@ -13,6 +13,14 @@
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <Style x:Key="LeftValueCell" TargetType="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding LeftText}" />
+        </Style>
+        <Style x:Key="RightValueCell" TargetType="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding RightText}" />
+        </Style>
     </Window.Resources>
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -104,6 +112,11 @@
                        TextWrapping="Wrap"
                        AutomationProperties.AutomationId="CompareSummaryFieldsText"
                        Text="{Binding SummaryFieldsText}" />
+            <TextBlock Margin="0,6,0,0"
+                       Foreground="#FF666666"
+                       TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="CompareSummaryValuesText"
+                       Text="{Binding SummaryValuesText}" />
         </StackPanel>
 
         <Grid Grid.Row="3">
@@ -143,6 +156,7 @@
                     <DataGridTextColumn x:Name="AddedFieldsColumn" Binding="{Binding AddedFields}" Width="60" />
                     <DataGridTextColumn x:Name="RemovedFieldsColumn" Binding="{Binding RemovedFields}" Width="70" />
                     <DataGridTextColumn x:Name="ChangedTypesColumn" Binding="{Binding ChangedTypes}" Width="80" />
+                    <DataGridTextColumn x:Name="ValuesColumn" Binding="{Binding ValuesText}" Width="90" />
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -216,6 +230,200 @@
                                        FontFamily="Consolas"
                                        Text="{Binding DiagnosticsText}" />
                         </StackPanel>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="{Binding ValuesTabText}">
+                    <Grid Margin="6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0">
+                            <TextBlock FontWeight="SemiBold"
+                                       TextWrapping="Wrap"
+                                       AutomationProperties.AutomationId="CompareValuesSummaryText"
+                                       Text="{Binding ValuesSummaryText}" />
+                            <TextBlock Margin="0,6,0,0"
+                                       Foreground="#FF666666"
+                                       TextWrapping="Wrap"
+                                       Text="{Binding ValuesIdentityText}" />
+                            <TextBlock Margin="0,6,0,0"
+                                       Foreground="#FFB00020"
+                                       TextWrapping="Wrap"
+                                       AutomationProperties.AutomationId="CompareValuesTruncatedText"
+                                       Text="{Binding ValuesTruncatedText}"
+                                       Visibility="{Binding ValuesTruncated, Converter={StaticResource BoolToVisibility}}" />
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <DataGrid x:Name="RecordsGrid"
+                                      Grid.Column="0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      SelectionUnit="FullRow"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="All"
+                                      EnableRowVirtualization="True"
+                                      ItemsSource="{Binding Records}"
+                                      SelectedItem="{Binding SelectedRecord, Mode=TwoWay}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="RecordKeyColumn" Binding="{Binding Key}" Width="*" />
+                                    <DataGridTextColumn x:Name="RecordStatusColumn" Binding="{Binding StatusText}" Width="120" />
+                                    <DataGridTextColumn x:Name="RecordFieldsColumn" Binding="{Binding ChangedFieldsText}" Width="100" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <GridSplitter Grid.Column="1"
+                                          Width="6"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          Background="Transparent" />
+
+                            <DataGrid x:Name="RecordFieldsGrid"
+                                      Grid.Column="2"
+                                      Margin="6,0,0,0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="All"
+                                      EnableRowVirtualization="True"
+                                      ItemsSource="{Binding RecordFields}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="RecordFieldNameColumn" Binding="{Binding Name}" Width="*" />
+                                    <DataGridTextColumn x:Name="RecordFieldStatusColumn" Binding="{Binding StatusText}" Width="130" />
+                                    <DataGridTextColumn x:Name="RecordFieldLeftColumn"
+                                                        Binding="{Binding LeftText}"
+                                                        Width="*"
+                                                        ElementStyle="{StaticResource LeftValueCell}" />
+                                    <DataGridTextColumn x:Name="RecordFieldRightColumn"
+                                                        Binding="{Binding RightText}"
+                                                        Width="*"
+                                                        ElementStyle="{StaticResource RightValueCell}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+
+                        <GroupBox Grid.Row="2"
+                                  Margin="0,6,0,0"
+                                  Header="{Binding RootFieldsLabel}"
+                                  Visibility="{Binding HasRootFields, Converter={StaticResource BoolToVisibility}}">
+                            <DataGrid x:Name="RootFieldsGrid"
+                                      MaxHeight="160"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="All"
+                                      ItemsSource="{Binding RootFields}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="RootFieldNameColumn" Binding="{Binding Name}" Width="*" />
+                                    <DataGridTextColumn x:Name="RootFieldStatusColumn" Binding="{Binding StatusText}" Width="130" />
+                                    <DataGridTextColumn x:Name="RootFieldLeftColumn"
+                                                        Binding="{Binding LeftText}"
+                                                        Width="*"
+                                                        ElementStyle="{StaticResource LeftValueCell}" />
+                                    <DataGridTextColumn x:Name="RootFieldRightColumn"
+                                                        Binding="{Binding RightText}"
+                                                        Width="*"
+                                                        ElementStyle="{StaticResource RightValueCell}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="{Binding OverlaysTabText}">
+                    <Grid Margin="6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Foreground="#FFB00020"
+                                   TextWrapping="Wrap"
+                                   AutomationProperties.AutomationId="CompareOverlayTruncatedText"
+                                   Text="{Binding OverlayCellsTruncatedText}"
+                                   Visibility="{Binding HasOverlayTruncation, Converter={StaticResource BoolToVisibility}}" />
+
+                        <DataGrid x:Name="OverlaysGrid"
+                                  Grid.Row="1"
+                                  Margin="0,6,0,0"
+                                  MaxHeight="170"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  ItemsSource="{Binding Overlays}"
+                                  SelectedItem="{Binding SelectedOverlay, Mode=TwoWay}">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasDifferences}" Value="True">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="OverlayLanguageColumn" Binding="{Binding LanguageCode}" Width="110" />
+                                <DataGridTextColumn x:Name="OverlayStatusColumn" Binding="{Binding StatusText}" Width="120" />
+                                <DataGridTextColumn x:Name="OverlayLeftColumn" Binding="{Binding LeftText}" Width="110" />
+                                <DataGridTextColumn x:Name="OverlayRightColumn" Binding="{Binding RightText}" Width="110" />
+                                <DataGridTextColumn x:Name="OverlayAddedColumn" Binding="{Binding AddedText}" Width="80" />
+                                <DataGridTextColumn x:Name="OverlayRemovedColumn" Binding="{Binding RemovedText}" Width="80" />
+                                <DataGridTextColumn x:Name="OverlayChangedColumn" Binding="{Binding ChangedText}" Width="80" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <DataGrid x:Name="OverlayCellsGrid"
+                                  Grid.Row="2"
+                                  Margin="0,6,0,0"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  EnableRowVirtualization="True"
+                                  ItemsSource="{Binding OverlayCells}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="OverlayCellKeyColumn" Binding="{Binding Key}" Width="140" />
+                                <DataGridTextColumn x:Name="OverlayCellFieldColumn" Binding="{Binding FieldPath}" Width="*" />
+                                <DataGridTextColumn x:Name="OverlayCellStatusColumn" Binding="{Binding StatusText}" Width="130" />
+                                <DataGridTextColumn x:Name="OverlayCellLeftColumn"
+                                                    Binding="{Binding LeftText}"
+                                                    Width="*"
+                                                    ElementStyle="{StaticResource LeftValueCell}" />
+                                <DataGridTextColumn x:Name="OverlayCellRightColumn"
+                                                    Binding="{Binding RightText}"
+                                                    Width="*"
+                                                    ElementStyle="{StaticResource RightValueCell}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </TabItem>
 

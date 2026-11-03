@@ -32,7 +32,7 @@ These rules apply to every WPF form in `xml-editor-reloaded/src/XmlEditorReloade
 | `NestedTableWorkspaceView.xaml` | ✅ | Toolbar wraps with equal 6 px gaps; add-assignment label/field pair is one StackPanel; sections and lists use 6 px. |
 | `FieldEditor.xaml` | ✅ | Label and editor are adjacent Grid columns with 6 px gaps; buttons use 6 px. |
 | `BulkEditWindow.xaml` | ✅ | Header label/field pairs are Grid columns with 6 px; checkboxes and action buttons use 6 px. |
-| `CompareWindow.xaml` | ✅ | Directory labels/fields and action buttons use 6 px; progress/status follow the same gap. |
+| `CompareWindow.xaml` | ✅ | Directory labels/fields and action buttons use 6 px; progress/status follow the same gap; the Records/Overlays tabs keep 6 px between summary, grids, splitter and root-field group. |
 | `TableCopyWindow.xaml` | ✅ | Source/target and option labels/fields use 6 px; action row uses 6 px. |
 | `SettingsWindow.xaml` | ✅ | Directory row, column gap, reset/status rows and footer buttons use 6 px. |
 | `ImageViewerWindow.xaml` | ✅ | Item, type/index, zoom and preview header rows use 6 px; three preview columns are separated by 6 px. |

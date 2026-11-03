@@ -559,6 +559,18 @@ internal static class Ui
             .FirstOrDefault(row => string.Equals(row.ReadRowCells().FirstOrDefault(), firstCellText, StringComparison.Ordinal));
 
     /// <summary>
+    /// Returns the realized data row at the given index.
+    /// </summary>
+    /// <param name="grid">Grid element.</param>
+    /// <param name="index">Zero-based row index among realized rows.</param>
+    /// <returns>The row, or <see langword="null"/> when the index is outside the realized rows.</returns>
+    public static AutomationElement? RowAt(this AutomationElement grid, int index) =>
+        SafeFindAll(grid, TreeScope.Children, new PropertyCondition(
+                AutomationElement.ControlTypeProperty,
+                ControlType.DataItem))
+            .ElementAtOrDefault(index);
+
+    /// <summary>
     /// Scrolls a grid to the top when it supports the scroll pattern.
     /// </summary>
     /// <param name="grid">Grid element.</param>

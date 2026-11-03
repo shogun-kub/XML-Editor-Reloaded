@@ -81,6 +81,9 @@ public static class TableComparisonReportFormatter
                     FormatPresence(field.LeftPresence, field.LeftMaxOccurrences),
                     FormatPresence(field.RightPresence, field.RightMaxOccurrences));
             }
+
+            AppendValueCsvRows(builder, entry);
+            AppendOverlayCsvRows(builder, entry);
         }
 
         foreach (var reference in report.LookupReferences)
@@ -105,6 +108,87 @@ public static class TableComparisonReportFormatter
         return builder.ToString();
     }
 
+    private static void AppendValueCsvRows(StringBuilder builder, TableComparisonEntry entry)
+    {
+        var value = entry.Value;
+        if (!value.HasDifferences)
+        {
+            return;
+        }
+
+        var identity = value.IdentityKind.ToString();
+        foreach (var record in value.Records)
+        {
+            AppendCsvRow(
+                builder,
+                "Record",
+                entry.TableName.Value,
+                record.Key,
+                record.Kind.ToString(),
+                string.Empty,
+                string.Empty,
+                record.ChangedFieldCount.ToString(CultureInfo.InvariantCulture),
+                identity);
+            foreach (var field in record.Fields)
+            {
+                AppendCsvRow(
+                    builder,
+                    "Value",
+                    entry.TableName.Value,
+                    string.Concat(record.Key, "/", field.Name),
+                    field.Kind.ToString(),
+                    field.LeftValue ?? string.Empty,
+                    field.RightValue ?? string.Empty,
+                    record.Kind.ToString(),
+                    identity);
+            }
+        }
+
+        foreach (var field in value.RootFields)
+        {
+            AppendCsvRow(
+                builder,
+                "RootField",
+                entry.TableName.Value,
+                field.Name,
+                field.Kind.ToString(),
+                field.LeftValue ?? string.Empty,
+                field.RightValue ?? string.Empty,
+                identity,
+                string.Empty);
+        }
+    }
+
+    private static void AppendOverlayCsvRows(StringBuilder builder, TableComparisonEntry entry)
+    {
+        foreach (var overlay in entry.Overlays)
+        {
+            AppendCsvRow(
+                builder,
+                "Overlay",
+                entry.TableName.Value,
+                overlay.LanguageCode,
+                overlay.Status.ToString(),
+                overlay.Left.CellCount.ToString(CultureInfo.InvariantCulture),
+                overlay.Right.CellCount.ToString(CultureInfo.InvariantCulture),
+                $"{overlay.Left.Status}/{overlay.Right.Status}",
+                $"{overlay.AddedCellCount}/{overlay.RemovedCellCount}/{overlay.ChangedCellCount}");
+            foreach (var cell in overlay.Cells)
+            {
+                AppendCsvRow(
+                    builder,
+                    "OverlayCell",
+                    entry.TableName.Value,
+                    string.Concat(overlay.LanguageCode, "/", cell.Key, "/", cell.FieldPath),
+                    cell.Kind.ToString(),
+                    cell.LeftValue ?? string.Empty,
+                    cell.RightValue ?? string.Empty,
+                    cell.Key,
+                    cell.FieldPath);
+            }
+        }
+    }
+
     private static void AppendSummary(StringBuilder builder, TableComparisonSummary summary)
     {
         builder.AppendLine("## Summary");
@@ -124,6 +208,12 @@ public static class TableComparisonReportFormatter
         AppendMetric(builder, "Fields removed", summary.RemovedFieldCount);
         AppendMetric(builder, "Fields with changed type", summary.TypeChangedFieldCount);
         AppendMetric(builder, "Fields with changed cardinality", summary.CardinalityChangedFieldCount);
+        AppendMetric(builder, "Records added", summary.AddedRecordCount);
+        AppendMetric(builder, "Records removed", summary.RemovedRecordCount);
+        AppendMetric(builder, "Records changed", summary.ChangedRecordCount);
+        AppendMetric(builder, "Field values changed", summary.ChangedFieldCount);
+        AppendMetric(builder, "Root fields changed", summary.ChangedRootFieldCount);
+        AppendMetric(builder, "Overlay cells differing", summary.DifferingOverlayCellCount);
         AppendMetric(builder, "Records left", summary.LeftRecordTotal);
         AppendMetric(builder, "Records right", summary.RightRecordTotal);
         builder.AppendLine();
@@ -225,21 +315,172 @@ public static class TableComparisonReportFormatter
             {
                 builder.AppendLine("_No field-level differences._");
                 builder.AppendLine();
-                continue;
+            }
+            else
+            {
+                builder.AppendLine("| Field | Status | Left type | Right type | Left presence | Right presence |");
+                builder.AppendLine("| --- | --- | --- | --- | --- | --- |");
+                foreach (var field in changedFields)
+                {
+                    builder.AppendLine(
+                        $"| {EscapeCell(field.Name)} | {field.Status} | {FormatType(field.LeftType)} | "
+                        + $"{FormatType(field.RightType)} | {FormatPresence(field.LeftPresence, field.LeftMaxOccurrences)} | "
+                        + $"{FormatPresence(field.RightPresence, field.RightMaxOccurrences)} |");
+                }
+
+                builder.AppendLine();
             }
 
-            builder.AppendLine("| Field | Status | Left type | Right type | Left presence | Right presence |");
-            builder.AppendLine("| --- | --- | --- | --- | --- | --- |");
-            foreach (var field in changedFields)
+            AppendValueDetails(builder, entry);
+            AppendOverlayDetails(builder, entry);
+        }
+    }
+
+    private static void AppendValueDetails(StringBuilder builder, TableComparisonEntry entry)
+    {
+        var value = entry.Value;
+        if (!value.HasDifferences)
+        {
+            return;
+        }
+
+        builder.AppendLine("#### Value differences");
+        builder.AppendLine();
+        builder.AppendLine(
+            $"- Identity: {(value.IdentityKind == RecordIdentityKind.DeclaredKey ? "declared record key" : "record order (no key declared)")}");
+        builder.AppendLine(
+            $"- Records: {value.AddedRecordCount} added, {value.RemovedRecordCount} removed, "
+            + $"{value.ChangedRecordCount} changed; {value.ChangedFieldCount} field values differ; "
+            + $"{value.RootFieldChangeCount} root fields differ.");
+        if (value.RecordsTruncated)
+        {
+            builder.AppendLine("- Detail lists are capped by the report limits; the counts above are exact.");
+        }
+
+        builder.AppendLine();
+        if (value.Records.Count > 0)
+        {
+            builder.AppendLine("| Record | Status | Changed fields |");
+            builder.AppendLine("| --- | --- | ---: |");
+            foreach (var record in value.Records)
             {
                 builder.AppendLine(
-                    $"| {EscapeCell(field.Name)} | {field.Status} | {FormatType(field.LeftType)} | "
-                    + $"{FormatType(field.RightType)} | {FormatPresence(field.LeftPresence, field.LeftMaxOccurrences)} | "
-                    + $"{FormatPresence(field.RightPresence, field.RightMaxOccurrences)} |");
+                    $"| {EscapeCell(record.Key)} | {record.Kind} | "
+                    + $"{record.ChangedFieldCount.ToString(CultureInfo.InvariantCulture)} |");
+            }
+
+            builder.AppendLine();
+
+            var fieldRows = value.Records
+                .SelectMany(static record => record.Fields.Select(field => (Record: record, Field: field)))
+                .ToList();
+            if (fieldRows.Count > 0)
+            {
+                builder.AppendLine("| Record | Field | Status | Left | Right |");
+                builder.AppendLine("| --- | --- | --- | --- | --- |");
+                foreach (var row in fieldRows)
+                {
+                    builder.AppendLine(
+                        $"| {EscapeCell(row.Record.Key)} | {EscapeCell(row.Field.Name)} | {row.Field.Kind} | "
+                        + $"{EscapeCell(row.Field.LeftValue ?? string.Empty)} | "
+                        + $"{EscapeCell(row.Field.RightValue ?? string.Empty)} |");
+                }
+
+                builder.AppendLine();
+            }
+        }
+
+        if (value.RootFields.Count > 0)
+        {
+            builder.AppendLine("| Root field | Status | Left | Right |");
+            builder.AppendLine("| --- | --- | --- | --- |");
+            foreach (var field in value.RootFields)
+            {
+                builder.AppendLine(
+                    $"| {EscapeCell(field.Name)} | {field.Kind} | "
+                    + $"{EscapeCell(field.LeftValue ?? string.Empty)} | "
+                    + $"{EscapeCell(field.RightValue ?? string.Empty)} |");
             }
 
             builder.AppendLine();
         }
+    }
+
+    private static void AppendOverlayDetails(StringBuilder builder, TableComparisonEntry entry)
+    {
+        var overlays = entry.Overlays;
+        if (overlays.Count == 0)
+        {
+            return;
+        }
+
+        var changed = overlays.Where(static overlay => overlay.HasDifferences).ToList();
+        if (changed.Count == 0)
+        {
+            return;
+        }
+
+        builder.AppendLine("#### Overlays");
+        builder.AppendLine();
+        builder.AppendLine("| Language | Status | Left cells | Right cells | Added | Removed | Changed |");
+        builder.AppendLine("| --- | --- | ---: | ---: | ---: | ---: | ---: |");
+        var errors = new List<string>();
+        foreach (var overlay in changed)
+        {
+            builder.AppendLine(
+                $"| {EscapeCell(overlay.LanguageCode)} | {overlay.Status} | "
+                + $"{overlay.Left.CellCount.ToString(CultureInfo.InvariantCulture)} ({overlay.Left.Status}) | "
+                + $"{overlay.Right.CellCount.ToString(CultureInfo.InvariantCulture)} ({overlay.Right.Status}) | "
+                + $"{overlay.AddedCellCount.ToString(CultureInfo.InvariantCulture)} | "
+                + $"{overlay.RemovedCellCount.ToString(CultureInfo.InvariantCulture)} | "
+                + $"{overlay.ChangedCellCount.ToString(CultureInfo.InvariantCulture)} |");
+            if (!string.IsNullOrEmpty(overlay.Left.ErrorText))
+            {
+                errors.Add($"{overlay.LanguageCode}: left overlay error: {EscapeCell(overlay.Left.ErrorText)}");
+            }
+
+            if (!string.IsNullOrEmpty(overlay.Right.ErrorText))
+            {
+                errors.Add($"{overlay.LanguageCode}: right overlay error: {EscapeCell(overlay.Right.ErrorText)}");
+            }
+        }
+
+        builder.AppendLine();
+        if (errors.Count > 0)
+        {
+            foreach (var error in errors)
+            {
+                builder.AppendLine($"- {error}");
+            }
+
+            builder.AppendLine();
+        }
+        if (changed.Any(static overlay => overlay.CellsTruncated))
+        {
+            builder.AppendLine("_Overlay cell lists are capped by the report limits; the counts above are exact._");
+            builder.AppendLine();
+        }
+
+        var cellRows = changed
+            .SelectMany(static overlay => overlay.Cells.Select(cell => (Overlay: overlay, Cell: cell)))
+            .ToList();
+        if (cellRows.Count == 0)
+        {
+            return;
+        }
+
+        builder.AppendLine("| Language | Record | Field | Status | Left | Right |");
+        builder.AppendLine("| --- | --- | --- | --- | --- | --- |");
+        foreach (var row in cellRows)
+        {
+            builder.AppendLine(
+                $"| {EscapeCell(row.Overlay.LanguageCode)} | {EscapeCell(row.Cell.Key)} | "
+                + $"{EscapeCell(row.Cell.FieldPath)} | {row.Cell.Kind} | "
+                + $"{EscapeCell(row.Cell.LeftValue ?? string.Empty)} | "
+                + $"{EscapeCell(row.Cell.RightValue ?? string.Empty)} |");
+        }
+
+        builder.AppendLine();
     }
 
     private static void AppendSide(StringBuilder builder, string label, TableSideComparison? side)

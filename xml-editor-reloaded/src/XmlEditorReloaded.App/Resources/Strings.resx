@@ -828,6 +828,72 @@
   <data name="CompareSideRight" xml:space="preserve">
     <value>Right</value>
   </data>
+  <data name="CompareValuesTab" xml:space="preserve">
+    <value>Records</value>
+  </data>
+  <data name="CompareOverlaysTab" xml:space="preserve">
+    <value>Overlays</value>
+  </data>
+  <data name="CompareSummaryValuesText" xml:space="preserve">
+    <value>Records: +{0} added, −{1} removed, ~{2} changed; differing field values: {3}; root fields: {4}; overlay cells: {5}.</value>
+  </data>
+  <data name="CompareValuesSummaryText" xml:space="preserve">
+    <value>Records: +{0} added, −{1} removed, ~{2} changed; differing fields: {3}.</value>
+  </data>
+  <data name="CompareValuesIdentityDeclared" xml:space="preserve">
+    <value>Records are matched by the declared key.</value>
+  </data>
+  <data name="CompareValuesIdentityPositional" xml:space="preserve">
+    <value>The table declares no key; records are matched by order.</value>
+  </data>
+  <data name="CompareValuesTruncatedText" xml:space="preserve">
+    <value>Record details are capped; the counters are exact.</value>
+  </data>
+  <data name="CompareRecordKeyHeader" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="CompareRecordStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompareRecordChangedFieldsHeader" xml:space="preserve">
+    <value>Fields changed</value>
+  </data>
+  <data name="CompareRecordChanged" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="CompareValueChanged" xml:space="preserve">
+    <value>Value changed</value>
+  </data>
+  <data name="CompareRootFieldsLabel" xml:space="preserve">
+    <value>Root fields</value>
+  </data>
+  <data name="CompareOverlayLanguageHeader" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="CompareOverlayStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompareOverlayLeftCellsHeader" xml:space="preserve">
+    <value>Cells left</value>
+  </data>
+  <data name="CompareOverlayRightCellsHeader" xml:space="preserve">
+    <value>Cells right</value>
+  </data>
+  <data name="CompareOverlayAddedHeader" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="CompareOverlayRemovedHeader" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="CompareOverlayChangedHeader" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="CompareOverlayCellsTruncatedText" xml:space="preserve">
+    <value>Overlay cell details are capped; the counters are exact.</value>
+  </data>
+  <data name="CompareOverlayCellKeyHeader" xml:space="preserve">
+    <value>Record</value>
+  </data>
   <data name="RelationUnavailableFormat" xml:space="preserve">
     <value>Relation target unavailable: {0}</value>
   </data>

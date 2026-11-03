@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Xml.Comparison;
@@ -125,6 +126,94 @@ public class CompareViewModelTests
     }
 
     /// <summary>
+    /// Record value differences are projected into the records tab, and selecting a record fills its
+    /// changed fields.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ProjectsRecordValueDifferences()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var left = CreateTableData(
+            workspace,
+            "left",
+            "Items/Items.xml",
+            "<ITEMLIST><ITEM><uiIndex>1</uiIndex><szItemName>A</szItemName></ITEM></ITEMLIST>");
+        var right = CreateTableData(
+            workspace,
+            "right",
+            "Items/Items.xml",
+            "<ITEMLIST><ITEM><uiIndex>1</uiIndex><szItemName>B</szItemName></ITEM></ITEMLIST>");
+        var viewModel = CreateViewModel();
+        viewModel.LeftDirectory = left;
+        viewModel.RightDirectory = right;
+
+        await viewModel.CompareCommand.ExecuteAsync(null);
+
+        var table = Assert.Single(viewModel.Tables);
+        Assert.Equal("+0 \u22120 ~1 (1)", table.ValuesText);
+        var record = Assert.Single(viewModel.Records);
+        Assert.Equal("#1", record.Key);
+        Assert.Equal("Changed", record.StatusText);
+        Assert.Equal("1", record.ChangedFieldsText);
+        Assert.Same(record, viewModel.SelectedRecord);
+
+        var field = Assert.Single(viewModel.RecordFields);
+        Assert.Equal("szItemName", field.Name);
+        Assert.Equal("Value changed", field.StatusText);
+        Assert.Equal("A", field.LeftText);
+        Assert.Equal("B", field.RightText);
+        Assert.False(viewModel.ValuesTruncated);
+        Assert.StartsWith("Records: +0", viewModel.ValuesSummaryText, StringComparison.Ordinal);
+        Assert.StartsWith("Records: +0", viewModel.SummaryValuesText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Overlay comparisons are projected into the overlays tab, and selecting an overlay fills its
+    /// differing cells.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ProjectsOverlayDifferences()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        const string Base = "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>";
+        var left = CreateTableData(workspace, "left", "Items/Weapons.xml", Base);
+        var right = CreateTableData(workspace, "right", "Items/Weapons.xml", Base);
+        CreateTableData(
+            workspace,
+            "left",
+            "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Глок</szWeaponName></WEAPON></WEAPONLIST>");
+        CreateTableData(
+            workspace,
+            "right",
+            "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Пистолет</szWeaponName></WEAPON></WEAPONLIST>");
+        var catalog = new FileSystemTableCatalog(
+            new[] { new LanguageDescriptor("ru", "Russian", "Russian", 1) });
+        var viewModel = CreateViewModel(catalog: catalog);
+        viewModel.LeftDirectory = left;
+        viewModel.RightDirectory = right;
+
+        await viewModel.CompareCommand.ExecuteAsync(null);
+
+        var overlay = Assert.Single(viewModel.Overlays);
+        Assert.Equal("ru", overlay.LanguageCode);
+        Assert.Equal("Both", overlay.StatusText);
+        Assert.Equal("2", overlay.LeftText);
+        Assert.Equal("2", overlay.RightText);
+        Assert.Equal("1", overlay.ChangedText);
+        Assert.Same(overlay, viewModel.SelectedOverlay);
+        var cell = Assert.Single(viewModel.OverlayCells);
+        Assert.Equal("#1", cell.Key);
+        Assert.Equal("szWeaponName", cell.FieldPath);
+        Assert.Equal("Глок", cell.LeftText);
+        Assert.Equal("Пистолет", cell.RightText);
+        Assert.False(viewModel.HasOverlayTruncation);
+    }
+
+    /// <summary>
     /// Export is unavailable until a report exists.
     /// </summary>
     [Fact]
@@ -153,9 +242,11 @@ public class CompareViewModelTests
         Assert.Equal("first", viewModel.LeftDirectory);
     }
 
-    private static CompareViewModel CreateViewModel(FakeDialogService? dialog = null) =>
+    private static CompareViewModel CreateViewModel(
+        FakeDialogService? dialog = null,
+        ITableCatalog? catalog = null) =>
         new(
-            new TableDataComparer(new FileSystemTableCatalog()),
+            new TableDataComparer(catalog ?? new FileSystemTableCatalog()),
             dialog ?? new FakeDialogService());
 
     private static string CreateTableData(

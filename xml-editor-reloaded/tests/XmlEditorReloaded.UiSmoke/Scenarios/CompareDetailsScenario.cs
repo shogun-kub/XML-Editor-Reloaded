@@ -74,6 +74,8 @@ internal sealed class CompareDetailsScenario : SmokeScenario
             profileText);
 
         VerifyFieldsTab(context, window, added, removed, typeChanged);
+        VerifyValuesTab(context, window);
+        VerifyOverlaysTab(context, window);
         VerifyMissingSide(context, window);
         VerifyLookupTab(context, window);
 
@@ -145,6 +147,150 @@ internal sealed class CompareDetailsScenario : SmokeScenario
     }
 
     /// <summary>
+    /// Verifies the record-value tab: the counters are filled, the differing records are listed, and
+    /// selecting a changed record shows its differing fields.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="window">Comparison window.</param>
+    private static void VerifyValuesTab(ScenarioContext context, AutomationElement window)
+    {
+        var header = context.Strings.Get("CompareValuesTab");
+        var tab = SelectTab(window, header);
+        context.Recorder.Check("Вкладка «Записи» доступна", tab is not null, header);
+        if (tab is null)
+        {
+            return;
+        }
+
+        Thread.Sleep(400);
+        var summary = window.WaitById("CompareValuesSummaryText").ReadName();
+        var prefix = ScenarioUi.FormatPrefix(context.Strings.Get("CompareValuesSummaryText"));
+        context.Recorder.Check(
+            "Сводка записей заполнена",
+            summary.StartsWith(prefix, StringComparison.Ordinal),
+            summary);
+
+        var grid = window.WaitById("RecordsGrid");
+        var rows = grid.RowCount();
+        context.Recorder.Check("Различия записей перечислены", rows > 0, $"строк: {rows}");
+        var knownStatuses = new[]
+        {
+            context.Strings.Get("CompareStatusLeftOnly"),
+            context.Strings.Get("CompareStatusRightOnly"),
+            context.Strings.Get("CompareRecordChanged"),
+        };
+        var statuses = new List<string>();
+        for (var row = 0; row < Math.Min(5, rows); row++)
+        {
+            var key = DataOperationsUi.GridCellText(grid, row, 0);
+            var status = DataOperationsUi.GridCellText(grid, row, 1);
+            statuses.Add(status);
+            context.Recorder.SoftCheck(
+                $"Запись {row} имеет ключ и известный статус",
+                key.Length > 0 && knownStatuses.Contains(status, StringComparer.Ordinal),
+                $"{key}: {status}");
+        }
+
+        context.Recorder.Check(
+            "Статусы записей читаются из известного набора",
+            statuses.Count > 0 && statuses.All(status => knownStatuses.Contains(status, StringComparer.Ordinal)),
+            string.Join(" | ", statuses));
+
+        var changedRow = Enumerable.Range(0, rows)
+            .FirstOrDefault(row => DataOperationsUi.GridCellText(grid, row, 1)
+                == context.Strings.Get("CompareRecordChanged"), -1);
+        if (changedRow < 0)
+        {
+            context.Recorder.SoftCheck(
+                "Изменённая запись доступна для просмотра полей",
+                false,
+                "в списке нет записи со статусом «Изменена»");
+            return;
+        }
+
+        var changedRowElement = grid.RowAt(changedRow);
+        if (changedRowElement is null)
+        {
+            context.Recorder.SoftCheck(
+                "Изменённая запись доступна для просмотра полей",
+                false,
+                "строка не реализована в виртуализированном списке");
+            return;
+        }
+
+        changedRowElement.SelectItem();
+        Thread.Sleep(400);
+        var fields = window.WaitById("RecordFieldsGrid");
+        context.Recorder.Check(
+            "Поля изменённой записи показаны",
+            fields.RowCount() > 0,
+            $"строк: {fields.RowCount()}");
+        var firstName = DataOperationsUi.GridCellText(fields, 0, 0);
+        var firstStatus = DataOperationsUi.GridCellText(fields, 0, 1);
+        context.Recorder.Check(
+            "Поле записи имеет имя и статус изменения",
+            firstName.Length > 0
+                && firstStatus == context.Strings.Get("CompareValueChanged"),
+            $"{firstName}: {firstStatus}");
+    }
+
+    /// <summary>
+    /// Verifies the overlay tab: the v4 Russian overlay is reported as left-only with a cell count, and
+    /// no cell list is produced when the other side has no overlay.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="window">Comparison window.</param>
+    private static void VerifyOverlaysTab(ScenarioContext context, AutomationElement window)
+    {
+        var header = context.Strings.Get("CompareOverlaysTab");
+        var tab = SelectTab(window, header);
+        context.Recorder.Check("Вкладка «Оверлеи» доступна", tab is not null, header);
+        if (tab is null)
+        {
+            return;
+        }
+
+        Thread.Sleep(400);
+        var grid = window.WaitById("OverlaysGrid");
+        var rows = grid.RowCount();
+        context.Recorder.Check("Оверлей Items.Items показан", rows == 1, $"строк: {rows}");
+        if (rows == 0)
+        {
+            return;
+        }
+
+        var language = DataOperationsUi.GridCellText(grid, 0, 0);
+        var status = DataOperationsUi.GridCellText(grid, 0, 1);
+        var leftCells = DataOperationsUi.GridCellText(grid, 0, 2);
+        var rightCells = DataOperationsUi.GridCellText(grid, 0, 3);
+        context.Recorder.Check(
+            "Оверлей v4 помечен как «Только слева»",
+            language == "ru" && status == context.Strings.Get("CompareStatusLeftOnly"),
+            $"{language}: {status}");
+        context.Recorder.Check(
+            "Ячейки левого оверлея посчитаны, правый отмечен как отсутствующий",
+            ParseCount(leftCells) > 0 && rightCells == context.Strings.Get("CompareLookupMissing"),
+            $"{leftCells} / {rightCells}");
+
+        var cells = window.WaitById("OverlayCellsGrid");
+        context.Recorder.Check(
+            "Без оверлея справа различия ячеек не перечисляются",
+            cells.RowCount() == 0,
+            $"строк: {cells.RowCount()}");
+    }
+
+    private static AutomationElement? SelectTab(AutomationElement window, string header)
+    {
+        var tab = window
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FirstOrDefault(candidate => candidate.ReadName() == header
+                || candidate.FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                    .Any(text => text.ReadName() == header));
+        tab?.SelectItem();
+        return tab;
+    }
+
+    /// <summary>
     /// Selects the table that exists only in v5 and verifies that the details show a missing left side
     /// instead of an empty or broken record.
     /// </summary>
@@ -162,6 +308,8 @@ internal sealed class CompareDetailsScenario : SmokeScenario
 
         row.SelectItem();
         Thread.Sleep(500);
+        SelectTab(window, context.Strings.Get("CompareFieldsTab"));
+        Thread.Sleep(200);
         var status = context.Strings.Get("CompareStatusRightOnly");
         var header = FindText(
             window,

@@ -828,6 +828,72 @@
   <data name="CompareSideRight" xml:space="preserve">
     <value>Справа</value>
   </data>
+  <data name="CompareValuesTab" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="CompareOverlaysTab" xml:space="preserve">
+    <value>Оверлеи</value>
+  </data>
+  <data name="CompareSummaryValuesText" xml:space="preserve">
+    <value>Записи: +{0} добавлено, −{1} удалено, ~{2} изменено; различающихся значений полей: {3}; корневых полей: {4}; ячеек оверлеев: {5}.</value>
+  </data>
+  <data name="CompareValuesSummaryText" xml:space="preserve">
+    <value>Записи: +{0} добавлено, −{1} удалено, ~{2} изменено; различающихся полей: {3}.</value>
+  </data>
+  <data name="CompareValuesIdentityDeclared" xml:space="preserve">
+    <value>Записи сопоставлены по объявленному ключу.</value>
+  </data>
+  <data name="CompareValuesIdentityPositional" xml:space="preserve">
+    <value>Ключ не объявлен; записи сопоставлены по порядку.</value>
+  </data>
+  <data name="CompareValuesTruncatedText" xml:space="preserve">
+    <value>Детали записей ограничены; счётчики точные.</value>
+  </data>
+  <data name="CompareRecordKeyHeader" xml:space="preserve">
+    <value>Запись</value>
+  </data>
+  <data name="CompareRecordStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CompareRecordChangedFieldsHeader" xml:space="preserve">
+    <value>Полей изменено</value>
+  </data>
+  <data name="CompareRecordChanged" xml:space="preserve">
+    <value>Изменена</value>
+  </data>
+  <data name="CompareValueChanged" xml:space="preserve">
+    <value>Значение изменено</value>
+  </data>
+  <data name="CompareRootFieldsLabel" xml:space="preserve">
+    <value>Корневые поля</value>
+  </data>
+  <data name="CompareOverlayLanguageHeader" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="CompareOverlayStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CompareOverlayLeftCellsHeader" xml:space="preserve">
+    <value>Ячеек слева</value>
+  </data>
+  <data name="CompareOverlayRightCellsHeader" xml:space="preserve">
+    <value>Ячеек справа</value>
+  </data>
+  <data name="CompareOverlayAddedHeader" xml:space="preserve">
+    <value>Добавлено</value>
+  </data>
+  <data name="CompareOverlayRemovedHeader" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="CompareOverlayChangedHeader" xml:space="preserve">
+    <value>Изменено</value>
+  </data>
+  <data name="CompareOverlayCellsTruncatedText" xml:space="preserve">
+    <value>Детали ячеек оверлеев ограничены; счётчики точные.</value>
+  </data>
+  <data name="CompareOverlayCellKeyHeader" xml:space="preserve">
+    <value>Запись</value>
+  </data>
   <data name="RelationUnavailableFormat" xml:space="preserve">
     <value>Целевая таблица связи недоступна: {0}</value>
   </data>

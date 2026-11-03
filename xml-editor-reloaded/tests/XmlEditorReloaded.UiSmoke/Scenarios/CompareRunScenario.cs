@@ -36,6 +36,13 @@ internal sealed class CompareRunScenario : SmokeScenario
             fields.StartsWith(fieldsPrefix, StringComparison.Ordinal),
             fields);
 
+        var values = window.WaitById("CompareSummaryValuesText").ReadName();
+        var valuesPrefix = ScenarioUi.FormatPrefix(context.Strings.Get("CompareSummaryValuesText"));
+        context.Recorder.Check(
+            "Сводка значений заполнена",
+            values.StartsWith(valuesPrefix, StringComparison.Ordinal),
+            values);
+
         var grid = window.WaitById("TablesGrid");
         context.Recorder.Check("Список таблиц сравнения непустой", grid.RowCount() > 30, $"строк: {grid.RowCount()}");
 

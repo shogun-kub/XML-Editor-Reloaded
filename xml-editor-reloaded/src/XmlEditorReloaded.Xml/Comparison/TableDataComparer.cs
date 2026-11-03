@@ -94,6 +94,12 @@ public sealed class TableDataComparer : ITableComparisonService
                 && (left?.Analysis is null || right?.Analysis is null)
                     ? Array.Empty<FieldComparison>()
                     : CompareFields(left?.Analysis, right?.Analysis);
+            var value = left?.Document is not null && right?.Document is not null
+                ? TableValueComparer.Compare(left.Document, right.Document, cancellationToken)
+                : TableValueComparison.Empty;
+            var overlays = await OverlayFileComparer
+                .CompareAsync(left?.Document, right?.Document, tableMetadata, _loader, cancellationToken)
+                .ConfigureAwait(false);
 
             entries.Add(new TableComparisonEntry(
                 name,
@@ -101,7 +107,11 @@ public sealed class TableDataComparer : ITableComparisonService
                 status,
                 left?.Comparison,
                 right?.Comparison,
-                fields));
+                fields)
+            {
+                Value = value,
+                Overlays = overlays,
+            });
         }
 
         var lookupReferences = BuildLookupReferences(
@@ -165,6 +175,7 @@ public sealed class TableDataComparer : ITableComparisonService
                     null,
                     new[] { new LoadDiagnostic(code, text) },
                     text),
+                null,
                 null);
         }
 
@@ -173,6 +184,7 @@ public sealed class TableDataComparer : ITableComparisonService
         {
             return new SideLoad(
                 new TableSideComparison(TableSideStatus.Malformed, null, result.Diagnostics, null),
+                null,
                 null);
         }
 
@@ -185,6 +197,7 @@ public sealed class TableDataComparer : ITableComparisonService
                     null,
                     result.Diagnostics,
                     "The load result has no analyzable document."),
+                null,
                 null);
         }
 
@@ -194,7 +207,8 @@ public sealed class TableDataComparer : ITableComparisonService
             : TableSideStatus.Loaded;
         return new SideLoad(
             new TableSideComparison(status, analysis.Snapshot, result.Diagnostics, null),
-            analysis);
+            analysis,
+            document);
     }
 
     private static IReadOnlyList<FieldComparison> CompareFields(AnalyzedTable? left, AnalyzedTable? right)
@@ -355,9 +369,19 @@ public sealed class TableDataComparer : ITableComparisonService
             common.Sum(static entry => entry.RemovedFieldCount),
             common.Sum(static entry => entry.TypeChangedFieldCount),
             common.Sum(static entry => entry.CardinalityChangedFieldCount),
+            common.Sum(static entry => entry.Value.AddedRecordCount),
+            common.Sum(static entry => entry.Value.RemovedRecordCount),
+            common.Sum(static entry => entry.Value.ChangedRecordCount),
+            common.Sum(static entry => entry.Value.ChangedFieldCount),
+            common.Sum(static entry => entry.Value.RootFieldChangeCount),
+            common.Sum(static entry => entry.Overlays.Sum(static overlay =>
+                overlay.AddedCellCount + overlay.RemovedCellCount + overlay.ChangedCellCount)),
             entries.Sum(static entry => (long)(entry.Left?.Snapshot?.RecordCount ?? 0)),
             entries.Sum(static entry => (long)(entry.Right?.Snapshot?.RecordCount ?? 0)));
     }
 
-    private sealed record SideLoad(TableSideComparison Comparison, AnalyzedTable? Analysis);
+    private sealed record SideLoad(
+        TableSideComparison Comparison,
+        AnalyzedTable? Analysis,
+        TableDocument? Document);
 }

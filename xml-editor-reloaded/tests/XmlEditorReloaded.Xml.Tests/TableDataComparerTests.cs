@@ -212,8 +212,287 @@ public class TableDataComparerTests
     }
 
     /// <summary>
-    /// Lookup columns declared in metadata are reported with their availability on both sides.
+    /// Records are matched by the declared key; added, removed, and changed records report their
+    /// differing field values as exact XML text.
     /// </summary>
+    [Fact]
+    public async Task Compare_ReportsRecordValueDifferencesByDeclaredKey()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        Write(left, "Items/Items.xml",
+            "<ITEMLIST>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock</szItemName><ubWeight>1.0</ubWeight></ITEM>"
+            + "<ITEM><uiIndex>2</uiIndex><szItemName>Removed</szItemName></ITEM>"
+            + "</ITEMLIST>");
+        Write(right, "Items/Items.xml",
+            "<ITEMLIST>"
+            + "<ITEM><uiIndex>1</uiIndex><szItemName>Glock 17</szItemName><ubWeight>1</ubWeight></ITEM>"
+            + "<ITEM><uiIndex>3</uiIndex><szItemName>Added</szItemName></ITEM>"
+            + "</ITEMLIST>");
+        var metadata = new TestMetadataProvider(CreateItemsMetadata());
+
+        var result = await new TableDataComparer(new TestCatalog(), metadata).CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var report = result.Data!;
+        var entry = Assert.Single(report.Tables);
+        Assert.True(entry.HasValueDifferences);
+        Assert.Equal(RecordIdentityKind.DeclaredKey, entry.Value.IdentityKind);
+        Assert.Equal(1, entry.Value.AddedRecordCount);
+        Assert.Equal(1, entry.Value.RemovedRecordCount);
+        Assert.Equal(1, entry.Value.ChangedRecordCount);
+        Assert.Equal(2, entry.Value.ChangedFieldCount);
+        Assert.False(entry.Value.RecordsTruncated);
+
+        var removed = Assert.Single(entry.Value.Records, record => record.Kind == ComparisonDifferenceKind.LeftOnly);
+        Assert.Equal("2", removed.Key);
+        var added = Assert.Single(entry.Value.Records, record => record.Kind == ComparisonDifferenceKind.RightOnly);
+        Assert.Equal("3", added.Key);
+        var changed = Assert.Single(entry.Value.Records, record => record.Kind == ComparisonDifferenceKind.Changed);
+        Assert.Equal("1", changed.Key);
+        Assert.Equal(0, changed.LeftOrder);
+        Assert.Equal(0, changed.RightOrder);
+        Assert.Equal(2, changed.ChangedFieldCount);
+        Assert.Contains(
+            changed.Fields,
+            field => field.Name == "szItemName"
+                && field.Kind == ComparisonDifferenceKind.Changed
+                && field.LeftValue == "Glock"
+                && field.RightValue == "Glock 17");
+        Assert.Contains(
+            changed.Fields,
+            field => field.Name == "ubWeight"
+                && field.LeftValue == "1.0"
+                && field.RightValue == "1");
+
+        Assert.Equal(1, report.Summary.AddedRecordCount);
+        Assert.Equal(1, report.Summary.RemovedRecordCount);
+        Assert.Equal(1, report.Summary.ChangedRecordCount);
+        Assert.Equal(2, report.Summary.ChangedFieldCount);
+    }
+
+    /// <summary>
+    /// A table without a declared key is compared by record order and reports positional identities.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ReportsPositionalRecordValuesWithoutMetadata()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        Write(left, "Custom/List.xml", "<LIST><ROW><id>1</id><name>A</name></ROW></LIST>");
+        Write(right, "Custom/List.xml", "<LIST><ROW><id>1</id><name>B</name></ROW></LIST>");
+
+        var result = await new TableDataComparer(new TestCatalog()).CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var entry = Assert.Single(result.Data!.Tables);
+        Assert.Equal(RecordIdentityKind.Positional, entry.Value.IdentityKind);
+        Assert.Equal(1, entry.Value.ChangedRecordCount);
+        var changed = Assert.Single(entry.Value.Records);
+        Assert.Equal("#1", changed.Key);
+        var field = Assert.Single(changed.Fields);
+        Assert.Equal("name", field.Name);
+        Assert.Equal("A", field.LeftValue);
+        Assert.Equal("B", field.RightValue);
+    }
+
+    /// <summary>
+    /// Root singleton fields such as <c>COUNTRY/countryName</c> are compared even though they are not
+    /// records of the table.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ReportsRootSingletonFieldDifferences()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        Write(left, "Map/Cities.xml",
+            "<CITY_INFO><COUNTRY><countryName>Arulco</countryName></COUNTRY>"
+            + "<CITYLIST><CITY><uiIndex>1</uiIndex><townName>Omerta</townName></CITY></CITYLIST></CITY_INFO>");
+        Write(right, "Map/Cities.xml",
+            "<CITY_INFO><COUNTRY><countryName>Arulco (new)</countryName></COUNTRY>"
+            + "<CITYLIST><CITY><uiIndex>1</uiIndex><townName>Omerta</townName></CITY></CITYLIST></CITY_INFO>");
+        var metadata = new TestMetadataProvider(CreateCitiesMetadata());
+
+        var result = await new TableDataComparer(new TestCatalog(), metadata).CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var entry = Assert.Single(result.Data!.Tables);
+        Assert.True(entry.HasValueDifferences);
+        Assert.Equal(0, entry.Value.ChangedRecordCount);
+        Assert.Equal(1, entry.Value.RootFieldChangeCount);
+        var field = Assert.Single(entry.Value.RootFields);
+        Assert.Equal("COUNTRY/countryName", field.Name);
+        Assert.Equal(ComparisonDifferenceKind.Changed, field.Kind);
+        Assert.Equal("Arulco", field.LeftValue);
+        Assert.Equal("Arulco (new)", field.RightValue);
+        Assert.Equal(1, result.Data.Summary.ChangedRootFieldCount);
+    }
+
+    /// <summary>
+    /// Overlay files are compared cell by cell when both sides have an overlay for the same language.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ReportsOverlayContentDifferences()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        const string Base = "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>";
+        Write(left, "Items/Weapons.xml", Base);
+        Write(right, "Items/Weapons.xml", Base);
+        Write(left, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST>"
+            + "<WEAPON><uiIndex>1</uiIndex><szWeaponName>Глок</szWeaponName></WEAPON>"
+            + "<WEAPON><uiIndex>2</uiIndex><szWeaponName>Узи</szWeaponName></WEAPON>"
+            + "</WEAPONLIST>");
+        Write(right, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST>"
+            + "<WEAPON><uiIndex>1</uiIndex><szWeaponName>Пистолет</szWeaponName></WEAPON>"
+            + "<WEAPON><uiIndex>3</uiIndex><szWeaponName>Новый</szWeaponName></WEAPON>"
+            + "</WEAPONLIST>");
+        var metadata = new TestMetadataProvider(CreateWeaponsMetadata());
+
+        var result = await new TableDataComparer(
+                new TestCatalog(discoverOverlays: true),
+                metadata)
+            .CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var report = result.Data!;
+        var entry = Assert.Single(report.Tables);
+        Assert.True(entry.HasOverlayDifferences);
+        var overlay = Assert.Single(entry.Overlays);
+        Assert.Equal("ru", overlay.LanguageCode);
+        Assert.Equal(OverlayComparisonStatus.Both, overlay.Status);
+        Assert.Equal(OverlayFileStatus.Loaded, overlay.Left.Status);
+        Assert.Equal(OverlayFileStatus.Loaded, overlay.Right.Status);
+        Assert.Equal(4, overlay.Left.CellCount);
+        Assert.Equal(4, overlay.Right.CellCount);
+        Assert.Equal(2, overlay.AddedCellCount);
+        Assert.Equal(2, overlay.RemovedCellCount);
+        Assert.Equal(1, overlay.ChangedCellCount);
+        Assert.False(overlay.CellsTruncated);
+        Assert.Contains(
+            overlay.Cells,
+            cell => cell.Key == "1"
+                && cell.FieldPath == "szWeaponName"
+                && cell.Kind == ComparisonDifferenceKind.Changed
+                && cell.LeftValue == "Глок"
+                && cell.RightValue == "Пистолет");
+        Assert.Equal(5, report.Summary.DifferingOverlayCellCount);
+    }
+
+    /// <summary>
+    /// An overlay that exists on one side only is reported through its presence state; its cells are not
+    /// listed as removed so a v4/v5 comparison stays readable.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ReportsOverlayMissingOnOneSide()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        const string Base = "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>";
+        Write(left, "Items/Weapons.xml", Base);
+        Write(right, "Items/Weapons.xml", Base);
+        Write(left, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Глок</szWeaponName></WEAPON></WEAPONLIST>");
+        var metadata = new TestMetadataProvider(CreateWeaponsMetadata());
+
+        var result = await new TableDataComparer(
+                new TestCatalog(discoverOverlays: true),
+                metadata)
+            .CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var entry = Assert.Single(result.Data!.Tables);
+        Assert.True(entry.HasOverlayDifferences);
+        var overlay = Assert.Single(entry.Overlays);
+        Assert.Equal(OverlayComparisonStatus.LeftOnly, overlay.Status);
+        Assert.Equal(OverlayFileStatus.Loaded, overlay.Left.Status);
+        Assert.Equal(2, overlay.Left.CellCount);
+        Assert.Equal(OverlayFileStatus.Missing, overlay.Right.Status);
+        Assert.Equal(0, overlay.AddedCellCount);
+        Assert.Equal(0, overlay.RemovedCellCount);
+        Assert.Equal(0, overlay.ChangedCellCount);
+        Assert.Empty(overlay.Cells);
+    }
+
+    /// <summary>
+    /// A malformed overlay on one side is reported through its side state without failing the
+    /// comparison, and no cell-level differences are claimed.
+    /// </summary>
+    [Fact]
+    public async Task Compare_ReportsMalformedOverlaySide()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        const string Base = "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>";
+        Write(left, "Items/Weapons.xml", Base);
+        Write(right, "Items/Weapons.xml", Base);
+        Write(left, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Глок</szWeaponName></WEAPON></WEAPONLIST>");
+        Write(right, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Пистолет</szWeaponName></WEAPON>");
+        var metadata = new TestMetadataProvider(CreateWeaponsMetadata());
+
+        var result = await new TableDataComparer(
+                new TestCatalog(discoverOverlays: true),
+                metadata)
+            .CompareAsync(left, right);
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        var entry = Assert.Single(result.Data!.Tables);
+        Assert.True(entry.HasOverlayDifferences);
+        var overlay = Assert.Single(entry.Overlays);
+        Assert.Equal(OverlayComparisonStatus.Both, overlay.Status);
+        Assert.Equal(OverlayFileStatus.Loaded, overlay.Left.Status);
+        Assert.Equal(OverlayFileStatus.Malformed, overlay.Right.Status);
+        Assert.False(string.IsNullOrEmpty(overlay.Right.ErrorText));
+        Assert.Equal(0, overlay.AddedCellCount);
+        Assert.Equal(0, overlay.RemovedCellCount);
+        Assert.Equal(0, overlay.ChangedCellCount);
+        Assert.Empty(overlay.Cells);
+        var markdown = TableComparisonReportFormatter.FormatMarkdown(result.Data);
+        Assert.Contains("right overlay error:", markdown, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The Markdown export contains the new record, root field, and overlay detail sections.
+    /// </summary>
+    [Fact]
+    public async Task FormatMarkdown_ContainsValueAndOverlayDetails()
+    {
+        using var workspace = new TestWorkspace();
+        var left = CreateDirectory(workspace, "left");
+        var right = CreateDirectory(workspace, "right");
+        Write(left, "Items/Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>");
+        Write(right, "Items/Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Glock</szWeaponName></WEAPON></WEAPONLIST>");
+        Write(left, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Глок</szWeaponName></WEAPON></WEAPONLIST>");
+        Write(right, "Items/Russian.Weapons.xml",
+            "<WEAPONLIST><WEAPON><uiIndex>1</uiIndex><szWeaponName>Пистолет</szWeaponName></WEAPON></WEAPONLIST>");
+        var metadata = new TestMetadataProvider(CreateWeaponsMetadata());
+        var report = (await new TableDataComparer(
+                new TestCatalog(discoverOverlays: true),
+                metadata)
+            .CompareAsync(left, right)).Data!;
+
+        var markdown = TableComparisonReportFormatter.FormatMarkdown(report);
+
+        Assert.Contains("Records changed | 0", markdown, StringComparison.Ordinal);
+        Assert.Contains("#### Overlays", markdown, StringComparison.Ordinal);
+        Assert.Contains("| Language | Status | Left cells | Right cells |", markdown, StringComparison.Ordinal);
+        Assert.Contains("| ru | Both |", markdown, StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task Compare_ReportsLookupReferencesAvailability()
     {
@@ -418,19 +697,33 @@ public class TableDataComparerTests
                 new ColumnHint("usItemClass") { LookupTable = "Lookup.ItemClass" },
             });
 
+    private static TableMetadata CreateWeaponsMetadata() =>
+        new(
+            new TableName("Items.Weapons"),
+            "WEAPONLIST",
+            "WEAPON",
+            isLookup: false,
+            recordKey: new RecordKeySpec(new[]
+            {
+                new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "uiIndex"),
+            }));
+
     private sealed class TestCatalog : ITableCatalog
     {
         private readonly HashSet<string> _missingRelativePaths;
         private readonly string? _missingDirectoryName;
+        private readonly bool _discoverOverlays;
 
         public TestCatalog(
             IEnumerable<string>? missingRelativePaths = null,
-            string? missingDirectoryName = null)
+            string? missingDirectoryName = null,
+            bool discoverOverlays = false)
         {
             _missingRelativePaths = new HashSet<string>(
                 missingRelativePaths ?? Array.Empty<string>(),
                 StringComparer.OrdinalIgnoreCase);
             _missingDirectoryName = missingDirectoryName;
+            _discoverOverlays = discoverOverlays;
         }
 
         public Task<OperationResult<IReadOnlyList<TableDescriptor>>> GetTablesAsync(
@@ -445,9 +738,17 @@ public class TableDataComparerTests
                     $"The TableData directory '{tableDataDirectory}' does not exist."));
             }
 
+            var overlayByBasePath = _discoverOverlays
+                ? DiscoverOverlays(tableDataDirectory)
+                : new Dictionary<string, OverlayDescriptor>(StringComparer.OrdinalIgnoreCase);
             var descriptors = new List<TableDescriptor>();
             foreach (var file in Directory.EnumerateFiles(tableDataDirectory, "*.xml", SearchOption.AllDirectories))
             {
+                if (_discoverOverlays && Path.GetFileName(file).StartsWith("Russian.", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 var relativePath = Path.GetRelativePath(tableDataDirectory, file).Replace('\\', '/');
                 if (!TableName.TryFromRelativePath(relativePath, out var tableName))
                 {
@@ -459,7 +760,9 @@ public class TableDataComparerTests
                     file,
                     relativePath,
                     IsMapped: false,
-                    Array.Empty<OverlayDescriptor>()));
+                    overlayByBasePath.TryGetValue(file, out var overlay)
+                        ? new[] { overlay }
+                        : Array.Empty<OverlayDescriptor>()));
             }
 
             descriptors.Sort(static (left, right) => left.TableName.CompareTo(right.TableName));
@@ -479,6 +782,31 @@ public class TableDataComparerTests
             }
 
             return Task.FromResult(OperationResult<IReadOnlyList<TableDescriptor>>.Success(result));
+        }
+
+        private static Dictionary<string, OverlayDescriptor> DiscoverOverlays(string tableDataDirectory)
+        {
+            var language = new LanguageDescriptor("ru", "Russian", "Russian", 1);
+            var overlays = new Dictionary<string, OverlayDescriptor>(StringComparer.OrdinalIgnoreCase);
+            foreach (var file in Directory.EnumerateFiles(tableDataDirectory, "*.xml", SearchOption.AllDirectories))
+            {
+                var fileName = Path.GetFileName(file);
+                if (!fileName.StartsWith("Russian.", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var baseName = fileName["Russian.".Length..];
+                var basePath = Path.Combine(Path.GetDirectoryName(file)!, baseName);
+                if (!File.Exists(basePath))
+                {
+                    continue;
+                }
+
+                overlays[basePath] = new OverlayDescriptor(language, basePath, file);
+            }
+
+            return overlays;
         }
     }
 

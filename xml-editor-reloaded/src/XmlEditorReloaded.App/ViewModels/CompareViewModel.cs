@@ -45,6 +45,9 @@ public partial class CompareViewModel : ObservableObject
     private string _summaryFieldsText = string.Empty;
 
     [ObservableProperty]
+    private string _summaryValuesText = string.Empty;
+
+    [ObservableProperty]
     private ComparisonTableItem? _selectedTable;
 
     [ObservableProperty]
@@ -58,6 +61,27 @@ public partial class CompareViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _hasDiagnostics;
+
+    [ObservableProperty]
+    private ComparisonRecordItem? _selectedRecord;
+
+    [ObservableProperty]
+    private ComparisonOverlayItem? _selectedOverlay;
+
+    [ObservableProperty]
+    private string _valuesSummaryText = string.Empty;
+
+    [ObservableProperty]
+    private string _valuesIdentityText = string.Empty;
+
+    [ObservableProperty]
+    private bool _valuesTruncated;
+
+    [ObservableProperty]
+    private bool _hasRootFields;
+
+    [ObservableProperty]
+    private bool _hasOverlayTruncation;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CompareViewModel"/> class.
@@ -107,6 +131,23 @@ public partial class CompareViewModel : ObservableObject
         LookupNameHeader = Strings.Get("CompareLookupNameHeader");
         LookupLeftHeader = Strings.Get("CompareLeftHeader");
         LookupRightHeader = Strings.Get("CompareRightHeader");
+
+        ValuesTabText = Strings.Get("CompareValuesTab");
+        OverlaysTabText = Strings.Get("CompareOverlaysTab");
+        RecordKeyHeader = Strings.Get("CompareRecordKeyHeader");
+        RecordStatusHeader = Strings.Get("CompareRecordStatusHeader");
+        RecordFieldsHeader = Strings.Get("CompareRecordChangedFieldsHeader");
+        RootFieldsLabel = Strings.Get("CompareRootFieldsLabel");
+        OverlayLanguageHeader = Strings.Get("CompareOverlayLanguageHeader");
+        OverlayStatusHeader = Strings.Get("CompareOverlayStatusHeader");
+        OverlayLeftCellsHeader = Strings.Get("CompareOverlayLeftCellsHeader");
+        OverlayRightCellsHeader = Strings.Get("CompareOverlayRightCellsHeader");
+        OverlayAddedHeader = Strings.Get("CompareOverlayAddedHeader");
+        OverlayRemovedHeader = Strings.Get("CompareOverlayRemovedHeader");
+        OverlayChangedHeader = Strings.Get("CompareOverlayChangedHeader");
+        OverlayCellKeyHeader = Strings.Get("CompareOverlayCellKeyHeader");
+        OverlayCellsTruncatedText = Strings.Get("CompareOverlayCellsTruncatedText");
+        ValuesTruncatedText = Strings.Get("CompareValuesTruncatedText");
     }
 
     /// <summary>
@@ -260,6 +301,86 @@ public partial class CompareViewModel : ObservableObject
     public string LookupRightHeader { get; }
 
     /// <summary>
+    /// Gets the records tab header.
+    /// </summary>
+    public string ValuesTabText { get; }
+
+    /// <summary>
+    /// Gets the overlays tab header.
+    /// </summary>
+    public string OverlaysTabText { get; }
+
+    /// <summary>
+    /// Gets the record key column header.
+    /// </summary>
+    public string RecordKeyHeader { get; }
+
+    /// <summary>
+    /// Gets the record status column header.
+    /// </summary>
+    public string RecordStatusHeader { get; }
+
+    /// <summary>
+    /// Gets the changed-field-count column header.
+    /// </summary>
+    public string RecordFieldsHeader { get; }
+
+    /// <summary>
+    /// Gets the root singleton fields label.
+    /// </summary>
+    public string RootFieldsLabel { get; }
+
+    /// <summary>
+    /// Gets the overlay language column header.
+    /// </summary>
+    public string OverlayLanguageHeader { get; }
+
+    /// <summary>
+    /// Gets the overlay status column header.
+    /// </summary>
+    public string OverlayStatusHeader { get; }
+
+    /// <summary>
+    /// Gets the left overlay cell-count column header.
+    /// </summary>
+    public string OverlayLeftCellsHeader { get; }
+
+    /// <summary>
+    /// Gets the right overlay cell-count column header.
+    /// </summary>
+    public string OverlayRightCellsHeader { get; }
+
+    /// <summary>
+    /// Gets the added overlay cell column header.
+    /// </summary>
+    public string OverlayAddedHeader { get; }
+
+    /// <summary>
+    /// Gets the removed overlay cell column header.
+    /// </summary>
+    public string OverlayRemovedHeader { get; }
+
+    /// <summary>
+    /// Gets the changed overlay cell column header.
+    /// </summary>
+    public string OverlayChangedHeader { get; }
+
+    /// <summary>
+    /// Gets the overlay cell key column header.
+    /// </summary>
+    public string OverlayCellKeyHeader { get; }
+
+    /// <summary>
+    /// Gets the note shown when overlay cell details are capped.
+    /// </summary>
+    public string OverlayCellsTruncatedText { get; }
+
+    /// <summary>
+    /// Gets the note shown when record details are capped.
+    /// </summary>
+    public string ValuesTruncatedText { get; }
+
+    /// <summary>
     /// Gets the table comparison rows.
     /// </summary>
     public ObservableCollection<ComparisonTableItem> Tables { get; } = new();
@@ -273,6 +394,31 @@ public partial class CompareViewModel : ObservableObject
     /// Gets the lookup reference rows of the whole report.
     /// </summary>
     public ObservableCollection<ComparisonLookupItem> LookupReferences { get; } = new();
+
+    /// <summary>
+    /// Gets the differing records of the selected table.
+    /// </summary>
+    public ObservableCollection<ComparisonRecordItem> Records { get; } = new();
+
+    /// <summary>
+    /// Gets the differing field values of the selected record.
+    /// </summary>
+    public ObservableCollection<ComparisonValueItem> RecordFields { get; } = new();
+
+    /// <summary>
+    /// Gets the differing root singleton fields of the selected table.
+    /// </summary>
+    public ObservableCollection<ComparisonValueItem> RootFields { get; } = new();
+
+    /// <summary>
+    /// Gets the language overlay comparisons of the selected table.
+    /// </summary>
+    public ObservableCollection<ComparisonOverlayItem> Overlays { get; } = new();
+
+    /// <summary>
+    /// Gets the differing cells of the selected overlay.
+    /// </summary>
+    public ObservableCollection<ComparisonOverlayCellItem> OverlayCells { get; } = new();
 
     /// <summary>
     /// Gets a value indicating whether a report is available for export.
@@ -415,6 +561,18 @@ public partial class CompareViewModel : ObservableObject
     partial void OnSelectedTableChanged(ComparisonTableItem? value)
     {
         Fields.Clear();
+        Records.Clear();
+        RootFields.Clear();
+        Overlays.Clear();
+        RecordFields.Clear();
+        OverlayCells.Clear();
+        SelectedRecord = null;
+        SelectedOverlay = null;
+        ValuesSummaryText = string.Empty;
+        ValuesIdentityText = string.Empty;
+        ValuesTruncated = false;
+        HasRootFields = false;
+        HasOverlayTruncation = false;
         if (value is null)
         {
             SelectedDetailsHeader = string.Empty;
@@ -430,9 +588,75 @@ public partial class CompareViewModel : ObservableObject
             Fields.Add(new ComparisonFieldItem(field));
         }
 
+        var comparison = value.Entry.Value;
+        foreach (var record in comparison.Records)
+        {
+            Records.Add(new ComparisonRecordItem(record));
+        }
+
+        SelectedRecord = Records.FirstOrDefault(static record => record.Record.Fields.Count > 0)
+            ?? Records.FirstOrDefault();
+
+        foreach (var rootField in comparison.RootFields)
+        {
+            RootFields.Add(new ComparisonValueItem(rootField));
+        }
+
+        HasRootFields = RootFields.Count > 0;
+        ValuesSummaryText = Strings.Format(
+            "CompareValuesSummaryText",
+            comparison.AddedRecordCount,
+            comparison.RemovedRecordCount,
+            comparison.ChangedRecordCount,
+            comparison.ChangedFieldCount);
+        ValuesIdentityText = Strings.Get(
+            comparison.IdentityKind == RecordIdentityKind.DeclaredKey
+                ? "CompareValuesIdentityDeclared"
+                : "CompareValuesIdentityPositional");
+        ValuesTruncated = comparison.RecordsTruncated;
+
+        foreach (var overlay in value.Entry.Overlays)
+        {
+            Overlays.Add(new ComparisonOverlayItem(overlay));
+        }
+
+        HasOverlayTruncation = value.Entry.Overlays.Any(static overlay => overlay.CellsTruncated);
+        if (Overlays.Count > 0)
+        {
+            SelectedOverlay = Overlays[0];
+        }
+
         ProfileText = value.ProfileText;
         DiagnosticsText = value.DiagnosticsText;
         HasDiagnostics = !string.IsNullOrEmpty(DiagnosticsText);
+    }
+
+    partial void OnSelectedRecordChanged(ComparisonRecordItem? value)
+    {
+        RecordFields.Clear();
+        if (value is null)
+        {
+            return;
+        }
+
+        foreach (var field in value.Record.Fields)
+        {
+            RecordFields.Add(new ComparisonValueItem(field));
+        }
+    }
+
+    partial void OnSelectedOverlayChanged(ComparisonOverlayItem? value)
+    {
+        OverlayCells.Clear();
+        if (value is null)
+        {
+            return;
+        }
+
+        foreach (var cell in value.Overlay.Cells)
+        {
+            OverlayCells.Add(new ComparisonOverlayCellItem(cell));
+        }
     }
 
     private void ShowReport(TableComparisonReport report)
@@ -442,6 +666,11 @@ public partial class CompareViewModel : ObservableObject
         LookupReferences.Clear();
         SelectedTable = null;
         Fields.Clear();
+        Records.Clear();
+        RecordFields.Clear();
+        RootFields.Clear();
+        Overlays.Clear();
+        OverlayCells.Clear();
 
         foreach (var entry in report.Tables)
         {
@@ -470,6 +699,14 @@ public partial class CompareViewModel : ObservableObject
             summary.CardinalityChangedFieldCount,
             summary.LeftRecordTotal,
             summary.RightRecordTotal);
+        SummaryValuesText = Strings.Format(
+            "CompareSummaryValuesText",
+            summary.AddedRecordCount,
+            summary.RemovedRecordCount,
+            summary.ChangedRecordCount,
+            summary.ChangedFieldCount,
+            summary.ChangedRootFieldCount,
+            summary.DifferingOverlayCellCount);
         StatusText = SummaryText;
         SelectedTable = Tables.FirstOrDefault(static item => item.HasDifferences)
             ?? Tables.FirstOrDefault();

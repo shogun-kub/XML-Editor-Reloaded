@@ -61,6 +61,66 @@ public enum FieldComparisonStatus
 }
 
 /// <summary>
+/// Kind of difference reported for a record, a field value, a root singleton field, or an overlay cell.
+/// </summary>
+public enum ComparisonDifferenceKind
+{
+    /// <summary>The item exists only in the left (baseline) data set.</summary>
+    LeftOnly,
+
+    /// <summary>The item exists only in the right (candidate) data set.</summary>
+    RightOnly,
+
+    /// <summary>The item exists on both sides with a different value.</summary>
+    Changed,
+}
+
+/// <summary>
+/// How records of one table were matched between the two data sets.
+/// </summary>
+public enum RecordIdentityKind
+{
+    /// <summary>Records were matched by the record key declared in the table metadata.</summary>
+    DeclaredKey,
+
+    /// <summary>The table declares no record key, so records were matched by their order.</summary>
+    Positional,
+}
+
+/// <summary>
+/// Presence of one language overlay file on one side of the comparison.
+/// </summary>
+public enum OverlayComparisonStatus
+{
+    /// <summary>Only the left (baseline) data set has an overlay for this language.</summary>
+    LeftOnly,
+
+    /// <summary>Only the right (candidate) data set has an overlay for this language.</summary>
+    RightOnly,
+
+    /// <summary>Both data sets have an overlay for this language.</summary>
+    Both,
+}
+
+/// <summary>
+/// Load state of one overlay file.
+/// </summary>
+public enum OverlayFileStatus
+{
+    /// <summary>The overlay file does not exist in this data set.</summary>
+    Missing,
+
+    /// <summary>The overlay file parsed and its content was compared.</summary>
+    Loaded,
+
+    /// <summary>The overlay file is not well-formed XML; its content was not compared.</summary>
+    Malformed,
+
+    /// <summary>The overlay file could not be read; its content was not compared.</summary>
+    Unreadable,
+}
+
+/// <summary>
 /// Availability of a lookup table referenced by a column.
 /// </summary>
 public enum LookupAvailability
@@ -135,6 +195,212 @@ public sealed record FieldComparison(
     int RightMaxOccurrences);
 
 /// <summary>
+/// One field value that differs between the two data sets.
+/// </summary>
+/// <param name="Name">Field name; root singleton fields use a path such as <c>COUNTRY/countryName</c>.</param>
+/// <param name="Kind">Kind of difference.</param>
+/// <param name="LeftValue">Left value, or <see langword="null"/> when the field is absent on the left.</param>
+/// <param name="RightValue">Right value, or <see langword="null"/> when the field is absent on the right.</param>
+/// <remarks>
+/// Values are the exact XML text of leaf elements; nested elements are rendered with their markup.
+/// Repeated fields join their occurrences with a newline. A value longer than
+/// <see cref="TableComparisonLimits.MaxValueLength"/> is truncated so the report stays bounded.
+/// </remarks>
+public sealed record RecordFieldChange(
+    string Name,
+    ComparisonDifferenceKind Kind,
+    string? LeftValue,
+    string? RightValue);
+
+/// <summary>
+/// Comparison of one record present on at least one side with a different value set.
+/// </summary>
+/// <param name="Key">User-facing record key; a duplicate key carries an occurrence suffix such as <c>5 #2</c>.</param>
+/// <param name="LeftOrder">Zero-based record position on the left, or <c>-1</c> when the record is absent.</param>
+/// <param name="RightOrder">Zero-based record position on the right, or <c>-1</c> when the record is absent.</param>
+/// <param name="Kind">Kind of difference at the record level.</param>
+/// <param name="Fields">
+/// Differing fields of a changed record, in left-first-appearance order followed by right-only fields.
+/// The list is empty for an added or a removed record so the report stays bounded.
+/// </param>
+public sealed record RecordComparison(
+    string Key,
+    int LeftOrder,
+    int RightOrder,
+    ComparisonDifferenceKind Kind,
+    IReadOnlyList<RecordFieldChange> Fields)
+{
+    /// <summary>
+    /// Gets the number of differing fields of a changed record; zero for an added or a removed record.
+    /// </summary>
+    public int ChangedFieldCount => Fields.Count;
+}
+
+/// <summary>
+/// Value-level comparison of one table: record presence, changed field values, and root singleton fields.
+/// </summary>
+/// <param name="IdentityKind">How records were matched between the data sets.</param>
+/// <param name="AddedRecordCount">Records present only on the right, counted even when details are capped.</param>
+/// <param name="RemovedRecordCount">Records present only on the left, counted even when details are capped.</param>
+/// <param name="ChangedRecordCount">Records present on both sides with at least one differing field.</param>
+/// <param name="ChangedFieldCount">
+/// Number of differing field values across changed records; fields added to or removed from a record are
+/// included.
+/// </param>
+/// <param name="RecordsTruncated">
+/// Whether the detailed record and field lists were capped by
+/// <see cref="TableComparisonLimits.MaxRecordDetailsPerTable"/> or
+/// <see cref="TableComparisonLimits.MaxFieldDetailsPerTable"/>. The counts remain exact.
+/// </param>
+/// <param name="Records">Differing records; identical records are not reported.</param>
+/// <param name="RootFields">Differing root-level singleton fields such as <c>COUNTRY/countryName</c>.</param>
+public sealed record TableValueComparison(
+    RecordIdentityKind IdentityKind,
+    int AddedRecordCount,
+    int RemovedRecordCount,
+    int ChangedRecordCount,
+    int ChangedFieldCount,
+    bool RecordsTruncated,
+    IReadOnlyList<RecordComparison> Records,
+    IReadOnlyList<RecordFieldChange> RootFields)
+{
+    /// <summary>
+    /// Gets an empty value comparison, used when a side is absent or could not be analyzed.
+    /// </summary>
+    public static TableValueComparison Empty { get; } = new(
+        RecordIdentityKind.Positional,
+        0,
+        0,
+        0,
+        0,
+        false,
+        Array.Empty<RecordComparison>(),
+        Array.Empty<RecordFieldChange>());
+
+    /// <summary>
+    /// Gets a value indicating whether any record or root singleton field differs.
+    /// </summary>
+    public bool HasDifferences =>
+        AddedRecordCount > 0
+        || RemovedRecordCount > 0
+        || ChangedRecordCount > 0
+        || RootFields.Count > 0;
+
+    /// <summary>
+    /// Gets the number of differing records regardless of whether their details were capped.
+    /// </summary>
+    public int RecordDifferenceCount => AddedRecordCount + RemovedRecordCount + ChangedRecordCount;
+
+    /// <summary>
+    /// Gets the number of differing root singleton fields.
+    /// </summary>
+    public int RootFieldChangeCount => RootFields.Count;
+}
+
+/// <summary>
+/// Load state and cell count of one language overlay file on one side.
+/// </summary>
+/// <param name="FilePath">Absolute overlay file path, or <see langword="null"/> when the overlay is absent.</param>
+/// <param name="Status">Load state of the overlay file.</param>
+/// <param name="ErrorText">Error text when the file is malformed or unreadable; otherwise <see langword="null"/>.</param>
+/// <param name="CellCount">Number of leaf cells in the overlay; zero when the file was not parsed.</param>
+public sealed record OverlaySide(
+    string? FilePath,
+    OverlayFileStatus Status,
+    string? ErrorText,
+    int CellCount)
+{
+    /// <summary>
+    /// Gets a side that has no overlay file for this language.
+    /// </summary>
+    public static OverlaySide Missing { get; } = new(null, OverlayFileStatus.Missing, null, 0);
+}
+
+/// <summary>
+/// One translated overlay cell that differs between the two data sets.
+/// </summary>
+/// <param name="Key">Record key, or the singleton path such as <c>COUNTRY</c> for a root-level cell.</param>
+/// <param name="FieldPath">Field path relative to the record or singleton.</param>
+/// <param name="Kind">Kind of difference.</param>
+/// <param name="LeftValue">Left translated value, or <see langword="null"/> when the cell is absent on the left.</param>
+/// <param name="RightValue">Right translated value, or <see langword="null"/> when the cell is absent on the right.</param>
+public sealed record OverlayCellChange(
+    string Key,
+    string FieldPath,
+    ComparisonDifferenceKind Kind,
+    string? LeftValue,
+    string? RightValue);
+
+/// <summary>
+/// Content comparison of one language overlay.
+/// </summary>
+/// <param name="LanguageCode">Overlay language code, for example <c>ru</c>.</param>
+/// <param name="Status">Whether the overlay exists on one or both sides.</param>
+/// <param name="Left">Load state of the left overlay file.</param>
+/// <param name="Right">Load state of the right overlay file.</param>
+/// <param name="AddedCellCount">Cells present only on the right; zero when a side could not be parsed.</param>
+/// <param name="RemovedCellCount">Cells present only on the left; zero when a side could not be parsed.</param>
+/// <param name="ChangedCellCount">Cells present on both sides with a different translation.</param>
+/// <param name="CellsTruncated">
+/// Whether the detailed cell list was capped by
+/// <see cref="TableComparisonLimits.MaxOverlayCellDetailsPerLanguage"/>. The counts remain exact.
+/// </param>
+/// <param name="Cells">Differing overlay cells; empty when one side is missing, malformed, or unreadable.</param>
+/// <remarks>
+/// Cell-level differences are reported only when both overlay files parsed. An overlay that exists on
+/// one side only is reported through <paramref name="Status"/> and the side states, without listing every
+/// translated cell as removed.
+/// </remarks>
+public sealed record OverlayComparison(
+    string LanguageCode,
+    OverlayComparisonStatus Status,
+    OverlaySide Left,
+    OverlaySide Right,
+    int AddedCellCount,
+    int RemovedCellCount,
+    int ChangedCellCount,
+    bool CellsTruncated,
+    IReadOnlyList<OverlayCellChange> Cells)
+{
+    /// <summary>
+    /// Gets a value indicating whether the overlay presence, its load state, or its content differs.
+    /// </summary>
+    public bool HasDifferences =>
+        Status != OverlayComparisonStatus.Both
+        || Left.Status != OverlayFileStatus.Loaded
+        || Right.Status != OverlayFileStatus.Loaded
+        || AddedCellCount > 0
+        || RemovedCellCount > 0
+        || ChangedCellCount > 0;
+}
+
+/// <summary>
+/// Caps applied while building a comparison report. Counts are always exact; only detail lists are capped.
+/// </summary>
+public static class TableComparisonLimits
+{
+    /// <summary>
+    /// Maximum number of characters kept for one XML value in the report.
+    /// </summary>
+    public const int MaxValueLength = 300;
+
+    /// <summary>
+    /// Maximum number of record details kept per table.
+    /// </summary>
+    public const int MaxRecordDetailsPerTable = 2000;
+
+    /// <summary>
+    /// Maximum number of differing field values kept per table across all record details.
+    /// </summary>
+    public const int MaxFieldDetailsPerTable = 20000;
+
+    /// <summary>
+    /// Maximum number of differing overlay cells kept per language.
+    /// </summary>
+    public const int MaxOverlayCellDetailsPerLanguage = 2000;
+}
+
+/// <summary>
 /// Comparison of one table file, including per-field and per-side results.
 /// </summary>
 /// <param name="TableName">Dotted table name derived from the relative path.</param>
@@ -152,6 +418,16 @@ public sealed record TableComparisonEntry(
     IReadOnlyList<FieldComparison> Fields)
 {
     /// <summary>
+    /// Gets the value-level comparison of the table, including root singleton fields.
+    /// </summary>
+    public TableValueComparison Value { get; init; } = TableValueComparison.Empty;
+
+    /// <summary>
+    /// Gets the content comparison of the language overlays of the table, one entry per language.
+    /// </summary>
+    public IReadOnlyList<OverlayComparison> Overlays { get; init; } = Array.Empty<OverlayComparison>();
+
+    /// <summary>
     /// Gets a value indicating whether at least one side of the table is malformed.
     /// </summary>
     public bool HasMalformedSide =>
@@ -162,6 +438,17 @@ public sealed record TableComparisonEntry(
     /// </summary>
     public bool HasLoadFailure =>
         Left?.Status == TableSideStatus.Failed || Right?.Status == TableSideStatus.Failed;
+
+    /// <summary>
+    /// Gets a value indicating whether record values or root singleton fields differ.
+    /// </summary>
+    public bool HasValueDifferences => Value.HasDifferences;
+
+    /// <summary>
+    /// Gets a value indicating whether an overlay is absent, unreadable, or has different content.
+    /// </summary>
+    public bool HasOverlayDifferences =>
+        Overlays.Any(static overlay => overlay.HasDifferences);
 
     /// <summary>
     /// Gets the number of fields that exist only in the right (candidate) data set.
@@ -189,8 +476,8 @@ public sealed record TableComparisonEntry(
 
     /// <summary>
     /// Gets a value indicating whether the entry contains any reportable difference: presence,
-    /// load problems, root or record element names, record counts, overlays, or field shapes.
-    /// Value differences inside cells are intentionally not compared.
+    /// load problems, root or record element names, record counts, overlays, field shapes, record
+    /// values, root singleton fields, or overlay content.
     /// </summary>
     public bool HasDifferences =>
         Status != TableComparisonStatus.Both
@@ -203,7 +490,9 @@ public sealed record TableComparisonEntry(
         || Left.Snapshot.RecordCount != Right.Snapshot.RecordCount
         || Left.Snapshot.FieldCount != Right.Snapshot.FieldCount
         || !Left.Snapshot.OverlayLanguages.SequenceEqual(Right.Snapshot.OverlayLanguages, StringComparer.Ordinal)
-        || Fields.Any(static candidate => candidate.Status != FieldComparisonStatus.Same);
+        || Fields.Any(static candidate => candidate.Status != FieldComparisonStatus.Same)
+        || HasValueDifferences
+        || HasOverlayDifferences;
 }
 
 /// <summary>
@@ -237,6 +526,14 @@ public sealed record LookupReferenceComparison(
 /// <param name="RemovedFieldCount">Fields present only in the left data set among common tables.</param>
 /// <param name="TypeChangedFieldCount">Common-table fields with a different inferred type.</param>
 /// <param name="CardinalityChangedFieldCount">Common-table fields that became or stopped being repeated elements.</param>
+/// <param name="AddedRecordCount">Records present only in the right data set among common tables.</param>
+/// <param name="RemovedRecordCount">Records present only in the left data set among common tables.</param>
+/// <param name="ChangedRecordCount">Records present on both sides with at least one differing field.</param>
+/// <param name="ChangedFieldCount">Differing field values across changed records.</param>
+/// <param name="ChangedRootFieldCount">Differing root singleton fields, for example <c>COUNTRY/countryName</c>.</param>
+/// <param name="DifferingOverlayCellCount">
+/// Differing translated overlay cells across languages where both overlay files parsed.
+/// </param>
 /// <param name="LeftRecordTotal">Sum of record counts across left-side snapshots.</param>
 /// <param name="RightRecordTotal">Sum of record counts across right-side snapshots.</param>
 public sealed record TableComparisonSummary(
@@ -253,14 +550,20 @@ public sealed record TableComparisonSummary(
     int RemovedFieldCount,
     int TypeChangedFieldCount,
     int CardinalityChangedFieldCount,
+    int AddedRecordCount,
+    int RemovedRecordCount,
+    int ChangedRecordCount,
+    int ChangedFieldCount,
+    int ChangedRootFieldCount,
+    int DifferingOverlayCellCount,
     long LeftRecordTotal,
     long RightRecordTotal);
 
 /// <summary>
 /// Read-only cross-version comparison of two <c>TableData</c> directories.
 /// The report compares table presence, record counts, field sets, inferred types, lookup
-/// references, and sparse profiles. Cell values are not compared and nothing is written to
-/// either data set.
+/// references, sparse profiles, record values, root singleton fields, and overlay content.
+/// Nothing is written to either data set.
 /// </summary>
 /// <param name="LeftDirectory">Absolute <c>TableData</c> directory of the baseline data set.</param>
 /// <param name="RightDirectory">Absolute <c>TableData</c> directory of the candidate data set.</param>
