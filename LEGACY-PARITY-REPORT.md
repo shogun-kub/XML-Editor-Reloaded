@@ -742,7 +742,7 @@
 
 Создан `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`: 50 сценариев на v4/v5 — запуск и датасеты, сетка/фильтры/bulk/layout, item и merc workspace, shopkeeper, pickers, copy, compare и экспорт, STI-изображения, локализация, настройки, close/save, external-change, malformed lookup и итоговая целостность. Ожидания в чек-листе выборочно сверены с данными v4/v5 (item 12/1422/1456/1742/1775, 27 вложений, Barry и пять комплектов, 23 строки `Lookup.Cursor`, 63 слота, дубликат дилера).
 
-Не всё WPF-поведение автоматизируется. С 2026-10-31 часть A (S01–S14 без S04, S48 и итоговая целостность S50) проходит в консольном UI-smoke `XmlEditorReloaded.UiSmoke`; к 2026-11-03 автоматизировано 77 сценариев (A–G, S50–S52, S54, S56, S58–S70, S76–S88), ручными остаются S04, S22, S53, S55, S57, S71–S75, S83, S89–S92, ветка ошибки S13 и выбор в picker S61. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
+Не всё WPF-поведение автоматизируется. С 2026-10-31 часть A (S01–S14 без S04, S48 и итоговая целостность S50) проходит в консольном UI-smoke `XmlEditorReloaded.UiSmoke`; к 2026-11-03 автоматизирован 81 сценарий (A–G, S50–S52, S54, S56, S58–S70, S76–S82, S84–S92), ручными остаются S04, S22, S53, S55, S57, S71–S75, S83, ветка ошибки S13 и выбор в picker S61. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
 
 ## M23b1 — фильтры item workspace и видимость полей
 
@@ -993,6 +993,7 @@
 | Corpus v4 | 564/564 |
 | Corpus v5 | 564/564 |
 | Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| UI-smoke M23b8 (2026-11-03) | 4/4: S89 пустой файл дилера, S90 опустевшая mapped-таблица, S91 copy lookup по имени, S92 журнал и ротация; S50 5/5 |
 | Тесты M23b8 | `TableFileLoaderTests.Load_EmptyDeclaredRoot_LoadsEditableAndAcceptsFirstRecord`, `Load_RootWithoutChildElements_LoadsEditable`, `Load_EmptyLookupRoot_LoadsEditableAndAddsIdAndName`, `Load_EmptyRootWithoutMetadata_StaysReadOnly`, `Load_EmptyRootWithWrongMetadata_StaysReadOnly`, `Load_RootWithForeignChild_MatchingMetadata_StaysReadOnly`; `TableSchemaBuilderTests.Build_EmptyMappedTable_UsesHintsAsStarterSchema`, `Build_EmptyNestedTable_DoesNotDeclareHintColumns`; `TableEditorViewModelTests.EmptyTable_ReopensEditableAndAddsFirstRow`; `ShopkeeperTab_EmptiedDealerFile_KeepsDealerAfterReload`; `LookupCopy_SkipPolicy_SkipsExistingNameRow`, `LookupCopy_OverwritePolicy_UpdatesExistingNameRow`, `LookupCopy_AbsentDisplayName_AddsRowWithSourceKey`, `LookupCopy_AmbiguousDisplayName_AddsRowAndWarns`, `LookupCopy_AllocateMode_SkipsExistingNameRow`; `MetadataTests.ComparisonField_MarksLookupNamesOnly`, `Migrate_OnExistingDatabase_AppliesNothingAndKeepsComparisonHints`; `RepositoryIntegrationTests.Copy_LookupRowWithAbsentId_MatchesSeededComparisonField`; `OperationLogTests.*`; `FileOperationLogTests.*` |
 | `References/` | не изменён; corpus/compare читают корпус, copy работает на temp-копиях |
 
@@ -1012,9 +1013,9 @@ full functional parity и коммит `M23: legacy functional parity gate`.
 | Compare v4↔v5 | `XER_COMPARE_LEFT_DIR` / `RIGHT_DIR` → `RealDataComparisonTests` | 1/1; 238/239 таблиц, 238 общих, 1 right-only (`Email.EmailSenderNameList`), 1 malformed (`Lookup.AttachmentPoint` v5), 0 failed |
 | Copy v4→v5 | `XER_COPY_SOURCE_DIR` / `TARGET_DIR` → `CorpusCopyTests` | 1/1; SHA-256 источника не изменён |
 | Perf v5 / v4 | `Category=Performance` | 9/9 и 9/9; порог 2 с на операцию |
-| UI-smoke в песочнице | 52 выбранных сценария: прежние 45 (head 21 + tail 24) + блок M23b7; список: S01–S03, S05–S07, S09, S15–S17, S36–S38, S40–S49, S51–S52, S54, S56, S58–S70, S76–S88 + обязательный S50 | head 22/22, tail 25/25, M23b7 7/7; полный доступный набор проверен тремя прогонами |
-| S50: целостность | SHA-256 `References/` + изменения копий + git | 504 файла; head 7/7, tail 10/10, M23b7 8/8 заявленных изменений; артефактов сборки в git нет |
-| Ручной UI-smoke | интерактивный рабочий стол | агентом не выполнялся: S04, S22, S53, S55, S57, S71–S75, S83, пока не автоматизированные S89–S92, ветка ошибки сохранения S13 и выбор другого значения в picker S61; ожидает пользователя |
+| UI-smoke в песочнице | 56 выбранных сценариев: прежние 45 (head 21 + tail 24) + блоки M23b7 и M23b8; список: S01–S03, S05–S07, S09, S15–S17, S36–S38, S40–S49, S51–S52, S54, S56, S58–S70, S76–S82, S84–S92 + обязательный S50 | head 22/22, tail 25/25, M23b7 7/7, M23b8 4/4; полный доступный набор проверен четырьмя прогонами |
+| S50: целостность | SHA-256 `References/` + изменения копий + git | 504 файла; head 7/7, tail 10/10, M23b7 8/8, M23b8 5/5 заявленных изменений; артефактов сборки в git нет |
+| Ручной UI-smoke | интерактивный рабочий стол | агентом не выполнялся: S04, S22, S53, S55, S57, S71–S75, S83, ветка ошибки сохранения S13 и выбор другого значения в picker S61; ожидает пользователя |
 | `References/` | хеши corpus/compare/copy/S50 | без изменений |
 | Git | `git status --short` | чисто; `bin/`/`obj/` и пользовательские файлы не отслеживаются |
 

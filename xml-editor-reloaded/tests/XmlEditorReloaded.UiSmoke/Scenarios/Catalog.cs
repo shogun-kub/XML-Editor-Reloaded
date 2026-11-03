@@ -98,6 +98,10 @@ internal static class ScenarioCatalog
         new ItemNameLimitScenario(),
         new MercKitRenameScenario(),
         new UnsavedChangesCloseScenario(),
+        new EmptyDealerFileScenario(),
+        new EmptyMappedTableScenario(),
+        new CopyLookupComparisonScenario(),
+        new OperationLogScenario(),
     ];
 
     /// <summary>

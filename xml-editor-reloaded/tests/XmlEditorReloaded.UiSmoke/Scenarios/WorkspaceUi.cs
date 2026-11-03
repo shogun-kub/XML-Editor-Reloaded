@@ -340,6 +340,21 @@ internal static class WorkspaceUi
     }
 
     /// <summary>
+    /// Clicks the save button of the active generic table and waits for the saved status.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    public static void SaveGenericTable(ScenarioContext context)
+    {
+        context.Window.WaitById("SaveButton").InvokeButton();
+        WaitForStatus(
+            context,
+            "EditorStatus",
+            text => text == context.Strings.Get("EditorSaved"),
+            "статус «Сохранено.» обычной таблицы",
+            TimeSpan.FromSeconds(60));
+    }
+
+    /// <summary>
     /// Clicks the mercenary-gear save button and waits for the saved status.
     /// </summary>
     /// <param name="context">Scenario context.</param>
