@@ -347,6 +347,32 @@ internal static class ScenarioUi
     }
 
     /// <summary>
+    /// Opens a menu item whose command shows a modal dialog and does not return until that dialog is
+    /// closed. The invoke runs in the background so the scenario can answer the dialog.
+    /// </summary>
+    /// <param name="context">Scenario context.</param>
+    /// <param name="menuId">Automation identifier of the top-level menu.</param>
+    /// <param name="itemId">Automation identifier of the item inside that menu.</param>
+    public static void OpenMenuItemDetached(ScenarioContext context, string menuId, string itemId)
+    {
+        ExpandMenu(context.Window.WaitById(menuId));
+        var item = WaitForMenuItemById(context.App, itemId);
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                item.InvokeButton();
+            }
+            catch (Exception exception) when (
+                exception is UiTimeoutException or ElementNotAvailableException)
+            {
+                // The modal dialog closed the menu item before the invoke returned.
+            }
+        });
+        Thread.Sleep(350);
+    }
+
+    /// <summary>
     /// Waits until the context-menu item with the given caption appears and returns it.
     /// </summary>
     /// <param name="app">Running application.</param>

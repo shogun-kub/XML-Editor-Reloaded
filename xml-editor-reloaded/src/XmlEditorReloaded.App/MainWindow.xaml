@@ -68,7 +68,8 @@
                           AutomationProperties.AutomationId="TranslationReportButton"
                           Command="{Binding ShowTranslationReportCommand}" />
             </MenuItem>
-            <MenuItem Header="{Binding HelpMenuText}">
+            <MenuItem Header="{Binding HelpMenuText}"
+                      AutomationProperties.AutomationId="HelpMenu">
                 <MenuItem Header="{Binding AboutMenuText}"
                           AutomationProperties.AutomationId="AboutMenuItem"
                           Command="{Binding OpenAboutCommand}" />

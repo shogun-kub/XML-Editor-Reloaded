@@ -152,7 +152,9 @@ M23b7. Пробелы затрагивают только WPF-слой (кром
    остаются видимыми и сохраняются без изменений. В китайском режиме
    непереведённое поле показывает базовый английский текст, поэтому счётчик может
    показывать превышение — это следствие «счётчик по видимому значению».
-   Лимиты также действуют в панели деталей generic grid — это надмножество legacy.
+   Лимиты также действуют в панели деталей generic grid, если они заданы в
+   метаданных этой таблицы; у `Items.Weapons` таких строк нет — это надмножество
+   legacy.
 5. **Merc gear**: заголовок обновляется при фиксации имени (потеря фокуса), а не
    на каждый символ; так сохраняется одна undo-запись на переименование вместо 80.
    Fallback локализован (`Kit N`/`Комплект N`) вместо жёсткого `GEARKIT N`.
@@ -169,6 +171,7 @@ M23b7. Пробелы затрагивают только WPF-слой (кром
 | Corpus v4 | 532/532 |
 | Corpus v5 | 532/532 |
 | Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
+| UI-smoke (2026-11-03) | 7/7: S81 About, S82 геометрия, S84–S88 счётчики/оверлеи/лимиты/переименование/закрытие; S83 остаётся ручным |
 | BOM / `References/` | BOM нет; `References/` не изменён |
 
 Ключевые тесты:
@@ -192,6 +195,11 @@ M23b7. Пробелы затрагивают только WPF-слой (кром
   `TableEditorViewModelTests.DetailForm_DescriptionsExposeCharacterCounterAndLimit`.
 - Merc gear: `KitHeader_FollowsNameAndFallsBackToLocalizedNumber`,
   `TranslatedKitName_WritesOnlyToOverlay` (заголовок из оверлея).
+- UI-smoke M23b7: `AboutScenario`, `WindowGeometryScenario`,
+  `ItemDescriptionCounterScenario`, `ItemOverlayCounterScenario`,
+  `ItemNameLimitScenario`, `MercKitRenameScenario`,
+  `UnsavedChangesCloseScenario`; S88 нашёл отсутствие уведомления
+  `DisplayName` у merc-вкладки, исправлено `OnIsDirtyChanged`.
 
 ## 6. Остаточные риски и задел
 

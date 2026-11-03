@@ -316,6 +316,12 @@ public sealed partial class DetailFieldViewModel : ObservableObject
     public bool ShowCharacterCounter { get; }
 
     /// <summary>
+    /// Gets the automation identifier of the character counter, derived from the field path so each
+    /// visible counter can be addressed by UI automation.
+    /// </summary>
+    public string CounterAutomationId => $"{PathText}_counter";
+
+    /// <summary>
     /// Gets a value indicating whether the field has a text length limit.
     /// </summary>
     public bool HasTextLengthLimit => MaxTextLength > 0;

@@ -17,7 +17,6 @@ internal static class ScenarioCatalog
         ["S73"] = "проверка сообщений у поля индекса вместе с отрисовкой превью",
         ["S74"] = "визуальная проверка обновления миниатюр без перезагрузки",
         ["S75"] = "визуальная проверка выбранного кадра после повторного открытия",
-        ["S82"] = "геометрия окна проверяется между запусками и на реальном рабочем столе",
         ["S83"] = "поведение при отключении монитора и испорченных настройках требует ручных действий",
     };
 
@@ -92,6 +91,13 @@ internal static class ScenarioCatalog
         new MercStatusRangeScenario(),
         new FlagBitEditorScenario(),
         new ValidationUndoScenario(),
+        new AboutScenario(),
+        new WindowGeometryScenario(),
+        new ItemDescriptionCounterScenario(),
+        new ItemOverlayCounterScenario(),
+        new ItemNameLimitScenario(),
+        new MercKitRenameScenario(),
+        new UnsavedChangesCloseScenario(),
     ];
 
     /// <summary>

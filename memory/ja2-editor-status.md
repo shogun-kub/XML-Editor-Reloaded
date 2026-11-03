@@ -7,15 +7,17 @@ metadata:
   originSessionId: sess_9123e0d2-50a3-44a1-ac9f-49aedbc18523
 ---
 
-**Current status (2026-11-02):** M0–M23b8 и M23a завершены; автоматические гейты gate M23b пройдены
-(сборка, 600 тестов, corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9 на обеих версиях, 45
-UI-сценариев в песочнице двумя прогонами: head 22/22 и tail 25/25; S50 обязателен в каждом). Маркер `M23: legacy functional parity gate` ставится после подписи ручного
-smoke; вручную остаются S04, S22, S53, S55, S57, S71–S75, S82–S83, а S81 и S84–S92 ещё не
-автоматизированы. UI-smoke `XmlEditorReloaded.UiSmoke` автоматизирует 70 сценариев:
-S01–S03, S05–S21, S23–S49, целостность S50, S51/S52/S54/S56/S58, S59–S65, S66–S70 и S76–S80. F0–F9
+**Current status (2026-11-03):** M0–M23b8 и M23a завершены; автоматические гейты gate M23b пройдены
+(сборка, 600 тестов, corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9 на обеих версиях, 52
+UI-сценария в песочнице: прежние 45 двумя прогонами head 22/22 и tail 25/25, блок M23b7 — 7/7; S50
+обязателен в каждом). Маркер `M23: legacy functional parity gate` ставится после подписи ручного
+smoke; вручную остаются S04, S22, S53, S55, S57, S71–S75, S83, а S89–S92 ещё не
+автоматизированы. UI-smoke `XmlEditorReloaded.UiSmoke` автоматизирует 77 сценариев:
+S01–S03, S05–S21, S23–S49, целостность S50, S51/S52/S54/S56/S58, S59–S65, S66–S70, S76–S88. F0–F9
 закрыты 2026-10-30 (`MANUAL-SMOKE-FIX-PLAN.md`); выпадающие значения фильтров и массовой правки — бэклог
 B1–B2, не дефекты. S41–S49 проверены прогоном 2026-11-01; S44 нашёл дефект языка диалогов, исправлен
-явной культурой в `Strings`. Детали раннера и UIA-грабли — [[ja2-editor-ui-smoke]].
+явной культурой в `Strings`. M23b7 UI-smoke (2026-11-03) добавил S81/S82/S84–S88 и нашёл отсутствие
+уведомления `DisplayName` у merc-вкладки; детали раннера и UIA-грабли — [[ja2-editor-ui-smoke]].
 
 **Approved M18–M27 roadmap (2026-10-24, plan-only, commit `60d6695`):** full working legacy parity against
 `References/xml-editor`; hidden, dead and lossy legacy behavior is excluded. M18 relations + main-table

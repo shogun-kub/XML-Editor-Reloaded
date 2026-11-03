@@ -72,6 +72,7 @@
                    Margin="6,0,0,0"
                    VerticalAlignment="Center"
                    Foreground="#FF8B6F00"
+                   AutomationProperties.AutomationId="{Binding CounterAutomationId}"
                    Visibility="{Binding ShowCharacterCounter, Converter={StaticResource BoolToVisibility}}">
             <TextBlock.Text>
                 <MultiBinding Converter="{StaticResource CharacterCounterConverter}">

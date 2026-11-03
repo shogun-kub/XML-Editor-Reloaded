@@ -38,6 +38,8 @@ public class MercGearWorkspaceViewModelTests
         Assert.All(viewModel.Kits.SelectMany(static kit => kit.Slots), static slot => Assert.True(slot.HasRelation));
 
         var kit = viewModel.Kits[0];
+        var propertyChanges = new List<string?>();
+        viewModel.PropertyChanged += (_, args) => propertyChanges.Add(args.PropertyName);
         var helmet = Assert.Single(kit.Slots, static slot => slot.ItemField == "mHelmet");
         Assert.Contains(helmet.Relation!.Options, static entry => entry.Value == "3");
         var nothing = Assert.Single(helmet.Relation.Options, static entry => entry.Value == "0");
@@ -51,6 +53,8 @@ public class MercGearWorkspaceViewModelTests
         kit.Name = "Renamed";
 
         Assert.True(viewModel.IsDirty);
+        Assert.Contains(nameof(MercGearWorkspaceViewModel.DisplayName), propertyChanges);
+        Assert.Equal(viewModel.Title + " *", viewModel.DisplayName);
         Assert.True(viewModel.CanUndo);
         await viewModel.SaveAsync();
         Assert.False(viewModel.IsDirty);

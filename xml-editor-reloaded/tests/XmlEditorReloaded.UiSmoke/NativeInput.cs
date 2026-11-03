@@ -161,6 +161,27 @@ internal static class NativeInput
         SystemParametersInfo(SpiSetForegroundLockTimeout, 0, ref timeout, SpifSendChange);
 
     /// <summary>
+    /// Moves and resizes a top-level window without changing its z-order or activation. Used by the
+    /// geometry scenario, where the smoke runner must not override the placement the application will
+    /// persist.
+    /// </summary>
+    /// <param name="windowHandle">Native window handle.</param>
+    /// <param name="x">Left edge in screen coordinates.</param>
+    /// <param name="y">Top edge in screen coordinates.</param>
+    /// <param name="width">Window width.</param>
+    /// <param name="height">Window height.</param>
+    public static void SetWindowBounds(IntPtr windowHandle, int x, int y, int width, int height)
+    {
+        if (windowHandle == IntPtr.Zero)
+        {
+            return;
+        }
+
+        SetWindowPos(windowHandle, HwndTop, x, y, width, height, SwpNoZOrder | SwpNoActivate);
+        Thread.Sleep(200);
+    }
+
+    /// <summary>
     /// Raises a window to the top of the band it belongs to without changing its topmost state.
     /// </summary>
     /// <param name="windowHandle">Native window handle.</param>

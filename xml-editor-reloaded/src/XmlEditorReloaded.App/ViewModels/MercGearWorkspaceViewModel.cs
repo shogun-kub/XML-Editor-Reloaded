@@ -53,6 +53,8 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
     [ObservableProperty]
     private bool _isDirty;
 
+    partial void OnIsDirtyChanged(bool value) => OnPropertyChanged(nameof(DisplayName));
+
     [ObservableProperty]
     private bool _isEditable;
 
