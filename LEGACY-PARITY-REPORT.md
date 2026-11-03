@@ -1,6 +1,6 @@
 # Legacy parity report (M23a)
 
-**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b8 выполнены по состоянию на 2026-10-27. Автоматические гейты M23b (сборка, 601 тест, corpus v4/v5, compare, copy, perf, часть UI-smoke в песочнице, включая S71–S73/S75) пройдены 2026-11-03; маркер full functional parity ставится после подписи ручного WPF-smoke по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`, без неё M23 не закрыт. Поведение редактора в M23a не менялось.
+**Статус:** M23a0–M23a6 выполнены; автоматические гейты M23a7 (сборка, тесты, corpus v4/v5, compare, copy, perf, приёмка M22c) пройдены 2026-10-24. Подшаги M23b1–M23b8 выполнены по состоянию на 2026-10-27. Автоматические гейты M23b (сборка, 601 тест, corpus v4/v5, compare, copy, perf, часть UI-smoke в песочнице, включая S55/S57 и S71–S73/S75) пройдены 2026-11-03; маркер full functional parity ставится после подписи ручного WPF-smoke по `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`, без неё M23 не закрыт. Поведение редактора в M23a не менялось.
 
 Матрица и реестр ниже сохраняются в состоянии аудита M23a (как и после M23b1–M23b8): закрытие пробелов фиксируют секции `M23b1`…`M23b8` в конце документа, а не переписывание снимка. Поэтому строки закрытых пробелов по-прежнему имеют вердикт `пробел`.
 
@@ -742,7 +742,7 @@
 
 Создан `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md`: 50 сценариев на v4/v5 — запуск и датасеты, сетка/фильтры/bulk/layout, item и merc workspace, shopkeeper, pickers, copy, compare и экспорт, STI-изображения, локализация, настройки, close/save, external-change, malformed lookup и итоговая целостность. Ожидания в чек-листе выборочно сверены с данными v4/v5 (item 12/1422/1456/1742/1775, 27 вложений, Barry и пять комплектов, 23 строки `Lookup.Cursor`, 63 слота, дубликат дилера).
 
-Не всё WPF-поведение автоматизируется. С 2026-10-31 часть A (S01–S14 без S04, S48 и итоговая целостность S50) проходит в консольном UI-smoke `XmlEditorReloaded.UiSmoke`; к 2026-11-03 автоматизированы 85 сценариев (A–G, S50–S52, S54, S56, S58–S70, S71–S73, S75, S76–S82, S84–S92), ручными остаются S04, S22, S53, S55, S57, S74, S83, ветка ошибки S13 и выбор в picker S61. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
+Не всё WPF-поведение автоматизируется. С 2026-10-31 часть A (S01–S14 без S04, S48 и итоговая целостность S50) проходит в консольном UI-smoke `XmlEditorReloaded.UiSmoke`; к 2026-11-03 автоматизированы 87 сценариев (A–G, S50–S52, S54–S58, S59–S70, S71–S73, S75, S76–S82, S84–S92), ручными остаются S04, S22, S53, S74, S83, ветка ошибки S13 и выбор в picker S61. Дату, коммит, количество `✅/❌/N/A`, дефекты и подпись пользователь вносит в таблицу чек-листа и в этот раздел; до этого M23a7 и M23a остаются незакрытыми.
 
 ## M23b1 — фильтры item workspace и видимость полей
 
@@ -802,6 +802,7 @@
 | Тесты M23b2 | `Initialize_ShowsReverseAttachmentsAndForwardLaunchables`, `CompatibleFaceItems_FiltersByItemIndex`, `ChildSectionNavigation_SelectsRelatedItem`, `SubTableListField_EditsBarrelConfigurations`, `DictFields_AreEditableValidatedAndCreatedOnDemand`, `SymmetricPairTests` (5), `EnemyAmmoViewModelTests` (4), `Load_LegacyRepeatedResult_ReportsDiagnosticWithoutMutation` |
 | Compare / copy / perf | 1/1, 1/1, 9/9 (v5) |
 | `References/` | не изменён; corpus-тесты работают на temp-копиях, enemy-ammo corpus-гейт только читает |
+| UI-smoke M23b2 (2026-11-03) | 2/2: S55 `BarrelConfiguration` 4/6/8 → 7/6/8 + add/remove без `BarrelConfigurationN`, S57 ключ 208→209 и add/delete 211 с обратной строкой |
 
 ## M23b3 — Источники значений и pickers
 
@@ -1014,9 +1015,9 @@ full functional parity и коммит `M23: legacy functional parity gate`.
 | Compare v4↔v5 | `XER_COMPARE_LEFT_DIR` / `RIGHT_DIR` → `RealDataComparisonTests` | 1/1; 238/239 таблиц, 238 общих, 1 right-only (`Email.EmailSenderNameList`), 1 malformed (`Lookup.AttachmentPoint` v5), 0 failed |
 | Copy v4→v5 | `XER_COPY_SOURCE_DIR` / `TARGET_DIR` → `CorpusCopyTests` | 1/1; SHA-256 источника не изменён |
 | Perf v5 / v4 | `Category=Performance` | 9/9 и 9/9; порог 2 с на операцию |
-| UI-smoke в песочнице | 60 выбранных сценариев: прежние 45 (head 21 + tail 24) + блоки M23b7, M23b8 и изображений; список: S01–S03, S05–S07, S09, S15–S17, S36–S38, S40–S49, S51–S52, S54, S56, S58–S70, S71–S73, S75, S76–S82, S84–S92 + обязательный S50 | head 22/22, tail 25/25, M23b7 7/7, M23b8 4/4, изображения 4/4; полный доступный набор проверен пятью прогонами |
-| S50: целостность | SHA-256 `References/` + изменения копий + git | 504 файла; head 7/7, tail 10/10, M23b7 8/8, M23b8 5/5, изображения 2/2 заявленных изменений; артефактов сборки в git нет |
-| Ручной UI-smoke | интерактивный рабочий стол | агентом не выполнялся: S04, S22, S53, S55, S57, S74, S83, ветка ошибки сохранения S13 и выбор другого значения в picker S61; ожидает пользователя |
+| UI-smoke в песочнице | 62 выбранных сценария: прежние 45 (head 21 + tail 24) + блоки M23b7, M23b8, изображений и S55/S57; список: S01–S03, S05–S07, S09, S15–S17, S36–S38, S40–S49, S51–S52, S54–S58, S59–S70, S71–S73, S75, S76–S82, S84–S92 + обязательный S50 | head 22/22, tail 25/25, M23b7 7/7, M23b8 4/4, изображения 4/4, S55/S57 2/2; полный доступный набор проверен шестью прогонами |
+| S50: целостность | SHA-256 `References/` + изменения копий + git | 504 файла; head 7/7, tail 10/10, M23b7 8/8, M23b8 5/5, изображения 2/2, S55/S57 2/2 заявленных изменений; артефактов сборки в git нет |
+| Ручной UI-smoke | интерактивный рабочий стол | агентом не выполнялся: S04, S22, S53, S74, S83, ветка ошибки сохранения S13 и выбор другого значения в picker S61; ожидает пользователя |
 | `References/` | хеши corpus/compare/copy/S50 | без изменений |
 | Git | `git status --short` | чисто; `bin/`/`obj/` и пользовательские файлы не отслеживаются |
 

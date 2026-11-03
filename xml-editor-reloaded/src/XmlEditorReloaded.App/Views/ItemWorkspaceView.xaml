@@ -35,7 +35,9 @@
             </DrawingBrush.Drawing>
         </DrawingBrush>
         <DataTemplate x:Key="ItemListSectionTemplate">
-            <GroupBox Margin="0,4,0,0" Header="{Binding Label}">
+            <GroupBox Margin="0,4,0,0"
+                      Header="{Binding Label}"
+                      AutomationProperties.AutomationId="{Binding SectionAutomationId}">
                 <StackPanel Margin="4">
                     <TextBlock Foreground="#FF777777"
                                TextWrapping="Wrap"
@@ -55,11 +57,13 @@
                                                           Visibility="{Binding HasRelation, Converter={StaticResource BoolToVisibility}}" />
                                     <TextBox Grid.Column="0"
                                              VerticalAlignment="Center"
+                                             AutomationProperties.AutomationId="{Binding ValueAutomationId}"
                                              Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                              Visibility="{Binding IsPlainValue, Converter={StaticResource BoolToVisibility}}" />
                                     <Button Grid.Column="1"
                                             Margin="6,0,0,0"
                                             Padding="8,1"
+                                            AutomationProperties.AutomationId="{Binding RemoveAutomationId}"
                                             Content="✕"
                                             Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=GroupBox}}"
                                             CommandParameter="{Binding}" />
@@ -70,6 +74,7 @@
                     <Button Margin="0,6,0,0"
                             Padding="10,2"
                             HorizontalAlignment="Left"
+                            AutomationProperties.AutomationId="{Binding AddAutomationId}"
                             Content="{Binding AddText}"
                             Command="{Binding AddCommand}" />
                 </StackPanel>

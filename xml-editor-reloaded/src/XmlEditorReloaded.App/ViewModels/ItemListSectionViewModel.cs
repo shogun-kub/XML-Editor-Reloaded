@@ -59,6 +59,26 @@ public sealed partial class ItemListSectionViewModel : ObservableObject
     public string FieldName { get; }
 
     /// <summary>
+    /// Gets the automation identifier of the section group, derived from the field name.
+    /// </summary>
+    public string SectionAutomationId => $"ItemListSection_{FieldName}";
+
+    /// <summary>
+    /// Gets the automation identifier of the add button.
+    /// </summary>
+    public string AddAutomationId => $"ItemListAdd_{FieldName}";
+
+    /// <summary>
+    /// Gets the automation identifier shared by the value editors of this section.
+    /// </summary>
+    public string ValueAutomationId => $"ItemListValue_{FieldName}";
+
+    /// <summary>
+    /// Gets the automation identifier shared by the remove buttons of this section.
+    /// </summary>
+    public string RemoveAutomationId => $"ItemListRemove_{FieldName}";
+
+    /// <summary>
     /// Gets the localized section label.
     /// </summary>
     public string Label { get; }
@@ -163,6 +183,16 @@ public sealed partial class ItemListValueViewModel : ObservableObject
     /// Gets a value indicating whether the value is edited as plain numeric text.
     /// </summary>
     public bool IsPlainValue => !HasRelation;
+
+    /// <summary>
+    /// Gets the automation identifier of this value editor.
+    /// </summary>
+    public string ValueAutomationId => _section.ValueAutomationId;
+
+    /// <summary>
+    /// Gets the automation identifier of this value's remove button.
+    /// </summary>
+    public string RemoveAutomationId => _section.RemoveAutomationId;
 
     /// <summary>
     /// Gets or sets the raw key text. Setting the value writes the whole list back to the document.

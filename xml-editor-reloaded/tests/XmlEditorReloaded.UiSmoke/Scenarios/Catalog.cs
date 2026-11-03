@@ -10,8 +10,6 @@ internal static class ScenarioCatalog
         ["S04"] = "выбор папки без TableData выполняется через нативный диалог обзора",
         ["S22"] = "визуальная проверка STI-превью: кадр и его пиксели оценивает человек",
         ["S53"] = "двойной щёлчок по заголовку строки требует мыши",
-        ["S55"] = "правка и добавление значений списка BarrelConfiguration требуют ввода",
-        ["S57"] = "смена ключа симметричной пары требует ввода",
         ["S74"] = "визуальная проверка обновления миниатюр без перезагрузки",
         ["S83"] = "поведение при отключении монитора и испорченных настройках требует ручных действий",
     };
@@ -96,6 +94,8 @@ internal static class ScenarioCatalog
         new ImageTypeScenario(),
         new ImageIndexValidationScenario(),
         new ImageFramePersistenceScenario(),
+        new BarrelConfigurationScenario(),
+        new SymmetricPairScenario(),
         new MercKitRenameScenario(),
         new UnsavedChangesCloseScenario(),
         new EmptyDealerFileScenario(),
