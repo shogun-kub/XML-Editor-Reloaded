@@ -102,6 +102,7 @@ internal static class ScenarioCatalog
         new EmptyMappedTableScenario(),
         new CopyLookupComparisonScenario(),
         new OperationLogScenario(),
+        new NestedTableWorkspaceScenario(),
     ];
 
     /// <summary>

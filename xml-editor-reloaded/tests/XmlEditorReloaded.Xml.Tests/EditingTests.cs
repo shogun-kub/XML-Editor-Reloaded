@@ -14,6 +14,23 @@ namespace XmlEditorReloaded.Xml.Tests;
 public class EditingTests
 {
     /// <summary>
+    /// A nested-record table appends new records inside its declared container.
+    /// </summary>
+    [Fact]
+    public async Task AddRecord_NestedPrimaryPath_AppendsInsideContainer()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("Overlays/cities-base.xml");
+        var document = await OverlayTestData.LoadBaseAsync(path, OverlayTestData.CitiesMetadata());
+
+        var result = document.AddRecord();
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(3, document.Records.Count);
+        Assert.Equal("3", result.Data!.GetKey());
+    }
+
+    /// <summary>
     /// An invalid integer is rejected without mutating the document.
     /// </summary>
     [Fact]

@@ -88,13 +88,28 @@ public sealed class TableRecord
     {
         ArgumentException.ThrowIfNullOrEmpty(fieldName);
         var container = FindDirectChild(fieldName);
-        return container is null || !container.HasElements
+        return ContainerChildNames(container);
+    }
+
+    /// <summary>
+    /// Gets the distinct child element names at a nested field path.
+    /// </summary>
+    /// <param name="path">Slash-separated path of the container.</param>
+    /// <returns>The child names, or an empty list when the path is absent or has no child elements.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> is null.</exception>
+    public IReadOnlyList<string> GetChildFieldNames(FieldPath path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        return ContainerChildNames(FindPath(path));
+    }
+
+    private static IReadOnlyList<string> ContainerChildNames(XElement? container) =>
+        container is null || !container.HasElements
             ? Array.Empty<string>()
             : container.Elements()
                 .Select(static element => element.Name.LocalName)
                 .Distinct(StringComparer.Ordinal)
                 .ToArray();
-    }
 
     /// <summary>
     /// Gets all values of a repeated direct child field, in document order.

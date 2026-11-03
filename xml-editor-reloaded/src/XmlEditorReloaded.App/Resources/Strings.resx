@@ -171,6 +171,24 @@
   <data name="EditorSaveText" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="EditorUndoDone" xml:space="preserve">
+    <value>Edit undone.</value>
+  </data>
+  <data name="EditorRedoDone" xml:space="preserve">
+    <value>Edit restored.</value>
+  </data>
+  <data name="EditorDeleteRowTitle" xml:space="preserve">
+    <value>Delete record</value>
+  </data>
+  <data name="NestedEditorSelectRecord" xml:space="preserve">
+    <value>Select a record to edit its fields.</value>
+  </data>
+  <data name="NestedEditorRecordAdded" xml:space="preserve">
+    <value>Record {0} added.</value>
+  </data>
+  <data name="NestedEditorRecordDeleted" xml:space="preserve">
+    <value>Record {0} deleted.</value>
+  </data>
   <data name="EditorValidateText" xml:space="preserve">
     <value>Validate</value>
   </data>

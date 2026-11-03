@@ -129,7 +129,7 @@ public sealed class OverlayMerger
 
         var rootCells = new List<MergedCell>();
         var segments = _metadata.RecordKey?.Segments;
-        if (segments is not null && overlayDocument is not null)
+        if (segments is not null)
         {
             for (var index = 1; index < segments.Count; index++)
             {
@@ -139,7 +139,9 @@ public sealed class OverlayMerger
                 }
 
                 var baseSingleton = resolver.ResolveSingleton(baseDocument.Xml, index);
-                var overlaySingleton = resolver.ResolveSingleton(overlayDocument.Xml, index);
+                var overlaySingleton = overlayDocument is null
+                    ? null
+                    : resolver.ResolveSingleton(overlayDocument.Xml, index);
                 if (baseSingleton is null && overlaySingleton is null)
                 {
                     continue;

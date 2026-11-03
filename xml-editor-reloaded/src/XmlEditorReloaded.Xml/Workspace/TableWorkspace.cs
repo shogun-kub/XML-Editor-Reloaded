@@ -254,17 +254,28 @@ public sealed partial class TableWorkspace
     /// block is translated outside the repeated city list.
     /// </summary>
     /// <returns>
-    /// Merged root cells, or an empty list when no overlay is selected. The cell paths use the
-    /// slash-separated form, for example <c>COUNTRY/countryName</c>.
+    /// Merged root cells, or an empty list for a table without root singleton segments. The cell paths
+    /// use the slash-separated form, for example <c>COUNTRY/countryName</c>.
     /// </returns>
     public IReadOnlyList<MergedCell> GetRootCells()
     {
-        if (Metadata is null || Overlay is null)
+        if (Metadata is null)
         {
             return Array.Empty<MergedCell>();
         }
 
-        return new OverlayMerger(Metadata).Merge(BaseDocument, Overlay.Document).RootCells;
+        return new OverlayMerger(Metadata).Merge(BaseDocument, Overlay?.Document).RootCells;
+    }
+
+    /// <summary>
+    /// Determines whether a field path can be translated through the selected language overlay.
+    /// </summary>
+    /// <param name="path">Path relative to the record or from the document root.</param>
+    /// <returns><see langword="true"/> when the table declares the path as translatable.</returns>
+    public bool IsTranslatable(FieldPath path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        return Session?.IsTranslatable(path) == true;
     }
 
     /// <summary>
@@ -649,10 +660,110 @@ public sealed partial class TableWorkspace
     }
 
     /// <summary>
-    /// Sets a root-level translated field, for example <c>COUNTRY/countryName</c>.
+    /// Enumerates the nested records of one primary record for a nested key segment, for example the
+    /// <c>ASSIGNMENT</c> entries of a facility type.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="segmentIndex">Key-segment index of the nested collection, where the primary is zero.</param>
+    /// <returns>The nested records in document order; empty when the record or segment is absent.</returns>
+    public IReadOnlyList<NestedWorkspaceRecord> GetNestedRecords(string recordKey, int segmentIndex)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentOutOfRangeException.ThrowIfNegative(segmentIndex);
+
+        if (Metadata?.RecordKey is not { } spec
+            || segmentIndex <= 0
+            || segmentIndex >= spec.Segments.Count)
+        {
+            return Array.Empty<NestedWorkspaceRecord>();
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return Array.Empty<NestedWorkspaceRecord>();
+        }
+
+        var resolved = new OverlayKeyResolver(Metadata).ResolveNested(record.Element, segmentIndex);
+        return resolved
+            .Select((nested, index) => new NestedWorkspaceRecord(
+                segmentIndex,
+                index,
+                nested.Key,
+                new TableRecord(BaseDocument, nested.Element)))
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Gets the effective value of a nested record field, using the merged translation value when an
+    /// overlay is selected and the key is known.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="nested">Nested record returned by <see cref="GetNestedRecords"/>.</param>
+    /// <param name="path">Field path relative to the nested record.</param>
+    /// <returns>The effective value, or <see langword="null"/> when the field is absent.</returns>
+    public string? GetNestedValue(string recordKey, NestedWorkspaceRecord nested, FieldPath path)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(nested);
+        ArgumentNullException.ThrowIfNull(path);
+
+        if (Overlay is not null
+            && Metadata?.RecordKey is { } spec
+            && nested.Key is { Length: > 0 }
+            && nested.SegmentIndex > 0
+            && nested.SegmentIndex < spec.Segments.Count)
+        {
+            var segment = spec.Segments[nested.SegmentIndex];
+            var keyedPath = segment.Path + "[" + nested.Key + "]/" + path.Text;
+            var row = GetRow(recordKey);
+            var cell = row?.Merged?.Cells
+                .FirstOrDefault(candidate => string.Equals(candidate.FieldPath, keyedPath, StringComparison.Ordinal));
+            if (cell is not null)
+            {
+                return cell.Value;
+            }
+        }
+
+        return nested.Record.GetRawValue(path);
+    }
+
+    /// <summary>
+    /// Determines whether a nested record field comes from the selected language overlay.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="nested">Nested record returned by <see cref="GetNestedRecords"/>.</param>
+    /// <param name="path">Field path relative to the nested record.</param>
+    /// <returns><see langword="true"/> when the overlay contains the field.</returns>
+    public bool IsNestedTranslated(string recordKey, NestedWorkspaceRecord nested, FieldPath path)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(nested);
+        ArgumentNullException.ThrowIfNull(path);
+
+        if (Overlay is null
+            || Metadata?.RecordKey is not { } spec
+            || nested.Key is not { Length: > 0 }
+            || nested.SegmentIndex <= 0
+            || nested.SegmentIndex >= spec.Segments.Count)
+        {
+            return false;
+        }
+
+        var segment = spec.Segments[nested.SegmentIndex];
+        var keyedPath = segment.Path + "[" + nested.Key + "]/" + path.Text;
+        var row = GetRow(recordKey);
+        var cell = row?.Merged?.Cells
+            .FirstOrDefault(candidate => string.Equals(candidate.FieldPath, keyedPath, StringComparison.Ordinal));
+        return cell?.OverlayValue is not null;
+    }
+
+    /// <summary>
+    /// Sets a root-level field, for example <c>COUNTRY/countryName</c>. A translatable path is written
+    /// only to the selected language overlay; every other path is written to the base table.
     /// </summary>
     /// <param name="path">Path from the document root.</param>
-    /// <param name="rawText">Translation text to store exactly.</param>
+    /// <param name="rawText">Value to store exactly.</param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/>.
     /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
@@ -662,22 +773,73 @@ public sealed partial class TableWorkspace
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(rawText);
 
-        if (Session?.Overlay is null)
+        if (!CanEdit)
         {
-            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "No language overlay is selected.");
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
         }
 
-        var transaction = new TableEditTransaction();
         var firstSegment = path.Segments[0];
-        var before = CaptureOverlayRootElement(firstSegment);
-        var result = Session.SetRootValue(path, rawText);
-        if (result.IsSuccess)
+        var isOverlayEdit = Session?.Overlay is not null && Session.IsTranslatable(path);
+        var transaction = new TableEditTransaction();
+        if (isOverlayEdit)
         {
-            CompleteOverlayRootElement(transaction, before, firstSegment);
-            History.Record(transaction);
+            var before = CaptureOverlayRootElement(firstSegment);
+            var result = Session!.SetRootValue(path, rawText);
+            if (result.IsSuccess)
+            {
+                CompleteOverlayRootElement(transaction, before, firstSegment);
+                History.Record(transaction);
+            }
+
+            return result;
         }
 
-        return result;
+        var root = BaseDocument.Xml.Root;
+        if (root is null)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The document has no root element.");
+        }
+
+        if (path.Depth < 2)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "A root value path needs a field.");
+        }
+
+        var element = root.Elements()
+            .FirstOrDefault(child => string.Equals(child.Name.LocalName, firstSegment, StringComparison.Ordinal));
+        var baseBefore = element is null ? null : ElementSnapshotState.Capture(BaseDocument, element);
+        var created = element is null;
+        if (element is null)
+        {
+            element = new XElement(XName.Get(firstSegment));
+            root.Add(element);
+        }
+
+        var record = new TableRecord(BaseDocument, element);
+        var relative = new FieldPath(path.Segments.Skip(1).ToArray());
+        var baseResult = record.SetFieldValue(relative, rawText, addIfMissing: true);
+        if (!baseResult.IsSuccess)
+        {
+            if (created)
+            {
+                element.Remove();
+            }
+
+            return baseResult;
+        }
+
+        if (baseBefore is null)
+        {
+            transaction.Add(ElementSnapshotState.CaptureInsertion(BaseDocument, element));
+        }
+        else
+        {
+            baseBefore.CompleteAfter(element);
+            transaction.Add(baseBefore);
+        }
+
+        History.Record(transaction);
+        return baseResult;
     }
 
     /// <summary>

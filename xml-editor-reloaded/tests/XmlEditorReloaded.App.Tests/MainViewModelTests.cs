@@ -195,6 +195,31 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// Opening the Cities table creates the nested-record workspace instead of the generic grid.
+    /// </summary>
+    [Fact]
+    public async Task OpenCities_OpensNestedWorkspace()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateCitiesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+
+        var editor = Assert.IsType<NestedTableWorkspaceViewModel>(Assert.Single(viewModel.Editors));
+        Assert.Same(editor, viewModel.SelectedEditor);
+        Assert.Equal("Map.Cities", editor.Title);
+        Assert.Single(editor.Records);
+        Assert.NotNull(editor.SelectedRecord);
+        Assert.Equal("Omerta", editor.SelectedRecord!.DisplayName);
+    }
+
+    /// <summary>
     /// Opening the Items table creates the item master-detail workspace instead of the generic grid.
     /// </summary>
     [Fact]
@@ -1129,6 +1154,19 @@ public class MainViewModelTests
             copyDialog ?? new FakeTableCopyDialogService(),
             settingsDialog ?? new FakeSettingsDialogService(),
             layoutStore ?? new FakeTableLayoutStore());
+
+    private static string CreateCitiesData(TestWorkspace workspace)
+    {
+        var data13 = workspace.PathOf("Data-1.13");
+        var directory = Path.Combine(data13, "TableData", "Map");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(
+            Path.Combine(directory, "Cities.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO><CITYLIST>"
+            + "<CITY><uiIndex>1</uiIndex><townName>Omerta</townName></CITY>"
+            + "</CITYLIST></CITY_INFO>");
+        return data13;
+    }
 
     private static string CreateNotesData(TestWorkspace workspace) =>
         CreateNotesData(workspace, gameFolder: null, text: "Hello");

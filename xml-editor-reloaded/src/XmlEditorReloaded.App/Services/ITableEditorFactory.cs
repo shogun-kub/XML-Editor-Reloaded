@@ -46,6 +46,20 @@ public interface ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode);
+
+    /// <summary>
+    /// Creates an uninitialized nested-record workspace for tables such as <c>Map.Cities</c> and
+    /// <c>Map.FacilityTypes</c>; call <see cref="ViewModels.NestedTableWorkspaceViewModel.InitializeAsync"/>
+    /// before displaying it.
+    /// </summary>
+    /// <param name="session">Data-set session that owns the table.</param>
+    /// <param name="descriptor">Table descriptor to open.</param>
+    /// <param name="languageCode">Optional language code for overlay editing.</param>
+    /// <returns>The nested-record workspace view model.</returns>
+    ViewModels.NestedTableWorkspaceViewModel CreateNestedWorkspace(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode);
 }
 
 /// <summary>
@@ -93,6 +107,13 @@ public sealed class TableEditorFactory : ITableEditorFactory
 
     /// <inheritdoc />
     public ViewModels.MercGearWorkspaceViewModel CreateMercGearWorkspace(
+        IDataSetSession session,
+        TableDescriptor descriptor,
+        string? languageCode) =>
+        new(session, descriptor, languageCode, _dialogService);
+
+    /// <inheritdoc />
+    public ViewModels.NestedTableWorkspaceViewModel CreateNestedWorkspace(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>

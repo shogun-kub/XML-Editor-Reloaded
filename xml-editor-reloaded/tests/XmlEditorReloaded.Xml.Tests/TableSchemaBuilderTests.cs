@@ -266,8 +266,8 @@ public class TableSchemaBuilderTests
     }
 
     /// <summary>
-    /// A table whose records live under a nested key path discovers its columns from that path even
-    /// though the direct record list of the document is empty.
+    /// A table whose records live under a nested key path discovers its columns from that path; the
+    /// document now exposes the resolved nested records directly.
     /// </summary>
     [Fact]
     public async Task Build_NestedRecordPath_DiscoversColumnsFromDeclaredPath()
@@ -279,7 +279,7 @@ public class TableSchemaBuilderTests
 
         var schema = new TableSchemaBuilder().Build(document);
 
-        Assert.Empty(document.Records);
+        Assert.Equal(2, document.Records.Count);
         Assert.Equal(2, schema.RecordCount);
         Assert.Equal(
             new[] { "uiIndex", "townName", "townUsesLoyalty" },

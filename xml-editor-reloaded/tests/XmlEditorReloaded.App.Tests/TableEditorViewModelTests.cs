@@ -82,11 +82,11 @@ public class TableEditorViewModelTests
 
     /// <summary>
     /// A table whose records are nested in the root (Map.Cities keeps them under CITYLIST/CITY) shows
-    /// its real columns and rows, hides the nested structures from the default grid, and keeps every
-    /// row read-only instead of failing with a key error.
+    /// its real columns and rows, hides the nested structures from the default grid, and edits the
+    /// resolved base records in place.
     /// </summary>
     [Fact]
-    public async Task NestedCityTable_ShowsRowsAndColumnsAndStaysReadOnly()
+    public async Task NestedCityTable_ShowsRowsAndColumnsAndEditsBaseRecords()
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
@@ -132,14 +132,14 @@ public class TableEditorViewModelTests
         Assert.True(nested.Column.IsNested);
         Assert.DoesNotContain(editor.VisibleColumns, column => column.Name == "baseSector");
 
-        Assert.False(editor.IsEditable);
-        Assert.True(editor.IsReadOnly);
-        Assert.All(editor.Rows, static row => Assert.False(row.CanEdit));
+        Assert.True(editor.IsEditable);
+        Assert.False(editor.IsReadOnly);
+        Assert.All(editor.Rows, static row => Assert.True(row.CanEdit));
 
         editor.Rows[0]["townName"] = "Changed";
 
-        Assert.Equal("Omerta", editor.Rows[0]["townName"]);
-        Assert.Contains("read-only", editor.StatusText, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Changed", editor.Rows[0]["townName"]);
+        Assert.DoesNotContain("read-only", editor.StatusText, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("key.not_found", editor.StatusText, StringComparison.Ordinal);
     }
 

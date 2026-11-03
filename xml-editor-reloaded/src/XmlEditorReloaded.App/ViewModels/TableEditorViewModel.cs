@@ -645,11 +645,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
                 ? Strings.Get("EditorBaseLanguage")
                 : Strings.Format("EditorLanguageFormat", Workspace.Language.DisplayName);
             BuildLanguageOptions(configuredLanguages);
-            // A nested-record table keeps its rows inside the root record, so the flat grid cannot edit
-            // it. A flat table without rows, by contrast, is editable: the user may have deleted its last
-            // row, and the first new row must be addable again (L-STO-034).
-            var hasNestedRecords = !string.IsNullOrEmpty(Workspace.Metadata?.RecordKey?.Primary.Path);
-            IsEditable = Workspace.CanEdit && !hasNestedRecords;
+            // A table without rows is editable: the user may have deleted its last row, and the first
+            // new row must be addable again (L-STO-034). Nested primary records are resolved by the
+            // document and are editable through the grid like direct records.
+            IsEditable = Workspace.CanEdit;
             await LoadFieldSourcesAsync(cancellationToken).ConfigureAwait(true);
             BuildColumns();
             HasGraphicFields = Workspace.Schema.FindColumn("ubGraphicNum") is not null;
@@ -659,9 +658,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             _layoutChangesReady = true;
             StatusText = layoutError ?? (IsEditable
                 ? Strings.Get("EditorReady")
-                : hasNestedRecords
-                    ? Strings.Get("EditorReadOnlyNested")
-                    : Strings.Get("EditorReadOnly"));
+                : Strings.Get("EditorReadOnly"));
         }
         catch (OperationCanceledException)
         {
@@ -1584,9 +1581,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
         if (row.Row.Record is null)
         {
-            // Rows of a nested record key (for example Map.Cities CITYLIST/CITY) have no base record
-            // that the grid could write to. Report that explicitly instead of a misleading key error.
-            StatusText = Strings.Get("EditorReadOnlyNested");
+            // A merged row exposed only by an overlay has no base record to write to.
+            StatusText = Strings.Get("EditorReadOnly");
             return OperationResult.Failure(
                 ErrorCodes.XmlNotSaveable,
                 "Rows that are not backed by a base record are read-only in the grid.");
@@ -1665,9 +1661,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// </summary>
     private string IdleStatusText => IsEditable
         ? Strings.Get("EditorReady")
-        : Workspace?.Metadata?.RecordKey?.Primary.Path is { Length: > 0 }
-            ? Strings.Get("EditorReadOnlyNested")
-            : Strings.Get("StatusLoadedReadOnly");
+        : Strings.Get("StatusLoadedReadOnly");
 
     private void SetTransientStatus(string message)
     {

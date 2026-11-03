@@ -4,13 +4,13 @@
 
 **Назначение:** десктопный редактор XML-таблиц (`TableData`) мода JA2 1.13 с сохранением структуры файлов, локализационными оверлеями, изображениями STI и сравнением версий. **Стек:** .NET 10, WPF, SQLite, xUnit, CommunityToolkit.Mvvm + Microsoft.Extensions.DependencyInjection.
 
-**Состояние:** M0–M23b8 и M23a завершены; автоматические гейты M23b пройдены 2026-11-01, маркер full functional parity поставлен 2026-11-03 после подписи ручного smoke (v4; колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя). Части A–G ручного smoke автоматизированы (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 88 сценариев: S01–S03, S05–S21, S23–S49, целостность S50, M23b2 S51/S52/S54–S58, M23b3 S59–S65, M23b4 S66–S70, M23b5 S71–S73/S75, M23b6 S76–S80, M23b7 S81/S82/S84–S88 и M23b8 S89–S92; S83 автоматизирован со скриншотами; S74 остаётся ручным; части E–G — S33–S49 с 2026-11-01); ручные S04, S22, S53 и S74 пройдены на v4. Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
+**Состояние:** M0–M24a завершены; автоматические гейты M23b пройдены 2026-11-01, маркер full functional parity поставлен 2026-11-03 после подписи ручного smoke (v4; колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя). M24a добавляет отдельные редакторы `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`) и `Map.FacilityTypes` (`ASSIGNMENT`), включая правку корневых singleton-полей, вложенных координат и переводов tooltip. Части A–G ручного smoke автоматизированы (`xml-editor-reloaded/tests/XmlEditorReloaded.UiSmoke`, 89 сценариев: S01–S03, S05–S21, S23–S49, целостность S50, M23b2 S51/S52/S54–S58, M23b3 S59–S65, M23b4 S66–S70, M23b5 S71–S73/S75, M23b6 S76–S80, M23b7 S81/S82/S84–S88, M23b8 S89–S92 и M24a S93; S83 автоматизирован со скриншотами; S74 остаётся ручным; части E–G — S33–S49 с 2026-11-01); ручные S04, S22, S53 и S74 пройдены на v4. Исправления F0–F9 — в `MANUAL-SMOKE-FIX-PLAN.md`, бэклог B1–B2 — ниже.
 
-**Реализовано:** датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие. Валидация предупреждает о границах legacy-спиннеров, группах флагов и карманах LBE, ничего не обнуляя; lookup-id и маски `Flags` 64-битные; Images показывает кадры типа, границы индекса и live-миниатюры; shopkeeper адресует строки дилера точной записью. Ошибки и preflight пишутся в лог с путями и причиной. Подробности — в коде, тестах и чек-листе.
+**Реализовано:** датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие, отдельные редакторы `Map.Cities`/`Map.FacilityTypes` с вложенными структурами и singleton-полями. Валидация предупреждает о границах legacy-спиннеров, группах флагов и карманах LBE, ничего не обнуляя; lookup-id и маски `Flags` 64-битные; Images показывает кадры типа, границы индекса и live-миниатюры; shopkeeper адресует строки дилера точной записью. Ошибки и preflight пишутся в лог с путями и причиной. Подробности — в коде, тестах и чек-листе.
 
 **Метаданные:** 173 таблицы, 1042 `TableRelations`, 1981 `ColumnHint` (123 с границами min/max, 23 с `ComparisonField`), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 7 `ColumnTextLimits` (лимиты ввода и счётчики символов, с китайским переопределением), 17 миграций, 7 языков, 64-битные lookup ID. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
 
-**Проверка:** build `-warnaserror` (0/0), 601 тест в базовом прогоне (`test.ps1`), корпусные прогоны v4/v5 (600/600), сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v4 и v5) пройдены 2026-11-01. UI-smoke: 88 автоматизированных сценариев (включая S50); в песочнице прогоняются выбранные сценарии (S50 запускается всегда; прежние 45 двумя прогонами head 22/22 и tail 25/25, блок M23b7 — 7/7, блок M23b8 — 4/4, изображения S71/S72/S73/S75 — 4/4, S55/S57 — 2/2, S83 — 1/1 со скриншотами), остальные требуют интерактивного рабочего стола. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
+**Проверка:** build `-warnaserror` (0/0), 608 тестов в базовом прогоне (`test.ps1`), корпусные прогоны v4/v5 (600/600), сравнение v4↔v5 (1/1), copy v4→v5 (1/1) и perf-гейты (9/9 на v4 и v5) пройдены 2026-11-01. UI-smoke: 89 автоматизированных сценариев (включая S50 и S93); в песочнице прогоняются выбранные сценарии (S50 запускается всегда; прежние 45 двумя прогонами head 22/22 и tail 25/25, блок M23b7 — 7/7, блок M23b8 — 4/4, изображения S71/S72/S73/S75 — 4/4, S55/S57 — 2/2, S83 — 1/1 со скриншотами, S93 — 1/1 на v4), остальные требуют интерактивного рабочего стола. Детали завершённых этапов здесь не дублируются: источник истины — код, тесты и git-история.
 
 **Правила:** XML-целостность, `References/`, кодировка и коммиты — в `AGENTS.md`; здесь не дублируются.
 
@@ -51,14 +51,16 @@
 - **M23b6:** shopkeeper — item-центричное создание/удаление строки дилера, exact-row адресация дубликата ключа; lookup — новая строка получает `name=""`, файл остаётся читаемым (`L-ITEM-039`, `L-SHP-001`, `L-AUX-036`).
 - **M23b7:** shell — окно About и Help > About, сохранение геометрии окна; field UI — лимиты ввода и счётчики символов; merc gear — имя набора в заголовке и `MaxLength = 80` (`L-SHELL-183`, `L-AUX-018/019`, `L-ITEM-017`, `L-MERC-003…007/013`, `L-SET-009`).
 - **M23b8:** хранение — пустой объявленный корень снова редактируется, стартовая схема пустой таблицы из hints; копирование — поиск отсутствующего id по `ComparisonField`; журналирование — файловый лог с заголовком сессии и стеком, глобальные обработчики исключений (`L-STO-034`, `L-OPS-011/025`).
+- **M24a:** `TableDocument` разрешает вложенный primary-путь (`CITYLIST/CITY`) и добавляет новые записи в существующий контейнер; корневые singleton-поля (`COUNTRY`) читаются/пишутся через объединённые root-cells; отдельный `NestedTableWorkspaceViewModel` строит master-detail из `TableWorkspace`, правит `ASSIGNMENT` по occurrence/ключу и пишет переводимый tooltip только в оверлей.
 
 Осталось:
 - **Ручной smoke:** S04, S22, S53 и S74 пройдены на v4 2026-11-03; **маркер full functional parity** поставлен, коммит `M23: legacy functional parity gate`. Колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя.
+- **M24b:** list/dict-поля, nested overlay-переводы и структурное добавление/удаление `ASSIGNMENT`.
 
 ### После паритета — M24–M27
 Эти функции не нужны для паритета (в legacy их нет), они закрывают собственные пробелы rewrite.
 
-- **M24a — Nested city/facility editors:** `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`) и `FacilityTypes/ASSIGNMENT`. **M24b — Root/list/dict:** root singleton cells, list/dict-поля, nested overlay-переводы.
+- **M24a — Nested city/facility editors (достигнут):** `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`) и `FacilityTypes/ASSIGNMENT`: отдельный master-detail редактор, правка скалярных и вложенных полей, корневых singleton-полей, добавление/удаление городов и типов объектов, переводы через оверлей. **M24b — List/dict и структурные вложенные записи:** list/dict-поля, nested overlay-переводы, добавление/удаление `ASSIGNMENT`.
 - **M25a — Comparison v2:** дифф значений, содержимое оверлеев, root singleton. **M25b — Dataset-wide:** валидация всего датасета одним отчётом, глобальный поиск.
 - **M26a — Lookup CRUD:** создание/изменение/удаление lookup-таблиц, bitmask allocation ID, free-form ID. **M26b — Protection:** «где используется», защита используемых значений, валидация flag-lookup.
 - **M27a — Packaging:** self-contained publish, portable zip, CI-гейты сборки/тестов/корпуса. **M27b — Release:** иконка/версия/changelog, README и user guide.
@@ -79,7 +81,7 @@
 - сервисные/вычисляемые настройки (`AP_Maximum`, `Hide_Nothing_Items`) заменяются отображением, поиском и perf-гейтами;
 - Cities/facilities, value-level compare, lookup management и packaging — M24–M27. Undo/redo, оверлеи, структурное сравнение и валидация уже сильнее legacy.
 
-**Маркеры:** **M19 — item-workflow parity (достигнут).** **M20 — auxiliary parity (достигнут).** **M23 — full functional parity:** все рабочие функции legacy, включая multi-dataset/copy, фильтры/выделение/layout.
+**Маркеры:** **M19 — item-workflow parity (достигнут).** **M20 — auxiliary parity (достигнут).** **M23 — full functional parity:** все рабочие функции legacy, включая multi-dataset/copy, фильтры/выделение/layout. **M24a — nested city/facility editors (достигнут).**
 
 ### Сводная матрица паритета
 
@@ -127,7 +129,7 @@
 1. `dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -warnaserror` — 0 ошибок/0 предупреждений
    (в песочнице — `-m:1 --no-restore`, см. `AGENTS.md`).
 2. `pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1` — сборка одним узлом и
-   601 тест в пяти xUnit-проектах, все зелёные (обход политики PowerShell — там же).
+   608 тестов в пяти xUnit-проектах, все зелёные (обход политики PowerShell — там же).
 3. Corpus: `XER_CORPUS_DIR="…/v4/Data-1.13/TableData" dotnet test` (и v5) — 600 тестов на каждом
    корпусе, temp-копии без изменений в `References/`; единственное ожидаемое предупреждение
    диапазона — `mSmall1Status=600` (mIndex 237, kit 5) в обеих версиях.
@@ -135,7 +137,7 @@
 5. Copy: `XER_COPY_SOURCE_DIR=<v4> XER_COPY_TARGET_DIR=<v5>` — `CorpusCopyTests` (temp-копии, remap, source неизменён).
 6. Perf: `XER_CORPUS_DIR=<v5> dotnet test --filter "Category=Performance"` — порог 2 с.
 7. **Автоматический UI-smoke:** `out/bin/XmlEditorReloaded.UiSmoke/debug/XmlEditorReloaded.UiSmoke.exe`
-   — 88 сценариев (S01–S03, S05–S21, S23–S49, S50, S51/S52/S54–S58, S59–S65, S66–S70, S71–S73, S75, S76–S83, S84–S92); запускать на
+   — 89 сценариев (S01–S03, S05–S21, S23–S49, S50, S51/S52/S54–S58, S59–S65, S66–S70, S71–S73, S75, S76–S83, S84–S93); запускать на
    интерактивном рабочем столе (`--only`, `--list`, `--keep`), результат — `report.md` в `.tmp/ui-smoke/<timestamp>/`.
 8. **Ручной smoke (выполняет пользователь):** `M23A-PARITY/MANUAL-SMOKE-CHECKLIST.md` — S04, S22,
    S53, S74 и ветка ошибки сохранения S13.

@@ -21,6 +21,8 @@ public partial class MainViewModel : ObservableObject
 {
     private static readonly TableName ItemsTableName = TableName.Parse("Items.Items");
     private static readonly TableName MercGearTableName = TableName.Parse("Inventory.MercStartingGear");
+    private static readonly TableName CitiesTableName = TableName.Parse("Map.Cities");
+    private static readonly TableName FacilityTypesTableName = TableName.Parse("Map.FacilityTypes");
 
     private readonly IDataSetSessionFactory _sessionFactory;
     private readonly ITableEditorFactory _editorFactory;
@@ -779,7 +781,9 @@ public partial class MainViewModel : ObservableObject
             ? _editorFactory.CreateItemWorkspace(session, descriptor, language)
             : descriptor.IsMapped && tableName == MercGearTableName
                 ? _editorFactory.CreateMercGearWorkspace(session, descriptor, language)
-                : _editorFactory.Create(session, descriptor, language);
+                : descriptor.IsMapped && (tableName == CitiesTableName || tableName == FacilityTypesTableName)
+                    ? _editorFactory.CreateNestedWorkspace(session, descriptor, language)
+                    : _editorFactory.Create(session, descriptor, language);
         AttachEditor(editor);
         Editors.Add(editor);
         SelectedEditor = editor;

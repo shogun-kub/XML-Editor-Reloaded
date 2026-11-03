@@ -1043,9 +1043,17 @@ full functional parity и коммит `M23: legacy functional parity gate`.
 
 **Статус gate:** автоматическая часть пройдена; ручной smoke принят 2026-11-03 (S04, S22, S53, S74 — v4; S83 — автотест), маркер `M23: legacy functional parity gate` поставлен.
 
+## M24a — Вложенные редакторы городов и типов объектов
+
+`Map.Cities` и `Map.FacilityTypes` больше не открываются в плоском grid как read-only. Документ разрешает объявленный primary-путь (`CITYLIST/CITY`) и добавляет новые записи в существующий контейнер; `TableWorkspace` отдаёт объединённые root-cells (`COUNTRY/countryName`, `COUNTRY/countryNoun`) и умеет писать как базу, так и оверлей. Новый `NestedTableWorkspaceViewModel` строит master-detail: список записей, скалярные группы, вложенные координаты (`baseSector`, `townPoint`, `iconPosition`), корневой singleton `COUNTRY`, а для `FacilityTypes` — блоки `ASSIGNMENT` с полями, вложенными `CONDITIONS`/`MORALE`/`LOYALTY_LOCAL`/`DRUNK` и tooltip-переводом. Поддерживаются добавление/удаление городов и типов объектов, undo/redo, сохранение, переключение языка, внешние изменения и валидация.
+
+Проверка: `dotnet build -warnaserror` (0/0), `util-scripts/test.ps1` — 608 тестов, включая `NestedTableWorkspaceViewModelTests` (город/страна/координаты, facility assignment + оверлей, добавление/undo), `OpenCities_OpensNestedWorkspace`, `RootSingleton_BaseEdit_IsUndoable` и `NestedCity_WithoutEdits_DoesNotRewrite`; UI-smoke S93 на v4 (город, `ASSIGNMENT/szTooltipText` только в `Russian.FacilityTypes.xml`, S50 без незаявленных изменений).
+
+Ограничение M24a: структурное добавление/удаление `ASSIGNMENT` и list/dict-поля отложены в M24b; существующие assignment-блоки редактируются полностью.
+
 ## Вне паритета (осознанно)
 
 - Скрытые/мёртвые меню legacy: Edit, Print/Preview/Setup, Profiles, Tools/Options, Maps/Cities/SAM/Movement, New Window и неработающие BitCodeMaker/working-data cache/сохранение layout в неверный путь.
 - Деструктивное поведение: молчаливая потеря unknown-тегов, каскадное удаление без предупреждения, перезапись `ubClassIndex`, сброс отсутствующих изображений в `0/0`, trim нулей/пустых элементов, сортировка записей при записи.
 - Сервисные/вычисляемые настройки (`AP_Maximum`, `Hide_Nothing_Items`) заменены отображением, поиском и perf-гейтами.
-- Cities/facilities, value-level compare, lookup management и packaging — M24–M27. Undo/redo, оверлеи, структурное сравнение и валидация уже сильнее legacy.
+- Cities/facilities (M24a закрыл редактирование существующих вложенных полей и CRUD городов/типов объектов; M24b — list/dict и структурные `ASSIGNMENT`), value-level compare, lookup management и packaging — M25–M27. Undo/redo, оверлеи, структурное сравнение и валидация уже сильнее legacy.

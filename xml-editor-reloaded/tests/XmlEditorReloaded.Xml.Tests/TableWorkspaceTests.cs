@@ -257,6 +257,66 @@ public class TableWorkspaceTests
     }
 
     /// <summary>
+    /// Loading and saving a nested-record table without edits leaves its bytes untouched.
+    /// </summary>
+    [Fact]
+    public async Task NestedCity_WithoutEdits_DoesNotRewrite()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("Overlays/cities-base.xml");
+        var before = await File.ReadAllBytesAsync(path);
+        var metadata = OverlayTestData.CitiesMetadata();
+        var descriptor = new TableDescriptor(
+            metadata.TableName,
+            path,
+            "Map/Cities.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata);
+        Assert.True(load.IsSuccess, load.ErrorText);
+
+        var result = await load.Data!.SaveAsync();
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(before, await File.ReadAllBytesAsync(path));
+    }
+
+    /// <summary>
+    /// A root singleton field is editable in the base table and undo restores both the value and the
+    /// root-cell view.
+    /// </summary>
+    [Fact]
+    public async Task RootSingleton_BaseEdit_IsUndoable()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("Overlays/cities-base.xml");
+        var metadata = OverlayTestData.CitiesMetadata();
+        var descriptor = new TableDescriptor(
+            metadata.TableName,
+            path,
+            "Map/Cities.xml",
+            IsMapped: true,
+            Array.Empty<OverlayDescriptor>());
+        var load = await TableWorkspace.LoadAsync(descriptor, metadata);
+        Assert.True(load.IsSuccess, load.ErrorText);
+        var table = load.Data!;
+
+        var before = Assert.Single(table.GetRootCells(), cell => cell.FieldPath == "COUNTRY/countryName");
+        Assert.Equal("Arulco", before.Value);
+
+        var result = table.SetRootValue(FieldPath.Parse("COUNTRY/countryName"), "Arulco New");
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.True(table.IsDirty);
+        var changed = Assert.Single(table.GetRootCells(), cell => cell.FieldPath == "COUNTRY/countryName");
+        Assert.Equal("Arulco New", changed.Value);
+
+        Assert.True(table.Undo().IsSuccess);
+        var restored = Assert.Single(table.GetRootCells(), cell => cell.FieldPath == "COUNTRY/countryName");
+        Assert.Equal("Arulco", restored.Value);
+    }
+
+    /// <summary>
     /// Nested records are exposed as merged rows and root singleton translations as root cells.
     /// </summary>
     [Fact]
@@ -276,10 +336,10 @@ public class TableWorkspaceTests
         Assert.True(load.IsSuccess, load.ErrorText);
         var table = load.Data!;
 
-        Assert.Empty(table.BaseDocument.Records);
+        Assert.Equal(2, table.BaseDocument.Records.Count);
         var rows = table.GetRows();
         Assert.Equal(2, rows.Count);
-        Assert.All(rows, row => Assert.Null(row.Record));
+        Assert.All(rows, row => Assert.NotNull(row.Record));
         var translated = Assert.Single(rows, row => row.Key == "1");
         var translatedCell = Assert.Single(
             translated.Merged!.Cells,

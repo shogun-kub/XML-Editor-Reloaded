@@ -4,6 +4,7 @@ using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.IO;
+using XmlEditorReloaded.Xml.Overlays;
 
 namespace XmlEditorReloaded.Xml.Documents;
 
@@ -42,12 +43,9 @@ public sealed class TableDocument
         OriginalLastWriteTimeUtc = originalLastWriteTimeUtc;
         OriginalSha256 = originalSha256;
 
-        _records = document.Root is null
-            ? new List<TableRecord>()
-            : document.Root.Elements()
-                .Where(element => string.Equals(element.Name.LocalName, recordElementName, StringComparison.Ordinal))
-                .Select(element => new TableRecord(this, element))
-                .ToList();
+        _records = ResolveRecordElements(document)
+            .Select(element => new TableRecord(this, element))
+            .ToList();
     }
 
     /// <summary>
@@ -123,6 +121,90 @@ public sealed class TableDocument
     private bool HasCompoundRecordKey => Metadata?.HasCompoundRecordKey == true;
 
     /// <summary>
+    /// Returns the record elements of a document. Tables such as <c>Map.Cities</c> keep their records
+    /// inside a container (<c>CITYLIST/CITY</c>) instead of directly under the root, so the declared
+    /// primary key path is followed when it includes more than the record name.
+    /// </summary>
+    private IReadOnlyList<XElement> ResolveRecordElements(XDocument document)
+    {
+        if (document.Root is null)
+        {
+            return Array.Empty<XElement>();
+        }
+
+        if (Metadata?.RecordKey?.Primary.Path is { Length: > 0 } path)
+        {
+            var resolved = new OverlayKeyResolver(Metadata).ResolvePrimary(document);
+            if (resolved.Count > 0)
+            {
+                return resolved.Select(static record => record.Element).ToArray();
+            }
+
+            // An empty nested table still has a container in a valid document. Fall back to a direct
+            // path walk so adding the first record can target the existing container.
+            var current = new List<XElement> { document.Root };
+            foreach (var part in path.Split('/'))
+            {
+                current = current
+                    .SelectMany(element => element.Elements()
+                        .Where(child => string.Equals(child.Name.LocalName, part, StringComparison.Ordinal)))
+                    .ToList();
+                if (current.Count == 0)
+                {
+                    break;
+                }
+            }
+
+            return current;
+        }
+
+        return document.Root.Elements()
+            .Where(element => string.Equals(element.Name.LocalName, RecordElementName, StringComparison.Ordinal))
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Returns the element that receives new records. For a nested primary path this is the container
+    /// (<c>CITYLIST</c>), which is created when the document does not contain it yet.
+    /// </summary>
+    private XElement? ResolveRecordContainer()
+    {
+        var root = _document.Root;
+        if (root is null)
+        {
+            return null;
+        }
+
+        if (Metadata?.RecordKey?.Primary.Path is not { Length: > 0 } path)
+        {
+            return root;
+        }
+
+        var parts = path.Split('/');
+        if (parts.Length <= 1)
+        {
+            return root;
+        }
+
+        var current = root;
+        for (var index = 0; index < parts.Length - 1; index++)
+        {
+            var name = parts[index];
+            var child = current.Elements()
+                .LastOrDefault(element => string.Equals(element.Name.LocalName, name, StringComparison.Ordinal));
+            if (child is null)
+            {
+                child = new XElement(XName.Get(name));
+                current.Add(child);
+            }
+
+            current = child;
+        }
+
+        return current;
+    }
+
+    /// <summary>
     /// Finds a record by its primary key value.
     /// </summary>
     /// <param name="key">Key value as it appears in the XML, for example <c>42</c>.</param>
@@ -172,8 +254,7 @@ public sealed class TableDocument
             return;
         }
 
-        foreach (var element in _document.Root.Elements().Where(element =>
-                     string.Equals(element.Name.LocalName, RecordElementName, StringComparison.Ordinal)))
+        foreach (var element in ResolveRecordElements(_document))
         {
             _records.Add(new TableRecord(this, element));
         }
@@ -216,7 +297,15 @@ public sealed class TableDocument
             element.Add(new XElement(XName.Get("name"), string.Empty));
         }
 
-        _document.Root.Add(element);
+        var container = ResolveRecordContainer();
+        if (container is null)
+        {
+            return OperationResult<TableRecord>.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The document has no root element.");
+        }
+
+        container.Add(element);
         var record = new TableRecord(this, element);
         _records.Add(record);
         MarkDirty();

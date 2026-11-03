@@ -225,6 +225,9 @@
                         <DataTemplate DataType="{x:Type vm:MercGearWorkspaceViewModel}">
                             <views:MercGearWorkspaceView />
                         </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:NestedTableWorkspaceViewModel}">
+                            <views:NestedTableWorkspaceView />
+                        </DataTemplate>
                     </TabControl.Resources>
                 </TabControl>
 

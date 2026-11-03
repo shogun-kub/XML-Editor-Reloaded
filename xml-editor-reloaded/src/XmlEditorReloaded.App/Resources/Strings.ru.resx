@@ -171,6 +171,24 @@
   <data name="EditorSaveText" xml:space="preserve">
     <value>Сохранить</value>
   </data>
+  <data name="EditorUndoDone" xml:space="preserve">
+    <value>Изменение отменено.</value>
+  </data>
+  <data name="EditorRedoDone" xml:space="preserve">
+    <value>Изменение восстановлено.</value>
+  </data>
+  <data name="EditorDeleteRowTitle" xml:space="preserve">
+    <value>Удаление записи</value>
+  </data>
+  <data name="NestedEditorSelectRecord" xml:space="preserve">
+    <value>Выберите запись, чтобы редактировать её поля.</value>
+  </data>
+  <data name="NestedEditorRecordAdded" xml:space="preserve">
+    <value>Запись {0} добавлена.</value>
+  </data>
+  <data name="NestedEditorRecordDeleted" xml:space="preserve">
+    <value>Запись {0} удалена.</value>
+  </data>
   <data name="EditorValidateText" xml:space="preserve">
     <value>Проверить</value>
   </data>
