@@ -26,45 +26,45 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,6">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <WrapPanel Grid.Column="0">
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedUndoButton"
                         Content="{Binding UndoText}"
                         Command="{Binding UndoCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedRedoButton"
                         Content="{Binding RedoText}"
                         Command="{Binding RedoCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedSaveButton"
                         Content="{Binding SaveText}"
                         Command="{Binding SaveCommand}"
                         IsEnabled="{Binding IsDirty}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedAddButton"
                         Content="{Binding AddRecordText}"
                         Command="{Binding AddRecordCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedDeleteButton"
                         Content="{Binding DeleteRecordText}"
                         Command="{Binding DeleteRecordCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedValidateButton"
                         Content="{Binding ValidateText}"
                         Command="{Binding ValidateCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="NestedReloadButton"
                         Content="{Binding ReloadText}"
                         Command="{Binding ReloadCommand}" />
@@ -72,7 +72,7 @@
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
-                        Margin="8,2,0,0">
+                        Margin="6,0,0,0">
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,0"
                            Text="{Binding LanguageLabel}" />
@@ -91,7 +91,7 @@
                    Margin="0,0,0,6"
                    Visibility="{Binding HasNestedAddActions, Converter={StaticResource BoolToVisibility}}">
             <StackPanel Orientation="Horizontal"
-                        Margin="0,0,12,0"
+                        Margin="0,0,6,0"
                         Visibility="{Binding HasAssignmentSegment, Converter={StaticResource BoolToVisibility}}">
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,0"
@@ -115,7 +115,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Padding="10,3"
-                                Margin="0,0,6,0"
+                                Margin="0,0,6,6"
                                 AutomationProperties.AutomationId="{Binding AutomationId}"
                                 Content="{Binding Text}"
                                 Command="{Binding Command}" />
@@ -130,14 +130,14 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <GroupBox Grid.Column="0" Header="{Binding Title}" Margin="0,0,8,0">
-                <Grid Margin="4">
+            <GroupBox Grid.Column="0" Header="{Binding Title}" Margin="0,0,6,0">
+                <Grid Margin="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -150,7 +150,7 @@
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                     <TextBlock Grid.Row="1"
-                               Margin="0,0,0,4"
+                               Margin="0,0,0,6"
                                FontSize="11"
                                Foreground="#FF666666"
                                AutomationProperties.AutomationId="NestedCountText"
@@ -165,11 +165,11 @@
 
             <GroupBox Grid.Column="1" Header="{Binding DetailHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding Sections}" Margin="4"
+                    <ItemsControl ItemsSource="{Binding Sections}" Margin="6"
                                   AutomationProperties.AutomationId="NestedSections">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Expander Margin="0,0,0,4"
+                                <Expander Margin="0,0,0,6"
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
                                           AutomationProperties.AutomationId="{Binding AutomationId}">
                                     <Expander.Header>
@@ -177,7 +177,7 @@
                                             <TextBlock FontWeight="SemiBold"
                                                        VerticalAlignment="Center"
                                                        Text="{Binding Header}" />
-                                            <Button Margin="8,0,0,0"
+                                            <Button Margin="6,0,0,0"
                                                     Padding="8,0"
                                                     VerticalAlignment="Center"
                                                     AutomationProperties.AutomationId="{Binding DeleteAutomationId}"
@@ -187,7 +187,7 @@
                                                     Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibility}}" />
                                         </StackPanel>
                                     </Expander.Header>
-                                    <StackPanel Margin="4,2,0,2">
+                                    <StackPanel Margin="6,3,0,3">
                                         <ItemsControl ItemsSource="{Binding Fields}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -195,17 +195,17 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
-                                        <ItemsControl ItemsSource="{Binding Lists}" Margin="0,4,0,0">
+                                        <ItemsControl ItemsSource="{Binding Lists}" Margin="0,6,0,0">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <GroupBox Margin="0,0,0,4"
+                                                    <GroupBox Margin="0,0,0,6"
                                                               Header="{Binding Label}"
                                                               AutomationProperties.AutomationId="{Binding PathText}">
-                                                        <StackPanel Margin="4">
+                                                        <StackPanel Margin="6">
                                                             <ItemsControl ItemsSource="{Binding Values}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <DockPanel Margin="0,0,0,2">
+                                                                        <DockPanel Margin="0,0,0,6">
                                                                             <Button DockPanel.Dock="Right"
                                                                                     Margin="6,0,0,0"
                                                                                     Padding="8,1"
@@ -220,7 +220,7 @@
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>
                                                             </ItemsControl>
-                                                            <Button Margin="0,2,0,0"
+                                                            <Button Margin="0,6,0,0"
                                                                     Padding="10,2"
                                                                     HorizontalAlignment="Left"
                                                                     AutomationProperties.AutomationId="{Binding AddAutomationId}"

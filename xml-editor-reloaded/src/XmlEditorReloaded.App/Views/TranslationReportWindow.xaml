@@ -26,7 +26,7 @@
                    Text="{Binding SummaryText}" />
 
         <ItemsControl Grid.Row="1"
-                      Margin="0,6,0,8"
+                      Margin="0,6,0,6"
                       ItemsSource="{Binding Groups}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -35,7 +35,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="0,0,6,4"
+                    <Border Margin="0,0,6,6"
                             Padding="6,2"
                             Background="#FFF2F2F2"
                             BorderBrush="#FFCCCCCC"
@@ -72,7 +72,7 @@
         </Grid>
 
         <Button Grid.Row="3"
-                Margin="0,10,0,0"
+                Margin="0,6,0,0"
                 Padding="16,4"
                 HorizontalAlignment="Right"
                 IsCancel="True"

@@ -26,7 +26,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,8">
+        <Grid Grid.Row="0" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -37,7 +37,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
                        VerticalAlignment="Center"
-                       Margin="0,0,8,0"
+                       Margin="0,0,6,0"
                        Text="{Binding SourceLabel}" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
@@ -46,13 +46,13 @@
                       SelectedItem="{Binding SourceDirectory, Mode=TwoWay}"
                       IsEditable="False" />
             <Button Grid.Column="2"
-                    Margin="6,0,16,0"
+                    Margin="6,0,6,0"
                     Padding="10,3"
                     Content="{Binding BrowseText}"
                     Command="{Binding BrowseSourceCommand}" />
             <TextBlock Grid.Column="3"
                        VerticalAlignment="Center"
-                       Margin="0,0,8,0"
+                       Margin="0,0,6,0"
                        Text="{Binding TargetLabel}" />
             <ComboBox Grid.Column="4"
                       VerticalAlignment="Center"
@@ -67,7 +67,7 @@
                     Command="{Binding BrowseTargetCommand}" />
         </Grid>
 
-        <Grid Grid.Row="1" Margin="0,0,0,8">
+        <Grid Grid.Row="1" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="2*" />
@@ -76,7 +76,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
                        VerticalAlignment="Center"
-                       Margin="0,0,8,0"
+                       Margin="0,0,6,0"
                        Text="{Binding TableLabel}" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
@@ -87,20 +87,20 @@
                       IsTextSearchEnabled="True" />
             <TextBlock Grid.Column="2"
                        VerticalAlignment="Center"
-                       Margin="16,0,8,0"
+                       Margin="6,0,6,0"
                        Text="{Binding RecordsLabel}" />
             <StackPanel Grid.Column="3">
                 <TextBox VerticalAlignment="Center"
                          AutomationProperties.AutomationId="CopyRecordKeysBox"
                          Text="{Binding RecordKeysText, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Margin="0,2,0,0"
+                <TextBlock Margin="0,6,0,0"
                            Foreground="#FF666666"
                            TextWrapping="Wrap"
                            Text="{Binding RecordsHint}" />
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,8">
+        <Grid Grid.Row="2" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -110,7 +110,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
                        VerticalAlignment="Center"
-                       Margin="0,0,8,0"
+                       Margin="0,0,6,0"
                        Text="{Binding ConflictLabel}" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
@@ -120,7 +120,7 @@
                       DisplayMemberPath="Label" />
             <TextBlock Grid.Column="2"
                        VerticalAlignment="Center"
-                       Margin="16,0,8,0"
+                       Margin="6,0,6,0"
                        Text="{Binding KeyModeLabel}" />
             <ComboBox Grid.Column="3"
                       VerticalAlignment="Center"
@@ -131,7 +131,7 @@
                       DisplayMemberPath="Label" />
             <CheckBox Grid.Column="4"
                       VerticalAlignment="Center"
-                      Margin="16,0,0,0"
+                      Margin="6,0,0,0"
                       AutomationProperties.AutomationId="CopyRelatedCheckBox"
                       Content="{Binding RelatedLabel}"
                       IsChecked="{Binding CopyRelatedRecords, Mode=TwoWay}" />
@@ -170,7 +170,7 @@
         </GroupBox>
 
         <GroupBox Grid.Row="5"
-                  Margin="0,8,0,0"
+                  Margin="0,6,0,0"
                   Header="{Binding WarningsHeader}"
                   Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVisibility}}">
             <ListBox MaxHeight="120"
@@ -184,43 +184,41 @@
             </ListBox>
         </GroupBox>
 
-        <Grid Grid.Row="6" Margin="0,8,0,0">
+        <Grid Grid.Row="6" Margin="0,6,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0"
-                    Padding="16,4"
-                    AutomationProperties.AutomationId="CopyPreviewButton"
-                    Content="{Binding PreviewText}"
-                    Command="{Binding PreviewCommand}" />
-            <Button Grid.Column="1"
-                    Margin="8,0,0,0"
-                    Padding="16,4"
-                    IsDefault="True"
-                    AutomationProperties.AutomationId="CopyApplyButton"
-                    Content="{Binding ApplyText}"
-                    Command="{Binding ApplyCommand}" />
-            <ProgressBar Grid.Column="2"
+            <ProgressBar Grid.Column="0"
                          Width="120"
                          Height="4"
-                         Margin="12,0,0,0"
                          HorizontalAlignment="Left"
                          VerticalAlignment="Center"
                          IsIndeterminate="True"
                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
-            <Button Grid.Column="3"
-                    Padding="16,4"
-                    IsCancel="True"
-                    AutomationProperties.AutomationId="CopyCloseButton"
-                    Content="{Binding CloseText}"
-                    Click="OnClose" />
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
+                <Button Margin="0,0,6,0"
+                        Padding="16,4"
+                        AutomationProperties.AutomationId="CopyPreviewButton"
+                        Content="{Binding PreviewText}"
+                        Command="{Binding PreviewCommand}" />
+                <Button Margin="0,0,6,0"
+                        Padding="16,4"
+                        IsDefault="True"
+                        AutomationProperties.AutomationId="CopyApplyButton"
+                        Content="{Binding ApplyText}"
+                        Command="{Binding ApplyCommand}" />
+                <Button Padding="16,4"
+                        IsCancel="True"
+                        AutomationProperties.AutomationId="CopyCloseButton"
+                        Content="{Binding CloseText}"
+                        Click="OnClose" />
+            </StackPanel>
         </Grid>
 
         <TextBlock Grid.Row="7"
-                   Margin="0,8,0,0"
+                   Margin="0,6,0,0"
                    AutomationProperties.AutomationId="CopyStatusText"
                    TextWrapping="Wrap"
                    Text="{Binding StatusText}" />

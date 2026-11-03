@@ -9,6 +9,7 @@ libraries, and the WPF application is the only frontend.
 ```
 JA2_1.13 Tools/
 ├── AGENTS.md                        # Rules for AI assistants
+├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
 ├── PROJECT-STRUCTURE.md             # This document
 ├── M14.5-METADATA-REPORT.md         # Metadata verification report

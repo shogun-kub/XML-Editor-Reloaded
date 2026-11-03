@@ -35,17 +35,17 @@
             </DrawingBrush.Drawing>
         </DrawingBrush>
         <DataTemplate x:Key="ItemListSectionTemplate">
-            <GroupBox Margin="0,4,0,0"
+            <GroupBox Margin="0,6,0,0"
                       Header="{Binding Label}"
                       AutomationProperties.AutomationId="{Binding SectionAutomationId}">
-                <StackPanel Margin="4">
+                <StackPanel Margin="6">
                     <TextBlock Foreground="#FF777777"
                                TextWrapping="Wrap"
                                Text="{Binding CompatibleNote}" />
-                    <ItemsControl ItemsSource="{Binding Values}" Margin="0,4,0,0">
+                    <ItemsControl ItemsSource="{Binding Values}" Margin="0,6,0,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,1">
+                                <Grid Margin="0,3">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -96,37 +96,37 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,6">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <WrapPanel Grid.Column="0">
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ItemUndoButton"
                         Content="{Binding UndoText}"
                         Command="{Binding UndoCommand}"
                         ToolTip="{Binding UndoButtonTooltip}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ItemRedoButton"
                         Content="{Binding RedoText}"
                         Command="{Binding RedoCommand}"
                         ToolTip="{Binding RedoButtonTooltip}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ItemSaveButton"
                         Content="{Binding SaveText}"
                         Command="{Binding SaveCommand}"
                         IsEnabled="{Binding IsDirty}" />
                 <Button Padding="10,3"
-                        Margin="0,0,6,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ItemValidateButton"
                         Content="{Binding ValidateText}"
                         Command="{Binding ValidateCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,0"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ItemReloadButton"
                         Content="{Binding ReloadText}"
                         Command="{Binding ReloadCommand}" />
@@ -134,7 +134,7 @@
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
-                        Margin="8,2,0,0">
+                        Margin="6,0,0,0">
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,0"
                            Text="{Binding LanguageLabel}" />
@@ -171,7 +171,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <GroupBox Grid.Column="0" Header="{Binding Title}" Margin="0,0,8,0">
+            <GroupBox Grid.Column="0" Header="{Binding Title}" Margin="0,0,6,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -183,7 +183,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -209,7 +209,7 @@
                                    Text="{Binding CountShortText}" />
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="0,0,0,4">
+                    <Grid Grid.Row="1" Margin="0,0,0,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -223,7 +223,7 @@
                                   DisplayMemberPath="Label" />
                     </Grid>
 
-                    <Grid Grid.Row="2" Margin="0,0,0,4">
+                    <Grid Grid.Row="2" Margin="0,0,0,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -237,7 +237,7 @@
                                   DisplayMemberPath="Label" />
                     </Grid>
 
-                    <Grid Grid.Row="3" Margin="0,0,0,4">
+                    <Grid Grid.Row="3" Margin="0,0,0,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -253,23 +253,24 @@
                     </Grid>
 
                     <Expander Grid.Row="4"
-                              Margin="0,0,0,4"
+                              Margin="0,0,0,6"
                               Header="{Binding ItemListFilterLabel}"
                               IsExpanded="{Binding IsItemFilterVisible, Mode=TwoWay}">
-                        <StackPanel Margin="4,4,0,0">
-                            <WrapPanel Margin="0,0,0,4">
+                        <StackPanel Margin="6,6,0,0">
+                            <WrapPanel Margin="0,0,0,6">
                                 <TextBlock VerticalAlignment="Center"
+                                           Margin="0,0,6,0"
                                            Foreground="#FF666666"
                                            Text="{Binding CustomItemFilter.SummaryText}" />
                                 <ComboBox Width="60"
-                                          Margin="8,0,4,0"
+                                          Margin="0,0,6,0"
                                           VerticalAlignment="Center"
                                           ItemsSource="{Binding CustomItemFilter.LogicalOperators}"
                                           SelectedItem="{Binding CustomItemFilter.SelectedLogicalOperator, Mode=TwoWay}"
                                           DisplayMemberPath="DisplayText"
                                           Visibility="{Binding CustomItemFilter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
                                 <Button Padding="8,2"
-                                        Margin="0,0,4,0"
+                                        Margin="0,0,6,0"
                                         Content="{Binding FilterAddText}"
                                         Command="{Binding CustomItemFilter.AddCriterionCommand}" />
                                 <Button Padding="8,2"
@@ -277,27 +278,27 @@
                                         Command="{Binding CustomItemFilter.ClearCommand}" />
                             </WrapPanel>
                             <Button Padding="8,2"
-                                    Margin="0,0,0,4"
+                                    Margin="0,0,0,6"
                                     HorizontalAlignment="Left"
                                     Content="{Binding ItemFilterClearText}"
                                     Command="{Binding ClearItemFiltersCommand}" />
                             <ItemsControl ItemsSource="{Binding CustomItemFilter.Criteria}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="0,1">
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
                                             <ComboBox Width="105"
                                                       ItemsSource="{Binding Columns}"
                                                       SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"
                                                       DisplayMemberPath="Name" />
                                             <ComboBox Width="70"
-                                                      Margin="4,0,0,0"
+                                                      Margin="6,0,0,0"
                                                       ItemsSource="{Binding Operators}"
                                                       SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayText" />
                                             <TextBox Width="65"
-                                                     Margin="4,0,0,0"
+                                                     Margin="6,0,0,0"
                                                      Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Button Margin="4,0,0,0"
+                                            <Button Margin="6,0,0,0"
                                                     Padding="6,0"
                                                     Content="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     Command="{Binding RemoveCommand}" />
@@ -318,14 +319,14 @@
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="1">
+                                <Grid Margin="3">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Border Width="26"
                                             Height="26"
-                                            Margin="0,0,4,0"
+                                            Margin="0,0,6,0"
                                             Background="{StaticResource CheckerBrush}"
                                             BorderBrush="#FFD0D0D0"
                                             BorderThickness="1">
@@ -379,7 +380,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="0,0,0,6">
+                <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -389,14 +390,14 @@
                                FontWeight="Bold"
                                AutomationProperties.AutomationId="ItemDetailHeader"
                                Text="{Binding DetailHeader}" />
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
                         <TextBlock VerticalAlignment="Center"
                                    Margin="0,0,6,0"
                                    Text="{Binding IdLabel}" />
                         <TextBox Width="90"
                                  AutomationProperties.AutomationId="ItemIdBox"
                                  Text="{Binding ItemIdText, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Margin="6,0,12,0"
+                        <Button Margin="6,0,6,0"
                                 Padding="10,2"
                                 AutomationProperties.AutomationId="ItemChangeIdButton"
                                 Content="{Binding ChangeIdText}"
@@ -416,8 +417,8 @@
                     <TabItem Header="{Binding FieldsTabText}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Margin="4">
-                                <Grid Margin="0,0,0,4">
+                            <StackPanel Margin="6">
+                                <Grid Margin="0,0,0,6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
@@ -435,19 +436,19 @@
                                 <ItemsControl ItemsSource="{Binding ItemGroups}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Expander Margin="0,2"
+                                            <Expander Margin="0,3"
                                                       IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                                                 <Expander.Header>
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock FontWeight="SemiBold"
                                                                    Text="{Binding Label}" />
-                                                        <TextBlock Margin="8,0,0,0"
+                                                        <TextBlock Margin="6,0,0,0"
                                                                    Foreground="#FF777777"
                                                                    Text="{Binding FieldCountText}" />
                                                     </StackPanel>
                                                 </Expander.Header>
                                                 <ItemsControl ItemsSource="{Binding Fields}"
-                                                              Margin="4,2,0,2">
+                                                              Margin="6,3,0,3">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <views:FieldEditor />
@@ -469,27 +470,27 @@
                     <TabItem Header="{Binding SubTablesTabText}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl ItemsSource="{Binding SubTableSections}" Margin="4">
+                            <ItemsControl ItemsSource="{Binding SubTableSections}" Margin="6">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Expander Margin="0,2" IsExpanded="True">
+                                        <Expander Margin="0,3" IsExpanded="True">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
-                                                    <TextBlock Margin="8,0,0,0"
+                                                    <TextBlock Margin="6,0,0,0"
                                                                Foreground="#FF777777"
                                                                Text="{Binding StatusText}" />
                                                 </StackPanel>
                                             </Expander.Header>
-                                            <StackPanel Margin="4,2,0,2">
+                                            <StackPanel Margin="6,3,0,3">
                                                 <StackPanel Orientation="Horizontal"
-                                                            Margin="0,0,0,4"
+                                                            Margin="0,0,0,6"
                                                             Visibility="{Binding HasRow, Converter={StaticResource InverseBoolToVisibility}}">
                                                     <Button Padding="10,2"
                                                             Content="{Binding CreateText}"
                                                             Command="{Binding CreateCommand}" />
-                                                    <TextBlock Margin="8,0,0,0"
+                                                    <TextBlock Margin="6,0,0,0"
                                                                VerticalAlignment="Center"
                                                                Foreground="#FF777777"
                                                                Text="{Binding SharedNote}" />
@@ -502,7 +503,7 @@
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <views:FieldEditor Margin="0,0,12,0" />
+                                                            <views:FieldEditor Margin="0,0,6,0" />
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
@@ -536,7 +537,7 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
                                             <Button Padding="10,3"
                                                     Margin="0,0,6,0"
                                                     Content="{Binding AddText}"
@@ -555,7 +556,7 @@
                     </TabItem>
 
                     <TabItem Header="{Binding ShopkeeperTabText}">
-                        <Grid Margin="4">
+                        <Grid Margin="6">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -567,7 +568,7 @@
                                        Foreground="#FF666666"
                                        AutomationProperties.AutomationId="ShopkeeperCountText"
                                        Text="{Binding ShopkeeperCountText}" />
-                            <Grid Grid.Row="1" Margin="0,0,0,2">
+                            <Grid Grid.Row="1" Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="120" />
@@ -586,7 +587,7 @@
                                               ItemsSource="{Binding ShopkeeperEntries}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="0,1">
+                                            <Grid Margin="0,3">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="120" />
@@ -596,12 +597,12 @@
                                                            TextTrimming="CharacterEllipsis"
                                                            Text="{Binding DealerName}" />
                                                 <TextBox Grid.Column="1"
-                                                         Margin="8,0,0,0"
+                                                         Margin="6,0,0,0"
                                                          AutomationProperties.AutomationId="ShopkeeperQuantityBox"
                                                          AutomationProperties.Name="{Binding DealerName}"
                                                          Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}" />
                                                 <Button Grid.Column="2"
-                                                        Margin="8,0,0,0"
+                                                        Margin="6,0,0,0"
                                                         Padding="10,1"
                                                         Command="{Binding RemoveCommand}"
                                                         Content="{Binding DataContext.ShopkeeperRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -624,27 +625,27 @@
                                 <TextBlock VerticalAlignment="Center"
                                            Text="{Binding ShopkeeperAddDealerLabel}" />
                                 <ComboBox Width="200"
-                                          Margin="8,0,0,0"
+                                          Margin="6,0,0,0"
                                           AutomationProperties.AutomationId="ShopkeeperDealerCombo"
                                           DisplayMemberPath="DealerName"
                                           IsEnabled="{Binding IsEditable}"
                                           ItemsSource="{Binding ShopkeeperDealerOptions}"
                                           SelectedItem="{Binding SelectedShopkeeperDealer, Mode=TwoWay}" />
-                                <TextBlock Margin="8,0,0,0"
+                                <TextBlock Margin="6,0,0,0"
                                            VerticalAlignment="Center"
                                            Text="{Binding ShopkeeperQuantityColumn}" />
                                 <TextBox Width="90"
-                                         Margin="8,0,0,0"
+                                         Margin="6,0,0,0"
                                          AutomationProperties.AutomationId="ShopkeeperNewQuantityBox"
                                          IsEnabled="{Binding IsEditable}"
                                          Text="{Binding NewShopkeeperQuantity, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="{Binding ShopkeeperQuantityColumn}" />
-                                <Button Margin="8,0,0,0"
+                                <Button Margin="6,0,0,0"
                                         Padding="10,2"
                                         AutomationProperties.AutomationId="ShopkeeperAddButton"
                                         Command="{Binding AddShopkeeperEntryCommand}"
                                         Content="{Binding ShopkeeperAddText}" />
-                                <TextBlock Margin="12,0,0,0"
+                                <TextBlock Margin="6,0,0,0"
                                            VerticalAlignment="Center"
                                            Foreground="#FF777777"
                                            Text="{Binding ShopkeeperNoDealersText}"
@@ -656,22 +657,22 @@
                     <TabItem Header="{Binding NestedTabText}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl ItemsSource="{Binding NestedGroups}" Margin="4">
+                            <ItemsControl ItemsSource="{Binding NestedGroups}" Margin="6">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Expander Margin="0,2"
+                                        <Expander Margin="0,3"
                                                   IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
-                                                    <TextBlock Margin="8,0,0,0"
+                                                    <TextBlock Margin="6,0,0,0"
                                                                Foreground="#FF777777"
                                                                Text="{Binding FieldCountText}" />
                                                 </StackPanel>
                                             </Expander.Header>
                                             <ItemsControl ItemsSource="{Binding Fields}"
-                                                          Margin="4,2,0,2">
+                                                          Margin="6,3,0,3">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <UniformGrid Columns="2" />
@@ -679,7 +680,7 @@
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <views:FieldEditor Margin="0,0,12,0" />
+                                                        <views:FieldEditor Margin="0,0,6,0" />
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
@@ -691,14 +692,14 @@
                     </TabItem>
 
                     <TabItem Header="{Binding ImagesTabText}">
-                        <Grid Margin="4">
+                        <Grid Margin="6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="300" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <DockPanel Grid.Column="0" Margin="0,0,10,0">
-                                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                            <DockPanel Grid.Column="0" Margin="0,0,6,0">
+                                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                                     <TextBlock FontWeight="SemiBold"
                                                Text="{Binding GraphicImageListLabel}" />
                                     <TextBlock Foreground="#FF666666"
@@ -713,7 +714,7 @@
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="1">
+                                            <Grid Margin="3">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
@@ -770,7 +771,7 @@
                                                         <TextBlock FontWeight="SemiBold"
                                                                    Text="{Binding Label}" />
                                                         <TextBlock Grid.Column="1"
-                                                                   Margin="8,0,0,0"
+                                                                   Margin="6,0,0,0"
                                                                    HorizontalAlignment="Right"
                                                                    Foreground="#FF666666"
                                                                    TextTrimming="CharacterEllipsis"
@@ -779,7 +780,7 @@
                                                     </Grid>
                                                     <Border Grid.Row="1"
                                                             Height="{Binding PanelHeight}"
-                                                            Margin="0,2,0,0"
+                                                            Margin="0,6,0,0"
                                                             Background="{StaticResource CheckerBrush}"
                                                             BorderBrush="#FFAFAFAF"
                                                             BorderThickness="1">
@@ -811,7 +812,7 @@
                   Header="{Binding ValidationLabel}"
                   IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
             <ListBox Height="110"
-                     Margin="4,4,0,0"
+                     Margin="6,6,0,0"
                      AutomationProperties.AutomationId="ItemValidationList"
                      ItemsSource="{Binding ValidationIssues}">
                 <ListBox.ItemTemplate>
@@ -842,7 +843,7 @@
                 </ProgressBar.Style>
             </ProgressBar>
             <TextBlock Grid.Row="1"
-                       Margin="0,4,0,0"
+                       Margin="0,6,0,0"
                        AutomationProperties.AutomationId="ItemStatus"
                        TextWrapping="Wrap"
                        Text="{Binding StatusText}" />

@@ -17,16 +17,16 @@
                    TextWrapping="Wrap" />
 
         <StackPanel Grid.Row="1"
-                    Margin="0,16,0,0"
+                    Margin="0,6,0,0"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             <Button x:Name="SaveButton"
-                    Margin="0,0,8,0"
+                    Margin="0,0,6,0"
                     Padding="16,4"
                     IsDefault="True"
                     Click="OnSave" />
             <Button x:Name="DiscardButton"
-                    Margin="0,0,8,0"
+                    Margin="0,0,6,0"
                     Padding="16,4"
                     Click="OnDiscard" />
             <Button x:Name="CancelButton"

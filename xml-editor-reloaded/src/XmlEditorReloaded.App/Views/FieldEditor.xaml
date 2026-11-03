@@ -10,7 +10,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <views:CharacterCounterConverter x:Key="CharacterCounterConverter" />
     </UserControl.Resources>
-    <Grid Margin="0,1">
+    <Grid Margin="0,3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="14" />
             <ColumnDefinition Width="105" />
@@ -43,7 +43,7 @@
                        Visibility="{Binding HasSourceError, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
         <CheckBox Grid.Column="2"
-                  Margin="4,0,0,0"
+                  Margin="6,0,0,0"
                   VerticalAlignment="Center"
                   AutomationProperties.AutomationId="{Binding PathText}"
                   IsChecked="{Binding BooleanValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -51,7 +51,7 @@
                   ToolTip="{Binding BooleanTooltip}"
                   Visibility="{Binding IsBoolean, Converter={StaticResource BoolToVisibility}}" />
         <ComboBox Grid.Column="2"
-                  Margin="4,0,0,0"
+                  Margin="6,0,0,0"
                   VerticalAlignment="Center"
                   AutomationProperties.AutomationId="{Binding PathText}"
                   ItemsSource="{Binding AllowedValues}"
@@ -70,7 +70,7 @@
         </ComboBox>
         <TextBox x:Name="ValueTextBox"
                  Grid.Column="2"
-                 Margin="4,0,0,0"
+                 Margin="6,0,0,0"
                  AutomationProperties.AutomationId="{Binding PathText}"
                  MaxLength="{Binding MaxTextLength}"
                  Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
@@ -90,7 +90,7 @@
             </TextBlock.Text>
         </TextBlock>
         <views:RelationPicker Grid.Column="2"
-                              Margin="4,0,0,0"
+                              Margin="6,0,0,0"
                               VerticalAlignment="Center"
                               AutomationId="{Binding PathText}"
                               RelationData="{Binding Relation}"
@@ -98,14 +98,14 @@
                               IsReadOnly="{Binding IsReadOnly}"
                               Visibility="{Binding IsRelation, Converter={StaticResource BoolToVisibility}}" />
         <Button Grid.Column="4"
-                Margin="4,0,0,0"
+                Margin="6,0,0,0"
                 Padding="5,0"
                 Content="→"
                 Command="{Binding GoToTargetCommand}"
                 ToolTip="{Binding GoToTargetTooltip}"
                 Visibility="{Binding CanGoToTarget, Converter={StaticResource BoolToVisibility}}" />
         <Button Grid.Column="5"
-                Margin="4,0,0,0"
+                Margin="6,0,0,0"
                 Padding="5,0"
                 Content="{Binding EditBitsText}"
                 Command="{Binding EditBitsCommand}"

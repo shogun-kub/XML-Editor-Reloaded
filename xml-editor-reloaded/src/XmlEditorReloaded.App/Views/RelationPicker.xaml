@@ -14,6 +14,7 @@
                  GotKeyboardFocus="OnGotKeyboardFocus" />
         <ToggleButton x:Name="DropDownButton"
                       Grid.Column="1"
+                      Margin="3,0,0,0"
                       Width="18"
                       Padding="0"
                       Focusable="False"

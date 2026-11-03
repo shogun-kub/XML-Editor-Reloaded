@@ -54,14 +54,14 @@
                 </DataGrid>
 
                 <StackPanel Grid.Row="1"
-                            Margin="0,8,0,0"
+                            Margin="0,6,0,0"
                             Orientation="Horizontal">
-                    <Button Margin="0,0,8,0"
+                    <Button Margin="0,0,6,0"
                             Padding="12,4"
                             AutomationProperties.AutomationId="SettingsAddButton"
                             Content="{Binding AddDirectoryText}"
                             Command="{Binding AddDirectoryCommand}" />
-                    <Button Margin="0,0,8,0"
+                    <Button Margin="0,0,6,0"
                             Padding="12,4"
                             AutomationProperties.AutomationId="SettingsRemoveButton"
                             Content="{Binding RemoveDirectoryText}"
@@ -72,9 +72,9 @@
                             Command="{Binding SetActiveDirectoryCommand}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                <StackPanel Grid.Row="2" Margin="0,6,0,0">
                     <TextBlock FontWeight="Bold" Text="{Binding ActiveDirectoryLabel}" />
-                    <TextBlock Margin="0,2,0,0"
+                    <TextBlock Margin="0,6,0,0"
                                AutomationProperties.AutomationId="SettingsActiveDirectoryText"
                                TextWrapping="Wrap"
                                Text="{Binding ActiveDirectoryText}" />
@@ -82,10 +82,10 @@
             </Grid>
         </GroupBox>
 
-        <Grid Grid.Row="1" Margin="0,12,0,0">
+        <Grid Grid.Row="1" Margin="0,6,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="6" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -101,7 +101,7 @@
                               ItemsSource="{Binding UiLanguageOptions}"
                               SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                               DisplayMemberPath="DisplayName" />
-                    <TextBlock Margin="0,8,0,0"
+                    <TextBlock Margin="0,6,0,0"
                                AutomationProperties.AutomationId="SettingsLanguageNote"
                                TextWrapping="Wrap"
                                Text="{Binding UiLanguageNote}" />
@@ -109,7 +109,7 @@
             </GroupBox>
         </Grid>
 
-        <StackPanel Grid.Row="2" Margin="0,12,0,0">
+        <StackPanel Grid.Row="2" Margin="0,6,0,0">
             <Button HorizontalAlignment="Left"
                     Padding="12,4"
                     AutomationProperties.AutomationId="SettingsResetLayoutsButton"
@@ -121,17 +121,17 @@
                        Foreground="#FF996600"
                        Text="{Binding ResetLayoutsPendingText}"
                        Visibility="{Binding IsResetLayoutsPending, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <TextBlock Margin="0,8,0,0"
+            <TextBlock Margin="0,6,0,0"
                        TextWrapping="Wrap"
                        AutomationProperties.AutomationId="SettingsStatusText"
                        Text="{Binding StatusText}" />
         </StackPanel>
 
         <StackPanel Grid.Row="3"
-                    Margin="0,16,0,0"
+                    Margin="0,6,0,0"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Margin="0,0,8,0"
+            <Button Margin="0,0,6,0"
                     Padding="20,4"
                     IsDefault="True"
                     AutomationProperties.AutomationId="SettingsOkButton"

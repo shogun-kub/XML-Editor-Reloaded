@@ -60,15 +60,15 @@
                        FontWeight="Bold"
                        VerticalAlignment="Center"
                        Text="{Binding Title}" />
-            <TextBlock Margin="12,0,0,0"
+            <TextBlock Margin="6,0,0,0"
                        VerticalAlignment="Center"
                        Foreground="#FF666666"
                        Text="{Binding LanguageText}" />
-            <TextBlock Margin="12,0,0,0"
+            <TextBlock Margin="6,0,0,0"
                        VerticalAlignment="Center"
                        AutomationProperties.AutomationId="TableRecordCount"
                        Text="{Binding RecordCountText}" />
-            <StackPanel Margin="12,0,0,0"
+            <StackPanel Margin="6,0,0,0"
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center"
@@ -100,7 +100,7 @@
                         Command="{Binding UndoCommand}"
                         ToolTip="{Binding UndoButtonTooltip}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,8"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="RedoButton"
                         Content="{Binding RedoText}"
                         Command="{Binding RedoCommand}"
@@ -126,7 +126,7 @@
                         Command="{Binding SaveCommand}"
                         IsEnabled="{Binding IsDirty}" />
                 <TextBlock VerticalAlignment="Center"
-                           Margin="0,0,12,8"
+                           Margin="0,0,6,6"
                            Foreground="#FF666666"
                            AutomationProperties.AutomationId="SelectedRowCount"
                            Text="{Binding SelectedRowCountText}" />
@@ -135,13 +135,13 @@
                         Content="{Binding ValidateText}"
                         Command="{Binding ValidateCommand}" />
                 <Button Padding="10,3"
-                        Margin="0,0,12,8"
+                        Margin="0,0,6,6"
                         AutomationProperties.AutomationId="ReloadButton"
                         Content="{Binding ReloadText}"
                         Command="{Binding ReloadCommand}" />
             </WrapPanel>
             <StackPanel Grid.Column="1"
-                        Margin="16,0,0,0"
+                        Margin="6,0,0,0"
                         Orientation="Horizontal"
                         VerticalAlignment="Top">
                 <TextBlock VerticalAlignment="Center"
@@ -164,14 +164,15 @@
                   AutomationProperties.AutomationId="FilterExpander"
                   Header="{Binding FilterLabel}"
                   IsExpanded="{Binding IsFilterVisible, Mode=TwoWay}">
-            <StackPanel Margin="4,4,0,0">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <StackPanel Margin="6,6,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock VerticalAlignment="Center"
+                               Margin="0,0,6,0"
                                Foreground="#FF666666"
                                AutomationProperties.AutomationId="FilterSummary"
                                Text="{Binding Filter.SummaryText}" />
                     <ComboBox Width="150"
-                              Margin="12,0,6,0"
+                              Margin="0,0,6,0"
                               VerticalAlignment="Center"
                               AutomationProperties.AutomationId="FilterLogicalOperatorCombo"
                               ItemsSource="{Binding Filter.LogicalOperators}"
@@ -184,7 +185,6 @@
                             Content="{Binding FilterAddText}"
                             Command="{Binding Filter.AddCriterionCommand}" />
                     <Button Padding="10,2"
-                            Margin="0,0,12,0"
                             AutomationProperties.AutomationId="FilterClearButton"
                             Content="{Binding FilterClearText}"
                             Command="{Binding ClearFilterCommand}" />
@@ -192,7 +192,7 @@
                 <ItemsControl ItemsSource="{Binding Filter.Criteria}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,1">
+                            <StackPanel Orientation="Horizontal" Margin="0,3">
                                 <ComboBox Width="230"
                                           AutomationProperties.AutomationId="FilterColumnCombo"
                                           ItemsSource="{Binding Columns}"
@@ -236,20 +236,20 @@
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
                   AutomationProperties.AutomationId="ColumnsExpander"
                   Header="{Binding ColumnsLabel}">
-            <Grid Margin="4,4,0,0">
+            <Grid Margin="6,6,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock VerticalAlignment="Center"
                                Margin="0,0,6,0"
                                Text="{Binding ColumnSearchLabel}" />
                     <TextBox Width="220"
                              AutomationProperties.AutomationId="ColumnSearchBox"
                              Text="{Binding ColumnSearchText, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Margin="10,0,6,0"
+                    <Button Margin="6,0,6,0"
                             Padding="10,2"
                             AutomationProperties.AutomationId="DefaultColumnsButton"
                             Content="{Binding DefaultColumnsText}"
@@ -260,7 +260,7 @@
                             Command="{Binding ShowAllColumnsCommand}" />
                 </StackPanel>
                 <TextBlock Grid.Row="1"
-                           Margin="0,2,0,2"
+                           Margin="0,3,0,3"
                            Foreground="#FF666666"
                            AutomationProperties.AutomationId="VisibleColumnCount"
                            Text="{Binding VisibleColumnCountText}" />
@@ -274,10 +274,10 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding IsVisible, Mode=TwoWay}"
-                                      Margin="2,1">
+                                      Margin="3,3">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name}" />
-                                    <TextBlock Margin="8,0,0,0"
+                                    <TextBlock Margin="6,0,0,0"
                                                Foreground="#FF777777"
                                                Text="{Binding Description}" />
                                 </StackPanel>
@@ -341,7 +341,7 @@
 
             <ToggleButton Grid.Column="1"
                           Width="22"
-                          Margin="4,0,0,0"
+                          Margin="6,0,0,0"
                           VerticalAlignment="Stretch"
                           HorizontalAlignment="Center"
                           Focusable="False"
@@ -372,7 +372,7 @@
 
             <Border Grid.Column="2"
                     Width="340"
-                    Margin="4,0,0,0"
+                    Margin="6,0,0,0"
                     BorderBrush="#FFB0B0B0"
                     BorderThickness="1"
                     Visibility="{Binding ShowDetails, Converter={StaticResource BoolToVisibility}}">
@@ -397,7 +397,7 @@
                                                 <TextBlock FontWeight="SemiBold"
                                                            Text="{Binding Label}" />
                                                 <TextBlock Grid.Column="1"
-                                                           Margin="8,0,0,0"
+                                                           Margin="6,0,0,0"
                                                            HorizontalAlignment="Right"
                                                            Foreground="#FF666666"
                                                            TextTrimming="CharacterEllipsis"
@@ -405,7 +405,7 @@
                                             </Grid>
                                             <Border Grid.Row="1"
                                                     Height="{Binding PanelHeight}"
-                                                    Margin="0,2,0,0"
+                                                    Margin="0,6,0,0"
                                                     Background="{StaticResource CheckerBrush}"
                                                     BorderBrush="#FFAFAFAF"
                                                     BorderThickness="1">
@@ -424,7 +424,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Grid Margin="0,4,0,4">
+                            <Grid Margin="0,6,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
@@ -440,19 +440,19 @@
                             <ItemsControl ItemsSource="{Binding DetailGroups}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Expander Margin="0,2,0,2"
+                                        <Expander Margin="0,3,0,3"
                                                   IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
-                                                    <TextBlock Margin="8,0,0,0"
+                                                    <TextBlock Margin="6,0,0,0"
                                                                Foreground="#FF777777"
                                                                Text="{Binding FieldCountText}" />
                                                 </StackPanel>
                                             </Expander.Header>
                                             <ItemsControl ItemsSource="{Binding Fields}"
-                                                          Margin="4,2,0,2">
+                                                          Margin="6,3,0,3">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <views:FieldEditor />
@@ -476,7 +476,7 @@
                   Header="{Binding ValidationLabel}"
                   IsExpanded="{Binding IsValidationVisible, Mode=TwoWay}">
             <ListBox Height="130"
-                     Margin="4,4,0,0"
+                     Margin="6,6,0,0"
                      AutomationProperties.AutomationId="ValidationList"
                      ItemsSource="{Binding ValidationIssues}">
                 <ListBox.ItemTemplate>
@@ -509,7 +509,7 @@
                 </ProgressBar.Style>
             </ProgressBar>
             <TextBlock Grid.Row="1"
-                       Margin="0,4,0,0"
+                       Margin="0,6,0,0"
                        TextWrapping="Wrap"
                        AutomationProperties.AutomationId="EditorStatus"
                        Text="{Binding StatusText}" />

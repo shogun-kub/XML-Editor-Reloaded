@@ -18,36 +18,36 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,8">
+        <Grid Grid.Row="0" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Text="{Binding IdLabel}" />
+            <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding IdLabel}" />
             <TextBox Grid.Column="1"
                      VerticalAlignment="Center"
                      AutomationProperties.AutomationId="ItemCreationIdBox"
                      Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
-        <Grid Grid.Row="1" Margin="0,0,0,8">
+        <Grid Grid.Row="1" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Text="{Binding NameLabel}" />
+            <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding NameLabel}" />
             <TextBox Grid.Column="1"
                      VerticalAlignment="Center"
                      AutomationProperties.AutomationId="ItemCreationNameBox"
                      Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,8">
+        <Grid Grid.Row="2" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Text="{Binding ClassLabel}" />
+            <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding ClassLabel}" />
             <ComboBox Grid.Column="1"
                       VerticalAlignment="Center"
                       AutomationProperties.AutomationId="ItemCreationClassCombo"
@@ -59,14 +59,14 @@
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Margin="0,8,8,0"
+            <Button Margin="0,0,6,0"
                     Padding="16,4"
                     AutomationProperties.AutomationId="ItemCreationOkButton"
                     IsDefault="True"
                     IsEnabled="{Binding IsValid}"
                     Content="{Binding OkText}"
                     Click="OnOk" />
-            <Button Margin="0,8,0,0"
+            <Button Margin="0"
                     Padding="16,4"
                     AutomationProperties.AutomationId="ItemCreationCancelButton"
                     IsCancel="True"

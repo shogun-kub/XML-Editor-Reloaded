@@ -24,7 +24,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Margin="0,0,0,8">
+        <Menu Grid.Row="0" Margin="0,0,0,6">
             <MenuItem Header="{Binding FileMenuText}"
                       AutomationProperties.AutomationId="FileMenu">
                 <MenuItem Header="{Binding SaveAllText}"
@@ -76,40 +76,51 @@
             </MenuItem>
         </Menu>
 
-        <WrapPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock VerticalAlignment="Center"
-                       Margin="0,0,8,0"
+        <Grid Grid.Row="1" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
                        Text="{Binding DataDirectoryLabel}" />
-            <ComboBox Width="320"
+            <ComboBox Grid.Column="1"
+                      MinWidth="220"
+                      HorizontalAlignment="Stretch"
                       AutomationProperties.AutomationId="DataDirectoryCombo"
                       VerticalAlignment="Center"
                       ItemsSource="{Binding DataDirectories}"
                       SelectedItem="{Binding SelectedDataDirectory, Mode=TwoWay}"
                       DisplayMemberPath="DisplayName"
                       ToolTip="{Binding DataDirectory}" />
-            <Button Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="BrowseDataDirectoryButton"
-                    Content="{Binding BrowseText}"
-                    Command="{Binding BrowseCommand}" />
-            <Button Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="RemoveDataDirectoryButton"
-                    Content="{Binding RemoveDataDirectoryText}"
-                    ToolTip="{Binding RemoveDataDirectoryTooltip}"
-                    Command="{Binding RemoveDataDirectoryCommand}"
-                    CommandParameter="{Binding SelectedDataDirectory}" />
-            <Button Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="RefreshTablesButton"
-                    Content="{Binding RefreshText}"
-                    Command="{Binding RefreshCommand}" />
-            <Button Margin="8,0,0,0"
-                    Padding="12,4"
-                    AutomationProperties.AutomationId="SaveAllButton"
-                    Content="{Binding SaveAllText}"
-                    Command="{Binding SaveAllCommand}" />
-        </WrapPanel>
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Margin="6,0,0,0">
+                <Button Margin="0,0,6,0"
+                        Padding="12,4"
+                        AutomationProperties.AutomationId="BrowseDataDirectoryButton"
+                        Content="{Binding BrowseText}"
+                        Command="{Binding BrowseCommand}" />
+                <Button Margin="0,0,6,0"
+                        Padding="12,4"
+                        AutomationProperties.AutomationId="RemoveDataDirectoryButton"
+                        Content="{Binding RemoveDataDirectoryText}"
+                        ToolTip="{Binding RemoveDataDirectoryTooltip}"
+                        Command="{Binding RemoveDataDirectoryCommand}"
+                        CommandParameter="{Binding SelectedDataDirectory}" />
+                <Button Margin="0,0,6,0"
+                        Padding="12,4"
+                        AutomationProperties.AutomationId="RefreshTablesButton"
+                        Content="{Binding RefreshText}"
+                        Command="{Binding RefreshCommand}" />
+                <Button Padding="12,4"
+                        AutomationProperties.AutomationId="SaveAllButton"
+                        Content="{Binding SaveAllText}"
+                        Command="{Binding SaveAllCommand}" />
+            </StackPanel>
+        </Grid>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -117,7 +128,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <GroupBox Grid.Column="0" Header="{Binding TablesLabel}" Margin="0,0,8,0">
+            <GroupBox Grid.Column="0" Header="{Binding TablesLabel}" Margin="0,0,6,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -161,28 +172,28 @@
                             Command="{Binding OpenTableCommand}" />
 
                     <Expander Grid.Row="2"
-                              Margin="0,8,0,0"
+                              Margin="0,6,0,0"
                               AutomationProperties.AutomationId="DetailsExpander"
                               Header="{Binding DetailsLabel}"
                               IsExpanded="True">
                         <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="4">
+                            <StackPanel Margin="6">
                                 <TextBlock FontWeight="Bold"
                                            Text="{Binding SelectedTable.TableName}" />
                                 <TextBlock Margin="0,6,0,0"
                                            AutomationProperties.AutomationId="DetailsText"
                                            Text="{Binding DetailsText}" />
-                                <TextBlock Margin="0,4,0,0"
+                                <TextBlock Margin="0,6,0,0"
                                            AutomationProperties.AutomationId="DetailsRecordCount"
                                            Text="{Binding RecordCountText}" />
-                                <TextBlock Margin="0,12,0,4"
+                                <TextBlock Margin="0,6,0,6"
                                            FontWeight="Bold"
                                            Text="{Binding DiagnosticsLabel}" />
                                 <ItemsControl AutomationProperties.AutomationId="DiagnosticsList"
                                           ItemsSource="{Binding Diagnostics}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="0,0,0,4"
+                                            <TextBlock Margin="0,0,0,6"
                                                        TextWrapping="Wrap"
                                                        Text="{Binding}" />
                                         </DataTemplate>
@@ -202,12 +213,12 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
-                                <TextBlock Margin="8,0,0,0"
+                                <TextBlock Margin="6,0,0,0"
                                            VerticalAlignment="Center"
                                            FontSize="10"
                                            Foreground="#FF777777"
                                            Text="{Binding DatasetLabel}" />
-                                <Button Margin="8,0,0,0"
+                                <Button Margin="6,0,0,0"
                                         Padding="5,0"
                                         Content="✕"
                                         Command="{Binding DataContext.CloseEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -254,13 +265,13 @@
 
         <ProgressBar Grid.Row="3"
                      Height="4"
-                     Margin="0,8,0,0"
+                     Margin="0,6,0,0"
                      IsIndeterminate="True"
                      Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <TextBlock Grid.Row="4"
                    AutomationProperties.AutomationId="StatusText"
-                   Margin="0,8,0,0"
+                   Margin="0,6,0,0"
                    TextWrapping="Wrap"
                    Text="{Binding StatusText}" />
     </Grid>

@@ -28,6 +28,7 @@
 | Малый контекст | [memory/context-stays-small.md](memory/context-stays-small.md) | Контекст сессии — бюджет; короткие файлы вместо подробных |
 | Чтение перед правкой | [memory/read-before-edit.md](memory/read-before-edit.md) | Правило только для `Edit`, не для `Write`; держать в одну фразу |
 | Бюджет контекста ZCode | [memory/zcode-context-budget.md](memory/zcode-context-budget.md) | Инструментальное: замеры 29,4k→12,8k и рычаги настройки ZCode |
+| UI-отступы | [UI-RULES.md](UI-RULES.md) | Минимум 3 px, стандарт 6 px; равные промежутки кнопок и строк; подпись и поле не расцепляются |
 
 ## Данные и эталон
 
