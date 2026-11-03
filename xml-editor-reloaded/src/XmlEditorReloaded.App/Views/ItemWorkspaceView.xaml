@@ -312,6 +312,7 @@
                              AutomationProperties.AutomationId="ItemList"
                              ItemsSource="{Binding Items}"
                              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                             SelectionChanged="OnItemListSelectionChanged"
                              VirtualizingStackPanel.IsVirtualizing="True"
                              VirtualizingStackPanel.VirtualizationMode="Recycling"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -331,7 +332,8 @@
                                         <Image Source="{Binding Thumbnail}"
                                                Stretch="Uniform"
                                                RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                               Loaded="OnItemThumbnailLoaded" />
+                                               Loaded="OnItemThumbnailLoaded"
+                                               DataContextChanged="OnItemThumbnailDataContextChanged" />
                                     </Border>
                                     <StackPanel Grid.Column="1">
                                         <TextBlock Text="{Binding DisplayText}"
@@ -724,7 +726,8 @@
                                                     <Image Source="{Binding Thumbnail}"
                                                            Stretch="Uniform"
                                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                           Loaded="OnGraphicImageThumbnailLoaded" />
+                                                           Loaded="OnGraphicImageThumbnailLoaded"
+                                                           DataContextChanged="OnGraphicImageThumbnailDataContextChanged" />
                                                 </Border>
                                                 <TextBlock Grid.Column="1"
                                                            Margin="6,0,0,0"
