@@ -713,7 +713,8 @@ public class TableEditorViewModelTests
         var (editor, _, _, _, _) = await CreateEditorAsync(
             workspace,
             includeLookups: true,
-            includeBooleans: true);
+            includeBooleans: true,
+            includeRelations: true);
         var filter = Assert.IsType<TableFilterViewModel>(editor.Filter);
         filter.AddCriterionCommand.Execute(null);
         var criterion = Assert.Single(filter.Criteria);
@@ -733,6 +734,19 @@ public class TableEditorViewModelTests
 
         Assert.Empty(criterion.AllowedValues);
         Assert.False(criterion.HasAllowedValues);
+
+        criterion.SelectedColumn = Assert.Single(filter.Columns, column => column.Name == "DiscardedLauncherItem");
+
+        Assert.True(criterion.HasAllowedValues);
+        Assert.Contains(
+            criterion.AllowedValues,
+            option => option.Value == "1" && option.DisplayText == "Glock 17 (1)");
+        Assert.Contains(
+            criterion.AllowedValues,
+            option => option.Value == "99" && option.DisplayText == "99 (unknown)");
+        criterion.Operand = "99";
+
+        Assert.Equal(new[] { "2" }, editor.Rows.Select(row => row.Key));
     }
 
     /// <summary>
@@ -747,7 +761,8 @@ public class TableEditorViewModelTests
         var (editor, _, _, dialog, _) = await CreateEditorAsync(
             workspace,
             includeLookups: true,
-            includeBooleans: true);
+            includeBooleans: true,
+            includeRelations: true);
         dialog.BulkEditHandler = _ => null;
 
         editor.BulkEditCommand.Execute(null);
@@ -758,6 +773,10 @@ public class TableEditorViewModelTests
         Assert.Contains(attachment.ValueOptions, option => option.DisplayText == "None (1)");
         var climbing = Assert.Single(context.Columns, column => column.FieldName == "AllowClimbing");
         Assert.Equal(new[] { "0", "1" }, climbing.ValueOptions.Select(option => option.Value));
+        var launcher = Assert.Single(context.Columns, column => column.FieldName == "DiscardedLauncherItem");
+        Assert.Contains(
+            launcher.ValueOptions,
+            option => option.Value == "1" && option.DisplayText == "Glock 17 (1)");
         var name = Assert.Single(context.Columns, column => column.FieldName == "szItemName");
         Assert.Empty(name.ValueOptions);
     }

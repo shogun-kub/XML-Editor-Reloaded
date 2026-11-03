@@ -153,9 +153,9 @@ public sealed class TableColumnViewModel : ObservableObject
         Lookup?.Options ?? Array.Empty<LookupOption>();
 
     /// <summary>
-    /// Gets the values offered by filter and bulk-edit value fields: Boolean choices, or the lookup
-    /// entries of a lookup/flag column. Columns without a finite value set return an empty list and
-    /// keep free text input.
+    /// Gets the values offered by filter and bulk-edit value fields: Boolean choices, the options of a
+    /// relation to another table, or the lookup entries of a lookup/flag column. Columns without a
+    /// finite value set return an empty list and keep free text input.
     /// </summary>
     public IReadOnlyList<AllowedValueOption> AllowedValues
     {
@@ -168,6 +168,13 @@ public sealed class TableColumnViewModel : ObservableObject
                     new AllowedValueOption("0", Strings.Get("AllowedValueFalse")),
                     new AllowedValueOption("1", Strings.Get("AllowedValueTrue")),
                 };
+            }
+
+            if (Relation is { IsAvailable: true } && Relation.Options.Count > 0)
+            {
+                return Relation.Options
+                    .Select(static option => new AllowedValueOption(option.Value, option.DropdownText))
+                    .ToArray();
             }
 
             if (Lookup is { IsAvailable: true }

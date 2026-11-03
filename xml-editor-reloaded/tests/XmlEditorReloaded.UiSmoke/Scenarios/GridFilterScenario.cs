@@ -48,7 +48,7 @@ internal sealed class GridFilterScenario : SmokeScenario
             "ubWeaponClass",
             context.Strings.Get("FilterOperatorEquals"),
             "2",
-            lookupItem: "Submachinegun (2)");
+            suggestedItem: "Submachinegun (2)");
         WaitForRowCount(context, 48, total);
         context.Recorder.Check("Фильтр по ubWeaponClass=2 оставляет 48 строк", true, CounterText(window));
         context.Recorder.Check(
@@ -57,9 +57,19 @@ internal sealed class GridFilterScenario : SmokeScenario
             window.FindAllById("FilterOperandBox")[0].ReadValue());
 
         add.InvokeButton();
-        SelectCriterion(window, 1, "ubCalibre", context.Strings.Get("FilterOperatorEquals"), "2");
+        SelectCriterion(
+            window,
+            1,
+            "ubCalibre",
+            context.Strings.Get("FilterOperatorEquals"),
+            "2",
+            suggestedItem: "9x19mm (2)");
         WaitForRowCount(context, 25, total);
         context.Recorder.Check("Два условия объединяются через «И»: 25 строк", true, CounterText(window));
+        context.Recorder.Check(
+            "Поле значения предлагает имя калибра из связанной таблицы",
+            window.FindAllById("FilterOperandBox")[1].ReadValue() == "2",
+            window.FindAllById("FilterOperandBox")[1].ReadValue());
         context.Recorder.Check(
             "Сводка показывает два условия",
             window.WaitById("FilterSummary").ReadName() == context.Strings.Format("EditorFilterSummaryFormat", 2),
@@ -118,7 +128,7 @@ internal sealed class GridFilterScenario : SmokeScenario
         string column,
         string operation,
         string operand,
-        string? lookupItem = null)
+        string? suggestedItem = null)
     {
         var columns = window.FindAllById("FilterColumnCombo");
         var operations = window.FindAllById("FilterOperatorCombo");
@@ -126,9 +136,9 @@ internal sealed class GridFilterScenario : SmokeScenario
         columns[index].SelectComboItem(column);
         operations[index].SelectComboItem(operation);
         operands[index].SetText(operand);
-        if (lookupItem is not null)
+        if (suggestedItem is not null)
         {
-            operands[index].SelectComboItem(lookupItem);
+            operands[index].SelectComboItem(suggestedItem);
         }
 
         Thread.Sleep(300);
