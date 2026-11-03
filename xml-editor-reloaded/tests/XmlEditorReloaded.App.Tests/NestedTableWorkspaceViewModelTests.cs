@@ -195,6 +195,224 @@ public class NestedTableWorkspaceViewModelTests
         Assert.Single(XDocument.Load(path).Root!.Element("CITYLIST")!.Elements("CITY"));
     }
 
+    /// <summary>
+    /// A facility assignment is appended from the toolbar, its translated tooltip is written to the
+    /// overlay, and deleting it removes both records.
+    /// </summary>
+    [Fact]
+    public async Task FacilityWorkspace_AddsAndDeletesAssignment()
+    {
+        using var workspace = new TestWorkspace();
+        var (path, overlayPath, session, descriptor) = await CreateFacilityAsync(workspace, withOverlay: true);
+        var viewModel = new NestedTableWorkspaceViewModel(
+            session,
+            descriptor,
+            "ru",
+            new FakeDialogService());
+
+        await viewModel.InitializeAsync();
+
+        Assert.True(viewModel.HasAssignmentSegment);
+        Assert.Contains(viewModel.BlockAddActions, action => action.AutomationId == "NestedAddBlock_PRODUCTIONLINE");
+        viewModel.NewAssignmentType = "CHEF";
+        Assert.True(viewModel.AddAssignmentCommand.CanExecute(null));
+
+        viewModel.AddAssignmentCommand.Execute(null);
+
+        Assert.Contains(viewModel.Sections, section => section.Header == "ASSIGNMENT: CHEF");
+        var tooltip = FindField(viewModel, "ASSIGNMENT[CHEF]/szTooltipText");
+        Assert.Equal(string.Empty, tooltip.Value);
+        tooltip.Value = "Шеф";
+        Assert.True(viewModel.IsDirty);
+        Assert.True(await viewModel.SaveWithRecoveryAsync());
+
+        var baseDocument = XDocument.Load(path);
+        Assert.Contains(
+            baseDocument.Root!.Element("FACILITYTYPE")!.Elements("ASSIGNMENT"),
+            element => element.Element("ubAssignmentType")?.Value == "CHEF");
+        Assert.Equal(
+            "Шеф",
+            XDocument.Load(overlayPath).Root!
+                .Element("FACILITYTYPE")!
+                .Elements("ASSIGNMENT")
+                .Single(element => element.Element("ubAssignmentType")?.Value == "CHEF")
+                .Element("szTooltipText")?.Value);
+
+        var chefSection = Assert.Single(viewModel.Sections, section => section.Header == "ASSIGNMENT: CHEF");
+        Assert.True(viewModel.DeleteSectionCommand.CanExecute(chefSection));
+        viewModel.DeleteSectionCommand.Execute(chefSection);
+        Assert.DoesNotContain(viewModel.Sections, section => section.Header == "ASSIGNMENT: CHEF");
+        Assert.True(await viewModel.SaveWithRecoveryAsync());
+        Assert.DoesNotContain(
+            XDocument.Load(path).Root!.Element("FACILITYTYPE")!.Elements("ASSIGNMENT"),
+            element => element.Element("ubAssignmentType")?.Value == "CHEF");
+        Assert.DoesNotContain(
+            XDocument.Load(overlayPath).Root!.Element("FACILITYTYPE")!.Elements("ASSIGNMENT"),
+            element => element.Element("ubAssignmentType")?.Value == "CHEF");
+    }
+
+    /// <summary>
+    /// Repeated assembly lists and production-line blocks are edited occurrence-aware and can be added
+    /// and deleted as whole blocks.
+    /// </summary>
+    [Fact]
+    public async Task FacilityWorkspace_EditsRepeatedListsAndBlocks()
+    {
+        using var workspace = new TestWorkspace();
+        var (path, _, session, descriptor) = await CreateFacilityAsync(workspace, withOverlay: false);
+        var viewModel = new NestedTableWorkspaceViewModel(
+            session,
+            descriptor,
+            null,
+            new FakeDialogService());
+
+        await viewModel.InitializeAsync();
+
+        var doctorSection = Assert.Single(viewModel.Sections, section => section.Header == "ASSIGNMENT: DOCTOR");
+        var drugList = Assert.Single(doctorSection.Lists, list => list.Label == "drugitem");
+        Assert.Equal(new[] { "245", "255" }, drugList.Values.Select(value => value.Value));
+        drugList.AddCommand.Execute(null);
+        drugList = Assert.Single(
+            Assert.Single(viewModel.Sections, section => section.Header == "ASSIGNMENT: DOCTOR").Lists,
+            list => list.Label == "drugitem");
+        Assert.Equal(3, drugList.Values.Count);
+        drugList.Values[2].Value = "300";
+
+        var firstBlock = Assert.Single(
+            viewModel.Sections,
+            section => section.AutomationId == "NestedSection_PRODUCTIONLINE_0");
+        var itemField = Assert.Single(firstBlock.Fields, field => field.Name == "usItemToCreate");
+        Assert.Equal("1446", itemField.Value);
+        itemField.Value = "2000";
+        var optionalList = Assert.Single(
+            Assert.Single(viewModel.Sections, section => section.AutomationId == "NestedSection_PRODUCTIONLINE_0").Lists);
+        Assert.Equal(new[] { "1", "2" }, optionalList.Values.Select(value => value.Value));
+        optionalList.AddCommand.Execute(null);
+        optionalList = Assert.Single(
+            Assert.Single(viewModel.Sections, section => section.AutomationId == "NestedSection_PRODUCTIONLINE_0").Lists);
+        optionalList.Values[2].Value = "9";
+
+        var addBlock = Assert.Single(viewModel.BlockAddActions);
+        addBlock.Command.Execute(null);
+        Assert.Equal(3, viewModel.Sections.Count(section => section.BlockFieldName == "PRODUCTIONLINE"));
+        var lastBlock = viewModel.Sections.Last(section => section.BlockFieldName == "PRODUCTIONLINE");
+        Assert.True(viewModel.DeleteSectionCommand.CanExecute(lastBlock));
+        viewModel.DeleteSectionCommand.Execute(lastBlock);
+        Assert.Equal(2, viewModel.Sections.Count(section => section.BlockFieldName == "PRODUCTIONLINE"));
+
+        Assert.True(await viewModel.SaveWithRecoveryAsync());
+        var facility = XDocument.Load(path).Root!.Element("FACILITYTYPE")!;
+        var doctor = facility.Elements("ASSIGNMENT")
+            .Single(element => element.Element("ubAssignmentType")?.Value == "DOCTOR");
+        Assert.Equal(
+            new[] { "245", "255", "300" },
+            doctor.Element("DRUNK")!
+                .Element("drugitems")!
+                .Elements("drugitem")
+                .Select(element => element.Value));
+        var lines = facility.Elements("PRODUCTIONLINE").ToArray();
+        Assert.Equal(2, lines.Length);
+        Assert.Equal("2000", lines[0].Element("usItemToCreate")?.Value);
+        Assert.Equal(
+            new[] { "1", "2", "9" },
+            lines[0].Elements("usOptional_ItemUsedUp").Select(element => element.Value));
+    }
+
+    /// <summary>
+    /// The nested city editor marks the qualified town name as translatable and writes it only to the
+    /// selected overlay.
+    /// </summary>
+    [Fact]
+    public async Task CityWorkspace_OverlayTownName_WritesOnlyOverlay()
+    {
+        using var workspace = new TestWorkspace();
+        var dataDirectory = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(dataDirectory, "TableData");
+        var mapDirectory = Path.Combine(tableData, "Map");
+        Directory.CreateDirectory(mapDirectory);
+        var path = Path.Combine(mapDirectory, "Cities.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO><CITYLIST>"
+            + "<CITY><uiIndex>1</uiIndex><townName>Omerta</townName></CITY>"
+            + "</CITYLIST></CITY_INFO>");
+        var overlayPath = Path.Combine(mapDirectory, "Russian.Cities.xml");
+        await File.WriteAllTextAsync(
+            overlayPath,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><CITY_INFO><CITYLIST>"
+            + "<CITY><uiIndex>1</uiIndex><townName>Омерта</townName></CITY>"
+            + "</CITYLIST></CITY_INFO>");
+
+        var session = await CreateSessionAsync(workspace, dataDirectory, tableData);
+        var descriptor = await FindDescriptorAsync(session, tableData, "Map.Cities");
+        var viewModel = new NestedTableWorkspaceViewModel(
+            session,
+            descriptor,
+            "ru",
+            new FakeDialogService());
+
+        await viewModel.InitializeAsync();
+
+        var townName = FindField(viewModel, "townName");
+        Assert.True(townName.IsTranslatable);
+        Assert.True(townName.IsTranslated);
+        townName.Value = "Омерта Новая";
+        Assert.True(await viewModel.SaveWithRecoveryAsync());
+
+        Assert.Equal(
+            "Omerta",
+            XDocument.Load(path).Root!
+                .Element("CITYLIST")!
+                .Element("CITY")!
+                .Element("townName")?.Value);
+        Assert.Equal(
+            "Омерта Новая",
+            XDocument.Load(overlayPath).Root!
+                .Element("CITYLIST")!
+                .Element("CITY")!
+                .Element("townName")?.Value);
+    }
+
+    private static async Task<(string Path, string OverlayPath, IDataSetSession Session, TableDescriptor Descriptor)>
+        CreateFacilityAsync(TestWorkspace workspace, bool withOverlay)
+    {
+        var dataDirectory = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(dataDirectory, "TableData");
+        var mapDirectory = Path.Combine(tableData, "Map");
+        Directory.CreateDirectory(mapDirectory);
+        var path = Path.Combine(mapDirectory, "FacilityTypes.xml");
+        await File.WriteAllTextAsync(
+            path,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><FACILITYTYPES><FACILITYTYPE>"
+            + "<ubIndex>1</ubIndex><szFacilityName>Hospital</szFacilityName>"
+            + "<szFacilityShortName>Hospital</szFacilityShortName>"
+            + "<ASSIGNMENT><ubAssignmentType>DOCTOR</ubAssignmentType>"
+            + "<szTooltipText>Doctor</szTooltipText><ubStaffLimit>2</ubStaffLimit>"
+            + "<DRUNK><ubChance>100</ubChance><drugitems>"
+            + "<drugitem>245</drugitem><drugitem>255</drugitem>"
+            + "</drugitems></DRUNK></ASSIGNMENT>"
+            + "<PRODUCTIONLINE><usItemToCreate>1446</usItemToCreate>"
+            + "<usOptional_ItemUsedUp>1</usOptional_ItemUsedUp>"
+            + "<usOptional_ItemUsedUp>2</usOptional_ItemUsedUp></PRODUCTIONLINE>"
+            + "<PRODUCTIONLINE><usItemToCreate>1447</usItemToCreate></PRODUCTIONLINE>"
+            + "</FACILITYTYPE></FACILITYTYPES>");
+        var overlayPath = Path.Combine(mapDirectory, "Russian.FacilityTypes.xml");
+        if (withOverlay)
+        {
+            await File.WriteAllTextAsync(
+                overlayPath,
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><FACILITYTYPES><FACILITYTYPE>"
+                + "<ubIndex>1</ubIndex>"
+                + "<ASSIGNMENT><ubAssignmentType>DOCTOR</ubAssignmentType>"
+                + "<szTooltipText>Доктор</szTooltipText></ASSIGNMENT>"
+                + "</FACILITYTYPE></FACILITYTYPES>");
+        }
+
+        var session = await CreateSessionAsync(workspace, dataDirectory, tableData);
+        var descriptor = await FindDescriptorAsync(session, tableData, "Map.FacilityTypes");
+        return (path, overlayPath, session, descriptor);
+    }
+
     private static NestedFieldViewModel FindField(NestedTableWorkspaceViewModel viewModel, string path) =>
         Assert.Single(
             viewModel.Sections.SelectMany(static section => section.Fields),

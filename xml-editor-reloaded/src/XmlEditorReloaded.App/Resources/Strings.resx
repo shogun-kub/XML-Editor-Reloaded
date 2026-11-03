@@ -1693,4 +1693,46 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="RemoveDataDirectoryTabsOpenFormat" xml:space="preserve">
     <value>The folder has {1} open tab(s). Close them before removing the folder from the list.&#10;{0}</value>
   </data>
+  <data name="NestedEditorAssignmentTypeLabel" xml:space="preserve">
+    <value>New assignment type:</value>
+  </data>
+  <data name="NestedEditorAddAssignment" xml:space="preserve">
+    <value>Add assignment</value>
+  </data>
+  <data name="NestedEditorAssignmentAdded" xml:space="preserve">
+    <value>Assignment {0} added.</value>
+  </data>
+  <data name="NestedEditorAssignmentExists" xml:space="preserve">
+    <value>Assignment {0} already exists.</value>
+  </data>
+  <data name="NestedEditorAssignmentTypeRequired" xml:space="preserve">
+    <value>Enter an assignment type first.</value>
+  </data>
+  <data name="NestedEditorAssignmentDeleted" xml:space="preserve">
+    <value>Assignment {0} deleted.</value>
+  </data>
+  <data name="NestedEditorDeleteSection" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="NestedEditorConfirmDeleteAssignment" xml:space="preserve">
+    <value>Delete assignment {0}?</value>
+  </data>
+  <data name="NestedEditorConfirmDeleteBlock" xml:space="preserve">
+    <value>Delete block {0}?</value>
+  </data>
+  <data name="NestedEditorAddBlock" xml:space="preserve">
+    <value>Add {0}</value>
+  </data>
+  <data name="NestedEditorBlockAdded" xml:space="preserve">
+    <value>Block {0} added.</value>
+  </data>
+  <data name="NestedEditorBlockDeleted" xml:space="preserve">
+    <value>Block {0} deleted.</value>
+  </data>
+  <data name="NestedEditorListAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="NestedEditorListRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
 </root>

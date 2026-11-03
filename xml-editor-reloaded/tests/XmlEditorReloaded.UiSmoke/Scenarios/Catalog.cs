@@ -103,6 +103,7 @@ internal static class ScenarioCatalog
         new CopyLookupComparisonScenario(),
         new OperationLogScenario(),
         new NestedTableWorkspaceScenario(),
+        new NestedCollectionsScenario(),
     ];
 
     /// <summary>

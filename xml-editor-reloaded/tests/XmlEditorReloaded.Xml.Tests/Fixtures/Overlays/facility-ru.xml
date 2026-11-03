@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FACILITYTYPES>
+  <FACILITYTYPE>
+    <ubIndex>1</ubIndex>
+    <ASSIGNMENT>
+      <ubAssignmentType>DOCTOR</ubAssignmentType>
+      <szTooltipText>Доктор</szTooltipText>
+    </ASSIGNMENT>
+  </FACILITYTYPE>
+</FACILITYTYPES>

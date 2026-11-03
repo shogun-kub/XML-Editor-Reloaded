@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FACILITYTYPES>
+  <FACILITYTYPE>
+    <ubIndex>1</ubIndex>
+    <szFacilityName>Hospital</szFacilityName>
+    <szFacilityShortName>Hospital</szFacilityShortName>
+    <ASSIGNMENT>
+      <ubAssignmentType>DOCTOR</ubAssignmentType>
+      <szTooltipText>Doctor</szTooltipText>
+      <ubStaffLimit>2</ubStaffLimit>
+      <DRUNK>
+        <ubChance>100</ubChance>
+        <drugitems>
+          <drugitem>245</drugitem>
+          <drugitem>255</drugitem>
+        </drugitems>
+      </DRUNK>
+    </ASSIGNMENT>
+    <ASSIGNMENT>
+      <ubAssignmentType>NURSE</ubAssignmentType>
+      <szTooltipText>Nurse</szTooltipText>
+      <ubStaffLimit>1</ubStaffLimit>
+    </ASSIGNMENT>
+    <PRODUCTIONLINE>
+      <usItemToCreate>1446</usItemToCreate>
+      <sMinutesRequired>180</sMinutesRequired>
+      <usOptional_ItemUsedUp>1</usOptional_ItemUsedUp>
+      <usOptional_ItemUsedUp>2</usOptional_ItemUsedUp>
+    </PRODUCTIONLINE>
+    <PRODUCTIONLINE>
+      <usItemToCreate>1447</usItemToCreate>
+      <sMinutesRequired>60</sMinutesRequired>
+    </PRODUCTIONLINE>
+  </FACILITYTYPE>
+</FACILITYTYPES>

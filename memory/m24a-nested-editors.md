@@ -24,12 +24,12 @@
 ## Проверка
 
 - `dotnet build -warnaserror` — 0/0.
-- `util-scripts/test.ps1` — 608 тестов; новые `NestedTableWorkspaceViewModelTests` (3),
+- `util-scripts/test.ps1` — 608 тестов на момент M24a; новые `NestedTableWorkspaceViewModelTests` (3),
   `OpenCities_OpensNestedWorkspace`, `RootSingleton_BaseEdit_IsUndoable` и
   `NestedCity_WithoutEdits_DoesNotRewrite` (загрузка/сохранение без правок не меняет байты).
 - UI-smoke S93 (v4) — PASS; S50 подтверждает, что изменены только `Map/Cities.xml` и
   `Map/Russian.FacilityTypes.xml`.
-- Ручной `ASSIGNMENT` add/delete и list/dict-поля — M24b.
+- `ASSIGNMENT` add/delete и list/dict-поля закрыты в M24b — [[m24b-nested-collections]].
 
 ## Грабли
 

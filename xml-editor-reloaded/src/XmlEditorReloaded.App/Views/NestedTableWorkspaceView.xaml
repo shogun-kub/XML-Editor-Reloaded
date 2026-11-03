@@ -20,6 +20,7 @@
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -86,7 +87,44 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <WrapPanel Grid.Row="1"
+                   Margin="0,0,0,6"
+                   Visibility="{Binding HasNestedAddActions, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,0,12,0"
+                        Visibility="{Binding HasAssignmentSegment, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Text="{Binding NewAssignmentTypeLabel}" />
+                <TextBox Width="140"
+                         Margin="0,0,6,0"
+                         VerticalAlignment="Center"
+                         AutomationProperties.AutomationId="NestedNewAssignmentTypeBox"
+                         Text="{Binding NewAssignmentType, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Padding="10,3"
+                        AutomationProperties.AutomationId="NestedAddAssignmentButton"
+                        Content="{Binding AddAssignmentText}"
+                        Command="{Binding AddAssignmentCommand}" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding BlockAddActions}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Padding="10,3"
+                                Margin="0,0,6,0"
+                                AutomationProperties.AutomationId="{Binding AutomationId}"
+                                Content="{Binding Text}"
+                                Command="{Binding Command}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </WrapPanel>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="*" />
@@ -135,15 +173,66 @@
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
                                           AutomationProperties.AutomationId="{Binding AutomationId}">
                                     <Expander.Header>
-                                        <TextBlock FontWeight="SemiBold" Text="{Binding Header}" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding Header}" />
+                                            <Button Margin="8,0,0,0"
+                                                    Padding="8,0"
+                                                    VerticalAlignment="Center"
+                                                    AutomationProperties.AutomationId="{Binding DeleteAutomationId}"
+                                                    Command="{Binding DataContext.DeleteSectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="{Binding DeleteText}"
+                                                    Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibility}}" />
+                                        </StackPanel>
                                     </Expander.Header>
-                                    <ItemsControl ItemsSource="{Binding Fields}" Margin="4,2,0,2">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <views:FieldEditor />
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <StackPanel Margin="4,2,0,2">
+                                        <ItemsControl ItemsSource="{Binding Fields}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <views:FieldEditor />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <ItemsControl ItemsSource="{Binding Lists}" Margin="0,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <GroupBox Margin="0,0,0,4"
+                                                              Header="{Binding Label}"
+                                                              AutomationProperties.AutomationId="{Binding PathText}">
+                                                        <StackPanel Margin="4">
+                                                            <ItemsControl ItemsSource="{Binding Values}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <DockPanel Margin="0,0,0,2">
+                                                                            <Button DockPanel.Dock="Right"
+                                                                                    Margin="6,0,0,0"
+                                                                                    Padding="8,1"
+                                                                                    AutomationProperties.AutomationId="{Binding RemoveAutomationId}"
+                                                                                    Command="{Binding RemoveCommand}"
+                                                                                    CommandParameter="{Binding}"
+                                                                                    Content="{Binding RemoveText}"
+                                                                                    IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                                                            <TextBox AutomationProperties.AutomationId="{Binding ValueAutomationId}"
+                                                                                     Text="{Binding Value, UpdateSourceTrigger=LostFocus}" />
+                                                                        </DockPanel>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                            <Button Margin="0,2,0,0"
+                                                                    Padding="10,2"
+                                                                    HorizontalAlignment="Left"
+                                                                    AutomationProperties.AutomationId="{Binding AddAutomationId}"
+                                                                    Command="{Binding AddCommand}"
+                                                                    Content="{Binding AddText}"
+                                                                    IsEnabled="{Binding CanEdit}" />
+                                                        </StackPanel>
+                                                    </GroupBox>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
                                 </Expander>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -152,7 +241,7 @@
             </GroupBox>
         </Grid>
 
-        <GroupBox Grid.Row="2"
+        <GroupBox Grid.Row="3"
                   Margin="0,6,0,0"
                   Header="{Binding ValidationLabel}"
                   Visibility="{Binding IsValidationVisible, Converter={StaticResource BoolToVisibility}}">
@@ -162,7 +251,7 @@
                      DisplayMemberPath="Text" />
         </GroupBox>
 
-        <TextBlock Grid.Row="3"
+        <TextBlock Grid.Row="4"
                    Margin="0,6,0,0"
                    TextWrapping="Wrap"
                    AutomationProperties.AutomationId="NestedStatusText"

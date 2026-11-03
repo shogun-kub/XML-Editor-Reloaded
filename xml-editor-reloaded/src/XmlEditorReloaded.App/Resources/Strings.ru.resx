@@ -1693,4 +1693,46 @@
   <data name="RemoveDataDirectoryTabsOpenFormat" xml:space="preserve">
     <value>В этом каталоге открыто вкладок: {1}. Закройте их, прежде чем убирать каталог из списка.&#10;{0}</value>
   </data>
+  <data name="NestedEditorAssignmentTypeLabel" xml:space="preserve">
+    <value>Новый тип назначения:</value>
+  </data>
+  <data name="NestedEditorAddAssignment" xml:space="preserve">
+    <value>Добавить назначение</value>
+  </data>
+  <data name="NestedEditorAssignmentAdded" xml:space="preserve">
+    <value>Назначение {0} добавлено.</value>
+  </data>
+  <data name="NestedEditorAssignmentExists" xml:space="preserve">
+    <value>Назначение {0} уже существует.</value>
+  </data>
+  <data name="NestedEditorAssignmentTypeRequired" xml:space="preserve">
+    <value>Сначала введите тип назначения.</value>
+  </data>
+  <data name="NestedEditorAssignmentDeleted" xml:space="preserve">
+    <value>Назначение {0} удалено.</value>
+  </data>
+  <data name="NestedEditorDeleteSection" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="NestedEditorConfirmDeleteAssignment" xml:space="preserve">
+    <value>Удалить назначение {0}?</value>
+  </data>
+  <data name="NestedEditorConfirmDeleteBlock" xml:space="preserve">
+    <value>Удалить блок {0}?</value>
+  </data>
+  <data name="NestedEditorAddBlock" xml:space="preserve">
+    <value>Добавить {0}</value>
+  </data>
+  <data name="NestedEditorBlockAdded" xml:space="preserve">
+    <value>Блок {0} добавлен.</value>
+  </data>
+  <data name="NestedEditorBlockDeleted" xml:space="preserve">
+    <value>Блок {0} удалён.</value>
+  </data>
+  <data name="NestedEditorListAdd" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="NestedEditorListRemove" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
 </root>

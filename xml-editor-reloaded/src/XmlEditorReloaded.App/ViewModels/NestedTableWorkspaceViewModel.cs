@@ -6,7 +6,9 @@ using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Overlays;
+using XmlEditorReloaded.Xml.Schema;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.ViewModels;
@@ -25,6 +27,7 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
     private string? _languageCode;
     private string? _selectedKey;
     private bool _suppressLanguageChange;
+    private int _assignmentSegmentIndex = -1;
 
     [ObservableProperty]
     private TableWorkspace? _workspace;
@@ -68,6 +71,9 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
     [ObservableProperty]
     private bool _canRedo;
 
+    [ObservableProperty]
+    private string _newAssignmentType = string.Empty;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NestedTableWorkspaceViewModel"/> class.
     /// </summary>
@@ -102,6 +108,8 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         LanguageLabel = Strings.Get("EditorLanguageLabel");
         ValidationLabel = Strings.Get("EditorValidationLabel");
         NoSelectionText = Strings.Get("NestedEditorSelectRecord");
+        NewAssignmentTypeLabel = Strings.Get("NestedEditorAssignmentTypeLabel");
+        AddAssignmentText = Strings.Get("NestedEditorAddAssignment");
     }
 
     /// <inheritdoc />
@@ -182,6 +190,31 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
     /// Gets the text shown when no record is selected.
     /// </summary>
     public string NoSelectionText { get; }
+
+    /// <summary>
+    /// Gets the label of the new-assignment type input.
+    /// </summary>
+    public string NewAssignmentTypeLabel { get; }
+
+    /// <summary>
+    /// Gets the add-assignment button text.
+    /// </summary>
+    public string AddAssignmentText { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the table has a nested assignment key segment.
+    /// </summary>
+    public bool HasAssignmentSegment => _assignmentSegmentIndex > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether the detail pane offers nested add actions.
+    /// </summary>
+    public bool HasNestedAddActions => HasAssignmentSegment || BlockAddActions.Count > 0;
+
+    /// <summary>
+    /// Gets the actions that append repeated nested blocks such as production lines.
+    /// </summary>
+    public ObservableCollection<NestedBlockAddViewModel> BlockAddActions { get; } = new();
 
     /// <summary>
     /// Gets the filtered record list.
@@ -461,6 +494,154 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         StatusText = Strings.Format("NestedEditorRecordDeleted", key);
     }
 
+    /// <summary>
+    /// Appends a nested assignment with the type entered in the toolbar.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddAssignment))]
+    private void AddAssignment()
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
+        }
+
+        var type = NewAssignmentType.Trim();
+        if (type.Length == 0)
+        {
+            StatusText = Strings.Get("NestedEditorAssignmentTypeRequired");
+            return;
+        }
+
+        var result = Workspace.AddNestedRecord(
+            _selectedKey,
+            _assignmentSegmentIndex,
+            type,
+            new[] { new KeyValuePair<string, string>("szTooltipText", string.Empty) });
+        if (!result.IsSuccess)
+        {
+            StatusText = string.Equals(result.ErrorCode, ErrorCodes.KeyConflict, StringComparison.Ordinal)
+                ? Strings.Format("NestedEditorAssignmentExists", type)
+                : Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        NewAssignmentType = string.Empty;
+        IsDirty = Workspace.IsDirty;
+        RefreshHistoryState();
+        BuildForm();
+        StatusText = Strings.Format("NestedEditorAssignmentAdded", type);
+    }
+
+    private bool CanAddAssignment() =>
+        IsEditable
+        && !IsBusy
+        && Workspace is not null
+        && _selectedKey is not null
+        && _assignmentSegmentIndex > 0
+        && !string.IsNullOrWhiteSpace(NewAssignmentType);
+
+    /// <summary>
+    /// Deletes the assignment or repeated block shown by one section after confirmation.
+    /// </summary>
+    /// <param name="section">Section to remove.</param>
+    [RelayCommand(CanExecute = nameof(CanDeleteSection))]
+    private void DeleteSection(NestedFormSectionViewModel? section)
+    {
+        if (Workspace is null || _selectedKey is null || section is not { CanDelete: true })
+        {
+            return;
+        }
+
+        var isAssignment = section.NestedSegmentIndex > 0;
+        var message = isAssignment
+            ? Strings.Format("NestedEditorConfirmDeleteAssignment", section.Header)
+            : Strings.Format("NestedEditorConfirmDeleteBlock", section.Header);
+        if (!_dialogService.Confirm(message, Strings.Get("EditorDeleteRowTitle")))
+        {
+            return;
+        }
+
+        var result = isAssignment
+            ? Workspace.DeleteNestedRecord(
+                _selectedKey,
+                section.NestedSegmentIndex,
+                section.NestedOccurrenceIndex)
+            : Workspace.DeleteRepeatedBlock(_selectedKey, section.BlockFieldName!, section.BlockIndex);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = Workspace.IsDirty;
+        RefreshHistoryState();
+        BuildForm();
+        StatusText = isAssignment
+            ? Strings.Format("NestedEditorAssignmentDeleted", section.Header)
+            : Strings.Format("NestedEditorBlockDeleted", section.Header);
+    }
+
+    private bool CanDeleteSection(NestedFormSectionViewModel? section) =>
+        IsEditable && !IsBusy && Workspace is not null && section?.CanDelete == true;
+
+    private void AddBlock(string fieldName)
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
+        }
+
+        var result = Workspace.AddRepeatedBlock(
+            _selectedKey,
+            fieldName,
+            BuildBlockTemplate(fieldName));
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = Workspace.IsDirty;
+        RefreshHistoryState();
+        BuildForm();
+        StatusText = Strings.Format("NestedEditorBlockAdded", fieldName);
+    }
+
+    private IReadOnlyList<KeyValuePair<string, string>> BuildBlockTemplate(string fieldName)
+    {
+        var values = new List<KeyValuePair<string, string>>();
+        if (Workspace is null)
+        {
+            return values;
+        }
+
+        foreach (var row in Workspace.GetRows())
+        {
+            if (row.Record is not { } record || record.GetOccurrenceCount(fieldName) == 0)
+            {
+                continue;
+            }
+
+            foreach (var name in record.GetChildFieldNames(fieldName))
+            {
+                var path = fieldName + "/" + name;
+                if (record.GetChildFieldNames(FieldPath.Parse(path)).Count > 0)
+                {
+                    continue;
+                }
+
+                values.Add(new KeyValuePair<string, string>(name, string.Empty));
+            }
+
+            if (values.Count > 0)
+            {
+                break;
+            }
+        }
+
+        return values;
+    }
+
     private bool CanAddRecord() => IsEditable && !IsBusy && Workspace is not null;
 
     private bool CanDeleteRecord() =>
@@ -550,6 +731,10 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
             _languageCode = Workspace.Language?.Code;
             IsTranslationMode = Workspace.Language is not null;
             IsEditable = Workspace.CanEdit;
+            _assignmentSegmentIndex = ResolveAssignmentSegmentIndex();
+            RebuildBlockActions();
+            OnPropertyChanged(nameof(HasAssignmentSegment));
+            OnPropertyChanged(nameof(HasNestedAddActions));
             BuildLanguageOptions();
             RebuildRecords(previousKey);
             RefreshHistoryState();
@@ -591,6 +776,71 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         {
             _suppressLanguageChange = false;
         }
+    }
+
+    private int ResolveAssignmentSegmentIndex()
+    {
+        if (Workspace?.Metadata?.RecordKey is not { } spec)
+        {
+            return -1;
+        }
+
+        for (var index = 1; index < spec.Segments.Count; index++)
+        {
+            var segment = spec.Segments[index];
+            if (segment.Kind != RecordKeyKind.Singleton && !string.IsNullOrEmpty(segment.KeyField))
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    private void RebuildBlockActions()
+    {
+        BlockAddActions.Clear();
+        if (Workspace is not null)
+        {
+            foreach (var column in Workspace.Schema.Columns)
+            {
+                if (!IsRepeatedBlock(column))
+                {
+                    continue;
+                }
+
+                var fieldName = column.XmlFieldName;
+                BlockAddActions.Add(new NestedBlockAddViewModel(
+                    Strings.Format("NestedEditorAddBlock", fieldName),
+                    "NestedAddBlock_" + fieldName,
+                    new RelayCommand(() => AddBlock(fieldName))));
+            }
+        }
+
+        OnPropertyChanged(nameof(HasNestedAddActions));
+    }
+
+    private bool IsRepeatedBlock(TableSchemaColumn column) =>
+        column.IsNested && column.IsList && !IsKeySegment(column.XmlFieldName);
+
+    private bool IsKeySegment(string fieldName)
+    {
+        if (Workspace?.Metadata?.RecordKey is not { } spec)
+        {
+            return false;
+        }
+
+        for (var index = 1; index < spec.Segments.Count; index++)
+        {
+            var segment = spec.Segments[index];
+            if (segment.Kind != RecordKeyKind.Singleton
+                && string.Equals(segment.Path, fieldName, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void RebuildRecords(string? preferredKey)
@@ -665,13 +915,19 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         RedoCommand.NotifyCanExecuteChanged();
         AddRecordCommand.NotifyCanExecuteChanged();
         DeleteRecordCommand.NotifyCanExecuteChanged();
+        AddAssignmentCommand.NotifyCanExecuteChanged();
+        DeleteSectionCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSelectedRecordChanged(NestedRecordItemViewModel? value)
     {
         _selectedKey = value?.Key;
+        AddAssignmentCommand.NotifyCanExecuteChanged();
         BuildForm();
     }
+
+    partial void OnNewAssignmentTypeChanged(string value) =>
+        AddAssignmentCommand.NotifyCanExecuteChanged();
 
     partial void OnSearchTextChanged(string value) => ApplyFilter(null);
 
@@ -719,7 +975,12 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
 
     partial void OnIsDirtyChanged(bool value) => OnPropertyChanged(nameof(DisplayName));
 
-    partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+    partial void OnIsBusyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+        AddAssignmentCommand.NotifyCanExecuteChanged();
+        DeleteSectionCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnCanUndoChanged(bool value) => UndoCommand.NotifyCanExecuteChanged();
 
@@ -729,6 +990,8 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
     {
         AddRecordCommand.NotifyCanExecuteChanged();
         DeleteRecordCommand.NotifyCanExecuteChanged();
+        AddAssignmentCommand.NotifyCanExecuteChanged();
+        DeleteSectionCommand.NotifyCanExecuteChanged();
     }
 
     private void BuildForm()
@@ -750,8 +1013,11 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         DetailHeader = Strings.Format("DetailHeaderFormat", row.KeyDisplay);
         AddRootSections();
         AddMainSections(row);
+        AddMainListSections(row);
         AddNestedLeafSections(row);
+        AddRepeatedBlockSections(row);
         AddNestedCollectionSections();
+        DeleteSectionCommand.NotifyCanExecuteChanged();
     }
 
     private void AddRootSections()
@@ -862,6 +1128,54 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         }
     }
 
+    private void AddMainListSections(WorkspaceRow row)
+    {
+        if (Workspace is null || row.Record is null)
+        {
+            return;
+        }
+
+        var lists = new List<NestedListViewModel>();
+        foreach (var column in Workspace.Schema.Columns)
+        {
+            if (!column.IsList
+                || column.IsNested
+                || column.MaxOccurrences <= 1
+                || IsKeySegment(column.XmlFieldName))
+            {
+                continue;
+            }
+
+            var fieldName = column.XmlFieldName;
+            lists.Add(new NestedListViewModel(
+                fieldName,
+                fieldName,
+                IsEditable,
+                row.GetValues(fieldName),
+                values => SetMainListValues(fieldName, values)));
+        }
+
+        if (lists.Count > 0)
+        {
+            Sections.Add(new NestedFormSectionViewModel(
+                "Lists",
+                "NestedSectionLists",
+                Array.Empty<NestedFieldViewModel>(),
+                lists: lists));
+        }
+    }
+
+    private void SetMainListValues(string fieldName, IReadOnlyList<string> values)
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
+        }
+
+        var result = Workspace.SetListValues(_selectedKey, fieldName, values);
+        AfterEdit(result, fieldName);
+    }
+
     private string? GetMainValue(string path) => Workspace?.GetRow(_selectedKey ?? string.Empty)?.GetValue(path);
 
     private bool IsMainTranslated(string path) =>
@@ -893,7 +1207,7 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
 
         foreach (var column in Workspace.Schema.Columns)
         {
-            if (!column.IsNested || IsNestedCollection(column.XmlFieldName))
+            if (!column.IsNested || IsNestedCollection(column.XmlFieldName) || IsRepeatedBlock(column))
             {
                 continue;
             }
@@ -935,6 +1249,130 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         }
     }
 
+    private void AddRepeatedBlockSections(WorkspaceRow row)
+    {
+        if (Workspace is null || row.Record is null)
+        {
+            return;
+        }
+
+        foreach (var column in Workspace.Schema.Columns)
+        {
+            if (!IsRepeatedBlock(column))
+            {
+                continue;
+            }
+
+            var fieldName = column.XmlFieldName;
+            var count = row.Record.GetOccurrenceCount(fieldName);
+            for (var index = 0; index < count; index++)
+            {
+                var fields = new List<NestedFieldViewModel>();
+                var lists = new List<NestedListViewModel>();
+                CollectBlockFields(
+                    row.Record,
+                    fieldName,
+                    index,
+                    fieldName + "[" + (index + 1) + "]",
+                    fields,
+                    lists);
+                Sections.Add(new NestedFormSectionViewModel(
+                    fieldName + " #" + (index + 1),
+                    "NestedSection_" + fieldName + "_" + index,
+                    fields,
+                    lists: lists,
+                    blockFieldName: fieldName,
+                    blockIndex: index));
+            }
+        }
+    }
+
+    private void CollectBlockFields(
+        TableRecord record,
+        string prefix,
+        int blockIndex,
+        string displayPrefix,
+        List<NestedFieldViewModel> fields,
+        List<NestedListViewModel> lists)
+    {
+        foreach (var childName in record.GetChildFieldNames(FieldPath.Parse(prefix), blockIndex))
+        {
+            var path = prefix + "/" + childName;
+            var childNames = record.GetChildFieldNames(FieldPath.Parse(path), blockIndex);
+            var values = record.GetRepeatedValues(FieldPath.Parse(path), blockIndex);
+            if (childNames.Count > 0)
+            {
+                if (values.Count > 1)
+                {
+                    continue;
+                }
+
+                CollectBlockFields(
+                    record,
+                    path,
+                    blockIndex,
+                    displayPrefix + "/" + childName,
+                    fields,
+                    lists);
+                continue;
+            }
+
+            if (values.Count > 1)
+            {
+                lists.Add(new NestedListViewModel(
+                    childName,
+                    displayPrefix + "/" + childName,
+                    IsEditable,
+                    values,
+                    newValues => SetBlockListValues(path, blockIndex, newValues)));
+                continue;
+            }
+
+            fields.Add(CreateField(
+                childName,
+                displayPrefix + "/" + childName,
+                () => record.GetRawValue(FieldPath.Parse(path), blockIndex),
+                value => SetBlockField(path, blockIndex, value),
+                isReadOnly: !IsEditable,
+                isTranslatable: Workspace?.Overlay is not null
+                    && Workspace.IsTranslatable(FieldPath.Parse(path)),
+                isTranslated: () => false));
+        }
+    }
+
+    private void SetBlockField(string path, int blockIndex, string value)
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
+        }
+
+        var record = Workspace.GetRow(_selectedKey)?.Record;
+        var wasAbsent = record?.GetRawValue(FieldPath.Parse(path), blockIndex) is null;
+        var result = Workspace.SetValue(
+            _selectedKey,
+            FieldPath.Parse(path),
+            blockIndex,
+            value,
+            addIfMissing: wasAbsent);
+        AfterEdit(result, path);
+    }
+
+    private void SetBlockListValues(string path, int blockIndex, IReadOnlyList<string> values)
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
+        }
+
+        var result = Workspace.SetRepeatedValues(
+            _selectedKey,
+            FieldPath.Parse(path),
+            values,
+            blockIndex);
+        AfterEdit(result, path);
+    }
+
     private bool IsNestedCollection(string fieldName)
     {
         var spec = Workspace?.Metadata?.RecordKey;
@@ -974,69 +1412,111 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
             var nestedRecords = Workspace.GetNestedRecords(_selectedKey, index);
             foreach (var nested in nestedRecords)
             {
-                var fields = BuildNestedFields(nested, segment);
+                var fields = new List<NestedFieldViewModel>();
+                var lists = new List<NestedListViewModel>();
+                CollectNestedFields(
+                    nested,
+                    segment,
+                    segment.Path + "[" + nested.KeyDisplay + "]",
+                    fields,
+                    lists);
                 Sections.Add(new NestedFormSectionViewModel(
                     segment.Path + ": " + nested.KeyDisplay,
                     "NestedSection_" + segment.Path + "_" + Sanitize(nested.KeyDisplay),
-                    fields));
+                    fields,
+                    lists: lists,
+                    nestedSegmentIndex: index,
+                    nestedOccurrenceIndex: nested.Index,
+                    nestedKey: nested.Key));
             }
         }
     }
 
-    private List<NestedFieldViewModel> BuildNestedFields(NestedWorkspaceRecord nested, RecordKeySegment segment)
+    private void CollectNestedFields(
+        NestedWorkspaceRecord nested,
+        RecordKeySegment segment,
+        string displayPrefix,
+        List<NestedFieldViewModel> fields,
+        List<NestedListViewModel> lists) =>
+        CollectNestedChildren(nested, segment, prefix: string.Empty, displayPrefix, fields, lists);
+
+    private void CollectNestedChildren(
+        NestedWorkspaceRecord nested,
+        RecordKeySegment segment,
+        string prefix,
+        string displayPrefix,
+        List<NestedFieldViewModel> fields,
+        List<NestedListViewModel> lists)
     {
-        if (Workspace is null)
+        var record = nested.Record;
+        var names = prefix.Length == 0
+            ? record.FieldNames
+            : record.GetChildFieldNames(FieldPath.Parse(prefix));
+        foreach (var name in names)
         {
-            return new List<NestedFieldViewModel>();
-        }
-
-        var fields = new List<NestedFieldViewModel>();
-        foreach (var fieldName in nested.Record.FieldNames)
-        {
-            if (nested.Record.GetChildFieldNames(fieldName).Count > 0)
+            var path = prefix.Length == 0 ? name : prefix + "/" + name;
+            var childNames = record.GetChildFieldNames(FieldPath.Parse(path));
+            var values = record.GetRepeatedValues(FieldPath.Parse(path));
+            if (childNames.Count > 0)
             {
-                continue;
-            }
+                if (values.Count > 1)
+                {
+                    continue;
+                }
 
-            var path = fieldName;
-            fields.Add(CreateField(
-                fieldName,
-                segment.Path + "[" + nested.KeyDisplay + "]/" + path,
-                () => GetNestedValue(nested, path),
-                value => SetNestedField(nested, path, value),
-                isReadOnly: !IsEditable
-                    || nested.Key is null
-                    || string.Equals(fieldName, segment.KeyField, StringComparison.Ordinal),
-                isTranslatable: Workspace.Overlay is not null
-                    && Workspace.IsTranslatable(FieldPath.Parse(path)),
-                isTranslated: () => Workspace.IsNestedTranslated(_selectedKey ?? string.Empty, nested, FieldPath.Parse(path))));
-        }
-
-        foreach (var container in nested.Record.FieldNames)
-        {
-            var childNames = nested.Record.GetChildFieldNames(container);
-            if (childNames.Count == 0)
-            {
-                continue;
-            }
-
-            foreach (var child in childNames)
-            {
-                var path = container + "/" + child;
-                var isList = nested.Record.GetChildFieldNames(FieldPath.Parse(path)).Count > 0;
-                fields.Add(CreateField(
+                CollectNestedChildren(
+                    nested,
+                    segment,
                     path,
-                    segment.Path + "[" + nested.KeyDisplay + "]/" + path,
-                    () => GetNestedValue(nested, path),
-                    value => SetNestedField(nested, path, value),
-                    isReadOnly: !IsEditable || isList || nested.Key is null,
-                    isTranslatable: Workspace.Overlay is not null
-                        && Workspace.IsTranslatable(FieldPath.Parse(path)),
-                    isTranslated: () => Workspace.IsNestedTranslated(_selectedKey ?? string.Empty, nested, FieldPath.Parse(path))));
+                    displayPrefix + "/" + name,
+                    fields,
+                    lists);
+                continue;
             }
+
+            if (values.Count > 1)
+            {
+                var listPath = path;
+                lists.Add(new NestedListViewModel(
+                    name,
+                    displayPrefix + "/" + name,
+                    IsEditable,
+                    values,
+                    newValues => SetNestedListValues(nested, listPath, newValues)));
+                continue;
+            }
+
+            var fieldPath = path;
+            var isKeyField = segment.KeyField is not null
+                && string.Equals(path, segment.KeyField, StringComparison.Ordinal);
+            fields.Add(CreateField(
+                name,
+                displayPrefix + "/" + name,
+                () => GetNestedValue(nested, fieldPath),
+                value => SetNestedField(nested, fieldPath, value),
+                isReadOnly: !IsEditable || nested.Key is null || isKeyField,
+                isTranslatable: Workspace?.Overlay is not null
+                    && Workspace.IsTranslatable(FieldPath.Parse(fieldPath)),
+                isTranslated: () => Workspace?.IsNestedTranslated(
+                    _selectedKey ?? string.Empty,
+                    nested,
+                    FieldPath.Parse(fieldPath)) == true));
+        }
+    }
+
+    private void SetNestedListValues(NestedWorkspaceRecord nested, string path, IReadOnlyList<string> values)
+    {
+        if (Workspace is null || _selectedKey is null)
+        {
+            return;
         }
 
-        return fields;
+        var result = Workspace.SetNestedRepeatedValues(
+            _selectedKey,
+            nested,
+            FieldPath.Parse(path),
+            values);
+        AfterEdit(result, path);
     }
 
     private string? GetNestedValue(NestedWorkspaceRecord nested, string path) =>

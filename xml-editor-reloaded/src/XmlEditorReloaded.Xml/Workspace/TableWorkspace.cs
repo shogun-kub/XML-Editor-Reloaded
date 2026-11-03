@@ -759,6 +759,407 @@ public sealed partial class TableWorkspace
     }
 
     /// <summary>
+    /// Appends a nested record for a key segment, for example one <c>ASSIGNMENT</c> of a facility type.
+    /// The nested key must be unique within the parent record; the new element is inserted after the
+    /// last same-named sibling and recorded as one undoable transaction. The overlay is not modified.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="segmentIndex">Key-segment index of the nested collection, where the primary is zero.</param>
+    /// <param name="key">Nested key value, written into the segment key field.</param>
+    /// <param name="initialValues">
+    /// Optional additional leaf values of the new nested record in document order; a value for the key
+    /// field is ignored because the key argument is authoritative.
+    /// </param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>key.conflict</c>,
+    /// <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> or <paramref name="key"/> is null.</exception>
+    public OperationResult AddNestedRecord(
+        string recordKey,
+        int segmentIndex,
+        string key,
+        IReadOnlyList<KeyValuePair<string, string>>? initialValues = null)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentOutOfRangeException.ThrowIfNegative(segmentIndex);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        if (Metadata?.RecordKey is not { } spec
+            || segmentIndex <= 0
+            || segmentIndex >= spec.Segments.Count)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The requested key segment is not a nested key segment of this table.");
+        }
+
+        var segment = spec.Segments[segmentIndex];
+        if (segment.Kind != RecordKeyKind.Scalar || string.IsNullOrEmpty(segment.KeyField))
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                $"Nested segment '{segment.Path}' has no scalar key field that could accept a new key.");
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.");
+        }
+
+        var resolver = new OverlayKeyResolver(Metadata);
+        var existing = resolver.ResolveNested(record.Element, segmentIndex);
+        if (existing.Any(candidate => string.Equals(candidate.Key, key, StringComparison.Ordinal)))
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyConflict,
+                $"Nested record '{segment.Path}' with key '{key}' already exists.");
+        }
+
+        var element = new XElement(XName.Get(segment.Path.Split('/')[^1]));
+        element.Add(new XElement(XName.Get(segment.KeyField), key));
+        var nestedRecord = new TableRecord(BaseDocument, element);
+        if (initialValues is not null)
+        {
+            foreach (var pair in initialValues)
+            {
+                if (string.IsNullOrEmpty(pair.Key)
+                    || string.Equals(pair.Key, segment.KeyField, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var applied = nestedRecord.TrySetValue(pair.Key, pair.Value, addIfMissing: true);
+                if (!applied)
+                {
+                    return OperationResult.Failure(
+                        ErrorCodes.XmlInvalidNumber,
+                        $"'{pair.Value}' is not a valid value for field '{pair.Key}'.");
+                }
+            }
+        }
+
+        var before = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var parent = record.Element;
+        var parts = segment.Path.Split('/');
+        for (var index = 0; index < parts.Length - 1; index++)
+        {
+            var child = parent.Elements()
+                .FirstOrDefault(candidate => string.Equals(
+                    candidate.Name.LocalName,
+                    parts[index],
+                    StringComparison.Ordinal));
+            if (child is null)
+            {
+                child = new XElement(XName.Get(parts[index]));
+                parent.Add(child);
+            }
+
+            parent = child;
+        }
+
+        var last = parent.Elements()
+            .LastOrDefault(candidate => string.Equals(
+                candidate.Name.LocalName,
+                parts[^1],
+                StringComparison.Ordinal));
+        if (last is not null)
+        {
+            last.AddAfterSelf(element);
+        }
+        else
+        {
+            parent.Add(element);
+        }
+
+        BaseDocument.MarkDirty();
+        var transaction = new TableEditTransaction();
+        before.CompleteAfter(record.Element);
+        transaction.Add(before);
+        History.Record(transaction);
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Deletes one nested record of a key segment and, when present, its matching translation record in
+    /// the selected overlay. The base and overlay changes are recorded as one undoable transaction.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="segmentIndex">Key-segment index of the nested collection, where the primary is zero.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the nested record in document order.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when an index is negative.</exception>
+    public OperationResult DeleteNestedRecord(string recordKey, int segmentIndex, int occurrenceIndex)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentOutOfRangeException.ThrowIfNegative(segmentIndex);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        if (Metadata?.RecordKey is not { } spec
+            || segmentIndex <= 0
+            || segmentIndex >= spec.Segments.Count)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                "The requested key segment is not a nested key segment of this table.");
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.");
+        }
+
+        var resolver = new OverlayKeyResolver(Metadata);
+        var nested = resolver.ResolveNested(record.Element, segmentIndex);
+        if (occurrenceIndex >= nested.Count)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                $"Nested record #{occurrenceIndex + 1} of '{spec.Segments[segmentIndex].Path}' was not found.");
+        }
+
+        var target = nested[occurrenceIndex];
+        var baseBefore = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var overlayBefore = CaptureOverlayState(recordKey);
+        target.Element.Remove();
+        BaseDocument.MarkDirty();
+
+        if (Overlay is not null && target.Key is not null)
+        {
+            var overlayRecord = resolver.FindPrimary(Overlay.Xml, recordKey);
+            var overlayNested = overlayRecord is null
+                ? null
+                : resolver.ResolveNested(overlayRecord, segmentIndex)
+                    .FirstOrDefault(candidate => string.Equals(
+                        candidate.Key,
+                        target.Key,
+                        StringComparison.Ordinal));
+            if (overlayNested is not null)
+            {
+                overlayNested.Element.Remove();
+                Overlay.MarkDirty();
+                Overlay.Document.SynchronizeRecords();
+            }
+        }
+
+        var transaction = new TableEditTransaction();
+        baseBefore.CompleteAfter(record.Element);
+        transaction.Add(baseBefore);
+        if (Overlay is not null)
+        {
+            CompleteOverlayState(transaction, overlayBefore, recordKey);
+        }
+
+        History.Record(transaction);
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Appends one repeated nested block such as a facility <c>PRODUCTIONLINE</c> as one undoable
+    /// transaction. Only the supplied leaf values are written; no fields are invented.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="fieldName">Case-sensitive XML element name of the repeated block.</param>
+    /// <param name="initialValues">Optional leaf values of the new block in document order.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    public OperationResult AddRepeatedBlock(
+        string recordKey,
+        string fieldName,
+        IReadOnlyList<KeyValuePair<string, string>>? initialValues = null)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+
+        return ApplyRecordEdit(
+            recordKey,
+            record => record.AddElement(fieldName, initialValues));
+    }
+
+    /// <summary>
+    /// Deletes one repeated nested block such as a facility <c>PRODUCTIONLINE</c> as one undoable
+    /// transaction.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="fieldName">Case-sensitive XML element name of the repeated block.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence among same-named blocks.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult DeleteRepeatedBlock(string recordKey, string fieldName, int occurrenceIndex)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        return ApplyRecordEdit(
+            recordKey,
+            record => record.RemoveElement(fieldName, occurrenceIndex));
+    }
+
+    /// <summary>
+    /// Gets the values of a repeated leaf field of a record, selecting an occurrence of the first path
+    /// segment, for example <c>PRODUCTIONLINE/usOptional_ItemUsedUp</c> of one production line.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="itemPath">Path to the repeated leaf.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment.</param>
+    /// <returns>The values in document order; empty when the record or path is absent.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/> or <paramref name="itemPath"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public IReadOnlyList<string> GetRepeatedValues(
+        string recordKey,
+        FieldPath itemPath,
+        int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        return BaseDocument.FindRecord(recordKey)?.GetRepeatedValues(itemPath, occurrenceIndex)
+            ?? Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Replaces all values of a repeated leaf field of a record as one undoable transaction.
+    /// </summary>
+    /// <param name="recordKey">Primary record key.</param>
+    /// <param name="itemPath">Path to the repeated leaf.</param>
+    /// <param name="values">New values in the desired order; an empty sequence removes the occurrences.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="recordKey"/>, <paramref name="itemPath"/>, or <paramref name="values"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult SetRepeatedValues(
+        string recordKey,
+        FieldPath itemPath,
+        IReadOnlyList<string> values,
+        int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        return ApplyRecordEdit(
+            recordKey,
+            record => record.SetRepeatedValues(itemPath, values, occurrenceIndex));
+    }
+
+    /// <summary>
+    /// Gets the values of a repeated leaf field of a nested record, for example the
+    /// <c>DRUNK/drugitems/drugitem</c> ids of an <c>ASSIGNMENT</c>.
+    /// </summary>
+    /// <param name="nested">Nested record returned by <see cref="GetNestedRecords"/>.</param>
+    /// <param name="itemPath">Path to the repeated leaf relative to the nested record.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment.</param>
+    /// <returns>The values in document order; empty when the path is absent.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="nested"/> or <paramref name="itemPath"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public IReadOnlyList<string> GetNestedRepeatedValues(
+        NestedWorkspaceRecord nested,
+        FieldPath itemPath,
+        int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(nested);
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        return nested.Record.GetRepeatedValues(itemPath, occurrenceIndex);
+    }
+
+    /// <summary>
+    /// Replaces all values of a repeated leaf field of a nested record as one undoable transaction of
+    /// the parent record.
+    /// </summary>
+    /// <param name="recordKey">Primary record key that owns the nested record.</param>
+    /// <param name="nested">Nested record returned by <see cref="GetNestedRecords"/>.</param>
+    /// <param name="itemPath">Path to the repeated leaf relative to the nested record.</param>
+    /// <param name="values">New values in the desired order; an empty sequence removes the occurrences.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>, <c>xml.invalid_number</c>, or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult SetNestedRepeatedValues(
+        string recordKey,
+        NestedWorkspaceRecord nested,
+        FieldPath itemPath,
+        IReadOnlyList<string> values,
+        int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(recordKey);
+        ArgumentNullException.ThrowIfNull(nested);
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        return ApplyRecordEdit(
+            recordKey,
+            _ => nested.Record.SetRepeatedValues(itemPath, values, occurrenceIndex));
+    }
+
+    private OperationResult ApplyRecordEdit(
+        string recordKey,
+        Func<TableRecord, OperationResult> edit)
+    {
+        ArgumentNullException.ThrowIfNull(edit);
+        if (!CanEdit)
+        {
+            return OperationResult.Failure(ErrorCodes.XmlNotSaveable, "The table is not editable.");
+        }
+
+        var record = BaseDocument.FindRecord(recordKey);
+        if (record is null)
+        {
+            return OperationResult.Failure(ErrorCodes.KeyNotFound, $"Record '{recordKey}' was not found.");
+        }
+
+        var before = ElementSnapshotState.Capture(BaseDocument, record.Element);
+        var result = edit(record);
+        if (!result.IsSuccess)
+        {
+            return result;
+        }
+
+        var transaction = new TableEditTransaction();
+        before.CompleteAfter(record.Element);
+        transaction.Add(before);
+        History.Record(transaction);
+        return result;
+    }
+
+    /// <summary>
     /// Sets a root-level field, for example <c>COUNTRY/countryName</c>. A translatable path is written
     /// only to the selected language overlay; every other path is written to the base table.
     /// </summary>

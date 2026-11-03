@@ -167,7 +167,12 @@ public sealed class TableSchemaBuilder
             var editorKind = dataType == ColumnDataType.Nested
                 ? ColumnEditorKind.SubTableGrid
                 : hint?.EditorKind ?? declared?.EditorKind ?? DefaultEditorKind(dataType);
-            var isTranslatable = translatableFields?.Contains(name) == true
+            // Translatable metadata paths may be qualified by the record path, for example
+            // CITYLIST/CITY/townName; the discovered column carries only the leaf name, so a suffix
+            // match marks the same field on the nested record schema.
+            var isTranslatable = translatableFields?.Any(path =>
+                    string.Equals(path, name, StringComparison.Ordinal)
+                    || path.EndsWith("/" + name, StringComparison.Ordinal)) == true
                 || hint?.Flags?.HasFlag(ColumnFlags.Translatable) == true
                 || declared?.Flags.HasFlag(ColumnFlags.Translatable) == true;
             // A nested element has no cell editor yet: the grid shows it as an empty read-only

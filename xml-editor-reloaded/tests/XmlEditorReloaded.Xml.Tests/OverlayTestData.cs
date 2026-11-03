@@ -74,6 +74,22 @@ internal static class OverlayTestData
         translatableFieldPaths: new[] { "COUNTRY/countryName", "COUNTRY/countryNoun", "CITYLIST/CITY/townName" });
 
     /// <summary>
+    /// Creates metadata for the FacilityTypes fixture.
+    /// </summary>
+    /// <returns>Facility metadata with a nested assignment key.</returns>
+    public static TableMetadata FacilityMetadata() => new(
+        TableName.Parse("Map.FacilityTypes"),
+        "FACILITYTYPES",
+        "FACILITYTYPE",
+        isLookup: false,
+        new RecordKeySpec(new[]
+        {
+            new RecordKeySegment(string.Empty, RecordKeyKind.Scalar, "ubIndex"),
+            new RecordKeySegment("ASSIGNMENT", RecordKeyKind.Scalar, "ubAssignmentType"),
+        }),
+        translatableFieldPaths: new[] { "szFacilityName", "szFacilityShortName", "ASSIGNMENT/szTooltipText" });
+
+    /// <summary>
     /// Loads a base fixture with metadata.
     /// </summary>
     /// <param name="path">Base file path.</param>

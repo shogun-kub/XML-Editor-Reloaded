@@ -500,6 +500,289 @@ public sealed class TableRecord
     }
 
     /// <summary>
+    /// Gets the number of direct children with the given name.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name.</param>
+    /// <returns>The occurrence count; zero when the element is absent.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    public int GetOccurrenceCount(string fieldName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        return _element.Elements()
+            .Count(element => string.Equals(element.Name.LocalName, fieldName, StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// Gets the distinct child element names at a nested field path, selecting an occurrence of the
+    /// first path segment.
+    /// </summary>
+    /// <param name="path">Slash-separated path of the container.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment among same-named siblings.</param>
+    /// <returns>The child names, or an empty list when the path is absent or has no child elements.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public IReadOnlyList<string> GetChildFieldNames(FieldPath path, int occurrenceIndex)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+        return ContainerChildNames(FindPath(path, occurrenceIndex));
+    }
+
+    /// <summary>
+    /// Gets the values of a repeated leaf field at a nested path, selecting an occurrence of the first
+    /// path segment. For example, <c>DRUNK/drugitems/drugitem</c> returns the drug item ids of the first
+    /// <c>DRUNK</c> block.
+    /// </summary>
+    /// <param name="itemPath">Path to the repeated leaf, including its container segments.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment among same-named siblings.</param>
+    /// <returns>The values in document order; empty when the path is absent.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="itemPath"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public IReadOnlyList<string> GetRepeatedValues(FieldPath itemPath, int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        var container = itemPath.Depth == 1
+            ? _element
+            : FindPath(ContainerPath(itemPath), occurrenceIndex);
+        return container is null
+            ? Array.Empty<string>()
+            : container.Elements()
+                .Where(element => string.Equals(
+                    element.Name.LocalName,
+                    itemPath.FieldName,
+                    StringComparison.Ordinal))
+                .Select(static element => element.Value)
+                .ToArray();
+    }
+
+    /// <summary>
+    /// Replaces all values of a repeated leaf field at a nested path, selecting an occurrence of the
+    /// first path segment. Only same-named siblings inside the resolved container are replaced; other
+    /// elements of the container and of the record are preserved.
+    /// </summary>
+    /// <param name="itemPath">Path to the repeated leaf, including its container segments.</param>
+    /// <param name="values">New values in the desired order; an empty sequence removes the occurrences.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence of the first path segment among same-named siblings.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="itemPath"/> or <paramref name="values"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult SetRepeatedValues(
+        FieldPath itemPath,
+        IReadOnlyList<string> values,
+        int occurrenceIndex = 0)
+    {
+        ArgumentNullException.ThrowIfNull(itemPath);
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        foreach (var value in values)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            var validation = ValidateValue(itemPath.FieldName, value);
+            if (!validation.IsSuccess)
+            {
+                return validation;
+            }
+        }
+
+        XElement? container;
+        if (itemPath.Depth == 1)
+        {
+            container = _element;
+        }
+        else
+        {
+            var containerPath = ContainerPath(itemPath);
+            container = FindPath(containerPath, occurrenceIndex);
+            if (container is null)
+            {
+                if (values.Count == 0)
+                {
+                    return OperationResult.Success();
+                }
+
+                container = CreatePath(containerPath, occurrenceIndex);
+                if (container is null)
+                {
+                    return OperationResult.Failure(
+                        ErrorCodes.KeyNotFound,
+                        $"Occurrence {occurrenceIndex} of '{containerPath.Segments[0]}' is not present in the record.");
+                }
+            }
+        }
+
+        var existing = container.Elements()
+            .Where(element => string.Equals(
+                element.Name.LocalName,
+                itemPath.FieldName,
+                StringComparison.Ordinal))
+            .ToList();
+        if (existing.Any(static element => element.HasElements))
+        {
+            return OperationResult.Failure(
+                ErrorCodes.XmlNotSaveable,
+                $"Repeated field '{itemPath.Text}' contains nested elements and cannot be replaced as scalar values.");
+        }
+
+        var oldValues = existing.Select(static element => element.Value).ToArray();
+        var changed = existing.Count != values.Count
+            || !oldValues.SequenceEqual(values, StringComparer.Ordinal);
+
+        if (!changed)
+        {
+            return OperationResult.Success();
+        }
+
+        var common = Math.Min(existing.Count, values.Count);
+        for (var index = 0; index < common; index++)
+        {
+            if (!string.Equals(existing[index].Value, values[index], StringComparison.Ordinal))
+            {
+                existing[index].Value = values[index];
+            }
+        }
+
+        if (values.Count > existing.Count)
+        {
+            for (var index = existing.Count; index < values.Count; index++)
+            {
+                var element = new XElement(XName.Get(itemPath.FieldName), values[index]);
+                if (existing.Count > 0)
+                {
+                    existing[^1].AddAfterSelf(element);
+                }
+                else
+                {
+                    container.Add(element);
+                }
+
+                existing.Add(element);
+            }
+        }
+        else if (values.Count < existing.Count)
+        {
+            for (var index = values.Count; index < existing.Count; index++)
+            {
+                existing[index].Remove();
+            }
+        }
+
+        _owner.MarkDirty();
+        _owner.ChangeTracker.Record(new ListFieldChanged(OwnerKey, itemPath.Text, oldValues, values));
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Appends one direct child element, optionally with initial leaf values, and inserts it after the
+    /// last same-named sibling. Existing elements and their order are preserved.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name of the new child.</param>
+    /// <param name="initialValues">
+    /// Optional leaf values of the new element in document order. Values are validated against metadata
+    /// before the element is attached.
+    /// </param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>xml.invalid_number</c> or <c>xml.not_saveable</c>.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    public OperationResult AddElement(
+        string fieldName,
+        IReadOnlyList<KeyValuePair<string, string>>? initialValues = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+
+        if (initialValues is not null)
+        {
+            foreach (var pair in initialValues)
+            {
+                if (string.IsNullOrEmpty(pair.Key))
+                {
+                    continue;
+                }
+
+                var validation = ValidateValue(pair.Key, pair.Value);
+                if (!validation.IsSuccess)
+                {
+                    return validation;
+                }
+            }
+        }
+
+        var element = new XElement(XName.Get(fieldName));
+        if (initialValues is not null)
+        {
+            foreach (var pair in initialValues)
+            {
+                if (!string.IsNullOrEmpty(pair.Key))
+                {
+                    element.Add(new XElement(XName.Get(pair.Key), pair.Value));
+                }
+            }
+        }
+
+        var last = _element.Elements()
+            .LastOrDefault(candidate => string.Equals(
+                candidate.Name.LocalName,
+                fieldName,
+                StringComparison.Ordinal));
+        if (last is not null)
+        {
+            last.AddAfterSelf(element);
+        }
+        else
+        {
+            _element.Add(element);
+        }
+
+        _owner.MarkDirty();
+        return OperationResult.Success();
+    }
+
+    /// <summary>
+    /// Removes one occurrence of a direct child element.
+    /// </summary>
+    /// <param name="fieldName">Case-sensitive XML element name.</param>
+    /// <param name="occurrenceIndex">Zero-based occurrence among same-named siblings.</param>
+    /// <returns>
+    /// On success, <c>error_code</c> is <see langword="null"/>.
+    /// On failure, <c>error_code</c> is <c>key.not_found</c>.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="fieldName"/> is empty.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="occurrenceIndex"/> is negative.</exception>
+    public OperationResult RemoveElement(string fieldName, int occurrenceIndex = 0)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentOutOfRangeException.ThrowIfNegative(occurrenceIndex);
+
+        var element = _element.Elements()
+            .Where(candidate => string.Equals(
+                candidate.Name.LocalName,
+                fieldName,
+                StringComparison.Ordinal))
+            .Skip(occurrenceIndex)
+            .FirstOrDefault();
+        if (element is null)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.KeyNotFound,
+                $"Occurrence {occurrenceIndex} of element '{fieldName}' is not present in the record.");
+        }
+
+        element.Remove();
+        _owner.MarkDirty();
+        return OperationResult.Success();
+    }
+
+    private static FieldPath ContainerPath(FieldPath itemPath) =>
+        new(itemPath.Segments.Take(itemPath.Depth - 1).ToArray());
+
+    /// <summary>
     /// Sets one indexed field from a dictionary mask such as <c>ItemCapacityPerSize%Index%</c>.
     /// </summary>
     /// <param name="definition">Dictionary field mask definition.</param>
