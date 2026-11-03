@@ -53,10 +53,20 @@ if ($Reset -and (Test-Path -LiteralPath $rootFull)) {
     Remove-Item -LiteralPath $rootFull -Recurse -Force
 }
 
-$v4 = Join-Path $rootFull 'v4'
-$v5 = Join-Path $rootFull 'v5'
+$v4Root = Join-Path $rootFull 'v4'
+$v5Root = Join-Path $rootFull 'v5'
 $appData = Join-Path $rootFull 'appdata'
 New-Item -ItemType Directory -Force -Path $rootFull, $appData | Out-Null
+
+# The manual scenarios only read tables and item sprites. Copying the whole game directory
+# would take several gigabytes and tens of thousands of files, so only the folders the
+# editor consumes are materialized: tables, big sprites, medium sprites, and small sprites.
+$copiedFolders = @(
+    'Data-1.13\TableData',
+    'Data-1.13\BigItems',
+    'Data-1.13\Interface',
+    'Data-1.13\tilesets\0'
+)
 
 function Copy-DataSet {
     param(
@@ -79,26 +89,37 @@ function Copy-DataSet {
         Remove-Item -LiteralPath $Target -Recurse -Force
     }
 
+    New-Item -ItemType Directory -Force -Path $Target | Out-Null
     Write-Host "Копирую $ReferenceName -> $Target ..."
-    Copy-Item -Path (Join-Path $source '*') -Destination $Target -Recurse -Force
+    foreach ($relative in $copiedFolders) {
+        $from = Join-Path $source $relative
+        if (-not (Test-Path -LiteralPath $from)) {
+            throw "В датасете References\$ReferenceName отсутствует $relative"
+        }
+
+        $to = Join-Path $Target $relative
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $to) | Out-Null
+        Copy-Item -LiteralPath $from -Destination $to -Recurse -Force
+        Write-Host "  $relative"
+    }
 }
 
-Copy-DataSet -ReferenceName 'JA 2 1.13 v4' -Target $v4
+Copy-DataSet -ReferenceName 'JA 2 1.13 v4' -Target $v4Root
 if ($V5) {
-    Copy-DataSet -ReferenceName 'JA 2 1.13 v5' -Target $v5
+    Copy-DataSet -ReferenceName 'JA 2 1.13 v5' -Target $v5Root
 }
 
-$dataDirectories = @($v4)
+$dataDirectories = @($v4Root)
 if ($V5) {
-    $dataDirectories += $v5
+    $dataDirectories += $v5Root
 }
 
 $settings = [ordered]@{
     dataDirectories       = $dataDirectories
-    activeDataDirectory   = $v4
+    activeDataDirectory   = $v4Root
     activeLanguageCode    = $null
     uiLanguageCode        = 'ru'
-    recentDataDirectories = @($v4)
+    recentDataDirectories = @($v4Root)
 }
 
 $settingsPath = Join-Path $appData 'settings.json'
@@ -108,15 +129,40 @@ $json = $settings | ConvertTo-Json -Depth 5
     $json,
     [System.Text.UTF8Encoding]::new($false))
 
+$readmePath = Join-Path $rootFull 'README.txt'
+$readme = @"
+XER manual smoke environment
+============================
+
+Prepared by util-scripts/manual-smoke.ps1.
+
+v4 data set:   $v4Root
+AppData:       $appData
+Settings:      $settingsPath
+
+The data set is a minimal copy: TableData, BigItems, Interface, tilesets\0.
+It is used only for read-only manual scenarios; the originals in References are untouched.
+
+For S83 edit $settingsPath while the editor is closed.
+
+To rebuild this directory, run from a normal PowerShell:
+  .\util-scripts\manual-smoke.cmd -Reset
+"@
+[System.IO.File]::WriteAllText(
+    $readmePath,
+    $readme,
+    [System.Text.UTF8Encoding]::new($false))
+
 Write-Host ''
 Write-Host 'Подготовлено:'
 Write-Host "  Рабочий каталог: $rootFull"
-Write-Host "  v4:             $v4"
+Write-Host "  v4:             $v4Root"
 if ($V5) {
-    Write-Host "  v5:             $v5"
+    Write-Host "  v5:             $v5Root"
 }
 Write-Host "  AppData:        $appData"
 Write-Host "  Settings:       $settingsPath"
+Write-Host "  README:         $readmePath"
 Write-Host ''
 
 if ($NoLaunch) {
