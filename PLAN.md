@@ -60,7 +60,10 @@
 
 Осталось:
 - **Ручной smoke:** S04, S22, S53 и S74 пройдены на v4 2026-11-03; **маркер full functional parity** поставлен, коммит `M23: legacy functional parity gate`. Колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя.
-- **M27:** упаковка и релиз (self-contained publish, portable zip, CI-гейты; иконка/версия/changelog, README и user guide).
+- **M27a — UI foundation:** монохромный набор иконок, тёмная/светлая тема с `System` по умолчанию, одинаковые высоты кнопок, горячие клавиши и навигация `PgUp/PgDn/Home/End` в гридах.
+- **M27b — Table tree:** дерево реальных папок и файлов, фильтр по имени, Fold/Unfold all и «Find in tree» с очисткой фильтра.
+- **M27c — XML read-only view:** переключатель Grid/Code на вкладку, поиск элемента по ID/ключу и переход к замечанию валидации по строке; без редактирования текста.
+- **M28 — Packaging/release:** self-contained publish, portable zip, CI-гейты, иконка/версия/changelog, README и user guide.
 
 ### После паритета — M24–M27
 Эти функции не нужны для паритета (в legacy их нет), они закрывают собственные пробелы rewrite.
@@ -68,9 +71,9 @@
 - **M24a — Nested city/facility editors (достигнут):** `Map.Cities` (`COUNTRY`/`CITYLIST/CITY`) и `FacilityTypes/ASSIGNMENT`: отдельный master-detail редактор, правка скалярных и вложенных полей, корневых singleton-полей, добавление/удаление городов и типов объектов, переводы через оверлей. **M24b — List/dict и структурные вложенные записи (достигнут):** list/dict-поля, nested overlay-переводы, добавление/удаление `ASSIGNMENT`.
 - **M25a — Comparison v2 (достигнут):** сравнение значений записей, содержимого оверлеев и корневых singleton-полей; ограничения деталей при точных счётчиках. **M25b — Dataset-wide (достигнут):** проверка всех таблиц одним отчётом с экспортом и глобальный поиск по значениям базы и оверлеев.
 - **M26a — Lookup CRUD (достигнут):** создание, изменение и удаление значений справочников, распределение ID по виду (битовая маска или последовательность), свободный ID с проверкой дубликатов. **M26b — Protection (достигнут):** «где используется» с переходом к записи, защита используемых значений, предупреждение о битах flag-lookup без имени.
-- **M27a — Packaging:** self-contained publish, portable zip, CI-гейты сборки/тестов/корпуса. **M27b — Release:** иконка/версия/changelog, README и user guide.
+- **M27a — UI foundation (запланирован):** ~50 монохромных иконок 24×24, темы `System`/`Light`/`Dark`, общие стили контролов, равные высоты кнопок, горячие клавиши с отображением в меню и тултипами, явная навигация `PgUp/PgDn/Home/End` в гридах. **M27b — Table tree (запланирован):** иерархия папок/файлов, фильтр, Fold/Unfold all, «Find in tree». **M27c — XML view (запланирован):** read-only текст, Grid/Code, поиск по ID, переход к замечанию. **M28 — Packaging (запланирован):** publish/zip/CI/README.
 
-**Критический путь:** M0 → … → M19 (item parity) → M20 → M21 → M22a → M22b → M22c → M23a → M23b (full legacy parity) → M24a → M24b → M25a → M25b → M26a (достигнут) → M26b → M27a → M27b. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22c и перед релизом.
+**Критический путь:** M0 → … → M19 (item parity) → M20 → M21 → M22a → M22b → M22c → M23a → M23b (full legacy parity) → M24a → M24b → M25a → M25b → M26a (достигнут) → M26b (достигнут) → M27a → M27b → M27c → M28. Corpus-гейты — на каждом milestone; perf-гейты — на M10, M11, M19–M22c и перед релизом.
 
 ---
 
