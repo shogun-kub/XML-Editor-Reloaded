@@ -311,22 +311,35 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
-                    <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3"
-                            SnapsToDevicePixels="True"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter ContentSource="Header"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          RecognizesAccessKey="True" />
-                    </Border>
+                    <Grid>
+                        <Border x:Name="Bd"
+                                Margin="0,0,1,0"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                SnapsToDevicePixels="True"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <Border x:Name="RightEdge"
+                                Width="1"
+                                Margin="0,0,2,0"
+                                HorizontalAlignment="Right"
+                                Background="{TemplateBinding BorderBrush}"
+                                IsHitTestVisible="False"
+                                SnapsToDevicePixels="True" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Theme.Panel.Background}" />
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Theme.Accent}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="1,1,1,0" />
+                            <Setter TargetName="Bd" Property="CornerRadius" Value="3,3,0,0" />
+                            <Setter TargetName="RightEdge" Property="Background" Value="{DynamicResource Theme.Accent}" />
                             <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
