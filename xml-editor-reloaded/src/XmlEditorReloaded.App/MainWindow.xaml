@@ -199,11 +199,13 @@
                     </DataGrid>
 
                     <Button Grid.Row="1"
+                            Style="{DynamicResource IconButton}"
                             Margin="0,6,0,0"
-                            Padding="12,4"
                             HorizontalAlignment="Left"
                             AutomationProperties.AutomationId="OpenTableButton"
-                            Content="{Binding OpenTableText}"
+                            AutomationProperties.Name="{Binding OpenTableText}"
+                            Content="{DynamicResource Icon.OpenRecord}"
+                            ToolTip="{shortcuts:ShortcutTip Action=OpenTable, Text={Binding OpenTableText}}"
                             Command="{Binding OpenTableCommand}" />
 
                     <Expander Grid.Row="2"

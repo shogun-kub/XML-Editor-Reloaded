@@ -62,22 +62,26 @@
                                              Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                              Visibility="{Binding IsPlainValue, Converter={StaticResource BoolToVisibility}}" />
                                     <Button Grid.Column="1"
+                                            Style="{DynamicResource IconButton}"
                                             Margin="6,0,0,0"
-                                            Padding="8,1"
                                             AutomationProperties.AutomationId="{Binding RemoveAutomationId}"
-                                            Content="✕"
+                                            AutomationProperties.Name="{Binding DeleteText}"
+                                            Content="{DynamicResource Icon.Delete}"
                                             Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=GroupBox}}"
-                                            CommandParameter="{Binding}" />
+                                            CommandParameter="{Binding}"
+                                            ToolTip="{Binding DeleteText}" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Button Margin="0,6,0,0"
-                            Padding="10,2"
+                    <Button Style="{DynamicResource IconButton}"
+                            Margin="0,6,0,0"
                             HorizontalAlignment="Left"
                             AutomationProperties.AutomationId="{Binding AddAutomationId}"
-                            Content="{Binding AddText}"
-                            Command="{Binding AddCommand}" />
+                            AutomationProperties.Name="{Binding AddText}"
+                            Content="{DynamicResource Icon.AddRow}"
+                            Command="{Binding AddCommand}"
+                            ToolTip="{Binding AddText}" />
                 </StackPanel>
             </GroupBox>
         </DataTemplate>
@@ -256,11 +260,13 @@
                         <TextBox AutomationProperties.AutomationId="ItemGoToIdBox"
                                  Text="{Binding GoToIdText, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Grid.Column="1"
+                                Style="{DynamicResource IconButton}"
                                 Margin="6,0,0,0"
-                                Padding="10,2"
                                 AutomationProperties.AutomationId="ItemGoToIdButton"
-                                Content="{Binding GoToIdLabel}"
-                                Command="{Binding GoToItemIdCommand}" />
+                                AutomationProperties.Name="{Binding GoToIdLabel}"
+                                Content="{DynamicResource Icon.GoToId}"
+                                Command="{Binding GoToItemIdCommand}"
+                                ToolTip="{Binding GoToIdLabel}" />
                     </Grid>
 
                     <Expander Grid.Row="4"

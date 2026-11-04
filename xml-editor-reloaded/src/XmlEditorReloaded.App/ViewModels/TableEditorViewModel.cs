@@ -226,6 +226,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         BulkEditTooltip = Strings.Get("EditorBulkEditTooltip");
         FilterLabel = Strings.Get("EditorFilterLabel");
         FilterAddText = Strings.Get("EditorFilterAdd");
+        FilterRemoveText = Strings.Get("EditorFilterRemove");
         FilterClearText = Strings.Get("EditorFilterClear");
         FilterByValueText = Strings.Get("EditorFilterByValue");
         FilterExcludeValueText = Strings.Get("EditorFilterExcludeValue");
@@ -514,6 +515,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Gets the add-condition button text.
     /// </summary>
     public string FilterAddText { get; }
+
+    /// <summary>
+    /// Gets the remove-condition button text.
+    /// </summary>
+    public string FilterRemoveText { get; }
 
     /// <summary>
     /// Gets the clear-filter button text.

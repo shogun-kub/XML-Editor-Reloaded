@@ -1458,6 +1458,9 @@
   <data name="EditorFilterAdd" xml:space="preserve">
     <value>Добавить условие</value>
   </data>
+  <data name="EditorFilterRemove" xml:space="preserve">
+    <value>Удалить условие</value>
+  </data>
   <data name="EditorFilterClear" xml:space="preserve">
     <value>Сбросить фильтр</value>
   </data>

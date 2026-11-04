@@ -260,11 +260,13 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <Button Margin="6,0,0,0"
-                                        Padding="8,0"
+                                <Button Style="{DynamicResource IconButton}"
+                                        Margin="6,0,0,0"
                                         AutomationProperties.AutomationId="FilterRemoveButton"
-                                        Content="×"
-                                        Command="{Binding RemoveCommand}" />
+                                        AutomationProperties.Name="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        Content="{DynamicResource Icon.FilterRemove}"
+                                        Command="{Binding RemoveCommand}"
+                                        ToolTip="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
