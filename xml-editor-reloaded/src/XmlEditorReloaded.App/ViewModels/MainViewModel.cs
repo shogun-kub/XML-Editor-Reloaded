@@ -153,6 +153,13 @@ public partial class MainViewModel : ObservableObject
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
         DataDirectoryLabel = Strings.Get("DataDirectoryLabel");
         TablesLabel = Strings.Get("TablesLabel");
+        TableTreeTabText = Strings.Get("TableTreeTab");
+        TableListTabText = Strings.Get("TableListTab");
+        TableTreeFilterText = Strings.Get("TableTreeFilter");
+        TableTreeFoldAllText = Strings.Get("TableTreeFoldAll");
+        TableTreeUnfoldAllText = Strings.Get("TableTreeUnfoldAll");
+        TableTreeFindText = Strings.Get("TableTreeFind");
+        TableTreeEmptyText = Strings.Get("TableTreeEmpty");
         DetailsLabel = Strings.Get("DetailsLabel");
         DiagnosticsLabel = Strings.Get("DiagnosticsLabel");
         TableColumn = Strings.Get("TableColumn");
@@ -308,6 +315,41 @@ public partial class MainViewModel : ObservableObject
     public string TablesLabel { get; }
 
     /// <summary>
+    /// Gets the tree tab label.
+    /// </summary>
+    public string TableTreeTabText { get; }
+
+    /// <summary>
+    /// Gets the flat-list tab label.
+    /// </summary>
+    public string TableListTabText { get; }
+
+    /// <summary>
+    /// Gets the tree filter placeholder/tooltip.
+    /// </summary>
+    public string TableTreeFilterText { get; }
+
+    /// <summary>
+    /// Gets the collapse-all button text.
+    /// </summary>
+    public string TableTreeFoldAllText { get; }
+
+    /// <summary>
+    /// Gets the expand-all button text.
+    /// </summary>
+    public string TableTreeUnfoldAllText { get; }
+
+    /// <summary>
+    /// Gets the find-in-tree button text.
+    /// </summary>
+    public string TableTreeFindText { get; }
+
+    /// <summary>
+    /// Gets the empty-filter message.
+    /// </summary>
+    public string TableTreeEmptyText { get; }
+
+    /// <summary>
     /// Gets the details label.
     /// </summary>
     public string DetailsLabel { get; }
@@ -336,6 +378,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the discovered tables of the active data set.
     /// </summary>
     public ObservableCollection<TableListItem> Tables { get; } = new();
+
+    /// <summary>
+    /// Gets the folder/file tree built from the active table list.
+    /// </summary>
+    public TableTreeViewModel TableTree { get; } = new();
 
     /// <summary>
     /// Gets diagnostics for the selected table.
@@ -533,6 +580,7 @@ public partial class MainViewModel : ObservableObject
         _dataSet = null;
         DataDirectory = string.Empty;
         Tables.Clear();
+        TableTree.Load(Array.Empty<TableListItem>());
         SelectedTable = null;
         Diagnostics.Clear();
         RecordCountText = string.Empty;
@@ -1054,6 +1102,7 @@ public partial class MainViewModel : ObservableObject
                 {
                     _dataSet = null;
                     Tables.Clear();
+        TableTree.Load(Array.Empty<TableListItem>());
                     SelectedTable = null;
                     Diagnostics.Clear();
                     RecordCountText = string.Empty;
@@ -1205,6 +1254,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         Tables.Clear();
+        TableTree.Load(Array.Empty<TableListItem>());
         SelectedTable = null;
         Diagnostics.Clear();
         DetailsText = Strings.Get("StatusNoSelection");
@@ -1214,6 +1264,7 @@ public partial class MainViewModel : ObservableObject
             Tables.Add(new TableListItem(descriptor));
         }
 
+        TableTree.Load(Tables);
         return true;
     }
 
@@ -1236,6 +1287,7 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnSelectedTableChanged(TableListItem? value)
     {
+        TableTree.Select(value);
         if (value is null)
         {
             DetailsText = Strings.Get("StatusNoSelection");

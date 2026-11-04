@@ -27,6 +27,27 @@
   <data name="TablesLabel" xml:space="preserve">
     <value>Таблицы</value>
   </data>
+  <data name="TableTreeTab" xml:space="preserve">
+    <value>Дерево</value>
+  </data>
+  <data name="TableListTab" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="TableTreeFilter" xml:space="preserve">
+    <value>Фильтр по имени файла</value>
+  </data>
+  <data name="TableTreeFoldAll" xml:space="preserve">
+    <value>Свернуть всё</value>
+  </data>
+  <data name="TableTreeUnfoldAll" xml:space="preserve">
+    <value>Развернуть всё</value>
+  </data>
+  <data name="TableTreeFind" xml:space="preserve">
+    <value>Найти в дереве</value>
+  </data>
+  <data name="TableTreeEmpty" xml:space="preserve">
+    <value>Нет таблиц по фильтру</value>
+  </data>
   <data name="DetailsLabel" xml:space="preserve">
     <value>Детали</value>
   </data>

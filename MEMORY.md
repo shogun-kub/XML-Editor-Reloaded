@@ -43,7 +43,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M27a готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b пройдены, B1–B2 закрыты, 716 тестов, UI-smoke A–G + S51–S98, ручной smoke принят; далее M27b; roadmap M18–M28 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M27b готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b/M27a/M27b пройдены, B1–B2 закрыты, 722 теста, UI-smoke A–G + S51–S98 и S100, ручной smoke принят; далее M27c; roadmap M18–M28 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
@@ -59,6 +59,7 @@
 | Датасет: отчёт и поиск | [memory/m25b-dataset-report.md](memory/m25b-dataset-report.md) | M25b: одна проверка всех таблиц, повреждённые файлы/оверлеи, экспорт, глобальный поиск по базе и оверлеям, переход к записи |
 | Справочники: ID значений | [memory/m26a-lookup-ids.md](memory/m26a-lookup-ids.md) | M26a: свободный бит для битовых lookup, максимум + 1 для последовательных, свободный 64-битный ID, undo, вид справочника в метаданных |
 | Справочники: защита значений | [memory/m26b-lookup-protection.md](memory/m26b-lookup-protection.md) | M26b: «где используется», запрет удаления/смены ID используемого значения, биты маски без имени, переход к записи, S97 |
+| Дерево таблиц | [memory/m27b-table-tree.md](memory/m27b-table-tree.md) | M27b: вкладки «Дерево»/«Список», папки по `RelativePath`, фильтр, Fold/Unfold all, Find in tree, S100 |
 | Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b8 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
 | UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–G): запуск, изоляция `%AppData%`, грабли UIA |

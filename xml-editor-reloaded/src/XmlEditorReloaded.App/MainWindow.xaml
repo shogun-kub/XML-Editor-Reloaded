@@ -171,32 +171,142 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <DataGrid x:Name="TablesGrid"
-                              Grid.Row="0"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              CanUserAddRows="False"
-                              SelectionMode="Single"
-                              SelectionUnit="FullRow"
-                              HeadersVisibility="Column"
-                              ItemsSource="{Binding Tables}"
-                              SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
-                              MouseDoubleClick="OnTablesGridDoubleClick">
-                        <DataGrid.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding OpenTableCommand}" />
-                        </DataGrid.InputBindings>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn x:Name="TableNameColumn"
-                                                Binding="{Binding TableName}"
-                                                Width="*" />
-                            <DataGridTextColumn x:Name="LanguagesColumn"
-                                                Binding="{Binding Languages}"
-                                                Width="90" />
-                            <DataGridTextColumn x:Name="MappedColumn"
-                                                Binding="{Binding MappedText}"
-                                                Width="90" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <TabControl x:Name="TableTabs"
+                                Grid.Row="0"
+                                AutomationProperties.AutomationId="TableTabs">
+                        <TabItem Header="{Binding TableTreeTabText}"
+                                 AutomationProperties.AutomationId="TableTreeTab">
+                            <Grid Margin="6">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TableTreeFilterBox"
+                                             Grid.Column="0"
+                                             Margin="0,0,4,0"
+                                             AutomationProperties.AutomationId="TableTreeFilterBox"
+                                             AutomationProperties.Name="{Binding TableTreeFilterText}"
+                                             ToolTip="{Binding TableTreeFilterText}"
+                                             Text="{Binding TableTree.FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                             PreviewKeyDown="OnTableTreePreviewKeyDown" />
+                                    <Button Grid.Column="1"
+                                            Style="{DynamicResource IconButton}"
+                                            Margin="0,0,4,0"
+                                            AutomationProperties.AutomationId="TableTreeFindButton"
+                                            AutomationProperties.Name="{Binding TableTreeFindText}"
+                                            Content="{DynamicResource Icon.FindInTree}"
+                                            Click="OnFindInTreeClick"
+                                            ToolTip="{shortcuts:ShortcutTip Action=FindInTree, Text={Binding TableTreeFindText}}" />
+                                    <Button Grid.Column="2"
+                                            Style="{DynamicResource IconButton}"
+                                            Margin="0,0,4,0"
+                                            AutomationProperties.AutomationId="TableTreeFoldButton"
+                                            AutomationProperties.Name="{Binding TableTreeFoldAllText}"
+                                            Content="{DynamicResource Icon.FoldAll}"
+                                            Click="OnFoldAllClick"
+                                            ToolTip="{Binding TableTreeFoldAllText}" />
+                                    <Button Grid.Column="3"
+                                            Style="{DynamicResource IconButton}"
+                                            AutomationProperties.AutomationId="TableTreeUnfoldButton"
+                                            AutomationProperties.Name="{Binding TableTreeUnfoldAllText}"
+                                            Content="{DynamicResource Icon.UnfoldAll}"
+                                            Click="OnUnfoldAllClick"
+                                            ToolTip="{Binding TableTreeUnfoldAllText}" />
+                                </Grid>
+                                <TreeView x:Name="TableTreeView"
+                                          Grid.Row="1"
+                                          Margin="0,6,0,0"
+                                          AutomationProperties.AutomationId="TableTree"
+                                          ItemsSource="{Binding TableTree.VisibleRoots}"
+                                          SelectedItemChanged="OnTableTreeSelectedItemChanged"
+                                          PreviewKeyDown="OnTableTreePreviewKeyDown">
+                                    <TreeView.ItemContainerStyle>
+                                        <Style TargetType="TreeViewItem"
+                                               BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                            <Setter Property="AutomationProperties.Name"
+                                                    Value="{Binding Name}" />
+                                            <Setter Property="IsExpanded"
+                                                    Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                            <Setter Property="IsSelected"
+                                                    Value="{Binding IsSelected, Mode=TwoWay}" />
+                                            <Setter Property="Padding" Value="2,1" />
+                                        </Style>
+                                    </TreeView.ItemContainerStyle>
+                                    <TreeView.ItemTemplate>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding VisibleChildren}">
+                                            <TextBlock Margin="2,1"
+                                                       Text="{Binding Name}"
+                                                       ToolTip="{Binding RelativePath}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="Normal" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsFolder}" Value="True">
+                                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </HierarchicalDataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+                                <TextBlock Grid.Row="2"
+                                           Margin="2,6,2,0"
+                                           Foreground="{DynamicResource Theme.Text.Muted}"
+                                           Text="{Binding TableTreeEmptyText}"
+                                           TextWrapping="Wrap">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TableTree.HasVisibleTables}"
+                                                             Value="False">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="{Binding TableListTabText}"
+                                 AutomationProperties.AutomationId="TableListTab">
+                            <DataGrid x:Name="TablesGrid"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserAddRows="False"
+                                      SelectionMode="Single"
+                                      SelectionUnit="FullRow"
+                                      HeadersVisibility="Column"
+                                      ItemsSource="{Binding Tables}"
+                                      SelectedItem="{Binding SelectedTable, Mode=TwoWay}"
+                                      MouseDoubleClick="OnTablesGridDoubleClick">
+                                <DataGrid.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding OpenTableCommand}" />
+                                </DataGrid.InputBindings>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="TableNameColumn"
+                                                        Binding="{Binding TableName}"
+                                                        Width="*" />
+                                    <DataGridTextColumn x:Name="LanguagesColumn"
+                                                        Binding="{Binding Languages}"
+                                                        Width="90" />
+                                    <DataGridTextColumn x:Name="MappedColumn"
+                                                        Binding="{Binding MappedText}"
+                                                        Width="90" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
 
                     <Button Grid.Row="1"
                             Style="{DynamicResource IconButton}"

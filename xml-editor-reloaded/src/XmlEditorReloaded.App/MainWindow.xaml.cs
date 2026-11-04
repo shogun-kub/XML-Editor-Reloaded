@@ -154,6 +154,141 @@ public partial class MainWindow : Window
 
     private void OnExitMenuClick(object sender, RoutedEventArgs e) => Close();
 
+    /// <summary>
+    /// Keeps the table tree selection and the shared table selection in sync.
+    /// </summary>
+    private void OnTableTreeSelectedItemChanged(
+        object sender,
+        RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (DataContext is MainViewModel viewModel
+            && e.NewValue is TableTreeItem { Table: { } table })
+        {
+            viewModel.SelectedTable = table;
+        }
+    }
+
+    private void OnTableTreePreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            TableTreeFilterBox.Focus();
+            TableTreeFilterBox.SelectAll();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.Escape
+            && ReferenceEquals(sender, TableTreeFilterBox)
+            && DataContext is MainViewModel viewModel)
+        {
+            viewModel.TableTree.ClearFilter();
+            TableTreeView.Focus();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.T
+            && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            FindInTree();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.Enter
+            && ReferenceEquals(sender, TableTreeView)
+            && Keyboard.Modifiers == ModifierKeys.None
+            && TableTreeView.SelectedItem is TableTreeItem { Table: not null }
+            && DataContext is MainViewModel { SelectedTable: not null } mainViewModel
+            && mainViewModel.OpenTableCommand.CanExecute(null))
+        {
+            mainViewModel.OpenTableCommand.Execute(null);
+            e.Handled = true;
+        }
+    }
+
+    private void OnFindInTreeClick(object sender, RoutedEventArgs e) => FindInTree();
+
+    private void OnFoldAllClick(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel viewModel)
+        {
+            viewModel.TableTree.CollapseAll();
+        }
+    }
+
+    private void OnUnfoldAllClick(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel viewModel)
+        {
+            viewModel.TableTree.ExpandAll();
+        }
+    }
+
+    private void FindInTree()
+    {
+        if (DataContext is not MainViewModel viewModel)
+        {
+            return;
+        }
+
+        var leaf = viewModel.TableTree.FindInTree(viewModel.SelectedTable);
+        if (leaf is null)
+        {
+            return;
+        }
+
+        TableTreeView.UpdateLayout();
+        SelectTreeNode(TableTreeView, leaf);
+        TableTreeView.Focus();
+    }
+
+    private static void SelectTreeNode(ItemsControl parent, TableTreeItem target)
+    {
+        if (parent.ItemContainerGenerator.ContainerFromItem(target) is TreeViewItem container)
+        {
+            container.IsSelected = true;
+            container.BringIntoView();
+            return;
+        }
+
+        foreach (var item in parent.Items.OfType<TableTreeItem>())
+        {
+            if (!Contains(item, target)
+                || parent.ItemContainerGenerator.ContainerFromItem(item) is not TreeViewItem child)
+            {
+                continue;
+            }
+
+            if (item.IsFolder)
+            {
+                child.IsExpanded = true;
+                child.UpdateLayout();
+            }
+
+            SelectTreeNode(child, target);
+        }
+    }
+
+    private static bool Contains(TableTreeItem node, TableTreeItem target) =>
+        ReferenceEquals(node, target)
+        || node.Children.Any(child => Contains(child, target));
+
+    /// <inheritdoc />
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        if (e.Key == Key.T
+            && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            FindInTree();
+            e.Handled = true;
+            return;
+        }
+
+        base.OnPreviewKeyDown(e);
+    }
+
     private void OnTablesGridDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (DataContext is not MainViewModel viewModel || viewModel.SelectedTable is null)

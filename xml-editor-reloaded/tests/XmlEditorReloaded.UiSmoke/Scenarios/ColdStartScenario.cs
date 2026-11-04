@@ -32,6 +32,7 @@ internal sealed class ColdStartScenario : SmokeScenario
             placeholder is not null,
             placeholder is null ? "подсказка не найдена" : null);
 
+        ScenarioUi.EnsureTableListMode(window);
         var tableGrid = window.WaitById("TablesGrid");
         var rows = tableGrid.FindAll(new PropertyCondition(
             AutomationElement.ControlTypeProperty,

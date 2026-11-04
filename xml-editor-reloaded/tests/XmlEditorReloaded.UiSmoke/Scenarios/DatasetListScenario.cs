@@ -22,6 +22,7 @@ internal sealed class DatasetListScenario : SmokeScenario
             "список таблиц загружен");
         context.Recorder.Check("Статус сообщает о загрузке таблиц", true, status);
 
+        ScenarioUi.EnsureTableListMode(window);
         var rowCount = window.WaitById("TablesGrid").RowCount();
         var expectedStatus = string.Format(template, rowCount);
         context.Recorder.Check(

@@ -9,6 +9,26 @@ namespace XmlEditorReloaded.UiSmoke.Scenarios;
 internal static class ScenarioUi
 {
     /// <summary>
+    /// Switches the main table panel to the flat-list tab. The product starts on the tree tab; older
+    /// scenarios operate on the list grid, so they select that tab before looking for rows.
+    /// </summary>
+    /// <param name="window">Main window.</param>
+    public static void EnsureTableListMode(AutomationElement window)
+    {
+        var listTab = window.FindById("TableListTab");
+        if (listTab is null)
+        {
+            return;
+        }
+
+        listTab.SelectItem();
+        Ui.WaitUntil(
+            () => window.FindById("TablesGrid") is not null,
+            "вкладка списка таблиц открыта",
+            TimeSpan.FromSeconds(30));
+    }
+
+    /// <summary>
     /// Finds a row of the main table list, scrolling the virtualized grid until the row is realized.
     /// </summary>
     /// <param name="window">Main window.</param>
@@ -20,6 +40,7 @@ internal static class ScenarioUi
         string tableName,
         TimeSpan? timeout = null)
     {
+        EnsureTableListMode(window);
         var grid = window.WaitById("TablesGrid");
         grid.ScrollToTop();
         var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(40));

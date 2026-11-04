@@ -10,11 +10,11 @@ namespace XmlEditorReloaded.UiSmoke;
 internal sealed class ChecklistCatalog
 {
     private static readonly Regex HeadingPattern = new(
-        @"\*\*(?<id>S\d{2})\.\s+(?<title>.*?)\.\*\*",
+        @"\*\*(?<id>S\d{2,3})\.\s+(?<title>.*?)\.\*\*",
         RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.Compiled);
 
     private static readonly Regex TableRowPattern = new(
-        @"^\|\s*(?<id>S\d{2})\s*\|\s*(?<title>[^|]+?)\s*\|",
+        @"^\|\s*(?<id>S\d{2,3})\s*\|\s*(?<title>[^|]+?)\s*\|",
         RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Compiled);
 
     private readonly Dictionary<string, string> _titles;

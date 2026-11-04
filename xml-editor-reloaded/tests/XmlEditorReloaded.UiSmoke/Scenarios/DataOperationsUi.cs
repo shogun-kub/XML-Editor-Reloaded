@@ -22,6 +22,7 @@ internal static class DataOperationsUi
     public static AutomationElement OpenCopyDialog(ScenarioContext context)
     {
         var window = context.Window;
+        ScenarioUi.EnsureTableListMode(window);
         Ui.WaitUntil(
             () => window.WaitById("TablesGrid").RowCount() > 0,
             "список таблиц главного окна загружен",
@@ -261,6 +262,7 @@ internal static class DataOperationsUi
     /// <returns>The comparison window.</returns>
     public static AutomationElement OpenCompareWindow(ScenarioContext context)
     {
+        ScenarioUi.EnsureTableListMode(context.Window);
         context.Window.WaitById("TablesGrid");
         ScenarioUi.OpenMenuItem(context, "DataMenu", "CompareButton");
         var window = ScenarioUi.WaitForWindowWithId(
