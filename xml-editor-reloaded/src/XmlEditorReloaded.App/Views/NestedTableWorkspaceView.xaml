@@ -117,10 +117,13 @@
                          VerticalAlignment="Center"
                          AutomationProperties.AutomationId="NestedNewAssignmentTypeBox"
                          Text="{Binding NewAssignmentType, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Padding="10,3"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="NestedAddAssignmentButton"
-                        Content="{Binding AddAssignmentText}"
-                        Command="{Binding AddAssignmentCommand}" />
+                        AutomationProperties.Name="{Binding AddAssignmentText}"
+                        Content="{DynamicResource Icon.AddRow}"
+                        Command="{Binding AddAssignmentCommand}"
+                        ToolTip="{Binding AddAssignmentText}" />
             </StackPanel>
             <ItemsControl ItemsSource="{Binding BlockAddActions}">
                 <ItemsControl.ItemsPanel>
@@ -130,11 +133,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Padding="10,3"
-                                Margin="0,0,6,6"
+                        <Button Style="{DynamicResource IconButton}"
+                                Margin="0,0,4,0"
                                 AutomationProperties.AutomationId="{Binding AutomationId}"
-                                Content="{Binding Text}"
-                                Command="{Binding Command}" />
+                                AutomationProperties.Name="{Binding Text}"
+                                Content="{DynamicResource Icon.AddRow}"
+                                Command="{Binding Command}"
+                                ToolTip="{Binding Text}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
