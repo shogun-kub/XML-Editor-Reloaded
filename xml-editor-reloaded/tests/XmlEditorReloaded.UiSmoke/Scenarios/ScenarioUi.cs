@@ -69,7 +69,7 @@ internal static class ScenarioUi
     /// <returns>Tab names in tab order.</returns>
     public static IReadOnlyList<string> TabNames(AutomationElement window) =>
         window.WaitById("EditorsTabs")
-            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FindChildren(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
             .Select(static tab => ReadTabText(tab))
             .ToList();
 
@@ -85,6 +85,9 @@ internal static class ScenarioUi
             .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
             .Select(static text => text.ReadName())
             .Where(static text => !string.IsNullOrWhiteSpace(text))
+            // The header comes before the tab content; a few values are enough for the header and keep
+            // the report readable when the content exposes dozens of text elements.
+            .Take(4)
             .ToList();
         return string.Join(" ", parts);
     }
@@ -604,6 +607,25 @@ internal static class ScenarioUi
     }
 
     /// <summary>
+    /// Selects a tab of any tab control in the window by its header text.
+    /// </summary>
+    /// <param name="window">Window that contains the tab control.</param>
+    /// <param name="header">Localized tab header.</param>
+    /// <returns>The selected tab item, or <see langword="null"/> when no tab has that header.</returns>
+    public static AutomationElement? SelectTab(AutomationElement window, string header)
+    {
+        var tab = window
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FirstOrDefault(candidate => candidate.ReadName() == header
+                || candidate
+                    .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
+                    .Any(text => text.ReadName() == header));
+        tab?.SelectItem();
+        Thread.Sleep(200);
+        return tab;
+    }
+
+    /// <summary>
     /// Selects an open editor tab by the table name in its header.
     /// </summary>
     /// <param name="window">Main window.</param>
@@ -612,7 +634,7 @@ internal static class ScenarioUi
     public static void ActivateTab(AutomationElement window, string tableName)
     {
         var tab = window.WaitById("EditorsTabs")
-            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FindChildren(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
             .FirstOrDefault(candidate => candidate.ReadName().Contains(tableName, StringComparison.Ordinal)
                 || candidate
                     .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
@@ -632,7 +654,7 @@ internal static class ScenarioUi
     public static void CloseTab(AutomationElement window, string tableName)
     {
         var tab = window.WaitById("EditorsTabs")
-            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FindChildren(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
             .FirstOrDefault(candidate => candidate.ReadName().Contains(tableName, StringComparison.Ordinal)
                 || candidate
                     .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text))
@@ -664,7 +686,7 @@ internal static class ScenarioUi
     public static void CloseActiveEditorTab(AutomationElement window)
     {
         var tab = window.WaitById("EditorsTabs")
-            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+            .FindChildren(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
             .FirstOrDefault()
             ?? throw new UiTimeoutException("Открытых вкладок нет.");
         var close = tab.FindFirst(TreeScope.Descendants, Ui.ByName("✕"))
@@ -693,7 +715,7 @@ internal static class ScenarioUi
     public static void WaitForEditorTabCount(AutomationElement window, int expected, TimeSpan? timeout = null) =>
         Ui.WaitUntil(
             () => window.WaitById("EditorsTabs")
-                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+                .FindChildren(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
                 .Count == expected,
             $"в редакторе {expected} вкладок",
             timeout);

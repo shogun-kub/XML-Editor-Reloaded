@@ -33,6 +33,7 @@ These rules apply to every WPF form in `xml-editor-reloaded/src/XmlEditorReloade
 | `FieldEditor.xaml` | ✅ | Label and editor are adjacent Grid columns with 6 px gaps; buttons use 6 px. |
 | `BulkEditWindow.xaml` | ✅ | Header label/field pairs are Grid columns with 6 px; checkboxes and action buttons use 6 px. |
 | `CompareWindow.xaml` | ✅ | Directory labels/fields and action buttons use 6 px; progress/status follow the same gap; the Records/Overlays tabs keep 6 px between summary, grids, splitter and root-field group. |
+| `DatasetWindow.xaml` | ✅ | Validation toolbar, summary/note/filter rows and search row use equal 6 px gaps; label/field pairs are Grid columns; grids, status row and close button keep 6 px. |
 | `TableCopyWindow.xaml` | ✅ | Source/target and option labels/fields use 6 px; action row uses 6 px. |
 | `SettingsWindow.xaml` | ✅ | Directory row, column gap, reset/status rows and footer buttons use 6 px. |
 | `ImageViewerWindow.xaml` | ✅ | Item, type/index, zoom and preview header rows use 6 px; three preview columns are separated by 6 px. |

@@ -67,6 +67,13 @@
                 <MenuItem Header="{Binding TranslationReportText}"
                           AutomationProperties.AutomationId="TranslationReportButton"
                           Command="{Binding ShowTranslationReportCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding DatasetValidationText}"
+                          AutomationProperties.AutomationId="DatasetValidationButton"
+                          Command="{Binding ValidateDatasetCommand}" />
+                <MenuItem Header="{Binding DatasetSearchText}"
+                          AutomationProperties.AutomationId="DatasetSearchButton"
+                          Command="{Binding SearchDatasetCommand}" />
             </MenuItem>
             <MenuItem Header="{Binding HelpMenuText}"
                       AutomationProperties.AutomationId="HelpMenu">

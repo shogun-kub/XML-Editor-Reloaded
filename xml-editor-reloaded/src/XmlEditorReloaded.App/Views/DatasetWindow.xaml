@@ -1,0 +1,303 @@
+<Window x:Class="XmlEditorReloaded.App.Views.DatasetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding Title}"
+        AutomationProperties.AutomationId="DatasetWindow"
+        Width="1180"
+        Height="740"
+        MinWidth="900"
+        MinHeight="520"
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl x:Name="Tabs"
+                    Grid.Row="0"
+                    AutomationProperties.AutomationId="DatasetTabs">
+            <TabItem Header="{Binding ValidationTabText}">
+                <Grid Margin="0,6,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Margin="0,0,0,6">
+                        <Button Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetValidateButton"
+                                Content="{Binding ValidateText}"
+                                Command="{Binding ValidateCommand}" />
+                        <Button Margin="6,0,0,0"
+                                Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetCancelButton"
+                                Content="{Binding CancelText}"
+                                Command="{Binding CancelValidationCommand}" />
+                        <Button Margin="6,0,0,0"
+                                Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetExportButton"
+                                Content="{Binding ExportText}"
+                                Command="{Binding ExportCommand}" />
+                        <Button Margin="6,0,0,0"
+                                Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetOpenIssueButton"
+                                Content="{Binding OpenText}"
+                                Command="{Binding OpenIssueCommand}" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="DatasetSummaryText"
+                               Text="{Binding ValidationSummaryText}" />
+
+                    <TextBlock Grid.Row="2"
+                               Margin="0,6,0,0"
+                               Foreground="#FF666666"
+                               TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="DatasetValidationNote"
+                               Text="{Binding ValidationNoteText}"
+                               Visibility="{Binding HasValidationNote, Converter={StaticResource BoolToVisibility}}" />
+
+                    <Grid Grid.Row="3"
+                          Margin="0,6,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding SeverityLabel}" />
+                        <ComboBox Grid.Column="1"
+                                  MinWidth="150"
+                                  VerticalAlignment="Center"
+                                  AutomationProperties.AutomationId="DatasetSeverityCombo"
+                                  ItemsSource="{Binding SeverityOptions}"
+                                  SelectedItem="{Binding SelectedSeverity, Mode=TwoWay}"
+                                  DisplayMemberPath="Label" />
+                        <TextBlock Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   Margin="6,0,6,0"
+                                   Text="{Binding FilterLabel}" />
+                        <TextBox Grid.Column="3"
+                                 VerticalAlignment="Center"
+                                 AutomationProperties.AutomationId="DatasetFilterBox"
+                                 Text="{Binding IssueFilterText, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
+                    <Grid Grid.Row="4">
+                        <DataGrid x:Name="IssuesGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  AutomationProperties.AutomationId="DatasetIssuesGrid"
+                                  ItemsSource="{Binding Issues}"
+                                  SelectedItem="{Binding SelectedIssue, Mode=TwoWay}"
+                                  MouseDoubleClick="OnIssuesGridDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="IssueTableColumn"
+                                                    Binding="{Binding TableName}"
+                                                    Width="190" />
+                                <DataGridTextColumn x:Name="IssueSeverityColumn"
+                                                    Binding="{Binding SeverityLabel}"
+                                                    Width="120" />
+                                <DataGridTextColumn x:Name="IssueRecordColumn"
+                                                    Binding="{Binding RecordKey}"
+                                                    Width="90" />
+                                <DataGridTextColumn x:Name="IssueFieldColumn"
+                                                    Binding="{Binding FieldPath}"
+                                                    Width="210" />
+                                <DataGridTextColumn x:Name="IssueMessageColumn"
+                                                    Binding="{Binding Message}"
+                                                    Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="#FF666666"
+                                   AutomationProperties.AutomationId="DatasetValidationEmptyText"
+                                   Text="{Binding EmptyText}"
+                                   Visibility="{Binding IsValidationEmpty, Converter={StaticResource BoolToVisibility}}" />
+                    </Grid>
+
+                    <TextBlock Grid.Row="5"
+                               Margin="0,6,0,0"
+                               Foreground="#FF666666"
+                               TextWrapping="Wrap"
+                               Text="{Binding ValidationHintText}" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{Binding SearchTabText}">
+                <Grid Margin="0,6,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0"
+                          Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,6,0"
+                                   Text="{Binding SearchLabel}" />
+                        <TextBox Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 AutomationProperties.AutomationId="DatasetSearchBox"
+                                 Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <CheckBox Grid.Column="2"
+                                  VerticalAlignment="Center"
+                                  Margin="6,0,0,0"
+                                  AutomationProperties.AutomationId="DatasetMatchCaseBox"
+                                  Content="{Binding MatchCaseText}"
+                                  IsChecked="{Binding MatchCase, Mode=TwoWay}" />
+                        <Button Grid.Column="3"
+                                Margin="6,0,0,0"
+                                Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetSearchButton"
+                                Content="{Binding RunSearchText}"
+                                Command="{Binding SearchCommand}" />
+                        <Button Grid.Column="4"
+                                Margin="6,0,0,0"
+                                Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetCancelSearchButton"
+                                Content="{Binding CancelText}"
+                                Command="{Binding CancelSearchCommand}" />
+                    </Grid>
+
+                    <TextBlock Grid.Row="1"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="DatasetSearchSummaryText"
+                               Text="{Binding SearchSummaryText}" />
+
+                    <TextBlock Grid.Row="2"
+                               Margin="0,6,0,0"
+                               Foreground="#FF666666"
+                               TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="DatasetSearchNote"
+                               Text="{Binding SearchNoteText}"
+                               Visibility="{Binding HasSearchNote, Converter={StaticResource BoolToVisibility}}" />
+
+                    <Grid Grid.Row="3"
+                          Margin="0,6,0,0">
+                        <DataGrid x:Name="HitsGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  AutomationProperties.AutomationId="DatasetHitsGrid"
+                                  ItemsSource="{Binding Hits}"
+                                  SelectedItem="{Binding SelectedHit, Mode=TwoWay}"
+                                  MouseDoubleClick="OnHitsGridDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="HitTableColumn"
+                                                    Binding="{Binding TableName}"
+                                                    Width="190" />
+                                <DataGridTextColumn x:Name="HitRecordColumn"
+                                                    Binding="{Binding RecordKey}"
+                                                    Width="90" />
+                                <DataGridTextColumn x:Name="HitFieldColumn"
+                                                    Binding="{Binding FieldPath}"
+                                                    Width="210" />
+                                <DataGridTextColumn x:Name="HitValueColumn"
+                                                    Binding="{Binding Value}"
+                                                    Width="*" />
+                                <DataGridTextColumn x:Name="HitLanguageColumn"
+                                                    Binding="{Binding LanguageLabel}"
+                                                    Width="90" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="#FF666666"
+                                   AutomationProperties.AutomationId="DatasetSearchEmptyText"
+                                   Text="{Binding SearchEmptyText}"
+                                   Visibility="{Binding IsSearchEmpty, Converter={StaticResource BoolToVisibility}}" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="4"
+                                Orientation="Horizontal"
+                                Margin="0,6,0,0">
+                        <Button Padding="16,4"
+                                AutomationProperties.AutomationId="DatasetOpenHitButton"
+                                Content="{Binding OpenText}"
+                                Command="{Binding OpenHitCommand}" />
+                        <TextBlock Margin="6,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="#FF666666"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding SearchHintText}" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="1"
+              Margin="0,6,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar Grid.Column="0"
+                         Width="120"
+                         Height="4"
+                         VerticalAlignment="Center"
+                         IsIndeterminate="True"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Grid.Column="1"
+                       Margin="6,0,0,0"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="DatasetStatusText"
+                       Text="{Binding StatusText}" />
+        </Grid>
+
+        <Button Grid.Row="2"
+                Margin="0,6,0,0"
+                Padding="16,4"
+                HorizontalAlignment="Right"
+                IsCancel="True"
+                AutomationProperties.AutomationId="DatasetCloseButton"
+                Content="{Binding CloseText}"
+                Click="OnClose" />
+    </Grid>
+</Window>

@@ -134,6 +134,20 @@ public sealed class WpfDialogService : IDialogService
     }
 
     /// <inheritdoc />
+    public void ShowDataset(ViewModels.DatasetViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+
+        var window = new Views.DatasetWindow(viewModel);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.Show();
+    }
+
+    /// <inheritdoc />
     public void ShowEnemyAmmo(ViewModels.EnemyAmmoViewModel viewModel)
     {
         ArgumentNullException.ThrowIfNull(viewModel);

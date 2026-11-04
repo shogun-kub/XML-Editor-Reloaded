@@ -37,4 +37,16 @@ public static class ValidationCodes
 
     /// <summary>The table has no metadata and cannot be schema-validated.</summary>
     public const string Unmapped = "validation.unmapped";
+
+    /// <summary>The table file is not well-formed XML and was not validated.</summary>
+    public const string MalformedFile = "validation.malformed_file";
+
+    /// <summary>The table file could not be read at all.</summary>
+    public const string UnreadableFile = "validation.unreadable_file";
+
+    /// <summary>A language overlay file is malformed or cannot be read.</summary>
+    public const string MalformedOverlay = "validation.malformed_overlay";
+
+    /// <summary>A load diagnostic reports a structural problem that does not block validation.</summary>
+    public const string LoadDiagnostic = "validation.load_diagnostic";
 }

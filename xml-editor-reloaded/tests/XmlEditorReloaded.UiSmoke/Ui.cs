@@ -58,6 +58,18 @@ internal static class Ui
         SafeFindAll(root, TreeScope.Descendants, condition);
 
     /// <summary>
+    /// Finds the immediate children that match a condition. Use this for tab items: descendants also
+    /// include the tab items of nested tab controls inside an editor.
+    /// </summary>
+    /// <param name="root">Root element.</param>
+    /// <param name="condition">Condition to match.</param>
+    /// <returns>The matching children in UI Automation order.</returns>
+    public static IReadOnlyList<AutomationElement> FindChildren(
+        this AutomationElement root,
+        Condition condition) =>
+        SafeFindAll(root, TreeScope.Children, condition);
+
+    /// <summary>
     /// Finds every descendant with the given automation identifier. Repeated identifiers occur inside
     /// data templates, for example one filter row per criterion.
     /// </summary>

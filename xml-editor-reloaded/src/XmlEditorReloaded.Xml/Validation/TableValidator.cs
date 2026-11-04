@@ -35,14 +35,43 @@ public sealed class TableValidator
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="document"/> is null.</exception>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
-    public async Task<ValidationReport> ValidateAsync(
+    public Task<ValidationReport> ValidateAsync(
         TableDocument document,
         ILookupRepository? lookupRepository = null,
         string? languageCode = null,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues = null)
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues = null) =>
+        ValidateAsync(
+            document,
+            lookupRepository,
+            languageCode,
+            cancellationToken,
+            relationTargetValues,
+            new Dictionary<string, IReadOnlyList<LookupEntry>>(StringComparer.Ordinal));
+
+    /// <summary>
+    /// Validates one document with a lookup cache shared by the caller. A data-set-wide validation
+    /// reuses one cache so every lookup table is read once instead of once per table.
+    /// </summary>
+    /// <param name="document">Loaded table document.</param>
+    /// <param name="lookupRepository">Optional lookup repository used to validate lookup references.</param>
+    /// <param name="languageCode">Optional language code for lookup overlays.</param>
+    /// <param name="cancellationToken">Token to cancel validation.</param>
+    /// <param name="relationTargetValues">Optional map from a relation source field to target keys.</param>
+    /// <param name="lookupCache">Cache of lookup entries keyed by lookup table name.</param>
+    /// <returns>The validation report.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the document or cache is null.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
+    internal async Task<ValidationReport> ValidateAsync(
+        TableDocument document,
+        ILookupRepository? lookupRepository,
+        string? languageCode,
+        CancellationToken cancellationToken,
+        IReadOnlyDictionary<string, IReadOnlySet<string>>? relationTargetValues,
+        Dictionary<string, IReadOnlyList<LookupEntry>> lookupCache)
     {
         ArgumentNullException.ThrowIfNull(document);
+        ArgumentNullException.ThrowIfNull(lookupCache);
 
         var tableName = document.Descriptor.TableName;
         var metadata = document.Metadata;
@@ -92,7 +121,6 @@ public sealed class TableValidator
         ValidateExclusiveFlagGroups(metadata, tableName, records, issues);
         ValidateClassValueLimits(metadata, tableName, records, issues);
 
-        var lookupCache = new Dictionary<string, IReadOnlyList<LookupEntry>>(StringComparer.Ordinal);
         foreach (var record in records)
         {
             await ValidateElementAsync(

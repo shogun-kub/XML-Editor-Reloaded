@@ -104,6 +104,7 @@ internal static class ScenarioCatalog
         new OperationLogScenario(),
         new NestedTableWorkspaceScenario(),
         new NestedCollectionsScenario(),
+        new DatasetReportScenario(),
     ];
 
     /// <summary>

@@ -1807,4 +1807,160 @@
   <data name="AllowedValueTrue" xml:space="preserve">
     <value>Да</value>
   </data>
+  <data name="DatasetTitle" xml:space="preserve">
+    <value>Датасет: {0}</value>
+  </data>
+  <data name="DatasetValidationTab" xml:space="preserve">
+    <value>Валидация</value>
+  </data>
+  <data name="DatasetSearchTab" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="DatasetValidateText" xml:space="preserve">
+    <value>Проверить</value>
+  </data>
+  <data name="DatasetCancelText" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="DatasetCloseText" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="DatasetExportText" xml:space="preserve">
+    <value>Экспорт…</value>
+  </data>
+  <data name="DatasetOpenText" xml:space="preserve">
+    <value>Открыть таблицу</value>
+  </data>
+  <data name="DatasetSeverityLabel" xml:space="preserve">
+    <value>Важность:</value>
+  </data>
+  <data name="DatasetFilterLabel" xml:space="preserve">
+    <value>Фильтр:</value>
+  </data>
+  <data name="DatasetTableHeader" xml:space="preserve">
+    <value>Таблица</value>
+  </data>
+  <data name="DatasetSeverityHeader" xml:space="preserve">
+    <value>Важность</value>
+  </data>
+  <data name="DatasetKeyHeader" xml:space="preserve">
+    <value>Запись</value>
+  </data>
+  <data name="DatasetFieldHeader" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="DatasetMessageHeader" xml:space="preserve">
+    <value>Сообщение</value>
+  </data>
+  <data name="DatasetValueHeader" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="DatasetLanguageHeader" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="DatasetBaseLanguage" xml:space="preserve">
+    <value>База</value>
+  </data>
+  <data name="DatasetSeverityAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="DatasetSeverityError" xml:space="preserve">
+    <value>Ошибки</value>
+  </data>
+  <data name="DatasetSeverityWarning" xml:space="preserve">
+    <value>Предупреждения</value>
+  </data>
+  <data name="DatasetSeverityInfo" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="DatasetSeverityErrorOne" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="DatasetSeverityWarningOne" xml:space="preserve">
+    <value>Предупреждение</value>
+  </data>
+  <data name="DatasetSeverityInfoOne" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="DatasetValidationMenu" xml:space="preserve">
+    <value>Проверить датасет…</value>
+  </data>
+  <data name="DatasetSearchMenu" xml:space="preserve">
+    <value>Поиск по датасету…</value>
+  </data>
+  <data name="DatasetValidationRunning" xml:space="preserve">
+    <value>Проверка датасета…</value>
+  </data>
+  <data name="DatasetProgressFormat" xml:space="preserve">
+    <value>Обработано {0} из {1}: {2}</value>
+  </data>
+  <data name="DatasetProgressCountFormat" xml:space="preserve">
+    <value>Обработано {0} из {1}</value>
+  </data>
+  <data name="DatasetValidationDoneFormat" xml:space="preserve">
+    <value>Таблиц: {0}, проверено: {1}; ошибок: {2}, предупреждений: {3}, информации: {4}.</value>
+  </data>
+  <data name="DatasetValidationEmpty" xml:space="preserve">
+    <value>Проблем не найдено.</value>
+  </data>
+  <data name="DatasetValidationHint" xml:space="preserve">
+    <value>Двойной щёлчок по строке открывает таблицу и запись.</value>
+  </data>
+  <data name="DatasetValidationCancelled" xml:space="preserve">
+    <value>Проверка отменена.</value>
+  </data>
+  <data name="DatasetValidationFailedFormat" xml:space="preserve">
+    <value>Проверка не удалась: {0}</value>
+  </data>
+  <data name="DatasetTruncatedFormat" xml:space="preserve">
+    <value>Показано {0} из {1}.</value>
+  </data>
+  <data name="DatasetNoReportText" xml:space="preserve">
+    <value>Сначала выполните проверку.</value>
+  </data>
+  <data name="DatasetExportTitle" xml:space="preserve">
+    <value>Сохранить отчёт</value>
+  </data>
+  <data name="DatasetExportFilter" xml:space="preserve">
+    <value>Markdown (*.md)|*.md|CSV (*.csv)|*.csv</value>
+  </data>
+  <data name="DatasetExportedFormat" xml:space="preserve">
+    <value>Отчёт сохранён: {0}</value>
+  </data>
+  <data name="DatasetExportFailedFormat" xml:space="preserve">
+    <value>Не удалось сохранить отчёт: {0}</value>
+  </data>
+  <data name="DatasetSearchLabel" xml:space="preserve">
+    <value>Найти:</value>
+  </data>
+  <data name="DatasetSearchRunText" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="DatasetMatchCase" xml:space="preserve">
+    <value>Учитывать регистр</value>
+  </data>
+  <data name="DatasetSearchReady" xml:space="preserve">
+    <value>Введите строку и нажмите «Найти».</value>
+  </data>
+  <data name="DatasetSearchNoTerm" xml:space="preserve">
+    <value>Введите строку для поиска.</value>
+  </data>
+  <data name="DatasetSearchRunning" xml:space="preserve">
+    <value>Поиск…</value>
+  </data>
+  <data name="DatasetSearchDoneFormat" xml:space="preserve">
+    <value>Найдено: {0}; таблиц с совпадениями: {1}; проверено таблиц: {2}; не прочитано: {3}.</value>
+  </data>
+  <data name="DatasetSearchEmpty" xml:space="preserve">
+    <value>Совпадений нет.</value>
+  </data>
+  <data name="DatasetSearchHint" xml:space="preserve">
+    <value>Двойной щёлчок открывает таблицу и запись.</value>
+  </data>
+  <data name="DatasetSearchCancelled" xml:space="preserve">
+    <value>Поиск отменён.</value>
+  </data>
+  <data name="DatasetSearchFailedFormat" xml:space="preserve">
+    <value>Поиск не удался: {0}</value>
+  </data>
 </root>

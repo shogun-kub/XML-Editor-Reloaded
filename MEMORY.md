@@ -43,7 +43,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M25a готовы, автогейты M23b/M24a/M24b/M25a пройдены, B1–B2 закрыты, 630 тестов, UI-smoke A–G + S51–S94, ручной smoke принят; далее M25b; roadmap M18–M27 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M25b готовы, автогейты M23b/M24a/M24b/M25a/M25b пройдены, B1–B2 закрыты, 655 тестов, UI-smoke A–G + S51–S95, ручной smoke принят; далее M26a; roadmap M18–M27 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
@@ -56,6 +56,7 @@
 | Вложенные редакторы | [memory/m24a-nested-editors.md](memory/m24a-nested-editors.md) | M24a: `Map.Cities`/`Map.FacilityTypes`, nested primary path, root singleton, `ASSIGNMENT`, overlay tooltip, S93 |
 | Структурные вложенные записи | [memory/m24b-nested-collections.md](memory/m24b-nested-collections.md) | M24b: add/delete `ASSIGNMENT`, блоки `PRODUCTIONLINE`, списки `drugitem`, nested-перевод `townName`, S94 |
 | Сравнение v2 | [memory/m25a-comparison-v2.md](memory/m25a-comparison-v2.md) | M25a: значения записей по ключу/порядку, ячейки оверлеев, root singleton, лимиты деталей, вкладки и экспорт |
+| Датасет: отчёт и поиск | [memory/m25b-dataset-report.md](memory/m25b-dataset-report.md) | M25b: одна проверка всех таблиц, повреждённые файлы/оверлеи, экспорт, глобальный поиск по базе и оверлеям, переход к записи |
 | Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b8 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
 | UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–G): запуск, изоляция `%AppData%`, грабли UIA |

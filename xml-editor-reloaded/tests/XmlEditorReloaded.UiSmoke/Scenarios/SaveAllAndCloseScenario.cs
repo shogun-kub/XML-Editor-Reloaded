@@ -151,10 +151,14 @@ internal sealed class SaveAllAndCloseScenario : SmokeScenario
             context,
             text => text == context.Strings.Get("EditorReady"),
             $"{tableName} открыт");
-        context.Window.WaitById("RowsGrid").EditCell(0, 1, value);
-        Ui.WaitUntil(
-            () => context.Window.WaitById("SaveButton").IsEnabled(),
-            $"вкладка {tableName} стала грязной");
+        // The first synthetic keystroke of a freshly activated window is occasionally swallowed, so the
+        // edit is retried until the tab becomes dirty.
+        DataOperationsUi.EditCellUntilDirty(
+            context.Window,
+            context.Window.WaitById("RowsGrid"),
+            0,
+            1,
+            value);
     }
 
     private static int CountElements(string path, string name) =>

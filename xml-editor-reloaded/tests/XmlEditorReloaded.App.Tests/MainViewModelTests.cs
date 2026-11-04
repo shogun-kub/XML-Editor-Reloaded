@@ -14,6 +14,8 @@ using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
 using XmlEditorReloaded.Xml.Copy;
 using XmlEditorReloaded.Xml.Repository;
+using XmlEditorReloaded.Xml.Search;
+using XmlEditorReloaded.Xml.Validation;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Tests;
@@ -76,7 +78,9 @@ public class MainViewModelTests
             new FakeVersionCompareService(),
             new FakeTableCopyDialogService(),
             new FakeSettingsDialogService(),
-            new FakeTableLayoutStore());
+            new FakeTableLayoutStore(),
+            new DatasetValidator(),
+            new DatasetSearchService());
 
         await viewModel.InitializeAsync();
 
@@ -137,7 +141,9 @@ public class MainViewModelTests
             new FakeVersionCompareService(),
             new FakeTableCopyDialogService(),
             new FakeSettingsDialogService(),
-            new FakeTableLayoutStore())
+            new FakeTableLayoutStore(),
+            new DatasetValidator(),
+            new DatasetSearchService())
         {
             DataDirectory = data13,
         };
@@ -1131,6 +1137,43 @@ public class MainViewModelTests
         Assert.Single(viewModel.Editors);
     }
 
+    /// <summary>
+    /// The data-set commands open the data-set window on the requested tab, and opening an issue
+    /// navigates to the table and selects the affected record.
+    /// </summary>
+    [Fact]
+    public async Task DatasetCommands_OpenWindowAndNavigateToIssue()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateCursorData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        Assert.Equal("Lookup.Cursor", Assert.Single(viewModel.Tables).TableName);
+
+        viewModel.ValidateDatasetCommand.Execute(null);
+
+        var dataset = Assert.IsType<DatasetViewModel>(dialog.LastDatasetViewModel);
+        Assert.Equal(0, dataset.InitialTabIndex);
+        await dataset.InitializeAsync();
+        var issue = dataset.Issues.First(item => item.Code == Core.Validation.ValidationCodes.InvalidType);
+        Assert.Equal("Lookup.Cursor", issue.TableName);
+
+        dataset.SelectedIssue = issue;
+        dataset.OpenIssueCommand.Execute(null);
+
+        await WaitUntilAsync(() =>
+            viewModel.Editors.Count == 1 && viewModel.Editors[0].SelectedRecordKey == "abc");
+        var editor = Assert.IsType<TableEditorViewModel>(Assert.Single(viewModel.Editors));
+        Assert.Equal("Lookup.Cursor", editor.TableName.Value);
+        Assert.Equal("abc", editor.SelectedRecordKey);
+
+        viewModel.SearchDatasetCommand.Execute(null);
+        Assert.Equal(1, Assert.IsType<DatasetViewModel>(dialog.LastDatasetViewModel).InitialTabIndex);
+    }
+
     private static MainViewModel CreateShell(
         SqliteMetadataProvider provider,
         FileSystemTableCatalog catalog,
@@ -1153,7 +1196,22 @@ public class MainViewModelTests
             versionCompare ?? new FakeVersionCompareService(),
             copyDialog ?? new FakeTableCopyDialogService(),
             settingsDialog ?? new FakeSettingsDialogService(),
-            layoutStore ?? new FakeTableLayoutStore());
+            layoutStore ?? new FakeTableLayoutStore(),
+            new DatasetValidator(provider),
+            new DatasetSearchService(provider));
+
+    private static string CreateCursorData(TestWorkspace workspace)
+    {
+        var data13 = workspace.PathOf("Data-1.13");
+        var directory = Path.Combine(data13, "TableData", "Lookup");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(
+            Path.Combine(directory, "Cursor.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>"
+            + "<Cursor><id>abc</id><name>Quest</name></Cursor>"
+            + "</JA2Data>");
+        return data13;
+    }
 
     private static string CreateCitiesData(TestWorkspace workspace)
     {
@@ -1276,6 +1334,10 @@ public class MainViewModelTests
         public ulong? EditBitsResult { get; set; }
 
         public TranslationReport? LastTranslationReport { get; private set; }
+
+        public DatasetViewModel? LastDatasetViewModel { get; private set; }
+
+        public void ShowDataset(DatasetViewModel viewModel) => LastDatasetViewModel = viewModel;
 
         public int AboutShown { get; private set; }
 

@@ -6,6 +6,8 @@ using XmlEditorReloaded.Xml.Loading;
 using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Repository;
 using XmlEditorReloaded.Xml.Saving;
+using XmlEditorReloaded.Xml.Search;
+using XmlEditorReloaded.Xml.Validation;
 
 namespace XmlEditorReloaded.Xml;
 
@@ -37,6 +39,12 @@ public static class XmlServiceCollectionExtensions
         services.TryAddSingleton<ITableCopyService>(provider => new TableCopyService(
             provider.GetRequiredService<ITableCatalog>(),
             provider.GetRequiredService<ITableMetadataProvider>()));
+        services.TryAddSingleton(provider => new DatasetValidator(
+            provider.GetService<ITableMetadataProvider>(),
+            provider.GetRequiredService<TableFileLoader>()));
+        services.TryAddSingleton(provider => new DatasetSearchService(
+            provider.GetService<ITableMetadataProvider>(),
+            provider.GetRequiredService<TableFileLoader>()));
 
         if (!string.IsNullOrWhiteSpace(tableDataDirectory))
         {

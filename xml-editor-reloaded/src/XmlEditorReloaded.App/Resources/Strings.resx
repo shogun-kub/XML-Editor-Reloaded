@@ -1807,4 +1807,160 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="AllowedValueTrue" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="DatasetTitle" xml:space="preserve">
+    <value>Data set: {0}</value>
+  </data>
+  <data name="DatasetValidationTab" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="DatasetSearchTab" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DatasetValidateText" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="DatasetCancelText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DatasetCloseText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="DatasetExportText" xml:space="preserve">
+    <value>Export…</value>
+  </data>
+  <data name="DatasetOpenText" xml:space="preserve">
+    <value>Open table</value>
+  </data>
+  <data name="DatasetSeverityLabel" xml:space="preserve">
+    <value>Severity:</value>
+  </data>
+  <data name="DatasetFilterLabel" xml:space="preserve">
+    <value>Filter:</value>
+  </data>
+  <data name="DatasetTableHeader" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="DatasetSeverityHeader" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="DatasetKeyHeader" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="DatasetFieldHeader" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="DatasetMessageHeader" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="DatasetValueHeader" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="DatasetLanguageHeader" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="DatasetBaseLanguage" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="DatasetSeverityAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="DatasetSeverityError" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="DatasetSeverityWarning" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="DatasetSeverityInfo" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="DatasetSeverityErrorOne" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="DatasetSeverityWarningOne" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="DatasetSeverityInfoOne" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="DatasetValidationMenu" xml:space="preserve">
+    <value>Validate data set…</value>
+  </data>
+  <data name="DatasetSearchMenu" xml:space="preserve">
+    <value>Search data set…</value>
+  </data>
+  <data name="DatasetValidationRunning" xml:space="preserve">
+    <value>Validating the data set…</value>
+  </data>
+  <data name="DatasetProgressFormat" xml:space="preserve">
+    <value>Processed {0} of {1}: {2}</value>
+  </data>
+  <data name="DatasetProgressCountFormat" xml:space="preserve">
+    <value>Processed {0} of {1}</value>
+  </data>
+  <data name="DatasetValidationDoneFormat" xml:space="preserve">
+    <value>Tables: {0}, validated: {1}; errors: {2}, warnings: {3}, information: {4}.</value>
+  </data>
+  <data name="DatasetValidationEmpty" xml:space="preserve">
+    <value>No problems were found.</value>
+  </data>
+  <data name="DatasetValidationHint" xml:space="preserve">
+    <value>Double-click a row to open the table and select the record.</value>
+  </data>
+  <data name="DatasetValidationCancelled" xml:space="preserve">
+    <value>Validation cancelled.</value>
+  </data>
+  <data name="DatasetValidationFailedFormat" xml:space="preserve">
+    <value>Validation failed: {0}</value>
+  </data>
+  <data name="DatasetTruncatedFormat" xml:space="preserve">
+    <value>Showing {0} of {1}.</value>
+  </data>
+  <data name="DatasetNoReportText" xml:space="preserve">
+    <value>Run the validation first.</value>
+  </data>
+  <data name="DatasetExportTitle" xml:space="preserve">
+    <value>Save report</value>
+  </data>
+  <data name="DatasetExportFilter" xml:space="preserve">
+    <value>Markdown (*.md)|*.md|CSV (*.csv)|*.csv</value>
+  </data>
+  <data name="DatasetExportedFormat" xml:space="preserve">
+    <value>Report saved: {0}</value>
+  </data>
+  <data name="DatasetExportFailedFormat" xml:space="preserve">
+    <value>The report could not be saved: {0}</value>
+  </data>
+  <data name="DatasetSearchLabel" xml:space="preserve">
+    <value>Find:</value>
+  </data>
+  <data name="DatasetSearchRunText" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="DatasetMatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
+  <data name="DatasetSearchReady" xml:space="preserve">
+    <value>Enter a term and press Find.</value>
+  </data>
+  <data name="DatasetSearchNoTerm" xml:space="preserve">
+    <value>Enter a search term.</value>
+  </data>
+  <data name="DatasetSearchRunning" xml:space="preserve">
+    <value>Searching…</value>
+  </data>
+  <data name="DatasetSearchDoneFormat" xml:space="preserve">
+    <value>Matches: {0}; tables with matches: {1}; tables searched: {2}; unreadable: {3}.</value>
+  </data>
+  <data name="DatasetSearchEmpty" xml:space="preserve">
+    <value>No matches.</value>
+  </data>
+  <data name="DatasetSearchHint" xml:space="preserve">
+    <value>Double-click to open the table and select the record.</value>
+  </data>
+  <data name="DatasetSearchCancelled" xml:space="preserve">
+    <value>Search cancelled.</value>
+  </data>
+  <data name="DatasetSearchFailedFormat" xml:space="preserve">
+    <value>Search failed: {0}</value>
+  </data>
 </root>

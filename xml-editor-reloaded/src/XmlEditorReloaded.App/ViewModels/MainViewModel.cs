@@ -10,6 +10,8 @@ using XmlEditorReloaded.Core.Diagnostics;
 using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Documents;
+using XmlEditorReloaded.Xml.Search;
+using XmlEditorReloaded.Xml.Validation;
 
 namespace XmlEditorReloaded.App.ViewModels;
 
@@ -33,6 +35,8 @@ public partial class MainViewModel : ObservableObject
     private readonly ITableCopyDialogService _copyDialog;
     private readonly ISettingsDialogService _settingsDialog;
     private readonly ITableLayoutStore _layoutStore;
+    private readonly DatasetValidator _datasetValidator;
+    private readonly DatasetSearchService _datasetSearch;
     private AppSettings _settings = AppSettings.Default;
     private bool _settingsLoaded;
     private IDataSetSession? _dataSet;
@@ -81,6 +85,8 @@ public partial class MainViewModel : ObservableObject
     /// <param name="copyDialog">Cross-data-set copy dialog service.</param>
     /// <param name="settingsDialog">Application settings dialog service.</param>
     /// <param name="layoutStore">Stored grid layouts, reset from the settings dialog.</param>
+    /// <param name="datasetValidator">Validator used by the data-set window.</param>
+    /// <param name="datasetSearch">Search used by the data-set window.</param>
     public MainViewModel(
         IDataSetSessionFactory sessionFactory,
         ITableEditorFactory editorFactory,
@@ -90,7 +96,9 @@ public partial class MainViewModel : ObservableObject
         IVersionCompareService versionCompare,
         ITableCopyDialogService copyDialog,
         ISettingsDialogService settingsDialog,
-        ITableLayoutStore layoutStore)
+        ITableLayoutStore layoutStore,
+        DatasetValidator datasetValidator,
+        DatasetSearchService datasetSearch)
     {
         ArgumentNullException.ThrowIfNull(sessionFactory);
         ArgumentNullException.ThrowIfNull(editorFactory);
@@ -101,6 +109,8 @@ public partial class MainViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(copyDialog);
         ArgumentNullException.ThrowIfNull(settingsDialog);
         ArgumentNullException.ThrowIfNull(layoutStore);
+        ArgumentNullException.ThrowIfNull(datasetValidator);
+        ArgumentNullException.ThrowIfNull(datasetSearch);
 
         _sessionFactory = sessionFactory;
         _editorFactory = editorFactory;
@@ -111,6 +121,8 @@ public partial class MainViewModel : ObservableObject
         _copyDialog = copyDialog;
         _settingsDialog = settingsDialog;
         _layoutStore = layoutStore;
+        _datasetValidator = datasetValidator;
+        _datasetSearch = datasetSearch;
 
         Editors.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasEditors));
 
@@ -133,6 +145,8 @@ public partial class MainViewModel : ObservableObject
         BulkEditText = Strings.Get("EditorBulkEditText");
         ResetLayoutText = Strings.Get("EditorResetLayoutText");
         TranslationReportText = Strings.Get("EditorTranslationReportText");
+        DatasetValidationText = Strings.Get("DatasetValidationMenu");
+        DatasetSearchText = Strings.Get("DatasetSearchMenu");
         OpenTableText = Strings.Get("EditorOpenText");
         SaveAllText = Strings.Get("EditorSaveAllText");
         EditorPlaceholder = Strings.Get("EditorPlaceholder");
@@ -241,6 +255,16 @@ public partial class MainViewModel : ObservableObject
     /// Gets the Data &gt; Translations menu item text.
     /// </summary>
     public string TranslationReportText { get; }
+
+    /// <summary>
+    /// Gets the Data &gt; Validate data set menu item text.
+    /// </summary>
+    public string DatasetValidationText { get; }
+
+    /// <summary>
+    /// Gets the Data &gt; Search data set menu item text.
+    /// </summary>
+    public string DatasetSearchText { get; }
 
     /// <summary>
     /// Gets the open-table button text.
@@ -652,6 +676,60 @@ public partial class MainViewModel : ObservableObject
     private bool CanResetLayout() => SelectedEditor is TableEditorViewModel;
 
     private bool CanShowTranslationReport() => SelectedEditor is TableEditorViewModel;
+
+    /// <summary>
+    /// Opens the data-set window on the validation tab. The report validates every table of the active
+    /// data set without modifying any file.
+    /// </summary>
+    [RelayCommand]
+    private void ValidateDataset() => ShowDatasetWindow(DatasetWindowTab.Validation);
+
+    /// <summary>
+    /// Opens the data-set window on the search tab, which searches every table value and language
+    /// overlay of the active data set.
+    /// </summary>
+    [RelayCommand]
+    private void SearchDataset() => ShowDatasetWindow(DatasetWindowTab.Search);
+
+    private void ShowDatasetWindow(DatasetWindowTab initialTab)
+    {
+        if (_dataSet is null)
+        {
+            StatusText = Strings.Get("InvalidDataDirectory");
+            return;
+        }
+
+        var viewModel = new DatasetViewModel(
+            _dataSet,
+            _datasetValidator,
+            _datasetSearch,
+            _dialogService,
+            initialTab);
+        viewModel.NavigationRequested += OnDatasetNavigationRequested;
+        _dialogService.ShowDataset(viewModel);
+    }
+
+    private async void OnDatasetNavigationRequested(object? sender, DatasetNavigationRequest request)
+    {
+        try
+        {
+            var session = (sender as DatasetViewModel)?.Session ?? _dataSet;
+            if (session is null)
+            {
+                return;
+            }
+
+            var editor = await OpenEditorByNameAsync(request.TableName, session).ConfigureAwait(true);
+            if (editor is not null && !string.IsNullOrWhiteSpace(request.RecordKey))
+            {
+                editor.SelectRecord(request.RecordKey);
+            }
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
+    }
 
     [RelayCommand]
     private async Task OpenSettingsAsync()
