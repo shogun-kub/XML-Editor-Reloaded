@@ -196,4 +196,18 @@ public sealed class WpfDialogService : IDialogService
 
         return window.ShowDialog() == true ? window.Request : null;
     }
+
+    /// <inheritdoc />
+    public string? EditLookupId(LookupIdEditRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var window = new Views.LookupIdWindow(new ViewModels.LookupIdViewModel(request));
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        return window.ShowDialog() == true ? window.Value : null;
+    }
 }

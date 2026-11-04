@@ -71,7 +71,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             await using var command = connection.CreateCommand();
             command.CommandText =
                 """
-                SELECT Id, XmlTable, DtoName, IsLookup, XmlRoot, RecordElement
+                SELECT Id, XmlTable, DtoName, IsLookup, XmlRoot, RecordElement, IsFlagLookup
                 FROM Tables
                 ORDER BY XmlTable;
                 """;
@@ -271,7 +271,7 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         await using var command = connection.CreateCommand();
         command.CommandText =
             """
-            SELECT Id, XmlTable, DtoName, IsLookup, XmlRoot, RecordElement
+            SELECT Id, XmlTable, DtoName, IsLookup, XmlRoot, RecordElement, IsFlagLookup
             FROM Tables
             WHERE XmlTable = $name;
             """;
@@ -293,7 +293,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         reader.IsDBNull(2) ? null : reader.GetString(2),
         reader.GetInt32(3) != 0,
         reader.GetString(4),
-        reader.GetString(5));
+        reader.GetString(5),
+        reader.GetInt32(6) != 0);
 
     private static async Task<TableMetadata> ReadTableDetailsAsync(
         SqliteConnection connection,
@@ -334,7 +335,8 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
             symmetricKeyPair,
             exclusiveFlagGroups,
             classValueLimits,
-            textLimits);
+            textLimits,
+            row.IsFlagLookup);
     }
 
     private static async Task<IReadOnlyList<ColumnTextLimit>> ReadColumnTextLimitsAsync(
@@ -707,5 +709,6 @@ public sealed class SqliteMetadataProvider : ITableMetadataProvider
         string? DtoName,
         bool IsLookup,
         string XmlRoot,
-        string RecordElement);
+        string RecordElement,
+        bool IsFlagLookup);
 }

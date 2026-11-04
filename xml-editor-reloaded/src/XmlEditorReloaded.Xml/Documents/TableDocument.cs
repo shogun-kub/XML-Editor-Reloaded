@@ -265,11 +265,16 @@ public sealed class TableDocument
     /// empty record instead, because no single key value identifies the row; the user fills the key
     /// fields in the grid or detail form.
     /// </summary>
+    /// <param name="primaryKey">
+    /// Optional exact key text for a table with a single declared key field, for example a lookup
+    /// identifier above the 32-bit range. The value is written verbatim; the caller validates it. A
+    /// compound-key table and a table without a key field ignore the value and use the usual fallback.
+    /// </param>
     /// <returns>
     /// On success, <c>error_code</c> is <see langword="null"/> and <c>data</c> carries the new record.
     /// On failure, <c>error_code</c> is <c>xml.not_saveable</c>.
     /// </returns>
-    public OperationResult<TableRecord> AddRecord()
+    public OperationResult<TableRecord> AddRecord(string? primaryKey = null)
     {
         if (Status != TableDocumentStatus.Loaded || _document.Root is null)
         {
@@ -284,7 +289,9 @@ public sealed class TableDocument
 
         if (!string.IsNullOrEmpty(keyField))
         {
-            key = GetNextPrimaryKey().ToString(CultureInfo.InvariantCulture);
+            key = string.IsNullOrEmpty(primaryKey)
+                ? GetNextPrimaryKey().ToString(CultureInfo.InvariantCulture)
+                : primaryKey;
             element.Add(new XElement(XName.Get(keyField), key));
         }
 

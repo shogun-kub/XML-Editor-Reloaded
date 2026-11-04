@@ -34,12 +34,16 @@ internal sealed class LookupRowCrudScenario : SmokeScenario
             TimeSpan.FromSeconds(30));
         var grid = window.WaitById("RowsGrid");
         context.Recorder.Check("Справочник содержит 23 записи", grid.RowCount() == 23, $"строк: {grid.RowCount()}");
+        context.Recorder.Check(
+            "Справочник помечен как последовательный",
+            window.WaitById("LookupKindText").ReadName() == context.Strings.Get("LookupKindSequential"),
+            window.WaitById("LookupKindText").ReadName());
 
         window.WaitById("AddRowButton").InvokeButton();
         WaitForRowCount(window, 24);
         ScenarioUi.WaitForEditorStatus(
             context,
-            text => text == context.Strings.Format("EditorRowAdded", "24"),
+            text => text == context.Strings.Format("LookupValueAddedFormat", "24"),
             "статус добавления записи",
             TimeSpan.FromSeconds(20));
         grid.ScrollToBottom();

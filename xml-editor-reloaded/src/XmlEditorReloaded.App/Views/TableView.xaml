@@ -120,6 +120,18 @@
                         Content="{Binding DeleteRowText}"
                         Command="{Binding DeleteRowCommand}"
                         IsEnabled="{Binding IsEditable}" />
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0,0,6,6"
+                           Foreground="#FF666666"
+                           AutomationProperties.AutomationId="LookupKindText"
+                           Text="{Binding LookupKindText}"
+                           Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
+                <Button Padding="10,3"
+                        Margin="0,0,6,6"
+                        AutomationProperties.AutomationId="ChangeLookupIdButton"
+                        Content="{Binding ChangeLookupIdText}"
+                        Command="{Binding ChangeLookupIdCommand}"
+                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
                 <Button Padding="10,3"
                         AutomationProperties.AutomationId="SaveButton"
                         Content="{Binding SaveText}"

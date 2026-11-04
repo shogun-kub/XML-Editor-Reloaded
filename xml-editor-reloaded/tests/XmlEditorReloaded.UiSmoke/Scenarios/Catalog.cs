@@ -105,6 +105,7 @@ internal static class ScenarioCatalog
         new NestedTableWorkspaceScenario(),
         new NestedCollectionsScenario(),
         new DatasetReportScenario(),
+        new LookupIdScenario(),
     ];
 
     /// <summary>

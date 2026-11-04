@@ -26,7 +26,7 @@ These rules apply to every WPF form in `xml-editor-reloaded/src/XmlEditorReloade
 | Form | Reviewed | Notes |
 | --- | --- | --- |
 | `MainWindow.xaml` | ✅ | Directory label/combo share one Grid row; Browse/Remove/Refresh/Save have equal 6 px gaps; no wrapping of a label away from its field. |
-| `TableView.xaml` | ✅ | Toolbar buttons 6 px apart and 6 px line gap; filter, columns, detail and status rows use 6 px; label/field pairs are Grid columns. |
+| `TableView.xaml` | ✅ | Toolbar buttons 6 px apart and 6 px line gap; the lookup kind marker and «Изменить ID…» use the same 6 px toolbar gaps; filter, columns, detail and status rows use 6 px; label/field pairs are Grid columns. |
 | `ItemWorkspaceView.xaml` | ✅ | Toolbar wraps with 6 px horizontal/vertical gaps; language label and combo are one StackPanel; item, sub-table, merchant and image rows use 6 px. |
 | `MercGearWorkspaceView.xaml` | ✅ | Toolbar wraps with equal 6 px gaps; language pair is one StackPanel; column and gear rows use 6 px. |
 | `NestedTableWorkspaceView.xaml` | ✅ | Toolbar wraps with equal 6 px gaps; add-assignment label/field pair is one StackPanel; sections and lists use 6 px. |
@@ -39,6 +39,7 @@ These rules apply to every WPF form in `xml-editor-reloaded/src/XmlEditorReloade
 | `ImageViewerWindow.xaml` | ✅ | Item, type/index, zoom and preview header rows use 6 px; three preview columns are separated by 6 px. |
 | `TranslationReportWindow.xaml` | ✅ | Summary, group chips, issue grid and close button use 6 px. |
 | `BitEditorWindow.xaml` | ✅ | Summary, 3 px bit grid and footer buttons meet the minimum. |
+| `LookupIdWindow.xaml` | ✅ | Summary, kind hint, ID label/field Grid row, error/warning lines and footer buttons use 6 px. |
 | `ItemCreationWindow.xaml` | ✅ | Three label/field Grid rows and footer buttons use 6 px. |
 | `AboutWindow.xaml` | ✅ | Label/value rows use 6 px; close button is separated by 6 px. |
 | `EnemyAmmoWindow.xaml` | ✅ | Ammo cells use 3 px side gaps and a 3 px label/field gap; action buttons use 6 px. |

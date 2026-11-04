@@ -52,6 +52,9 @@ public sealed class TableMetadata
     /// Optional input length limits and remaining-character counters of text fields. A limit restricts
     /// typing only and never validates or rewrites an existing value.
     /// </param>
+    /// <param name="isFlagLookup">
+    /// Whether the lookup ids are bit flags, so a free id is a free bit rather than the maximum id + 1.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableName"/> is <see langword="null"/>.</exception>
     public TableMetadata(
         TableName tableName,
@@ -69,7 +72,8 @@ public sealed class TableMetadata
         SymmetricKeyPair? symmetricKeyPair = null,
         IReadOnlyList<ExclusiveFlagGroup>? exclusiveFlagGroups = null,
         IReadOnlyList<ClassValueLimit>? classValueLimits = null,
-        IReadOnlyList<ColumnTextLimit>? textLimits = null)
+        IReadOnlyList<ColumnTextLimit>? textLimits = null,
+        bool isFlagLookup = false)
     {
         TableName = tableName;
         ArgumentException.ThrowIfNullOrWhiteSpace(xmlRoot);
@@ -77,6 +81,7 @@ public sealed class TableMetadata
         XmlRoot = xmlRoot;
         RecordElement = recordElement;
         IsLookup = isLookup;
+        IsFlagLookup = isFlagLookup && isLookup;
         RecordKey = recordKey;
         Columns = columns ?? Array.Empty<ColumnMetadata>();
         ListFields = listFields ?? Array.Empty<ListFieldDefinition>();
@@ -126,6 +131,13 @@ public sealed class TableMetadata
     /// Gets a value indicating whether the table is a lookup table of id/name pairs.
     /// </summary>
     public bool IsLookup { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the lookup ids are bit flags. A free id of such a lookup is the
+    /// lowest unused bit, because single bits name one flag and combinations name prepared sets.
+    /// Always <see langword="false"/> for a table that is not a lookup.
+    /// </summary>
+    public bool IsFlagLookup { get; }
 
     /// <summary>
     /// Gets the record key specification, or <see langword="null"/> when the table has no defined key.

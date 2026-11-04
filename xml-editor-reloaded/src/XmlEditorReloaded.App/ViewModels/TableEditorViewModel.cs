@@ -190,6 +190,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         AddRowText = Strings.Get("EditorAddRowText");
         DuplicateRowText = Strings.Get("EditorDuplicateRowText");
         DeleteRowText = Strings.Get("EditorDeleteRowText");
+        ChangeLookupIdText = Strings.Get("LookupChangeIdText");
         SaveText = Strings.Get("EditorSaveText");
         ValidateText = Strings.Get("EditorValidateText");
         ReloadText = Strings.Get("EditorReloadText");
@@ -316,6 +317,23 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// </summary>
     public bool IsReadOnly => !IsEditable;
 
+    /// <summary>
+    /// Gets a value indicating whether the edited table is a lookup of id/name pairs.
+    /// </summary>
+    public bool IsLookupTable => Workspace?.Metadata?.IsLookup == true;
+
+    /// <summary>
+    /// Gets a value indicating whether the lookup ids are bit flags, so a new value receives a free bit.
+    /// </summary>
+    public bool IsFlagLookup => Workspace?.Metadata?.IsFlagLookup == true;
+
+    /// <summary>
+    /// Gets the lookup kind shown in the toolbar, or an empty string for a regular table.
+    /// </summary>
+    public string LookupKindText => !IsLookupTable
+        ? string.Empty
+        : Strings.Get(IsFlagLookup ? "LookupKindFlags" : "LookupKindSequential");
+
     bool IDetailFieldHost.IsEditable => IsEditable;
 
     bool IDetailFieldHost.IsTranslationMode => IsTranslationMode;
@@ -341,6 +359,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Gets the delete-row button text.
     /// </summary>
     public string DeleteRowText { get; }
+
+    /// <summary>
+    /// Gets the change-lookup-id button text.
+    /// </summary>
+    public string ChangeLookupIdText { get; }
 
     /// <summary>
     /// Gets the save button text.
@@ -811,10 +834,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     public void AddRow() => AddRowWithDefaults(NewRowDefaults);
 
     /// <summary>
-    /// Appends a new record with the next primary key and the supplied initial values.
+    /// Appends a new record with the next primary key and the supplied initial values. A lookup table
+    /// receives an allocated identifier: the lowest unused bit for a bit-mask lookup and the maximum id
+    /// plus one for a sequential lookup.
     /// </summary>
     /// <param name="defaults">
-    /// Direct child values written to the new record, for example the parent key of a child row.
+    /// Direct child values written to the new record, for example the parent key of a child row. Lookup
+    /// tables ignore the values because their columns are not created from a parent row.
     /// </param>
     public void AddRowWithDefaults(IReadOnlyDictionary<string, string>? defaults)
     {
@@ -823,7 +849,16 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
-        var result = Workspace.AddRecord(defaults);
+        var allocatedLookupId = IsLookupTable ? Workspace.SuggestLookupId() : null;
+        if (IsLookupTable && allocatedLookupId is null)
+        {
+            StatusText = Strings.Get("LookupIdAllocationFailed");
+            return;
+        }
+
+        var result = allocatedLookupId is null
+            ? Workspace.AddRecord(defaults)
+            : Workspace.AddLookupRecord(allocatedLookupId);
         if (!result.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
@@ -834,7 +869,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         var added = result.Data!;
         RebuildRows(null, added);
         RefreshHistoryState();
-        SetTransientStatus(Strings.Format("EditorRowAdded", added.KeyDisplay));
+        SetTransientStatus(allocatedLookupId is null
+            ? Strings.Format("EditorRowAdded", added.KeyDisplay)
+            : Strings.Format("LookupValueAddedFormat", allocatedLookupId));
     }
 
     private bool CanDuplicateRows =>
@@ -879,6 +916,53 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         RebuildRows(duplicate.GetKey());
         RefreshHistoryState();
         SetTransientStatus(Strings.Format("EditorRowDuplicated", sourceDisplay, duplicate.KeyDisplay));
+    }
+
+    private bool CanChangeLookupId =>
+        Workspace is not null
+        && IsEditable
+        && IsLookupTable
+        && SelectedRow is not null
+        && Workspace.LookupKeyField is not null;
+
+    /// <summary>
+    /// Changes the identifier of the selected lookup value through the free-form identifier dialog.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanChangeLookupId))]
+    public void ChangeLookupId()
+    {
+        if (Workspace is null || SelectedRow is not { } row || Workspace.LookupKeyField is not { } keyField)
+        {
+            return;
+        }
+
+        var current = row.GetStoredValue(keyField) ?? string.Empty;
+        var request = new LookupIdEditRequest(
+            Strings.Format("LookupIdTitleFormat", Title),
+            Title,
+            current,
+            Workspace.SuggestLookupId() ?? current,
+            Workspace.Metadata?.IsFlagLookup == true,
+            Workspace.GetLookupIds());
+        var newId = _dialogService.EditLookupId(request);
+        if (newId is null)
+        {
+            return;
+        }
+
+        var result = Workspace.ChangeLookupId(row.Row, newId);
+        if (!result.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{result.ErrorCode}: {result.ErrorText}");
+            return;
+        }
+
+        IsDirty = Workspace.IsDirty;
+        var refreshed = Workspace.GetRow(row.Row);
+        RebuildRows(refreshed?.Key);
+        RefreshHistoryState();
+        var oldDisplay = current.Length == 0 ? "—" : current;
+        SetTransientStatus(Strings.Format("LookupIdChangedFormat", oldDisplay, refreshed?.Key ?? newId));
     }
 
     /// <summary>
@@ -1700,6 +1784,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     {
         OnPropertyChanged(nameof(IsReadOnly));
         DuplicateRowCommand.NotifyCanExecuteChanged();
+        ChangeLookupIdCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnShowDetailsChanged(bool value) =>
@@ -1724,6 +1809,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         FilterByValueCommand.NotifyCanExecuteChanged();
         ExcludeValueCommand.NotifyCanExecuteChanged();
         DuplicateRowCommand.NotifyCanExecuteChanged();
+        ChangeLookupIdCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnCurrentCellFieldChanged(string? value)
@@ -1739,7 +1825,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     partial void OnWorkspaceChanged(TableWorkspace? value)
     {
         OnPropertyChanged(nameof(IsLanguageSelectorEnabled));
+        OnPropertyChanged(nameof(IsLookupTable));
+        OnPropertyChanged(nameof(IsFlagLookup));
+        OnPropertyChanged(nameof(LookupKindText));
         DuplicateRowCommand.NotifyCanExecuteChanged();
+        ChangeLookupIdCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)

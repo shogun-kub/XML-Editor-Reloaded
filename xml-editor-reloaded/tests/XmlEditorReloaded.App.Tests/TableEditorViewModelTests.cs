@@ -2113,6 +2113,142 @@ public class TableEditorViewModelTests
             .Elements("ITEM").First().Element("szItemName")!.Value);
     }
 
+    /// <summary>
+    /// A lookup table marks its kind in the toolbar, and adding a value allocates the maximum id plus one.
+    /// </summary>
+    [Fact]
+    public async Task LookupTable_AddRowAllocatesSequentialId()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>"
+            + "<Cursor><id>3</id><name>Use</name></Cursor>");
+
+        Assert.True(editor.IsLookupTable);
+        Assert.False(editor.IsFlagLookup);
+        Assert.Equal("Lookup: sequential ids", editor.LookupKindText);
+
+        editor.AddRowCommand.Execute(null);
+
+        Assert.Equal(4, editor.Rows.Count);
+        Assert.Equal("4", editor.SelectedRow!.Key);
+        Assert.True(editor.IsDirty);
+        Assert.Contains("4", editor.StatusText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A bit-mask lookup receives the lowest unused bit instead of a value that would read as a
+    /// combination of existing flags.
+    /// </summary>
+    [Fact]
+    public async Task LookupTable_AddRowAllocatesLowestFreeBit()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.AttachmentPoint",
+            "<AttachmentPoint><id>0</id><name>None</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>1</id><name>Small</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>2</id><name>Medium</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>3</id><name>All</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>4</id><name>Hydration</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>7</id><name>All and carrier</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>8</id><name>Mask</name></AttachmentPoint>"
+            + "<AttachmentPoint><id>16</id><name>Batteries</name></AttachmentPoint>");
+
+        Assert.True(editor.IsLookupTable);
+        Assert.True(editor.IsFlagLookup);
+        Assert.Equal("Lookup: bit mask", editor.LookupKindText);
+
+        editor.AddRowCommand.Execute(null);
+
+        Assert.Equal("32", editor.SelectedRow!.Key);
+        Assert.Equal(9, editor.Rows.Count);
+    }
+
+    /// <summary>
+    /// The change-id command passes the current value, the suggestion, and the existing ids to the dialog,
+    /// then applies the free-form identifier as one dirty edit.
+    /// </summary>
+    [Fact]
+    public async Task LookupTable_ChangeLookupIdUsesFreeFormDialogAndAppliesId()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>");
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        dialog.LookupIdHandler = _ => "64";
+
+        editor.ChangeLookupIdCommand.Execute(null);
+
+        var request = Assert.IsType<LookupIdEditRequest>(dialog.LastLookupIdRequest);
+        Assert.Equal("Lookup.Cursor", request.TableName);
+        Assert.Equal("1", request.CurrentId);
+        Assert.Equal("3", request.SuggestedId);
+        Assert.False(request.IsFlagLookup);
+        Assert.Equal(new[] { "1", "2" }, request.ExistingIds);
+        Assert.Equal("64", editor.SelectedRow!.Key);
+        Assert.DoesNotContain(editor.Rows, row => row.Key == "1");
+        Assert.True(editor.IsDirty);
+        Assert.Contains("64", editor.StatusText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A duplicate identifier from the dialog is rejected with the key-conflict status, and cancelling
+    /// the dialog leaves the table clean.
+    /// </summary>
+    [Fact]
+    public async Task LookupTable_ChangeLookupIdRejectsDuplicateAndCancel()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>");
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        dialog.LookupIdHandler = _ => "2";
+
+        editor.ChangeLookupIdCommand.Execute(null);
+
+        Assert.Contains("key.conflict", editor.StatusText, StringComparison.Ordinal);
+        Assert.Single(editor.Rows, row => row.Key == "1");
+        Assert.False(editor.IsDirty);
+
+        dialog.LookupIdHandler = _ => null;
+        editor.ChangeLookupIdCommand.Execute(null);
+
+        Assert.False(editor.IsDirty);
+        Assert.Single(editor.Rows, row => row.Key == "1");
+    }
+
+    /// <summary>
+    /// A regular table has no lookup tools: the marker is off and the command cannot run.
+    /// </summary>
+    [Fact]
+    public async Task RegularTable_HasNoLookupTools()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(workspace, includeOverlay: false);
+        editor.SelectedRow = editor.Rows[0];
+
+        Assert.False(editor.IsLookupTable);
+        Assert.False(editor.IsFlagLookup);
+        Assert.Empty(editor.LookupKindText);
+        Assert.False(editor.ChangeLookupIdCommand.CanExecute(null));
+    }
+
     private static List<DetailFieldViewModel> FlattenDetailFields(TableEditorViewModel editor) =>
         editor.DetailGroups.SelectMany(static group => group.Fields).ToList();
 
@@ -2258,6 +2394,40 @@ public class TableEditorViewModelTests
         return (editor, descriptor, data13, dialog, images);
     }
 
+    private static async Task<(TableEditorViewModel Editor, FakeDialogService Dialog)> CreateLookupEditorAsync(
+        TestWorkspace workspace,
+        string tableName,
+        string records)
+    {
+        var data13 = workspace.PathOf("Data-1.13");
+        var tableData = Path.Combine(data13, "TableData");
+        var recordElement = tableName.Split('.')[1];
+        var lookupDirectory = Path.Combine(tableData, "Lookup");
+        Directory.CreateDirectory(lookupDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(lookupDirectory, recordElement + ".xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>" + records + "</JA2Data>");
+
+        var databasePath = workspace.PathOf("metadata.sqlite");
+        Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
+        var provider = new SqliteMetadataProvider(databasePath);
+        var catalog = new FileSystemTableCatalog(metadataProvider: provider);
+        var repository = new TableRepository(provider);
+        var session = (await new DataSetSessionFactory(provider, catalog, repository)
+            .OpenAsync(data13)).Data!;
+        var tables = await session.Catalog.GetTablesAsync(tableData);
+        var descriptor = Assert.Single(tables.Data!, table => table.TableName.Value == tableName);
+        var dialog = new FakeDialogService();
+        var editor = new TableEditorViewModel(
+            session,
+            descriptor,
+            null,
+            dialog,
+            new TestItemImageService());
+        await editor.InitializeAsync();
+        return (editor, dialog);
+    }
+
     private sealed class FakeDialogService : IDialogService
     {
         public bool ConfirmResult { get; set; } = true;
@@ -2321,6 +2491,16 @@ public class TableEditorViewModelTests
             string suggestedId,
             string suggestedName,
             IReadOnlyList<LookupOption> classes) => CreateItemResult;
+
+        public LookupIdEditRequest? LastLookupIdRequest { get; private set; }
+
+        public Func<LookupIdEditRequest, string?>? LookupIdHandler { get; set; }
+
+        public string? EditLookupId(LookupIdEditRequest request)
+        {
+            LastLookupIdRequest = request;
+            return LookupIdHandler?.Invoke(request);
+        }
 
         public BulkEditRequest? EditBulk(BulkEditContext context)
         {

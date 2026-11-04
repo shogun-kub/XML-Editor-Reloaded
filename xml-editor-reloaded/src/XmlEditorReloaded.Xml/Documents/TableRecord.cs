@@ -416,6 +416,37 @@ public sealed class TableRecord
     }
 
     /// <summary>
+    /// Sets a direct child field without metadata type validation. Lookup identifiers use this path
+    /// because they are unsigned 64-bit values even when the declared column type is a 32-bit integer.
+    /// </summary>
+    internal OperationResult SetFieldValueUnchecked(string fieldName, string rawText, bool addIfMissing = false)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentNullException.ThrowIfNull(rawText);
+
+        var path = new FieldPath(new[] { fieldName });
+        var child = FindDirectChild(fieldName);
+        if (child is null)
+        {
+            if (!addIfMissing)
+            {
+                return OperationResult.Failure(
+                    ErrorCodes.KeyNotFound,
+                    $"Field '{fieldName}' is not present in the record.");
+            }
+
+            child = new XElement(XName.Get(fieldName));
+            _element.Add(child);
+            child.Value = rawText;
+            _owner.MarkDirty();
+            _owner.ChangeTracker.Record(new FieldValueChanged(OwnerKey, fieldName, null, rawText));
+            return OperationResult.Success();
+        }
+
+        return SetElementValue(child, path, rawText, occurrenceIndex: 0);
+    }
+
+    /// <summary>
     /// Replaces all values of a repeated direct child field.
     /// </summary>
     /// <param name="fieldName">Case-sensitive XML element name.</param>

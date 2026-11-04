@@ -1963,4 +1963,49 @@
   <data name="DatasetSearchFailedFormat" xml:space="preserve">
     <value>Поиск не удался: {0}</value>
   </data>
+  <data name="LookupKindFlags" xml:space="preserve">
+    <value>Справочник: битовая маска</value>
+  </data>
+  <data name="LookupKindSequential" xml:space="preserve">
+    <value>Справочник: последовательные ID</value>
+  </data>
+  <data name="LookupChangeIdText" xml:space="preserve">
+    <value>Изменить ID…</value>
+  </data>
+  <data name="LookupValueAddedFormat" xml:space="preserve">
+    <value>Добавлено значение справочника с ID {0}.</value>
+  </data>
+  <data name="LookupIdAllocationFailed" xml:space="preserve">
+    <value>Свободных ID не осталось.</value>
+  </data>
+  <data name="LookupIdTitleFormat" xml:space="preserve">
+    <value>Идентификатор значения справочника: {0}</value>
+  </data>
+  <data name="LookupIdSummaryFormat" xml:space="preserve">
+    <value>Текущий ID: {0}. Свободный ID: {1}.</value>
+  </data>
+  <data name="LookupIdFlagsHint" xml:space="preserve">
+    <value>Справочник хранит битовую маску: свободный ID — младший свободный бит, а комбинация бит — готовый набор.</value>
+  </data>
+  <data name="LookupIdListHint" xml:space="preserve">
+    <value>Справочник хранит последовательные ID: свободный ID — максимальный + 1. Можно ввести любой свободный ID.</value>
+  </data>
+  <data name="LookupIdLabel" xml:space="preserve">
+    <value>ID:</value>
+  </data>
+  <data name="LookupIdEmpty" xml:space="preserve">
+    <value>Введите ID.</value>
+  </data>
+  <data name="LookupIdInvalidFormat" xml:space="preserve">
+    <value>ID должен быть целым числом от 0 до {0}.</value>
+  </data>
+  <data name="LookupIdDuplicateFormat" xml:space="preserve">
+    <value>ID {0} уже используется.</value>
+  </data>
+  <data name="LookupIdCombinationFormat" xml:space="preserve">
+    <value>ID {0} — комбинация бит, а не отдельный бит.</value>
+  </data>
+  <data name="LookupIdChangedFormat" xml:space="preserve">
+    <value>ID изменён: {0} → {1}.</value>
+  </data>
 </root>

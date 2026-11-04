@@ -25,7 +25,7 @@ public class MetadataTests
         var migration = await migrator.MigrateAsync(databasePath);
 
         Assert.True(migration.IsSuccess, migration.ErrorText);
-        Assert.Equal(17, migration.Data);
+        Assert.Equal(18, migration.Data);
 
         var provider = new SqliteMetadataProvider(databasePath);
         var tables = await provider.GetAllTablesAsync();
@@ -164,8 +164,15 @@ public class MetadataTests
         var flagLookup = await provider.GetTableAsync(TableName.Parse("Lookup.ItemFlag"));
         Assert.True(flagLookup.IsSuccess, flagLookup.ErrorText);
         Assert.Equal(2, flagLookup.Data!.Columns.Count);
+        Assert.True(flagLookup.Data.IsLookup);
+        Assert.True(flagLookup.Data.IsFlagLookup);
         Assert.True(flagLookup.Data.TryGetColumn("id", out var flagIdColumn));
         Assert.Equal(ColumnDataType.Raw, flagIdColumn!.DataType);
+
+        var sequentialLookup = await provider.GetTableAsync(TableName.Parse("Lookup.Cursor"));
+        Assert.True(sequentialLookup.IsSuccess, sequentialLookup.ErrorText);
+        Assert.True(sequentialLookup.Data!.IsLookup);
+        Assert.False(sequentialLookup.Data.IsFlagLookup);
 
         var disease = await provider.GetTableAsync(TableName.Parse("Disease"));
         Assert.True(disease.IsSuccess, disease.ErrorText);

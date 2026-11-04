@@ -161,4 +161,17 @@ public interface IDialogService
         string suggestedId,
         string suggestedName,
         IReadOnlyList<LookupOption> classes);
+
+    /// <summary>
+    /// Shows the free-form lookup identifier dialog. The user may keep the suggested id or type any
+    /// unused unsigned 64-bit id; a duplicate or non-numeric value is rejected in the dialog.
+    /// </summary>
+    /// <param name="request">Lookup identity, current id, suggestion, and existing ids.</param>
+    /// <returns>The accepted canonical identifier, or <see langword="null"/> when cancelled.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is null.</exception>
+    string? EditLookupId(LookupIdEditRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        return null;
+    }
 }
