@@ -69,6 +69,23 @@ public class ThemeResourcesTests
         Assert.True(mutedHeader >= 4.5, $"{name}: muted header contrast {mutedHeader:F2} is below 4.5.");
     }
 
+    /// <summary>
+    /// Grid lines stay distinguishable from the panel and alternating-row backgrounds in both palettes.
+    /// </summary>
+    [Theory]
+    [InlineData("Light")]
+    [InlineData("Dark")]
+    public void GridLines_HaveVisibleContrast(string name)
+    {
+        var palette = Load(name);
+        var line = ColorOf(palette, "Theme.Grid.Line");
+        foreach (var key in new[] { "Theme.Panel.Background", "Theme.Grid.Alternate" })
+        {
+            var ratio = Contrast(line, ColorOf(palette, key));
+            Assert.True(ratio >= 1.5, $"{name}: grid line contrast against {key} is {ratio:F2}.");
+        }
+    }
+
     private static XDocument Load(string name) =>
         XDocument.Load(Path.Combine(AppContext.BaseDirectory, "Themes", $"Theme.{name}.xaml"));
 

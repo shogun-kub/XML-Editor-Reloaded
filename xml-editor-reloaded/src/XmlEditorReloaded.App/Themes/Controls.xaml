@@ -296,10 +296,15 @@
     <Style TargetType="TabControl">
         <Setter Property="Background" Value="{DynamicResource Theme.Panel.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Theme.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
     </Style>
 
     <Style TargetType="TabItem">
+        <Setter Property="Background" Value="{DynamicResource Theme.Grid.Header}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Theme.Control.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="0,0,2,0" />
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text.Muted}" />
         <Setter Property="Padding" Value="10,6" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -307,9 +312,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
                     <Border x:Name="Bd"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            BorderThickness="0,0,0,2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="3"
+                            SnapsToDevicePixels="True"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter ContentSource="Header"
                                           HorizontalAlignment="Center"
@@ -318,11 +325,17 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Theme.Panel.Background}" />
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Theme.Accent}" />
                             <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Theme.Control.Hover}" />
                             <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource Theme.Text.Muted}" />
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -370,6 +383,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Theme.Border}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="GridLinesVisibility" Value="All" />
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource Theme.Grid.Line}" />
         <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource Theme.Grid.Line}" />
         <Setter Property="RowBackground" Value="{DynamicResource Theme.Panel.Background}" />

@@ -7,7 +7,7 @@ metadata:
   originSessionId: sess_9123e0d2-50a3-44a1-ac9f-49aedbc18523
 ---
 
-**Current status (2026-11-04):** M0–M27b завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 722 теста,
+**Current status (2026-11-04):** M0–M27b завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 724 теста,
 corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9, UI-smoke 94 сценария; маркер
 `M23: legacy functional parity gate` поставлен 2026-11-03 (ручной smoke: S04, S22, S53, S74 на v4;
 S83 автотест; колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя).

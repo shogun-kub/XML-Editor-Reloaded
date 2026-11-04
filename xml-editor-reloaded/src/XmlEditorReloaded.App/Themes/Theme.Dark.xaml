@@ -5,7 +5,7 @@
     <SolidColorBrush x:Key="Theme.Toolbar.Background" Color="#26292F" />
     <SolidColorBrush x:Key="Theme.Menu.Background" Color="#26292F" />
     <SolidColorBrush x:Key="Theme.Border" Color="#34383F" />
-    <SolidColorBrush x:Key="Theme.Grid.Line" Color="#2A2E34" />
+    <SolidColorBrush x:Key="Theme.Grid.Line" Color="#474D56" />
     <SolidColorBrush x:Key="Theme.Text" Color="#E6E7E9" />
     <SolidColorBrush x:Key="Theme.Text.Muted" Color="#9AA0A6" />
     <SolidColorBrush x:Key="Theme.Icon" Color="#C9CED6" />
