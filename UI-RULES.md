@@ -40,6 +40,7 @@ These rules apply to every WPF form in `xml-editor-reloaded/src/XmlEditorReloade
 | `TranslationReportWindow.xaml` | ✅ | Summary, group chips, issue grid and close button use 6 px. |
 | `BitEditorWindow.xaml` | ✅ | Summary, 3 px bit grid and footer buttons meet the minimum. |
 | `LookupIdWindow.xaml` | ✅ | Summary, kind hint, ID label/field Grid row, error/warning lines and footer buttons use 6 px. |
+| `LookupUsageWindow.xaml` | ✅ | Summary, usage grid and footer buttons use 6 px; the empty-state text is centered over the grid; Open/Close share one 6 px gap. |
 | `ItemCreationWindow.xaml` | ✅ | Three label/field Grid rows and footer buttons use 6 px. |
 | `AboutWindow.xaml` | ✅ | Label/value rows use 6 px; close button is separated by 6 px. |
 | `EnemyAmmoWindow.xaml` | ✅ | Ammo cells use 3 px side gaps and a 3 px label/field gap; action buttons use 6 px. |

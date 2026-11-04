@@ -19,6 +19,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml.Repository;
+using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Workspace;
 
 namespace XmlEditorReloaded.App.Tests;
@@ -443,11 +444,11 @@ public class TableEditorViewModelTests
         Assert.Equal("4", editor.SelectedRow!.Key);
 
         dialog.ConfirmResult = false;
-        editor.DeleteRowCommand.Execute(null);
+        await editor.DeleteRowCommand.ExecuteAsync(null);
         Assert.Equal(5, editor.Rows.Count);
 
         dialog.ConfirmResult = true;
-        editor.DeleteRowCommand.Execute(null);
+        await editor.DeleteRowCommand.ExecuteAsync(null);
         Assert.Equal(4, editor.Rows.Count);
 
         await editor.SaveCommand.ExecuteAsync(null);
@@ -2121,7 +2122,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _) = await CreateLookupEditorAsync(
+        var (editor, _, _) = await CreateLookupEditorAsync(
             workspace,
             "Lookup.Cursor",
             "<Cursor><id>1</id><name>Default</name></Cursor>"
@@ -2149,7 +2150,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, _) = await CreateLookupEditorAsync(
+        var (editor, _, _) = await CreateLookupEditorAsync(
             workspace,
             "Lookup.AttachmentPoint",
             "<AttachmentPoint><id>0</id><name>None</name></AttachmentPoint>"
@@ -2180,7 +2181,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, dialog) = await CreateLookupEditorAsync(
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
             workspace,
             "Lookup.Cursor",
             "<Cursor><id>1</id><name>Default</name></Cursor>"
@@ -2188,7 +2189,7 @@ public class TableEditorViewModelTests
         editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
         dialog.LookupIdHandler = _ => "64";
 
-        editor.ChangeLookupIdCommand.Execute(null);
+        await editor.ChangeLookupIdCommand.ExecuteAsync(null);
 
         var request = Assert.IsType<LookupIdEditRequest>(dialog.LastLookupIdRequest);
         Assert.Equal("Lookup.Cursor", request.TableName);
@@ -2211,7 +2212,7 @@ public class TableEditorViewModelTests
     {
         CultureInfo.CurrentUICulture = new CultureInfo("en");
         using var workspace = new TestWorkspace();
-        var (editor, dialog) = await CreateLookupEditorAsync(
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
             workspace,
             "Lookup.Cursor",
             "<Cursor><id>1</id><name>Default</name></Cursor>"
@@ -2219,14 +2220,14 @@ public class TableEditorViewModelTests
         editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
         dialog.LookupIdHandler = _ => "2";
 
-        editor.ChangeLookupIdCommand.Execute(null);
+        await editor.ChangeLookupIdCommand.ExecuteAsync(null);
 
         Assert.Contains("key.conflict", editor.StatusText, StringComparison.Ordinal);
         Assert.Single(editor.Rows, row => row.Key == "1");
         Assert.False(editor.IsDirty);
 
         dialog.LookupIdHandler = _ => null;
-        editor.ChangeLookupIdCommand.Execute(null);
+        await editor.ChangeLookupIdCommand.ExecuteAsync(null);
 
         Assert.False(editor.IsDirty);
         Assert.Single(editor.Rows, row => row.Key == "1");
@@ -2247,6 +2248,154 @@ public class TableEditorViewModelTests
         Assert.False(editor.IsFlagLookup);
         Assert.Empty(editor.LookupKindText);
         Assert.False(editor.ChangeLookupIdCommand.CanExecute(null));
+    }
+
+    /// <summary>
+    /// A lookup value referenced by a record cannot be deleted: no confirmation is shown and the table
+    /// stays clean.
+    /// </summary>
+    [Fact]
+    public async Task LookupProtection_UsedValue_CannotBeDeleted()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>",
+            items: "<ITEM><uiIndex>1</uiIndex><ubCursor>1</ubCursor></ITEM>",
+            withUsage: true);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+
+        await editor.DeleteRowCommand.ExecuteAsync(null);
+
+        Assert.Equal(2, editor.Rows.Count);
+        Assert.False(editor.IsDirty);
+        Assert.Equal(0, dialog.ConfirmCalls);
+        Assert.NotNull(dialog.LastMessage);
+        Assert.Contains("Items.Items", dialog.LastMessage, StringComparison.Ordinal);
+        Assert.Single(editor.Rows, row => row.Key == "1");
+    }
+
+    /// <summary>
+    /// An unused lookup value still goes through the usual confirmation and delete flow.
+    /// </summary>
+    [Fact]
+    public async Task LookupProtection_UnusedValue_CanBeDeleted()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>",
+            items: "<ITEM><uiIndex>1</uiIndex><ubCursor>1</ubCursor></ITEM>",
+            withUsage: true);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "2");
+
+        await editor.DeleteRowCommand.ExecuteAsync(null);
+
+        Assert.Single(editor.Rows);
+        Assert.True(editor.IsDirty);
+        Assert.Equal(1, dialog.ConfirmCalls);
+        Assert.Null(dialog.LastMessage);
+    }
+
+    /// <summary>
+    /// A used lookup value cannot be renamed, so no identifier dialog is opened.
+    /// </summary>
+    [Fact]
+    public async Task LookupProtection_UsedValue_CannotChangeId()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>",
+            items: "<ITEM><uiIndex>1</uiIndex><ubCursor>1</ubCursor></ITEM>",
+            withUsage: true);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        dialog.LookupIdHandler = _ => "9";
+
+        await editor.ChangeLookupIdCommand.ExecuteAsync(null);
+
+        Assert.Null(dialog.LastLookupIdRequest);
+        Assert.Single(editor.Rows, row => row.Key == "1");
+        Assert.False(editor.IsDirty);
+        Assert.NotNull(dialog.LastMessage);
+    }
+
+    /// <summary>
+    /// An unused lookup value can be renamed through the free-form identifier dialog.
+    /// </summary>
+    [Fact]
+    public async Task LookupProtection_UnusedValue_ChangesId()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>",
+            items: "<ITEM><uiIndex>1</uiIndex><ubCursor>1</ubCursor></ITEM>",
+            withUsage: true);
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "2");
+        dialog.LookupIdHandler = _ => "9";
+
+        await editor.ChangeLookupIdCommand.ExecuteAsync(null);
+
+        Assert.NotNull(dialog.LastLookupIdRequest);
+        Assert.Equal("2", dialog.LastLookupIdRequest!.CurrentId);
+        Assert.Single(editor.Rows, row => row.Key == "9");
+        Assert.True(editor.IsDirty);
+        Assert.Null(dialog.LastMessage);
+    }
+
+    /// <summary>
+    /// The "where used" command shows the retained usages, an unused value shows an empty report, and
+    /// opening a usage raises the table navigation request.
+    /// </summary>
+    [Fact]
+    public async Task LookupProtection_ShowUsagesAndNavigate()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, dialog, _) = await CreateLookupEditorAsync(
+            workspace,
+            "Lookup.Cursor",
+            "<Cursor><id>1</id><name>Default</name></Cursor>"
+            + "<Cursor><id>2</id><name>Hand</name></Cursor>",
+            items: "<ITEM><uiIndex>1</uiIndex><ubCursor>1</ubCursor></ITEM>",
+            withUsage: true);
+        TableNavigationRequest? navigation = null;
+        editor.TableNavigationRequested += (_, request) => navigation = request;
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "1");
+        await editor.ShowLookupUsagesCommand.ExecuteAsync(null);
+
+        var usages = Assert.IsType<LookupUsageViewModel>(dialog.LastLookupUsages);
+        Assert.False(usages.IsEmpty);
+        Assert.Contains("1", usages.SummaryText, StringComparison.Ordinal);
+        Assert.Equal("Items.Items", usages.SelectedUsage!.TableText);
+        Assert.Equal("1", usages.SelectedUsage.RecordText);
+
+        usages.OpenSelected();
+
+        Assert.NotNull(navigation);
+        Assert.Equal("Items.Items", navigation!.TableName.Value);
+        Assert.Equal("1", navigation.RecordKey);
+        Assert.Equal(editor.TableDataDirectory, navigation.TableDataDirectory);
+
+        editor.SelectedRow = Assert.Single(editor.Rows, row => row.Key == "2");
+        await editor.ShowLookupUsagesCommand.ExecuteAsync(null);
+
+        Assert.True(dialog.LastLookupUsages!.IsEmpty);
+        Assert.NotEmpty(dialog.LastLookupUsages.EmptyText);
     }
 
     private static List<DetailFieldViewModel> FlattenDetailFields(TableEditorViewModel editor) =>
@@ -2394,10 +2543,15 @@ public class TableEditorViewModelTests
         return (editor, descriptor, data13, dialog, images);
     }
 
-    private static async Task<(TableEditorViewModel Editor, FakeDialogService Dialog)> CreateLookupEditorAsync(
+    private static async Task<(
+        TableEditorViewModel Editor,
+        FakeDialogService Dialog,
+        SqliteMetadataProvider Provider)> CreateLookupEditorAsync(
         TestWorkspace workspace,
         string tableName,
-        string records)
+        string records,
+        string? items = null,
+        bool withUsage = false)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -2407,6 +2561,14 @@ public class TableEditorViewModelTests
         await File.WriteAllTextAsync(
             Path.Combine(lookupDirectory, recordElement + ".xml"),
             "<?xml version=\"1.0\" encoding=\"utf-8\"?><JA2Data>" + records + "</JA2Data>");
+        if (items is not null)
+        {
+            var itemsDirectory = Path.Combine(tableData, "Items");
+            Directory.CreateDirectory(itemsDirectory);
+            await File.WriteAllTextAsync(
+                Path.Combine(itemsDirectory, "Items.xml"),
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><ITEMLIST>" + items + "</ITEMLIST>");
+        }
 
         var databasePath = workspace.PathOf("metadata.sqlite");
         Assert.True((await new DatabaseMigrator().MigrateAsync(databasePath)).IsSuccess);
@@ -2423,14 +2585,17 @@ public class TableEditorViewModelTests
             descriptor,
             null,
             dialog,
-            new TestItemImageService());
+            new TestItemImageService(),
+            lookupUsage: withUsage ? new LookupUsageService(provider) : null);
         await editor.InitializeAsync();
-        return (editor, dialog);
+        return (editor, dialog, provider);
     }
 
     private sealed class FakeDialogService : IDialogService
     {
         public bool ConfirmResult { get; set; } = true;
+
+        public int ConfirmCalls { get; private set; }
 
         public UnsavedChangesChoice UnsavedChangesResult { get; set; } = UnsavedChangesChoice.Discard;
 
@@ -2456,7 +2621,25 @@ public class TableEditorViewModelTests
 
         public string? PickSaveFile(string title, string filter, string defaultFileName) => null;
 
-        public bool Confirm(string message, string title) => ConfirmResult;
+        public bool Confirm(string message, string title)
+        {
+            ConfirmCalls++;
+            return ConfirmResult;
+        }
+
+        public string? LastMessage { get; private set; }
+
+        public string? LastMessageTitle { get; private set; }
+
+        public void ShowMessage(string message, string title)
+        {
+            LastMessage = message;
+            LastMessageTitle = title;
+        }
+
+        public LookupUsageViewModel? LastLookupUsages { get; private set; }
+
+        public void ShowLookupUsages(LookupUsageViewModel viewModel) => LastLookupUsages = viewModel;
 
         public UnsavedChangesChoice ConfirmUnsavedChanges(string message, string title) =>
             UnsavedChangesResult;

@@ -2008,4 +2008,55 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="LookupIdChangedFormat" xml:space="preserve">
     <value>ID changed: {0} → {1}.</value>
   </data>
+  <data name="LookupUsageButtonText" xml:space="preserve">
+    <value>Where used</value>
+  </data>
+  <data name="LookupUsageTitleFormat" xml:space="preserve">
+    <value>Where used: {0}, ID {1}</value>
+  </data>
+  <data name="LookupUsageSummaryFormat" xml:space="preserve">
+    <value>Usages: {0}; shown: {1}; tables scanned: {2}; unreadable: {3}.</value>
+  </data>
+  <data name="LookupUsageEmpty" xml:space="preserve">
+    <value>The value is not used.</value>
+  </data>
+  <data name="LookupUsageTableColumn" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="LookupUsageRecordColumn" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="LookupUsageFieldColumn" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="LookupUsageValueColumn" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="LookupUsageOpenText" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="LookupUsageCloseText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LookupUsageNoKey" xml:space="preserve">
+    <value>The selected row has no numeric ID.</value>
+  </data>
+  <data name="LookupUsageFailedFormat" xml:space="preserve">
+    <value>Could not check usage: {0}</value>
+  </data>
+  <data name="LookupUsageChecking" xml:space="preserve">
+    <value>Checking usage…</value>
+  </data>
+  <data name="LookupUsageEntryFormat" xml:space="preserve">
+    <value>{0}, record {1}, field {2}</value>
+  </data>
+  <data name="LookupInUseTitle" xml:space="preserve">
+    <value>Value is in use</value>
+  </data>
+  <data name="LookupInUseDeleteFormat" xml:space="preserve">
+    <value>Cannot delete value ID {0}: usages — {1}. First: {2}.</value>
+  </data>
+  <data name="LookupInUseChangeFormat" xml:space="preserve">
+    <value>Cannot change ID {0}: the value is used ({1}). First: {2}.</value>
+  </data>
 </root>

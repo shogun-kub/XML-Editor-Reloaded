@@ -127,6 +127,67 @@ public class TableValidatorTests
     }
 
     /// <summary>
+    /// A flag mask with a bit that no lookup entry names is a warning, and the message lists the bit.
+    /// </summary>
+    [Fact]
+    public async Task Validate_FlagMask_WithUnnamedBit_IsWarning()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path))
+                .Replace("<AvailableAttachmentPoint>1</AvailableAttachmentPoint>", "<AvailableAttachmentPoint>16</AvailableAttachmentPoint>", StringComparison.Ordinal)
+                .Replace("<AvailableAttachmentPoint>2</AvailableAttachmentPoint>", "<AvailableAttachmentPoint>16</AvailableAttachmentPoint>", StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("AvailableAttachmentPoint")
+            {
+                DataType = ColumnDataType.Flags,
+                EditorKind = ColumnEditorKind.FlagEditor,
+                LookupTable = "Lookup.AttachmentPoint",
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document, new NamedLookupRepository(1, 2, 4));
+
+        var issues = report.Issues.Where(item => item.Code == ValidationCodes.LookupFlagMissing).ToArray();
+        Assert.NotEmpty(issues);
+        Assert.All(issues, issue =>
+        {
+            Assert.Contains("16", issue.Message, StringComparison.Ordinal);
+            Assert.Equal("AvailableAttachmentPoint", issue.FieldPath);
+        });
+    }
+
+    /// <summary>
+    /// A flag mask whose bits are all named, including a combination of them, is not reported.
+    /// </summary>
+    [Fact]
+    public async Task Validate_FlagMask_AllBitsNamed_NoWarning()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        await File.WriteAllTextAsync(
+            path,
+            (await File.ReadAllTextAsync(path))
+                .Replace("<AvailableAttachmentPoint>1</AvailableAttachmentPoint>", "<AvailableAttachmentPoint>3</AvailableAttachmentPoint>", StringComparison.Ordinal)
+                .Replace("<AvailableAttachmentPoint>2</AvailableAttachmentPoint>", "<AvailableAttachmentPoint>3</AvailableAttachmentPoint>", StringComparison.Ordinal));
+        var document = await LoadAsync(
+            path,
+            MetadataWithHints(new ColumnHint("AvailableAttachmentPoint")
+            {
+                DataType = ColumnDataType.Flags,
+                EditorKind = ColumnEditorKind.FlagEditor,
+                LookupTable = "Lookup.AttachmentPoint",
+            }));
+
+        var report = await new TableValidator().ValidateAsync(document, new NamedLookupRepository(1, 2));
+
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.LookupFlagMissing);
+        Assert.DoesNotContain(report.Issues, item => item.Code == ValidationCodes.LookupMissing);
+    }
+
+    /// <summary>
     /// A curated numeric range produces a warning but never changes the stored value.
     /// </summary>
     [Theory]
@@ -621,5 +682,15 @@ public class TableValidatorTests
             CancellationToken cancellationToken = default) =>
             Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
                 new[] { new LookupEntry(1, "Gun") }));
+    }
+
+    private sealed class NamedLookupRepository(params ulong[] ids) : ILookupRepository
+    {
+        public Task<OperationResult<IReadOnlyList<LookupEntry>>> GetEntriesAsync(
+            TableName lookupName,
+            string? languageCode = null,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult<IReadOnlyList<LookupEntry>>.Success(
+                ids.Select(static id => new LookupEntry(id, id.ToString())).ToArray()));
     }
 }

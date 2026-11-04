@@ -460,26 +460,43 @@ public sealed class TableValidator
         }
 
         var lookupTable = hint?.LookupTable ?? column?.LookupTable;
-        if (lookupTable is not null && lookupRepository is not null
-            && dataType is ColumnDataType.Lookup or ColumnDataType.Integer)
+        if (lookupTable is not null && lookupRepository is not null)
         {
-            var entries = await GetLookupAsync(
-                    lookupTable,
-                    lookupRepository,
-                    languageCode,
-                    lookupCache,
-                    cancellationToken)
-                .ConfigureAwait(false);
-
-            if (entries is not null && !ContainsLookupId(entries, leaf.Value))
+            if (dataType is ColumnDataType.Lookup or ColumnDataType.Integer)
             {
-                issues.Add(new ValidationIssue(
-                    ValidationSeverity.Warning,
-                    ValidationCodes.LookupMissing,
-                    $"Value '{leaf.Value.Trim()}' is not present in lookup table '{lookupTable}'.",
-                    tableName,
-                    recordKey,
-                    path));
+                var entries = await GetLookupAsync(
+                        lookupTable,
+                        lookupRepository,
+                        languageCode,
+                        lookupCache,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (entries is not null && !ContainsLookupId(entries, leaf.Value))
+                {
+                    issues.Add(new ValidationIssue(
+                        ValidationSeverity.Warning,
+                        ValidationCodes.LookupMissing,
+                        $"Value '{leaf.Value.Trim()}' is not present in lookup table '{lookupTable}'.",
+                        tableName,
+                        recordKey,
+                        path));
+                }
+            }
+            else if (dataType == ColumnDataType.Flags)
+            {
+                var entries = await GetLookupAsync(
+                        lookupTable,
+                        lookupRepository,
+                        languageCode,
+                        lookupCache,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (entries is not null)
+                {
+                    ValidateFlagMask(entries, leaf.Value, lookupTable, path, recordKey, tableName, issues);
+                }
             }
         }
 
@@ -648,5 +665,76 @@ public sealed class TableValidator
         }
 
         return entries.Any(entry => entry.Id == id);
+    }
+
+    /// <summary>
+    /// Reports bits of a flag mask that no lookup entry names. Every entry contributes its bits, so a
+    /// named combination covers its parts and only genuinely unnamed bits are reported. A zero mask is
+    /// always covered because it sets no bits.
+    /// </summary>
+    private static void ValidateFlagMask(
+        IReadOnlyList<LookupEntry> entries,
+        string rawValue,
+        string lookupTable,
+        string path,
+        string? recordKey,
+        TableName tableName,
+        List<ValidationIssue> issues)
+    {
+        if (!ulong.TryParse(rawValue.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var mask)
+            || mask == 0)
+        {
+            return;
+        }
+
+        var knownBits = 0UL;
+        foreach (var entry in entries)
+        {
+            knownBits |= entry.Id;
+        }
+
+        var unnamedBits = mask & ~knownBits;
+        if (unnamedBits == 0)
+        {
+            return;
+        }
+
+        issues.Add(new ValidationIssue(
+            ValidationSeverity.Warning,
+            ValidationCodes.LookupFlagMissing,
+            $"Flag value '{rawValue.Trim()}' uses bits that are not named in lookup table '{lookupTable}': "
+            + FormatBits(unnamedBits) + ".",
+            tableName,
+            recordKey,
+            path));
+    }
+
+    private static string FormatBits(ulong bits)
+    {
+        var values = new List<string>();
+        var hasMore = false;
+        for (var bit = 0; bit < 64; bit++)
+        {
+            var value = 1UL << bit;
+            if ((bits & value) == 0)
+            {
+                continue;
+            }
+
+            if (values.Count == 8)
+            {
+                hasMore = true;
+                break;
+            }
+
+            values.Add(value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        if (hasMore)
+        {
+            values.Add("…");
+        }
+
+        return string.Join(", ", values);
     }
 }

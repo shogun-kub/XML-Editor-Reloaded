@@ -45,6 +45,9 @@ public static class XmlServiceCollectionExtensions
         services.TryAddSingleton(provider => new DatasetSearchService(
             provider.GetService<ITableMetadataProvider>(),
             provider.GetRequiredService<TableFileLoader>()));
+        services.TryAddSingleton(provider => new LookupUsageService(
+            provider.GetService<ITableMetadataProvider>(),
+            provider.GetRequiredService<TableFileLoader>()));
 
         if (!string.IsNullOrWhiteSpace(tableDataDirectory))
         {

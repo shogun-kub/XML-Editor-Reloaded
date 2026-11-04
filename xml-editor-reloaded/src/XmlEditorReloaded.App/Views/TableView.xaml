@@ -133,6 +133,12 @@
                         Command="{Binding ChangeLookupIdCommand}"
                         Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
                 <Button Padding="10,3"
+                        Margin="0,0,6,6"
+                        AutomationProperties.AutomationId="LookupUsageButton"
+                        Content="{Binding LookupUsageText}"
+                        Command="{Binding ShowLookupUsagesCommand}"
+                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
+                <Button Padding="10,3"
                         AutomationProperties.AutomationId="SaveButton"
                         Content="{Binding SaveText}"
                         Command="{Binding SaveCommand}"

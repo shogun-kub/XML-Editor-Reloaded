@@ -174,4 +174,14 @@ public interface IDialogService
         ArgumentNullException.ThrowIfNull(request);
         return null;
     }
+
+    /// <summary>
+    /// Shows the read-only "where used" window for one lookup value.
+    /// </summary>
+    /// <param name="viewModel">Usage list and its navigation callback.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="viewModel"/> is null.</exception>
+    void ShowLookupUsages(LookupUsageViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+    }
 }

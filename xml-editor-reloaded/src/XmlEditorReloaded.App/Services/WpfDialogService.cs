@@ -210,4 +210,18 @@ public sealed class WpfDialogService : IDialogService
 
         return window.ShowDialog() == true ? window.Value : null;
     }
+
+    /// <inheritdoc />
+    public void ShowLookupUsages(ViewModels.LookupUsageViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+
+        var window = new Views.LookupUsageWindow(viewModel);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            window.Owner = owner;
+        }
+
+        window.ShowDialog();
+    }
 }

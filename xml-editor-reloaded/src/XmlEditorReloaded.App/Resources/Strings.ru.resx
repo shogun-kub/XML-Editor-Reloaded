@@ -2008,4 +2008,55 @@
   <data name="LookupIdChangedFormat" xml:space="preserve">
     <value>ID изменён: {0} → {1}.</value>
   </data>
+  <data name="LookupUsageButtonText" xml:space="preserve">
+    <value>Где используется</value>
+  </data>
+  <data name="LookupUsageTitleFormat" xml:space="preserve">
+    <value>Где используется: {0}, ID {1}</value>
+  </data>
+  <data name="LookupUsageSummaryFormat" xml:space="preserve">
+    <value>Использований: {0}; показано: {1}; проверено таблиц: {2}; не прочитано: {3}.</value>
+  </data>
+  <data name="LookupUsageEmpty" xml:space="preserve">
+    <value>Значение не используется.</value>
+  </data>
+  <data name="LookupUsageTableColumn" xml:space="preserve">
+    <value>Таблица</value>
+  </data>
+  <data name="LookupUsageRecordColumn" xml:space="preserve">
+    <value>Запись</value>
+  </data>
+  <data name="LookupUsageFieldColumn" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="LookupUsageValueColumn" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="LookupUsageOpenText" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="LookupUsageCloseText" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="LookupUsageNoKey" xml:space="preserve">
+    <value>У выбранной записи нет числового ID.</value>
+  </data>
+  <data name="LookupUsageFailedFormat" xml:space="preserve">
+    <value>Не удалось проверить использование: {0}</value>
+  </data>
+  <data name="LookupUsageChecking" xml:space="preserve">
+    <value>Проверка использования…</value>
+  </data>
+  <data name="LookupUsageEntryFormat" xml:space="preserve">
+    <value>{0}, запись {1}, поле {2}</value>
+  </data>
+  <data name="LookupInUseTitle" xml:space="preserve">
+    <value>Значение используется</value>
+  </data>
+  <data name="LookupInUseDeleteFormat" xml:space="preserve">
+    <value>Нельзя удалить значение ID {0}: использований — {1}. Первое: {2}.</value>
+  </data>
+  <data name="LookupInUseChangeFormat" xml:space="preserve">
+    <value>Нельзя изменить ID {0}: значение используется ({1}). Первое: {2}.</value>
+  </data>
 </root>

@@ -106,6 +106,7 @@ internal static class ScenarioCatalog
         new NestedCollectionsScenario(),
         new DatasetReportScenario(),
         new LookupIdScenario(),
+        new LookupUsageScenario(),
     ];
 
     /// <summary>

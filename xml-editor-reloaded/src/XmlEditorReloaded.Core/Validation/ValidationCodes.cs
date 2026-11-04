@@ -14,6 +14,9 @@ public static class ValidationCodes
     /// <summary>A lookup value does not exist in the referenced lookup table.</summary>
     public const string LookupMissing = "validation.lookup_missing";
 
+    /// <summary>A flag mask sets bits that no entry of the referenced bit-mask lookup names.</summary>
+    public const string LookupFlagMissing = "validation.lookup_flag_missing";
+
     /// <summary>Two records share the same primary key.</summary>
     public const string DuplicateKey = "validation.duplicate_key";
 

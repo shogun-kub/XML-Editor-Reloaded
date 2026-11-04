@@ -259,7 +259,7 @@ internal static class ScenarioUi
     {
         var trimmed = caption.Replace("&", string.Empty, StringComparison.Ordinal).Trim();
         return yes
-            ? trimmed is "Да" or "Yes" or "OK"
+            ? trimmed is "Да" or "Yes" or "OK" or "ОК" or "Ок"
             : trimmed is "Нет" or "No" or "Cancel" or "Отмена";
     }
 

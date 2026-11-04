@@ -36,7 +36,7 @@ public class TableEditorCompoundKeyTests
         Assert.False(editor.DuplicateRowCommand.CanExecute(null));
 
         editor.SelectedRow = Assert.Single(editor.Rows, row => row.KeyDisplay == "10 | 2");
-        editor.DeleteRowCommand.Execute(null);
+        await editor.DeleteRowCommand.ExecuteAsync(null);
 
         Assert.Equal(2, editor.Rows.Count);
         Assert.Contains(editor.Rows, row => row.KeyDisplay == "10 | 1");

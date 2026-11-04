@@ -18,6 +18,7 @@ using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Core.Validation;
 using XmlEditorReloaded.Xml.Documents;
 using XmlEditorReloaded.Xml.Filtering;
+using XmlEditorReloaded.Xml.Lookups;
 using XmlEditorReloaded.Xml.Schema;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -32,6 +33,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private readonly IDataSetSession _session;
     private readonly IItemImageService _itemImages;
     private readonly ITableLayoutStore? _layoutStore;
+    private readonly LookupUsageService? _lookupUsage;
     private string? _languageCode;
     private readonly IDialogService _dialogService;
     private readonly List<TableRowViewModel> _allRows = new();
@@ -154,6 +156,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// How long a transient status message stays visible before it is replaced by the idle status;
     /// three seconds when omitted.
     /// </param>
+    /// <param name="lookupUsage">
+    /// Optional lookup usage scanner used to protect used values and to show "where used"; when omitted,
+    /// the editor skips the usage check.
+    /// </param>
     public TableEditorViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
@@ -161,7 +167,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IDialogService dialogService,
         IItemImageService itemImages,
         ITableLayoutStore? layoutStore = null,
-        TimeSpan? statusAutoResetDelay = null)
+        TimeSpan? statusAutoResetDelay = null,
+        LookupUsageService? lookupUsage = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -174,6 +181,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         _dialogService = dialogService;
         _itemImages = itemImages;
         _layoutStore = layoutStore;
+        _lookupUsage = lookupUsage;
         _statusAutoResetDelay = statusAutoResetDelay ?? TimeSpan.FromSeconds(3);
 
         DetailImages = new[]
@@ -191,6 +199,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         DuplicateRowText = Strings.Get("EditorDuplicateRowText");
         DeleteRowText = Strings.Get("EditorDeleteRowText");
         ChangeLookupIdText = Strings.Get("LookupChangeIdText");
+        LookupUsageText = Strings.Get("LookupUsageButtonText");
         SaveText = Strings.Get("EditorSaveText");
         ValidateText = Strings.Get("EditorValidateText");
         ReloadText = Strings.Get("EditorReloadText");
@@ -364,6 +373,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Gets the change-lookup-id button text.
     /// </summary>
     public string ChangeLookupIdText { get; }
+
+    /// <summary>
+    /// Gets the "where used" button text.
+    /// </summary>
+    public string LookupUsageText { get; }
 
     /// <summary>
     /// Gets the save button text.
@@ -927,11 +941,17 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
 
     /// <summary>
     /// Changes the identifier of the selected lookup value through the free-form identifier dialog.
+    /// A value that is referenced by another table is protected and cannot be renamed.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanChangeLookupId))]
-    public void ChangeLookupId()
+    public async Task ChangeLookupIdAsync()
     {
         if (Workspace is null || SelectedRow is not { } row || Workspace.LookupKeyField is not { } keyField)
+        {
+            return;
+        }
+
+        if (!await ConfirmLookupNotUsedAsync("LookupInUseChangeFormat").ConfigureAwait(true))
         {
             return;
         }
@@ -965,11 +985,144 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         SetTransientStatus(Strings.Format("LookupIdChangedFormat", oldDisplay, refreshed?.Key ?? newId));
     }
 
+    private bool CanShowLookupUsages =>
+        Workspace is not null
+        && IsLookupTable
+        && SelectedRow is not null
+        && Workspace.LookupKeyField is not null
+        && _lookupUsage is not null;
+
     /// <summary>
-    /// Deletes the selected record and its translation after confirmation.
+    /// Shows the records that reference the selected lookup value and opens one of them on request.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanShowLookupUsages))]
+    public async Task ShowLookupUsagesAsync()
+    {
+        if (!TryGetSelectedLookupId(out var id) || Workspace?.Metadata is not { IsLookup: true } metadata)
+        {
+            StatusText = Strings.Get("LookupUsageNoKey");
+            return;
+        }
+
+        var report = await ScanLookupUsageAsync(id).ConfigureAwait(true);
+        if (report is null)
+        {
+            return;
+        }
+
+        var viewModel = new LookupUsageViewModel(
+            report,
+            Strings.Format("LookupUsageTitleFormat", Title, id.ToString(CultureInfo.InvariantCulture)));
+        viewModel.NavigationRequested += OnLookupUsageNavigationRequested;
+        _dialogService.ShowLookupUsages(viewModel);
+    }
+
+    private void OnLookupUsageNavigationRequested(object? sender, LookupUsageNavigationRequest request) =>
+        TableNavigationRequested?.Invoke(
+            this,
+            new TableNavigationRequest(request.TableName, request.RecordKey ?? string.Empty, TableDataDirectory));
+
+    private bool TryGetSelectedLookupId(out ulong id)
+    {
+        id = 0;
+        if (Workspace?.LookupKeyField is not { } keyField || SelectedRow is not { } row)
+        {
+            return false;
+        }
+
+        return LookupIdAllocator.TryParseId(row.GetStoredValue(keyField), out id);
+    }
+
+    /// <summary>
+    /// Checks whether the selected lookup value is referenced and shows a blocking message when it is.
+    /// Returns <see langword="true"/> only when the value may be deleted or renamed.
+    /// </summary>
+    private async Task<bool> ConfirmLookupNotUsedAsync(string messageFormat)
+    {
+        if (_lookupUsage is null || !IsLookupTable)
+        {
+            return true;
+        }
+
+        if (!TryGetSelectedLookupId(out var id))
+        {
+            StatusText = Strings.Get("LookupUsageNoKey");
+            return false;
+        }
+
+        var report = await ScanLookupUsageAsync(id).ConfigureAwait(true);
+        if (report is null)
+        {
+            return false;
+        }
+
+        if (!report.IsUsed)
+        {
+            return true;
+        }
+
+        var first = report.Usages.Count > 0
+            ? Strings.Format(
+                "LookupUsageEntryFormat",
+                report.Usages[0].TableName.Value,
+                report.Usages[0].RecordKey ?? "—",
+                report.Usages[0].FieldPath)
+            : Strings.Get("LookupUsageEmpty");
+        _dialogService.ShowMessage(
+            Strings.Format(
+                messageFormat,
+                id.ToString(CultureInfo.InvariantCulture),
+                report.UsageCount,
+                first),
+            Strings.Get("LookupInUseTitle"));
+        return false;
+    }
+
+    private async Task<LookupUsageReport?> ScanLookupUsageAsync(ulong id)
+    {
+        if (_lookupUsage is null || Workspace?.Metadata is not { IsLookup: true } metadata)
+        {
+            return null;
+        }
+
+        var tables = await _session.Catalog.GetTablesAsync(TableDataDirectory).ConfigureAwait(true);
+        if (!tables.IsSuccess)
+        {
+            StatusText = Strings.Format("StatusError", $"{tables.ErrorCode}: {tables.ErrorText}");
+            return null;
+        }
+
+        IsBusy = true;
+        var previousStatus = StatusText;
+        StatusText = Strings.Get("LookupUsageChecking");
+        try
+        {
+            var result = await _lookupUsage
+                .FindUsagesAsync(tables.Data!, metadata.TableName, id, metadata.IsFlagLookup)
+                .ConfigureAwait(true);
+            if (!result.IsSuccess)
+            {
+                StatusText = Strings.Format(
+                    "LookupUsageFailedFormat",
+                    $"{result.ErrorCode}: {result.ErrorText}");
+                return null;
+            }
+
+            StatusText = previousStatus;
+            return result.Data;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Deletes the selected record and its translation after confirmation. A lookup value that is
+    /// referenced by another table is protected and cannot be deleted.
     /// </summary>
     [RelayCommand]
-    public void DeleteRow()
+    public async Task DeleteRowAsync()
     {
         if (Workspace is null)
         {
@@ -979,6 +1132,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         if (SelectedRow is not { } row)
         {
             StatusText = Strings.Get("EditorSelectRow");
+            return;
+        }
+
+        if (!await ConfirmLookupNotUsedAsync("LookupInUseDeleteFormat").ConfigureAwait(true))
+        {
             return;
         }
 
@@ -1785,6 +1943,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         OnPropertyChanged(nameof(IsReadOnly));
         DuplicateRowCommand.NotifyCanExecuteChanged();
         ChangeLookupIdCommand.NotifyCanExecuteChanged();
+        ShowLookupUsagesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnShowDetailsChanged(bool value) =>
@@ -1810,6 +1969,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         ExcludeValueCommand.NotifyCanExecuteChanged();
         DuplicateRowCommand.NotifyCanExecuteChanged();
         ChangeLookupIdCommand.NotifyCanExecuteChanged();
+        ShowLookupUsagesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnCurrentCellFieldChanged(string? value)
@@ -1830,6 +1990,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         OnPropertyChanged(nameof(LookupKindText));
         DuplicateRowCommand.NotifyCanExecuteChanged();
         ChangeLookupIdCommand.NotifyCanExecuteChanged();
+        ShowLookupUsagesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSelectedLanguageOptionChanged(LanguageOptionViewModel? value)

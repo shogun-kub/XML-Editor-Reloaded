@@ -1,5 +1,6 @@
 using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Xml.Lookups;
 
 namespace XmlEditorReloaded.App.Services;
 
@@ -70,6 +71,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
     private readonly IDialogService _dialogService;
     private readonly IItemImageService _itemImages;
     private readonly ITableLayoutStore _layoutStore;
+    private readonly LookupUsageService? _lookupUsage;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableEditorFactory"/> class.
@@ -77,11 +79,13 @@ public sealed class TableEditorFactory : ITableEditorFactory
     /// <param name="dialogService">Dialog service used for editor confirmations and bit editing.</param>
     /// <param name="itemImages">Item image service used by the detail panel.</param>
     /// <param name="layoutStore">Per-table layout store used by generic grid tabs.</param>
+    /// <param name="lookupUsage">Optional scanner used to protect referenced lookup values.</param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency is null.</exception>
     public TableEditorFactory(
         IDialogService dialogService,
         IItemImageService itemImages,
-        ITableLayoutStore layoutStore)
+        ITableLayoutStore layoutStore,
+        LookupUsageService? lookupUsage = null)
     {
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(itemImages);
@@ -89,6 +93,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
         _dialogService = dialogService;
         _itemImages = itemImages;
         _layoutStore = layoutStore;
+        _lookupUsage = lookupUsage;
     }
 
     /// <inheritdoc />
@@ -96,7 +101,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>
-        new(session, descriptor, languageCode, _dialogService, _itemImages, _layoutStore);
+        new(session, descriptor, languageCode, _dialogService, _itemImages, _layoutStore, lookupUsage: _lookupUsage);
 
     /// <inheritdoc />
     public ViewModels.ItemWorkspaceViewModel CreateItemWorkspace(
