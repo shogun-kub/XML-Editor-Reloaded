@@ -478,6 +478,93 @@
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="8,4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Grid>
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Grid.Column="0"
+                                                  ContentSource="Icon"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,6,0" />
+                                <ContentPresenter Grid.Column="1"
+                                                  ContentSource="Header"
+                                                  RecognizesAccessKey="True"
+                                                  VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2"
+                                           Margin="18,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource Theme.Text.Muted}"
+                                           Text="{TemplateBinding InputGestureText}" />
+                                <Path Grid.Column="3"
+                                      x:Name="SubmenuArrow"
+                                      Data="M0,0 L4,4 L0,8"
+                                      Stroke="{DynamicResource Theme.Text.Muted}"
+                                      StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Margin="12,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <Popup x:Name="PART_Popup"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                               IsOpen="{TemplateBinding IsSubmenuOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Fade">
+                            <Border Background="{DynamicResource Theme.Menu.Background}"
+                                    BorderBrush="{DynamicResource Theme.Border}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="2"
+                                    MinWidth="180"
+                                    MaxHeight="520">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Role" Value="SubmenuHeader">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Right" />
+                            <Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Role" Value="TopLevelHeader">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom" />
+                        </Trigger>
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Right" />
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Theme.Control.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsSubmenuOpen" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Theme.Control.Pressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="ContextMenu">
@@ -505,7 +592,14 @@
 
     <Style TargetType="Separator">
         <Setter Property="Background" Value="{DynamicResource Theme.Border}" />
-        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Margin" Value="4,2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Background="{TemplateBinding Background}" Height="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="GridSplitter">
