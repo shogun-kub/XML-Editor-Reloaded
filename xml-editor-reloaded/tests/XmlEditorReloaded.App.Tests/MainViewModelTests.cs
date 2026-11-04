@@ -201,6 +201,42 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// Switching the shell to XML builds a snapshot of the selected editor, and both switch states
+    /// stay mutually exclusive.
+    /// </summary>
+    [Fact]
+    public async Task XmlMode_BuildsSnapshotForSelectedEditor()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedTable = Assert.Single(viewModel.Tables);
+        await viewModel.OpenTableCommand.ExecuteAsync(null);
+        var editor = Assert.IsType<TableEditorViewModel>(viewModel.SelectedEditor);
+
+        viewModel.IsXmlMode = true;
+        await WaitUntilAsync(
+            () => viewModel.XmlText.Contains("<NOTE>", StringComparison.Ordinal));
+
+        Assert.True(viewModel.IsXmlMode);
+        Assert.False(viewModel.IsGridMode);
+        Assert.Contains("<NOTES>", viewModel.XmlText, StringComparison.Ordinal);
+        Assert.StartsWith("<?xml", viewModel.XmlText, StringComparison.Ordinal);
+
+        viewModel.IsGridMode = true;
+
+        Assert.False(viewModel.IsXmlMode);
+        Assert.True(viewModel.IsGridMode);
+        Assert.Same(editor, viewModel.SelectedEditor);
+
+        await viewModel.CloseEditorCommand.ExecuteAsync(editor);
+    }
+
+    /// <summary>
     /// Opening the Cities table creates the nested-record workspace instead of the generic grid.
     /// </summary>
     [Fact]

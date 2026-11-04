@@ -26,6 +26,12 @@ public interface IEditorTab
     string DatasetLabel { get; }
 
     /// <summary>
+    /// Creates a read-only XML snapshot of the tab's primary table for the shared text view.
+    /// </summary>
+    /// <returns>The current XML text, or an empty string when the tab has no loaded document.</returns>
+    string CreateXmlSnapshot();
+
+    /// <summary>
     /// Gets the primary key of the selected record, or <see langword="null"/> when no record is selected.
     /// </summary>
     string? SelectedRecordKey { get; }

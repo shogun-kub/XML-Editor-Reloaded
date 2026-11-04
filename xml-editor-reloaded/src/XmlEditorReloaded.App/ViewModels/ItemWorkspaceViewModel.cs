@@ -250,6 +250,9 @@ public sealed partial class ItemWorkspaceViewModel :
     public string DatasetLabel => DatasetNames.LabelFor(_session);
 
     /// <inheritdoc />
+    public string CreateXmlSnapshot() => _set?.Primary.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+
+    /// <inheritdoc />
     public string? SelectedRecordKey => SelectedItem?.Key;
 
     /// <inheritdoc />

@@ -140,6 +140,9 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
     public string DatasetLabel => DatasetNames.LabelFor(_session);
 
     /// <inheritdoc />
+    public string CreateXmlSnapshot() => _workspace?.Primary.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+
+    /// <inheritdoc />
     public string? SelectedRecordKey => SelectedMerc?.Key;
 
     /// <inheritdoc />

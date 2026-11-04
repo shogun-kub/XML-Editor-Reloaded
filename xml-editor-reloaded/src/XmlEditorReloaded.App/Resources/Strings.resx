@@ -237,9 +237,6 @@
   <data name="EditorXmlUnsaved" xml:space="preserve">
     <value>Unsaved changes</value>
   </data>
-  <data name="EditorXmlUnavailable" xml:space="preserve">
-    <value>XML is not available</value>
-  </data>
   <data name="EditorSearchLabel" xml:space="preserve">
     <value>Search</value>
   </data>

@@ -1,0 +1,89 @@
+<UserControl x:Class="XmlEditorReloaded.App.Views.XmlTextView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="500"
+             d:DesignWidth="900">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontSize="15"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Text="{Binding SelectedEditor.Title}" />
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource Theme.Text.Muted}"
+                           Text="{Binding SelectedEditor.DatasetLabel}" />
+                <TextBlock Margin="12,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource Theme.Text.Muted}"
+                           Text="{Binding XmlReadOnlyText}" />
+                <TextBlock Margin="12,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource Theme.Text.Muted}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding XmlSavedText}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedEditor.IsDirty}" Value="True">
+                                    <Setter Property="Text" Value="{Binding XmlUnsavedText}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Style="{DynamicResource IconButton}"
+                    Margin="6,0,4,0"
+                    AutomationProperties.AutomationId="CopyXmlButton"
+                    AutomationProperties.Name="{Binding XmlCopyText}"
+                    Content="{DynamicResource Icon.CopyData}"
+                    Click="OnCopyXmlClick"
+                    ToolTip="{Binding XmlCopyText}" />
+            <Button Grid.Column="2"
+                    Style="{DynamicResource IconButton}"
+                    AutomationProperties.AutomationId="RefreshXmlButton"
+                    AutomationProperties.Name="{Binding XmlRefreshText}"
+                    Content="{DynamicResource Icon.Refresh}"
+                    Command="{Binding RefreshXmlSnapshotCommand}"
+                    ToolTip="{Binding XmlRefreshText}" />
+        </Grid>
+
+        <TextBox x:Name="XmlTextBox"
+                 Grid.Row="1"
+                 AutomationProperties.AutomationId="XmlTextBox"
+                 AutomationProperties.Name="{Binding XmlViewText}"
+                 IsReadOnly="True"
+                 IsReadOnlyCaretVisible="True"
+                 AcceptsReturn="True"
+                 FontFamily="Consolas"
+                 FontSize="12"
+                 Text="{Binding XmlText, Mode=OneWay}"
+                 TextWrapping="NoWrap"
+                 HorizontalScrollBarVisibility="Auto"
+                 VerticalScrollBarVisibility="Auto" />
+
+        <ProgressBar Grid.Row="1"
+                     Height="3"
+                     VerticalAlignment="Top"
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsXmlLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</UserControl>

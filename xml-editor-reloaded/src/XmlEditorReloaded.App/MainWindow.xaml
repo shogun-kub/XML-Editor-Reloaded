@@ -356,8 +356,50 @@
 
             <Grid Grid.Column="1">
                 <TabControl AutomationProperties.AutomationId="EditorsTabs"
+                            Tag="EditorTabs"
                             ItemsSource="{Binding Editors}"
                             SelectedItem="{Binding SelectedEditor, Mode=TwoWay}">
+                    <TabControl.Resources>
+                        <Style TargetType="TabPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabControl},
+                                                              Path=Tag}"
+                                             Value="EditorTabs">
+                                    <Setter Property="Margin" Value="0,0,118,0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <ContentControl Content="{Binding}"
+                                                Visibility="{Binding DataContext.IsGridMode,
+                                                                     RelativeSource={RelativeSource AncestorType=Window},
+                                                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ContentControl.Resources>
+                                        <DataTemplate DataType="{x:Type vm:TableEditorViewModel}">
+                                            <views:TableView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:ItemWorkspaceViewModel}">
+                                            <views:ItemWorkspaceView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:MercGearWorkspaceViewModel}">
+                                            <views:MercGearWorkspaceView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:NestedTableWorkspaceViewModel}">
+                                            <views:NestedTableWorkspaceView />
+                                        </DataTemplate>
+                                    </ContentControl.Resources>
+                                </ContentControl>
+                                <views:XmlTextView DataContext="{Binding DataContext,
+                                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                                   Visibility="{Binding DataContext.IsXmlMode,
+                                                                        RelativeSource={RelativeSource AncestorType=Window},
+                                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
                     <TabControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -375,21 +417,35 @@
                             </StackPanel>
                         </DataTemplate>
                     </TabControl.ItemTemplate>
-                    <TabControl.Resources>
-                        <DataTemplate DataType="{x:Type vm:TableEditorViewModel}">
-                            <views:TableView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:ItemWorkspaceViewModel}">
-                            <views:ItemWorkspaceView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:MercGearWorkspaceViewModel}">
-                            <views:MercGearWorkspaceView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:NestedTableWorkspaceViewModel}">
-                            <views:NestedTableWorkspaceView />
-                        </DataTemplate>
-                    </TabControl.Resources>
                 </TabControl>
+
+                <Border HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,4,8,0"
+                        Padding="2"
+                        Panel.ZIndex="10"
+                        Background="{DynamicResource Theme.Grid.Header}"
+                        BorderBrush="{DynamicResource Theme.Control.Border}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="{Binding HasEditors, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Style="{DynamicResource ViewModeRadio}"
+                                     GroupName="TableViewMode"
+                                     AutomationProperties.AutomationId="TableGridViewButton"
+                                     AutomationProperties.Name="{Binding GridViewText}"
+                                     Content="{Binding GridViewText}"
+                                     IsChecked="{Binding IsGridMode, Mode=TwoWay}"
+                                     ToolTip="{Binding GridViewText}" />
+                        <RadioButton Style="{DynamicResource ViewModeRadio}"
+                                     GroupName="TableViewMode"
+                                     AutomationProperties.AutomationId="TableXmlViewButton"
+                                     AutomationProperties.Name="{Binding XmlViewText}"
+                                     Content="{Binding XmlViewText}"
+                                     IsChecked="{Binding IsXmlMode, Mode=TwoWay}"
+                                     ToolTip="{Binding XmlViewText}" />
+                    </StackPanel>
+                </Border>
 
                 <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"

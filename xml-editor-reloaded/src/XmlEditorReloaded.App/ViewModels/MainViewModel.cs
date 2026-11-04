@@ -74,6 +74,15 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(ShowTranslationReportCommand))]
     private IEditorTab? _selectedEditor;
 
+    [ObservableProperty]
+    private bool _isXmlMode;
+
+    [ObservableProperty]
+    private string _xmlText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isXmlLoading;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
     /// </summary>
@@ -160,6 +169,13 @@ public partial class MainViewModel : ObservableObject
         TableTreeUnfoldAllText = Strings.Get("TableTreeUnfoldAll");
         TableTreeFindText = Strings.Get("TableTreeFind");
         TableTreeEmptyText = Strings.Get("TableTreeEmpty");
+        GridViewText = Strings.Get("EditorDataTab");
+        XmlViewText = Strings.Get("EditorXmlTab");
+        XmlReadOnlyText = Strings.Get("EditorXmlReadOnly");
+        XmlCopyText = Strings.Get("EditorXmlCopy");
+        XmlRefreshText = Strings.Get("EditorXmlRefresh");
+        XmlSavedText = Strings.Get("EditorXmlSaved");
+        XmlUnsavedText = Strings.Get("EditorXmlUnsaved");
         DetailsLabel = Strings.Get("DetailsLabel");
         DiagnosticsLabel = Strings.Get("DiagnosticsLabel");
         TableColumn = Strings.Get("TableColumn");
@@ -348,6 +364,56 @@ public partial class MainViewModel : ObservableObject
     /// Gets the empty-filter message.
     /// </summary>
     public string TableTreeEmptyText { get; }
+
+    /// <summary>
+    /// Gets the grid-view label.
+    /// </summary>
+    public string GridViewText { get; }
+
+    /// <summary>
+    /// Gets the XML-view label.
+    /// </summary>
+    public string XmlViewText { get; }
+
+    /// <summary>
+    /// Gets the read-only XML source description.
+    /// </summary>
+    public string XmlReadOnlyText { get; }
+
+    /// <summary>
+    /// Gets the copy-XML label.
+    /// </summary>
+    public string XmlCopyText { get; }
+
+    /// <summary>
+    /// Gets the refresh-XML label.
+    /// </summary>
+    public string XmlRefreshText { get; }
+
+    /// <summary>
+    /// Gets the saved-state label.
+    /// </summary>
+    public string XmlSavedText { get; }
+
+    /// <summary>
+    /// Gets the unsaved-state label.
+    /// </summary>
+    public string XmlUnsavedText { get; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the grid view is active.
+    /// </summary>
+    public bool IsGridMode
+    {
+        get => !IsXmlMode;
+        set
+        {
+            if (value)
+            {
+                IsXmlMode = false;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets the details label.
@@ -868,6 +934,52 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
+    /// Rebuilds the XML snapshot for the selected editor.
+    /// </summary>
+    /// <returns>A task that completes when the snapshot has been refreshed.</returns>
+    [RelayCommand]
+    private async Task RefreshXmlSnapshotAsync()
+    {
+        var editor = SelectedEditor;
+        if (editor is null)
+        {
+            XmlText = string.Empty;
+            return;
+        }
+
+        IsXmlLoading = true;
+        try
+        {
+            var snapshot = await Task.Run(editor.CreateXmlSnapshot).ConfigureAwait(true);
+            if (ReferenceEquals(SelectedEditor, editor))
+            {
+                XmlText = snapshot;
+            }
+        }
+        finally
+        {
+            IsXmlLoading = false;
+        }
+    }
+
+    partial void OnIsXmlModeChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsGridMode));
+        if (value)
+        {
+            _ = RefreshXmlSnapshotAsync();
+        }
+    }
+
+    partial void OnSelectedEditorChanged(IEditorTab? value)
+    {
+        if (IsXmlMode)
+        {
+            _ = RefreshXmlSnapshotAsync();
+        }
+    }
+
+    /// <summary>
     /// Closes the selected editor tab, for the global Ctrl+W shortcut.
     /// </summary>
     [RelayCommand]
@@ -944,6 +1056,11 @@ public partial class MainViewModel : ObservableObject
         Editors.Add(editor);
         SelectedEditor = editor;
         await editor.InitializeAsync().ConfigureAwait(true);
+        if (IsXmlMode)
+        {
+            await RefreshXmlSnapshotAsync().ConfigureAwait(true);
+        }
+
         return editor;
     }
 

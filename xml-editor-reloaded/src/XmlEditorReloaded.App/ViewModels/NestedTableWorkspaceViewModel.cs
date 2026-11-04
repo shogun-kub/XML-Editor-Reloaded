@@ -123,6 +123,9 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         System.IO.Path.GetDirectoryName(_session.TableDataDirectory)) ?? _session.TableDataDirectory;
 
     /// <inheritdoc />
+    public string CreateXmlSnapshot() => Workspace?.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+
+    /// <inheritdoc />
     public string? SelectedRecordKey => SelectedRecord?.Key;
 
     /// <inheritdoc />

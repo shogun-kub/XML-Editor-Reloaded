@@ -4,7 +4,7 @@ using System.Windows.Automation;
 namespace XmlEditorReloaded.UiSmoke.Scenarios;
 
 /// <summary>
-/// S101: the table editor exposes a read-only XML snapshot without affecting the data grid.
+/// S101: the global view switch replaces the whole table editor with a read-only XML snapshot.
 /// </summary>
 internal sealed class XmlViewScenario : SmokeScenario
 {
@@ -24,13 +24,24 @@ internal sealed class XmlViewScenario : SmokeScenario
             text => text == context.Strings.Get("EditorReady"),
             "Items.Weapons открыт");
 
-        var xmlTab = window.WaitById("TableXmlTab");
-        xmlTab.SelectItem();
+        context.Recorder.Check("Редактор по умолчанию в режиме Grid", window.FindById("RowsGrid") is not null);
+
+        window.WaitById("TableXmlViewButton").SelectItem();
         var xmlBox = window.WaitById("XmlTextBox");
         Ui.WaitUntil(
             () => xmlBox.ReadValue().Contains("<WEAPON", StringComparison.Ordinal),
             "XML-снимок таблицы загружен",
             TimeSpan.FromSeconds(30));
+        Ui.WaitUntil(
+            () => window.FindById("RowsGrid") is null,
+            "сетка скрыта в режиме XML",
+            TimeSpan.FromSeconds(10));
+
+        context.Recorder.Check("Сетка скрыта", window.FindById("RowsGrid") is null);
+        context.Recorder.Check("Тулбар редактирования скрыт", window.FindById("UndoButton") is null);
+        context.Recorder.Check("Поиск скрыт", window.FindById("SearchBox") is null);
+        context.Recorder.Check("Фильтр скрыт", window.FindById("FilterExpander") is null);
+        context.Recorder.Check("Выбор колонок скрыт", window.FindById("ColumnsList") is null);
 
         var xml = xmlBox.ReadValue();
         context.Recorder.Check(
@@ -60,10 +71,10 @@ internal sealed class XmlViewScenario : SmokeScenario
             context.App,
             Path.Combine(context.Directory, "S101-xml-view.png"));
 
-        window.WaitById("TableDataTab").SelectItem();
+        window.WaitById("TableGridViewButton").SelectItem();
         window.WaitById("RowsGrid");
         context.Recorder.Check(
-            "Возврат к данным не ломает сетку",
+            "Возврат к Grid восстанавливает сетку",
             window.FindById("RowsGrid") is not null,
             "RowsGrid");
     }

@@ -110,6 +110,9 @@ internal static class ScenarioCatalog
         new ToolbarAndNavigationScenario(),
         new TableTreeScenario(),
         new XmlViewScenario(),
+        new SpecializedXmlViewScenario(),
+        new MercXmlViewScenario(),
+        new NestedXmlViewScenario(),
     ];
 
     /// <summary>
