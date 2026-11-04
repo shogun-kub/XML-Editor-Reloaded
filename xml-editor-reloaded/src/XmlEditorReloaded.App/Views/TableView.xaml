@@ -4,9 +4,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
+             xmlns:shortcuts="clr-namespace:XmlEditorReloaded.App.Shortcuts"
              mc:Ignorable="d"
              d:DesignHeight="600"
-             d:DesignWidth="900">
+             d:DesignWidth="900"
+             PreviewKeyDown="OnPreviewKeyDown">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <views:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
@@ -74,7 +76,8 @@
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,0"
                            Text="{Binding SearchLabel}" />
-                <TextBox Width="220"
+                <TextBox x:Name="SearchBox"
+                         Width="220"
                          VerticalAlignment="Center"
                          AutomationProperties.AutomationId="SearchBox"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
@@ -91,72 +94,86 @@
             <WrapPanel Grid.Column="0">
                 <WrapPanel.Resources>
                     <Style TargetType="Button">
-                        <Setter Property="Margin" Value="0,0,6,8" />
+                        <Setter Property="Margin" Value="0,0,4,0" />
                     </Style>
                 </WrapPanel.Resources>
-                <Button Padding="10,3"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="UndoButton"
-                        Content="{Binding UndoText}"
+                        AutomationProperties.Name="{Binding UndoText}"
+                        Content="{DynamicResource Icon.Undo}"
                         Command="{Binding UndoCommand}"
                         ToolTip="{Binding UndoButtonTooltip}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="RedoButton"
-                        Content="{Binding RedoText}"
+                        AutomationProperties.Name="{Binding RedoText}"
+                        Content="{DynamicResource Icon.Redo}"
                         Command="{Binding RedoCommand}"
                         ToolTip="{Binding RedoButtonTooltip}" />
-                <Button Padding="10,3"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="AddRowButton"
-                        Content="{Binding AddRowText}"
+                        AutomationProperties.Name="{Binding AddRowText}"
+                        Content="{DynamicResource Icon.AddRow}"
                         Command="{Binding AddRowCommand}"
-                        IsEnabled="{Binding IsEditable}" />
-                <Button Padding="10,3"
+                        IsEnabled="{Binding IsEditable}"
+                        ToolTip="{shortcuts:ShortcutTip Action=AddRow, Text={Binding AddRowText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="DuplicateRowButton"
-                        Content="{Binding DuplicateRowText}"
+                        AutomationProperties.Name="{Binding DuplicateRowText}"
+                        Content="{DynamicResource Icon.Duplicate}"
                         Command="{Binding DuplicateRowCommand}"
-                        IsEnabled="{Binding IsEditable}" />
-                <Button Padding="10,3"
+                        IsEnabled="{Binding IsEditable}"
+                        ToolTip="{shortcuts:ShortcutTip Action=DuplicateRow, Text={Binding DuplicateRowText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="DeleteRowButton"
-                        Content="{Binding DeleteRowText}"
+                        AutomationProperties.Name="{Binding DeleteRowText}"
+                        Content="{DynamicResource Icon.Delete}"
                         Command="{Binding DeleteRowCommand}"
-                        IsEnabled="{Binding IsEditable}" />
+                        IsEnabled="{Binding IsEditable}"
+                        ToolTip="{shortcuts:ShortcutTip Action=DeleteRow, Text={Binding DeleteRowText}}" />
                 <TextBlock VerticalAlignment="Center"
-                           Margin="0,0,6,6"
+                           Margin="4,0,8,0"
                            Foreground="{DynamicResource Theme.Text.Muted}"
                            AutomationProperties.AutomationId="LookupKindText"
                            Text="{Binding LookupKindText}"
                            Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="ChangeLookupIdButton"
-                        Content="{Binding ChangeLookupIdText}"
+                        AutomationProperties.Name="{Binding ChangeLookupIdText}"
+                        Content="{DynamicResource Icon.ChangeId}"
                         Command="{Binding ChangeLookupIdCommand}"
-                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}"
+                        ToolTip="{shortcuts:ShortcutTip Action=ChangeId, Text={Binding ChangeLookupIdText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="LookupUsageButton"
-                        Content="{Binding LookupUsageText}"
+                        AutomationProperties.Name="{Binding LookupUsageText}"
+                        Content="{DynamicResource Icon.WhereUsed}"
                         Command="{Binding ShowLookupUsagesCommand}"
-                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
-                <Button Padding="10,3"
+                        Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}"
+                        ToolTip="{shortcuts:ShortcutTip Action=LookupUsage, Text={Binding LookupUsageText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="SaveButton"
-                        Content="{Binding SaveText}"
+                        AutomationProperties.Name="{Binding SaveText}"
+                        Content="{DynamicResource Icon.Save}"
                         Command="{Binding SaveCommand}"
-                        IsEnabled="{Binding IsDirty}" />
+                        IsEnabled="{Binding IsDirty}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Save, Text={Binding SaveText}}" />
                 <TextBlock VerticalAlignment="Center"
-                           Margin="0,0,6,6"
+                           Margin="4,0,8,0"
                            Foreground="{DynamicResource Theme.Text.Muted}"
                            AutomationProperties.AutomationId="SelectedRowCount"
                            Text="{Binding SelectedRowCountText}" />
-                <Button Padding="10,3"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="ValidateButton"
-                        Content="{Binding ValidateText}"
-                        Command="{Binding ValidateCommand}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                        AutomationProperties.Name="{Binding ValidateText}"
+                        Content="{DynamicResource Icon.Validate}"
+                        Command="{Binding ValidateCommand}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Validate, Text={Binding ValidateText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="ReloadButton"
-                        Content="{Binding ReloadText}"
-                        Command="{Binding ReloadCommand}" />
+                        AutomationProperties.Name="{Binding ReloadText}"
+                        Content="{DynamicResource Icon.Reload}"
+                        Command="{Binding ReloadCommand}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Reload, Text={Binding ReloadText}}" />
             </WrapPanel>
             <StackPanel Grid.Column="1"
                         Margin="6,0,0,0"
@@ -176,7 +193,8 @@
             </StackPanel>
         </Grid>
 
-        <Expander Grid.Row="2"
+        <Expander x:Name="FilterExpander"
+                  Grid.Row="2"
                   Margin="0,0,0,6"
                   Visibility="{Binding IsEmbedded, Converter={StaticResource InverseBoolToVisibility}}"
                   AutomationProperties.AutomationId="FilterExpander"
@@ -197,17 +215,22 @@
                               SelectedItem="{Binding Filter.SelectedLogicalOperator, Mode=TwoWay}"
                               DisplayMemberPath="DisplayText"
                               Visibility="{Binding Filter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
-                    <Button Padding="10,2"
-                            Margin="0,0,6,0"
+                    <Button x:Name="FilterAddButton"
+                            Style="{DynamicResource IconButton}"
+                            Margin="0,0,4,0"
                             AutomationProperties.AutomationId="FilterAddButton"
-                            Content="{Binding FilterAddText}"
-                            Command="{Binding Filter.AddCriterionCommand}" />
-                    <Button Padding="10,2"
+                            AutomationProperties.Name="{Binding FilterAddText}"
+                            Content="{DynamicResource Icon.FilterAdd}"
+                            Command="{Binding Filter.AddCriterionCommand}"
+                            ToolTip="{shortcuts:ShortcutTip Action=FilterAdd, Text={Binding FilterAddText}}" />
+                    <Button Style="{DynamicResource IconButton}"
                             AutomationProperties.AutomationId="FilterClearButton"
-                            Content="{Binding FilterClearText}"
-                            Command="{Binding ClearFilterCommand}" />
+                            AutomationProperties.Name="{Binding FilterClearText}"
+                            Content="{DynamicResource Icon.FilterClear}"
+                            Command="{Binding ClearFilterCommand}"
+                            ToolTip="{shortcuts:ShortcutTip Action=FilterClear, Text={Binding FilterClearText}}" />
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Filter.Criteria}">
+                <ItemsControl x:Name="FilterCriteriaList" ItemsSource="{Binding Filter.Criteria}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="0,3">
@@ -267,15 +290,19 @@
                     <TextBox Width="220"
                              AutomationProperties.AutomationId="ColumnSearchBox"
                              Text="{Binding ColumnSearchText, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Margin="6,0,6,0"
-                            Padding="10,2"
+                    <Button Style="{DynamicResource IconButton}"
+                            Margin="0,0,4,0"
                             AutomationProperties.AutomationId="DefaultColumnsButton"
-                            Content="{Binding DefaultColumnsText}"
-                            Command="{Binding ShowDefaultColumnsCommand}" />
-                    <Button Padding="10,2"
+                            AutomationProperties.Name="{Binding DefaultColumnsText}"
+                            Content="{DynamicResource Icon.ColumnsDefault}"
+                            Command="{Binding ShowDefaultColumnsCommand}"
+                            ToolTip="{Binding DefaultColumnsText}" />
+                    <Button Style="{DynamicResource IconButton}"
                             AutomationProperties.AutomationId="AllColumnsButton"
-                            Content="{Binding AllColumnsText}"
-                            Command="{Binding ShowAllColumnsCommand}" />
+                            AutomationProperties.Name="{Binding AllColumnsText}"
+                            Content="{DynamicResource Icon.ColumnsAll}"
+                            Command="{Binding ShowAllColumnsCommand}"
+                            ToolTip="{Binding AllColumnsText}" />
                 </StackPanel>
                 <TextBlock Grid.Row="1"
                            Margin="0,3,0,3"
@@ -314,6 +341,7 @@
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="RowsGrid"
                   Grid.Column="0"
+                  PreviewKeyDown="OnRowsGridPreviewKeyDown"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"

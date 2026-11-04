@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
+             xmlns:shortcuts="clr-namespace:XmlEditorReloaded.App.Shortcuts"
              mc:Ignorable="d"
              d:DesignHeight="700"
              d:DesignWidth="1100">
@@ -16,6 +17,8 @@
         <KeyBinding Key="Z" Modifiers="Control" Command="{Binding UndoCommand}" />
         <KeyBinding Key="Y" Modifiers="Control" Command="{Binding RedoCommand}" />
         <KeyBinding Key="Z" Modifiers="Control+Shift" Command="{Binding RedoCommand}" />
+        <KeyBinding Key="F5" Command="{Binding ReloadCommand}" />
+        <KeyBinding Key="F8" Command="{Binding ValidateCommand}" />
     </UserControl.InputBindings>
     <Grid Margin="8">
         <Grid.RowDefinitions>
@@ -33,34 +36,41 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <WrapPanel Grid.Column="0">
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="MercUndoButton"
-                        Content="{Binding UndoText}"
+                        AutomationProperties.Name="{Binding UndoText}"
+                        Content="{DynamicResource Icon.Undo}"
                         Command="{Binding UndoCommand}"
                         ToolTip="{Binding UndoButtonTooltip}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="MercRedoButton"
-                        Content="{Binding RedoText}"
+                        AutomationProperties.Name="{Binding RedoText}"
+                        Content="{DynamicResource Icon.Redo}"
                         Command="{Binding RedoCommand}"
                         ToolTip="{Binding RedoButtonTooltip}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="MercSaveButton"
-                        Content="{Binding SaveText}"
+                        AutomationProperties.Name="{Binding SaveText}"
+                        Content="{DynamicResource Icon.Save}"
                         Command="{Binding SaveCommand}"
-                        IsEnabled="{Binding IsDirty}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                        IsEnabled="{Binding IsDirty}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Save, Text={Binding SaveText}}" />
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="MercValidateButton"
-                        Content="{Binding ValidateText}"
-                        Command="{Binding ValidateCommand}" />
-                <Button Padding="10,3"
-                        Margin="0,0,6,6"
+                        AutomationProperties.Name="{Binding ValidateText}"
+                        Content="{DynamicResource Icon.Validate}"
+                        Command="{Binding ValidateCommand}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Validate, Text={Binding ValidateText}}" />
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="MercReloadButton"
-                        Content="{Binding ReloadText}"
-                        Command="{Binding ReloadCommand}" />
+                        AutomationProperties.Name="{Binding ReloadText}"
+                        Content="{DynamicResource Icon.Reload}"
+                        Command="{Binding ReloadCommand}"
+                        ToolTip="{shortcuts:ShortcutTip Action=Reload, Text={Binding ReloadText}}" />
             </WrapPanel>
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"

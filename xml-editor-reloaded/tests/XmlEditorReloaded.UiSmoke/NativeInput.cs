@@ -34,6 +34,12 @@ internal static class NativeInput
         /// <summary>End key.</summary>
         End = 0x23,
 
+        /// <summary>Page Up key.</summary>
+        PageUp = 0x21,
+
+        /// <summary>Page Down key.</summary>
+        PageDown = 0x22,
+
         /// <summary>Home key.</summary>
         Home = 0x24,
 
@@ -43,11 +49,29 @@ internal static class NativeInput
         /// <summary>A key.</summary>
         A = 0x41,
 
+        /// <summary>D key.</summary>
+        D = 0x44,
+
+        /// <summary>F key.</summary>
+        F = 0x46,
+
+        /// <summary>G key.</summary>
+        G = 0x47,
+
+        /// <summary>L key.</summary>
+        L = 0x4C,
+
         /// <summary>S key.</summary>
         S = 0x53,
 
+        /// <summary>U key.</summary>
+        U = 0x55,
+
         /// <summary>V key.</summary>
         V = 0x56,
+
+        /// <summary>X key.</summary>
+        X = 0x58,
 
         /// <summary>Z key.</summary>
         Z = 0x5A,

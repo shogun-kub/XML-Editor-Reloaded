@@ -1,6 +1,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -501,6 +502,222 @@ public partial class TableView : UserControl
         {
             e.Handled = true;
         }
+    }
+
+    /// <summary>
+    /// Gives the grid explicit Home/End/PageUp/PageDown row navigation. The WPF DataGrid moves between
+    /// columns for Home/End, which is surprising in a full-row editor.
+    /// </summary>
+    private void OnRowsGridPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (Keyboard.Modifiers != ModifierKeys.None || IsTextEditing(e.OriginalSource))
+        {
+            return;
+        }
+
+        var rows = RowsGrid.Items.Count;
+        if (rows == 0)
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case Key.Home:
+                SelectGridRow(0);
+                e.Handled = true;
+                break;
+            case Key.End:
+                SelectGridRow(rows - 1);
+                e.Handled = true;
+                break;
+            case Key.PageUp:
+                SelectGridRow(RowsGrid.SelectedIndex - PageRowCount());
+                e.Handled = true;
+                break;
+            case Key.PageDown:
+                SelectGridRow(RowsGrid.SelectedIndex + PageRowCount());
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private int PageRowCount() =>
+        Math.Max(1, (int)(RowsGrid.ActualHeight / 24) - 1);
+
+    private void SelectGridRow(int index)
+    {
+        if (RowsGrid.Items.Count == 0)
+        {
+            return;
+        }
+
+        var target = Math.Clamp(index, 0, RowsGrid.Items.Count - 1);
+        RowsGrid.SelectedIndex = target;
+        RowsGrid.ScrollIntoView(RowsGrid.Items[target]);
+        if (RowsGrid.Columns.Count > 0)
+        {
+            RowsGrid.CurrentCell = new DataGridCellInfo(RowsGrid.Items[target], RowsGrid.Columns[0]);
+        }
+
+        RowsGrid.Focus();
+    }
+
+    /// <summary>
+    /// Handles view-level shortcuts that need focus context: Ctrl+F focuses the search box, Ctrl+G
+    /// reveals and focuses the first filter value, and Insert/Delete only act when no text editor owns
+    /// the key.
+    /// </summary>
+    private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            SearchBox.Focus();
+            SearchBox.SelectAll();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.G && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            FocusFilterOperand();
+            e.Handled = true;
+            return;
+        }
+
+        if (IsTextEditing(e.OriginalSource))
+        {
+            return;
+        }
+
+        if (e.Key == Key.D && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            Execute(_viewModel?.DuplicateRowCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.L && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            Execute(_viewModel?.ChangeLookupIdCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.U && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            Execute(_viewModel?.ShowLookupUsagesCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.A && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            Execute(_viewModel?.Filter?.AddCriterionCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.X && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            Execute(_viewModel?.ClearFilterCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.F5 && Keyboard.Modifiers == ModifierKeys.None)
+        {
+            Execute(_viewModel?.ReloadCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.F8 && Keyboard.Modifiers == ModifierKeys.None)
+        {
+            Execute(_viewModel?.ValidateCommand);
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.Delete
+            && Keyboard.Modifiers == ModifierKeys.None
+            && RowsGrid.IsKeyboardFocusWithin)
+        {
+            Execute(_viewModel?.DeleteRowCommand);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Insert
+                 && Keyboard.Modifiers == ModifierKeys.None
+                 && RowsGrid.IsKeyboardFocusWithin)
+        {
+            Execute(_viewModel?.AddRowCommand);
+            e.Handled = true;
+        }
+    }
+
+    private static void Execute(ICommand? command)
+    {
+        if (command?.CanExecute(null) == true)
+        {
+            command.Execute(null);
+        }
+    }
+
+    private void FocusFilterOperand()
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        _viewModel.IsFilterVisible = true;
+        FilterExpander.IsExpanded = true;
+        if (_viewModel.Filter is { Criteria.Count: 0 } filter)
+        {
+            filter.AddCriterionCommand.Execute(null);
+        }
+
+        FilterCriteriaList.UpdateLayout();
+        var operand = FindDescendant<ComboBox>(
+            FilterCriteriaList,
+            combo => AutomationProperties.GetAutomationId(combo) == "FilterOperandBox");
+        if (operand is not null)
+        {
+            operand.Focus();
+            return;
+        }
+
+        FilterAddButton.Focus();
+    }
+
+    private static bool IsTextEditing(object? source) =>
+        source is TextBoxBase
+        || FindAncestor<TextBoxBase>(source as DependencyObject) is not null;
+
+    private static T? FindDescendant<T>(DependencyObject? root, Func<T, bool>? match = null)
+        where T : DependencyObject
+    {
+        if (root is null)
+        {
+            return null;
+        }
+
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
+        {
+            var child = VisualTreeHelper.GetChild(root, index);
+            if (child is T typed && (match?.Invoke(typed) ?? true))
+            {
+                return typed;
+            }
+
+            var nested = FindDescendant(child, match);
+            if (nested is not null)
+            {
+                return nested;
+            }
+        }
+
+        return null;
     }
 
     private static T? FindAncestor<T>(DependencyObject? current)

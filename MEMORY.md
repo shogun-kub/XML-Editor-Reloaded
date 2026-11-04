@@ -43,7 +43,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M26b готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b пройдены, B1–B2 закрыты, 703 теста, UI-smoke A–G + S51–S97, ручной smoke принят; далее M27; roadmap M18–M27 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M27a готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b пройдены, B1–B2 закрыты, 716 тестов, UI-smoke A–G + S51–S98, ручной smoke принят; далее M27b; roadmap M18–M28 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |

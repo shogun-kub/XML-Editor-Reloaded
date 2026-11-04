@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
         xmlns:vm="clr-namespace:XmlEditorReloaded.App.ViewModels"
+        xmlns:shortcuts="clr-namespace:XmlEditorReloaded.App.Shortcuts"
         mc:Ignorable="d"
         Title="{Binding Title}"
         Height="780"
@@ -15,6 +16,16 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenTableCommand}" />
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveSelectedEditorCommand}" />
+        <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAllCommand}" />
+        <KeyBinding Key="W" Modifiers="Control" Command="{Binding CloseSelectedEditorCommand}" />
+        <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenSettingsCommand}" />
+        <KeyBinding Key="P" Modifiers="Control+Shift" Command="{Binding ValidateDatasetCommand}" />
+        <KeyBinding Key="F" Modifiers="Control+Shift" Command="{Binding SearchDatasetCommand}" />
+        <KeyBinding Key="F1" Command="{Binding OpenAboutCommand}" />
+    </Window.InputBindings>
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,12 +38,19 @@
         <Menu Grid.Row="0" Margin="0,0,0,6">
             <MenuItem Header="{Binding FileMenuText}"
                       AutomationProperties.AutomationId="FileMenu">
+                <MenuItem Header="{Binding OpenTableText}"
+                          AutomationProperties.AutomationId="MenuOpenTable"
+                          InputGestureText="{shortcuts:GestureText Action=OpenTable}"
+                          Command="{Binding OpenTableCommand}" />
+                <Separator />
                 <MenuItem Header="{Binding SaveAllText}"
                           AutomationProperties.AutomationId="MenuSaveAll"
+                          InputGestureText="{shortcuts:GestureText Action=SaveAll}"
                           Command="{Binding SaveAllCommand}" />
                 <Separator />
                 <MenuItem Header="{Binding SettingsText}"
                           AutomationProperties.AutomationId="SettingsButton"
+                          InputGestureText="{shortcuts:GestureText Action=Settings}"
                           Command="{Binding OpenSettingsCommand}" />
                 <Separator />
                 <MenuItem Header="{Binding ExitMenuText}"
@@ -70,15 +88,18 @@
                 <Separator />
                 <MenuItem Header="{Binding DatasetValidationText}"
                           AutomationProperties.AutomationId="DatasetValidationButton"
+                          InputGestureText="{shortcuts:GestureText Action=Problems}"
                           Command="{Binding ValidateDatasetCommand}" />
                 <MenuItem Header="{Binding DatasetSearchText}"
                           AutomationProperties.AutomationId="DatasetSearchButton"
+                          InputGestureText="{shortcuts:GestureText Action=DatasetSearch}"
                           Command="{Binding SearchDatasetCommand}" />
             </MenuItem>
             <MenuItem Header="{Binding HelpMenuText}"
                       AutomationProperties.AutomationId="HelpMenu">
                 <MenuItem Header="{Binding AboutMenuText}"
                           AutomationProperties.AutomationId="AboutMenuItem"
+                          InputGestureText="{shortcuts:GestureText Action=About}"
                           Command="{Binding OpenAboutCommand}" />
             </MenuItem>
         </Menu>
@@ -105,26 +126,33 @@
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal"
                         Margin="6,0,0,0">
-                <Button Margin="0,0,6,0"
-                        Padding="12,4"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="BrowseDataDirectoryButton"
-                        Content="{Binding BrowseText}"
+                        AutomationProperties.Name="{Binding BrowseText}"
+                        Content="{DynamicResource Icon.OpenFolder}"
+                        ToolTip="{Binding BrowseText}"
                         Command="{Binding BrowseCommand}" />
-                <Button Margin="0,0,6,0"
-                        Padding="12,4"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="RemoveDataDirectoryButton"
-                        Content="{Binding RemoveDataDirectoryText}"
+                        AutomationProperties.Name="{Binding RemoveDataDirectoryText}"
+                        Content="{DynamicResource Icon.RemoveFolder}"
                         ToolTip="{Binding RemoveDataDirectoryTooltip}"
                         Command="{Binding RemoveDataDirectoryCommand}"
                         CommandParameter="{Binding SelectedDataDirectory}" />
-                <Button Margin="0,0,6,0"
-                        Padding="12,4"
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="0,0,4,0"
                         AutomationProperties.AutomationId="RefreshTablesButton"
-                        Content="{Binding RefreshText}"
+                        AutomationProperties.Name="{Binding RefreshText}"
+                        Content="{DynamicResource Icon.Refresh}"
+                        ToolTip="{Binding RefreshText}"
                         Command="{Binding RefreshCommand}" />
-                <Button Padding="12,4"
+                <Button Style="{DynamicResource IconButton}"
                         AutomationProperties.AutomationId="SaveAllButton"
-                        Content="{Binding SaveAllText}"
+                        AutomationProperties.Name="{Binding SaveAllText}"
+                        Content="{DynamicResource Icon.SaveAll}"
+                        ToolTip="{shortcuts:ShortcutTip Action=SaveAll, Text={Binding SaveAllText}}"
                         Command="{Binding SaveAllCommand}" />
             </StackPanel>
         </Grid>

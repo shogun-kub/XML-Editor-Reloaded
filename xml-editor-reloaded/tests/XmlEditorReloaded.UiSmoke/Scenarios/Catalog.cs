@@ -107,6 +107,7 @@ internal static class ScenarioCatalog
         new DatasetReportScenario(),
         new LookupIdScenario(),
         new LookupUsageScenario(),
+        new ToolbarAndNavigationScenario(),
     ];
 
     /// <summary>

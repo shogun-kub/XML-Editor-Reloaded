@@ -807,6 +807,30 @@ public partial class MainViewModel : ObservableObject
         // Otherwise activation already reported why the requested directory could not be opened.
     }
 
+    /// <summary>
+    /// Saves the selected editor tab, for the global Ctrl+S shortcut when focus is outside a grid.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveSelectedEditorAsync()
+    {
+        if (SelectedEditor is { IsDirty: true } editor)
+        {
+            await editor.SaveAsync().ConfigureAwait(true);
+        }
+    }
+
+    /// <summary>
+    /// Closes the selected editor tab, for the global Ctrl+W shortcut.
+    /// </summary>
+    [RelayCommand]
+    private async Task CloseSelectedEditorAsync()
+    {
+        if (SelectedEditor is { } editor)
+        {
+            await CloseEditorAsync(editor).ConfigureAwait(true);
+        }
+    }
+
     [RelayCommand]
     private async Task OpenTableAsync()
     {
