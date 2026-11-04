@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.Core.Abstractions;
 
 namespace XmlEditorReloaded.App.ViewModels;
 
@@ -50,6 +51,13 @@ public sealed class SettingsDirectoryItem : ObservableObject
 public sealed record UiLanguageOption(string Code, string DisplayName);
 
 /// <summary>
+/// One selectable visual theme.
+/// </summary>
+/// <param name="Mode">Theme mode stored in settings.</param>
+/// <param name="DisplayName">Text shown in the theme selector.</param>
+public sealed record ThemeOption(EditorThemeMode Mode, string DisplayName);
+
+/// <summary>
 /// View model of the settings dialog: configured data directories, the active directory, recently used
 /// directories, the interface language, and the stored-layout reset.
 /// </summary>
@@ -59,6 +67,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private string? _activeDirectory;
     private SettingsDirectoryItem? _selectedDirectory;
     private UiLanguageOption? _selectedLanguage;
+    private ThemeOption? _selectedTheme;
     private string _statusText = string.Empty;
     private bool _resetLayoutsRequested;
 
@@ -79,6 +88,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         RecentDirectoriesLabel = Strings.Get("SettingsRecentLabel");
         UiLanguageLabel = Strings.Get("SettingsUiLanguageLabel");
         UiLanguageNote = Strings.Get("SettingsUiLanguageNote");
+        ThemeLabel = Strings.Get("SettingsThemeLabel");
+        AppearanceLabel = Strings.Get("SettingsAppearanceLabel");
         ResetLayoutsText = Strings.Get("SettingsResetLayouts");
         ResetLayoutsPendingText = Strings.Get("SettingsResetLayoutsPending");
         AddDirectoryText = Strings.Get("SettingsAddDirectory");
@@ -97,6 +108,15 @@ public sealed partial class SettingsViewModel : ObservableObject
         _selectedLanguage = UiLanguageOptions.FirstOrDefault(option =>
             string.Equals(option.Code, request.UiLanguageCode, StringComparison.OrdinalIgnoreCase))
             ?? UiLanguageOptions[0];
+
+        ThemeOptions = new ObservableCollection<ThemeOption>
+        {
+            new(EditorThemeMode.System, Strings.Get("ThemeSystem")),
+            new(EditorThemeMode.Light, Strings.Get("ThemeLight")),
+            new(EditorThemeMode.Dark, Strings.Get("ThemeDark")),
+        };
+        _selectedTheme = ThemeOptions.FirstOrDefault(option => option.Mode == request.ThemeMode)
+            ?? ThemeOptions[0];
 
         foreach (var directory in request.DataDirectories)
         {
@@ -160,6 +180,16 @@ public sealed partial class SettingsViewModel : ObservableObject
     public string UiLanguageNote { get; }
 
     /// <summary>
+    /// Gets the visual-theme label.
+    /// </summary>
+    public string ThemeLabel { get; }
+
+    /// <summary>
+    /// Gets the appearance group header.
+    /// </summary>
+    public string AppearanceLabel { get; }
+
+    /// <summary>
     /// Gets the reset-layouts button text.
     /// </summary>
     public string ResetLayoutsText { get; }
@@ -220,6 +250,11 @@ public sealed partial class SettingsViewModel : ObservableObject
     public ObservableCollection<UiLanguageOption> UiLanguageOptions { get; }
 
     /// <summary>
+    /// Gets the selectable visual themes.
+    /// </summary>
+    public ObservableCollection<ThemeOption> ThemeOptions { get; }
+
+    /// <summary>
     /// Gets or sets the selected directory row.
     /// </summary>
     public SettingsDirectoryItem? SelectedDirectory
@@ -235,6 +270,15 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         get => _selectedLanguage;
         set => SetProperty(ref _selectedLanguage, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the selected visual theme.
+    /// </summary>
+    public ThemeOption? SelectedTheme
+    {
+        get => _selectedTheme;
+        set => SetProperty(ref _selectedTheme, value);
     }
 
     /// <summary>
@@ -373,7 +417,8 @@ public sealed partial class SettingsViewModel : ObservableObject
             paths,
             active,
             SelectedLanguage?.Code ?? "en",
-            _resetLayoutsRequested);
+            _resetLayoutsRequested,
+            SelectedTheme?.Mode ?? EditorThemeMode.System);
     }
 
     private void SelectDirectory(SettingsDirectoryItem item)

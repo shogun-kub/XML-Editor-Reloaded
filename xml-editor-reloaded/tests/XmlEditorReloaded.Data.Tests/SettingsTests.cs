@@ -173,6 +173,47 @@ public class SettingsTests
     }
 
     /// <summary>
+    /// The visual theme round-trips and an old settings file without it falls back to the system theme.
+    /// </summary>
+    [Fact]
+    public async Task SaveAndLoad_ThemeMode_RoundTrip()
+    {
+        using var workspace = new TestWorkspace();
+        var store = new JsonSettingsStore(workspace.PathOf("settings.json"));
+        var settings = AppSettings.Default with { ThemeMode = EditorThemeMode.Dark };
+
+        Assert.True((await store.SaveAsync(settings)).IsSuccess);
+        var load = await store.LoadAsync();
+
+        Assert.True(load.IsSuccess, load.ErrorText);
+        Assert.Equal(EditorThemeMode.Dark, load.Data!.ThemeMode);
+    }
+
+    /// <summary>
+    /// A settings file without the theme field keeps the system default.
+    /// </summary>
+    [Fact]
+    public async Task Load_SettingsWithoutTheme_ReturnsSystemTheme()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.PathOf("settings.json");
+        await File.WriteAllTextAsync(
+            path,
+            """
+            {
+              "dataDirectories": [],
+              "uiLanguageCode": "en"
+            }
+            """);
+        var store = new JsonSettingsStore(path);
+
+        var result = await store.LoadAsync();
+
+        Assert.True(result.IsSuccess, result.ErrorText);
+        Assert.Equal(EditorThemeMode.System, result.Data!.ThemeMode);
+    }
+
+    /// <summary>
     /// The saved geometry is written as a camel-case object so the settings file stays readable and
     /// stable across schema changes.
     /// </summary>

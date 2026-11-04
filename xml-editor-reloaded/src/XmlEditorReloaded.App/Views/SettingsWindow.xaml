@@ -95,9 +95,19 @@
                          IsEnabled="False" />
             </GroupBox>
 
-            <GroupBox Grid.Column="2" Header="{Binding UiLanguageLabel}">
+            <GroupBox Grid.Column="2" Header="{Binding AppearanceLabel}">
                 <StackPanel Margin="8">
-                    <ComboBox AutomationProperties.AutomationId="SettingsLanguageCombo"
+                    <TextBlock FontWeight="SemiBold" Text="{Binding ThemeLabel}" />
+                    <ComboBox Margin="0,4,0,0"
+                              AutomationProperties.AutomationId="SettingsThemeCombo"
+                              ItemsSource="{Binding ThemeOptions}"
+                              SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayName" />
+                    <TextBlock Margin="0,10,0,0"
+                               FontWeight="SemiBold"
+                               Text="{Binding UiLanguageLabel}" />
+                    <ComboBox Margin="0,4,0,0"
+                              AutomationProperties.AutomationId="SettingsLanguageCombo"
                               ItemsSource="{Binding UiLanguageOptions}"
                               SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                               DisplayMemberPath="DisplayName" />

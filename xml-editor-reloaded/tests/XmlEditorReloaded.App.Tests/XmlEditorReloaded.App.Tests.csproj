@@ -17,6 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\src\XmlEditorReloaded.App\Themes\Theme.Light.xaml"
+             Link="Themes\Theme.Light.xaml"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\src\XmlEditorReloaded.App\Themes\Theme.Dark.xaml"
+             Link="Themes\Theme.Dark.xaml"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\XmlEditorReloaded.App\XmlEditorReloaded.App.csproj" />
     <ProjectReference Include="..\..\src\XmlEditorReloaded.Core\XmlEditorReloaded.Core.csproj" />
     <ProjectReference Include="..\..\src\XmlEditorReloaded.Data\XmlEditorReloaded.Data.csproj" />

@@ -65,6 +65,12 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        Themes.ThemeManager.Apply(EditorThemeMode.System);
+        EventManager.RegisterClassHandler(
+            typeof(Window),
+            FrameworkElement.LoadedEvent,
+            new RoutedEventHandler(static (sender, _) =>
+                Themes.ThemeManager.ApplyWindowChrome((Window)sender)));
 
         var appDataDirectory = AppPaths.ApplicationDataDirectory;
         _logPath = AppPaths.LogFilePath;

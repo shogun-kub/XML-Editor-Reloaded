@@ -3,6 +3,21 @@ using XmlEditorReloaded.Core.Api;
 namespace XmlEditorReloaded.Core.Abstractions;
 
 /// <summary>
+/// Visual theme selected in the settings dialog.
+/// </summary>
+public enum EditorThemeMode
+{
+    /// <summary>Follow the Windows application theme.</summary>
+    System,
+
+    /// <summary>Always use the light theme.</summary>
+    Light,
+
+    /// <summary>Always use the dark theme.</summary>
+    Dark,
+}
+
+/// <summary>
 /// Application settings persisted outside the game data directories.
 /// </summary>
 /// <param name="DataDirectories">Configured game data directories (roots containing <c>Data-1.13</c> or <c>TableData</c>).</param>
@@ -14,13 +29,15 @@ namespace XmlEditorReloaded.Core.Abstractions;
 /// Last size, position, and maximized state of the main window, or <see langword="null"/> when the
 /// window has not been closed yet.
 /// </param>
+/// <param name="ThemeMode">Visual theme; follows the Windows theme when omitted.</param>
 public sealed record AppSettings(
     IReadOnlyList<string> DataDirectories,
     string? ActiveDataDirectory,
     string? ActiveLanguageCode,
     string? UiLanguageCode,
     IReadOnlyList<string> RecentDataDirectories,
-    WindowPlacement? WindowPlacement = null)
+    WindowPlacement? WindowPlacement = null,
+    EditorThemeMode ThemeMode = EditorThemeMode.System)
 {
     /// <summary>
     /// Gets the default settings used on first start.

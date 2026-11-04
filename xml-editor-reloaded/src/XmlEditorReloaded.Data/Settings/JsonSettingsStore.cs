@@ -145,7 +145,10 @@ public sealed class JsonSettingsStore : ISettingsStore
         dto.ActiveLanguageCode,
         dto.UiLanguageCode ?? "en",
         dto.RecentDataDirectories ?? new List<string>(),
-        Map(dto.WindowPlacement));
+        Map(dto.WindowPlacement),
+        Enum.TryParse<EditorThemeMode>(dto.ThemeMode, ignoreCase: true, out var themeMode)
+            ? themeMode
+            : EditorThemeMode.System);
 
     private static WindowPlacement? Map(WindowPlacementDto? dto)
     {
@@ -165,6 +168,7 @@ public sealed class JsonSettingsStore : ISettingsStore
         ActiveLanguageCode = settings.ActiveLanguageCode,
         UiLanguageCode = settings.UiLanguageCode,
         RecentDataDirectories = settings.RecentDataDirectories.ToList(),
+        ThemeMode = settings.ThemeMode.ToString(),
         WindowPlacement = settings.WindowPlacement is { } placement
             ? new WindowPlacementDto
             {
@@ -188,6 +192,8 @@ public sealed class JsonSettingsStore : ISettingsStore
         public string? UiLanguageCode { get; set; }
 
         public List<string>? RecentDataDirectories { get; set; }
+
+        public string? ThemeMode { get; set; }
 
         public WindowPlacementDto? WindowPlacement { get; set; }
     }

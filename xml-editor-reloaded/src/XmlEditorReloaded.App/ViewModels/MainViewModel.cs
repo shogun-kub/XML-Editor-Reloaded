@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
 using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.App.Themes;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
 using XmlEditorReloaded.Core.Diagnostics;
@@ -356,6 +357,7 @@ public partial class MainViewModel : ObservableObject
 
         _settings = load.Data!;
         _settingsLoaded = true;
+        ThemeManager.Apply(_settings.ThemeMode);
         DataDirectory = _settings.ActiveDataDirectory
             ?? _settings.DataDirectories.FirstOrDefault()
             ?? string.Empty;
@@ -738,7 +740,8 @@ public partial class MainViewModel : ObservableObject
             _settings.DataDirectories,
             _settings.ActiveDataDirectory ?? DataDirectory,
             _settings.UiLanguageCode,
-            _settings.RecentDataDirectories);
+            _settings.RecentDataDirectories,
+            _settings.ThemeMode);
         var result = _settingsDialog.Show(request);
         if (result is null)
         {
@@ -773,6 +776,7 @@ public partial class MainViewModel : ObservableObject
             RecentDataDirectories = _settings.RecentDataDirectories
                 .Where(recent => result.DataDirectories.Any(directory => SamePath(directory, recent)))
                 .ToArray(),
+            ThemeMode = result.ThemeMode,
         };
 
         var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
@@ -781,6 +785,8 @@ public partial class MainViewModel : ObservableObject
             StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
             return;
         }
+
+        ThemeManager.Apply(_settings.ThemeMode);
 
         RebuildDataDirectories();
         if (!string.IsNullOrWhiteSpace(result.ActiveDataDirectory))

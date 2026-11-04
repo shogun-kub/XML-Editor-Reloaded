@@ -1545,6 +1545,21 @@
   <data name="SettingsRecentLabel" xml:space="preserve">
     <value>Recently used directories</value>
   </data>
+  <data name="SettingsAppearanceLabel" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="SettingsThemeLabel" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
   <data name="SettingsUiLanguageLabel" xml:space="preserve">
     <value>Interface language</value>
   </data>

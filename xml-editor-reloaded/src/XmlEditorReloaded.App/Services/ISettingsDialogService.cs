@@ -1,3 +1,5 @@
+using XmlEditorReloaded.Core.Abstractions;
+
 namespace XmlEditorReloaded.App.Services;
 
 /// <summary>
@@ -7,11 +9,13 @@ namespace XmlEditorReloaded.App.Services;
 /// <param name="ActiveDataDirectory">Currently active data directory, or <see langword="null"/>.</param>
 /// <param name="UiLanguageCode">Language code of the editor interface, or <see langword="null"/> for the default.</param>
 /// <param name="RecentDataDirectories">Recently used data directories, most recent first.</param>
+/// <param name="ThemeMode">Visual theme currently selected in settings.</param>
 public sealed record SettingsRequest(
     IReadOnlyList<string> DataDirectories,
     string? ActiveDataDirectory,
     string? UiLanguageCode,
-    IReadOnlyList<string> RecentDataDirectories);
+    IReadOnlyList<string> RecentDataDirectories,
+    EditorThemeMode ThemeMode = EditorThemeMode.System);
 
 /// <summary>
 /// Settings confirmed by the user.
@@ -22,11 +26,13 @@ public sealed record SettingsRequest(
 /// <param name="ResetLayouts">
 /// When <see langword="true"/>, every stored grid layout must be removed after the dialog closes.
 /// </param>
+/// <param name="ThemeMode">Selected visual theme; it takes effect immediately.</param>
 public sealed record SettingsResult(
     IReadOnlyList<string> DataDirectories,
     string? ActiveDataDirectory,
     string UiLanguageCode,
-    bool ResetLayouts);
+    bool ResetLayouts,
+    EditorThemeMode ThemeMode = EditorThemeMode.System);
 
 /// <summary>
 /// Shows the application settings dialog to the user.

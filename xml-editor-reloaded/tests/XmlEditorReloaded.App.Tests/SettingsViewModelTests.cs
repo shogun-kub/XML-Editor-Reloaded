@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO;
 using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Xml.Workspace;
 
@@ -125,6 +126,31 @@ public class SettingsViewModelTests
 
         viewModel.SelectedLanguage = viewModel.UiLanguageOptions[0];
         Assert.Equal("en", viewModel.CreateResult().UiLanguageCode);
+    }
+
+    /// <summary>
+    /// The selected theme is carried into the dialog result and defaults to the system theme.
+    /// </summary>
+    [Fact]
+    public void SelectedTheme_IsCarriedIntoResult()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var first = CreateDataDirectory(workspace, "first");
+        var viewModel = new SettingsViewModel(
+            new SettingsRequest(
+                new[] { first },
+                first,
+                "en",
+                Array.Empty<string>(),
+                EditorThemeMode.Dark),
+            new FakeDialogService());
+
+        Assert.Equal(EditorThemeMode.Dark, viewModel.SelectedTheme!.Mode);
+        Assert.Equal(EditorThemeMode.Dark, viewModel.CreateResult().ThemeMode);
+
+        viewModel.SelectedTheme = viewModel.ThemeOptions[0];
+        Assert.Equal(EditorThemeMode.System, viewModel.CreateResult().ThemeMode);
     }
 
     private static SettingsViewModel CreateViewModel(
