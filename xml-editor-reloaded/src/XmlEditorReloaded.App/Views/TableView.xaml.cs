@@ -635,9 +635,26 @@ public partial class TableView : UserControl
         source is TextBoxBase
         || FindAncestor<TextBoxBase>(source as DependencyObject) is not null;
 
-    private static T? FindDescendant<T>(DependencyObject? root, Func<T, bool>? match = null)
-        where T : DependencyObject
+    private void OnEditorModeTabsSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (ReferenceEquals(sender, EditorModeTabs)
+            && EditorModeTabs.SelectedIndex == 1
+            && DataContext is TableEditorViewModel viewModel)
+        {
+            viewModel.RefreshXmlSnapshotCommand.Execute(null);
+        }
+    }
+
+    private void OnCopyXmlClick(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is TableEditorViewModel { XmlText.Length: > 0 } viewModel)
+        {
+            Clipboard.SetText(viewModel.XmlText);
+        }
+    }
+
+    private static T? FindDescendant<T>(DependencyObject? root, Func<T, bool>? match = null)
+        where T : DependencyObject    {
         if (root is null)
         {
             return null;

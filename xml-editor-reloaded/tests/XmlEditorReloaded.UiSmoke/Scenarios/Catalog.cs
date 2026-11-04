@@ -109,6 +109,7 @@ internal static class ScenarioCatalog
         new LookupUsageScenario(),
         new ToolbarAndNavigationScenario(),
         new TableTreeScenario(),
+        new XmlViewScenario(),
     ];
 
     /// <summary>

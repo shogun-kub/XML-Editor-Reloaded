@@ -216,6 +216,30 @@
   <data name="EditorReloadText" xml:space="preserve">
     <value>Перезагрузить</value>
   </data>
+  <data name="EditorDataTab" xml:space="preserve">
+    <value>Данные</value>
+  </data>
+  <data name="EditorXmlTab" xml:space="preserve">
+    <value>XML</value>
+  </data>
+  <data name="EditorXmlCopy" xml:space="preserve">
+    <value>Копировать XML</value>
+  </data>
+  <data name="EditorXmlRefresh" xml:space="preserve">
+    <value>Обновить XML</value>
+  </data>
+  <data name="EditorXmlReadOnly" xml:space="preserve">
+    <value>Только чтение · базовая таблица</value>
+  </data>
+  <data name="EditorXmlSaved" xml:space="preserve">
+    <value>Сохранено</value>
+  </data>
+  <data name="EditorXmlUnsaved" xml:space="preserve">
+    <value>Есть несохранённые изменения</value>
+  </data>
+  <data name="EditorXmlUnavailable" xml:space="preserve">
+    <value>XML недоступен</value>
+  </data>
   <data name="EditorSearchLabel" xml:space="preserve">
     <value>Поиск</value>
   </data>

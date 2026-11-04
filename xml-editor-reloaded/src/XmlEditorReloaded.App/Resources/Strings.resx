@@ -216,6 +216,30 @@
   <data name="EditorReloadText" xml:space="preserve">
     <value>Reload</value>
   </data>
+  <data name="EditorDataTab" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="EditorXmlTab" xml:space="preserve">
+    <value>XML</value>
+  </data>
+  <data name="EditorXmlCopy" xml:space="preserve">
+    <value>Copy XML</value>
+  </data>
+  <data name="EditorXmlRefresh" xml:space="preserve">
+    <value>Refresh XML</value>
+  </data>
+  <data name="EditorXmlReadOnly" xml:space="preserve">
+    <value>Read-only · base table</value>
+  </data>
+  <data name="EditorXmlSaved" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="EditorXmlUnsaved" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="EditorXmlUnavailable" xml:space="preserve">
+    <value>XML is not available</value>
+  </data>
   <data name="EditorSearchLabel" xml:space="preserve">
     <value>Search</value>
   </data>

@@ -335,7 +335,12 @@
             </Grid>
         </Expander>
 
-        <Grid Grid.Row="4">
+        <TabControl x:Name="EditorModeTabs"
+                    Grid.Row="4"
+                    SelectionChanged="OnEditorModeTabsSelectionChanged">
+            <TabItem Header="{Binding DataTabText}"
+                     AutomationProperties.AutomationId="TableDataTab">
+                <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -514,7 +519,60 @@
                     </ScrollViewer>
                 </GroupBox>
             </Border>
-        </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding XmlTabText}"
+                     AutomationProperties.AutomationId="TableXmlTab">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Foreground="{DynamicResource Theme.Text.Muted}"
+                                       Text="{Binding XmlReadOnlyText}" />
+                            <TextBlock Margin="12,0,0,0"
+                                       Foreground="{DynamicResource Theme.Text.Muted}"
+                                       Text="{Binding XmlDirtyText}" />
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Style="{DynamicResource IconButton}"
+                                Margin="6,0,4,0"
+                                AutomationProperties.AutomationId="CopyXmlButton"
+                                AutomationProperties.Name="{Binding XmlCopyText}"
+                                Content="{DynamicResource Icon.CopyData}"
+                                Click="OnCopyXmlClick"
+                                ToolTip="{Binding XmlCopyText}" />
+                        <Button Grid.Column="2"
+                                Style="{DynamicResource IconButton}"
+                                AutomationProperties.AutomationId="RefreshXmlButton"
+                                AutomationProperties.Name="{Binding XmlRefreshText}"
+                                Content="{DynamicResource Icon.Refresh}"
+                                Command="{Binding RefreshXmlSnapshotCommand}"
+                                ToolTip="{Binding XmlRefreshText}" />
+                    </Grid>
+                    <TextBox x:Name="XmlTextBox"
+                             Grid.Row="1"
+                             AutomationProperties.AutomationId="XmlTextBox"
+                             AutomationProperties.Name="{Binding XmlTabText}"
+                             IsReadOnly="True"
+                             IsReadOnlyCaretVisible="True"
+                             AcceptsReturn="True"
+                             FontFamily="Consolas"
+                             FontSize="12"
+                             Text="{Binding XmlText, Mode=OneWay}"
+                             TextWrapping="NoWrap"
+                             HorizontalScrollBarVisibility="Auto"
+                             VerticalScrollBarVisibility="Auto" />
+                </Grid>
+            </TabItem>
+        </TabControl>
 
         <Expander Grid.Row="5"
                   Margin="0,6,0,0"

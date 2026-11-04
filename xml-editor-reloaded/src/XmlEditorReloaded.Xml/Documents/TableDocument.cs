@@ -114,6 +114,24 @@ public sealed class TableDocument
 
     internal XDocument Xml => _document;
 
+    /// <summary>
+    /// Creates a read-only textual snapshot of the current in-memory document, including unsaved edits.
+    /// The snapshot is for display only; saving still uses the lossless document patcher.
+    /// </summary>
+    /// <returns>The current XML text, or an empty string when the document has no root.</returns>
+    public string CreateXmlSnapshot()
+    {
+        if (_document.Root is null)
+        {
+            return string.Empty;
+        }
+
+        var body = _document.ToString();
+        return _document.Declaration is { } declaration
+            ? $"{declaration}{Environment.NewLine}{body}"
+            : body;
+    }
+
     private string? PrimaryKeyField => Metadata?.RecordKeyFields is { Count: 1 } single
         ? single[0]
         : Metadata?.RecordKey?.Primary.KeyField;

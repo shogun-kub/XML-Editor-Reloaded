@@ -1,14 +1,14 @@
 ---
 name: ja2-editor-status
-description: Current state of XML Editor Reloaded (M0–M27b done, B1–B2 closed, F0–F9 fixed, UI smoke parts A–G plus S98/S100 automated, M27c next), approved M18–M28 roadmap and documentation policy.
+description: Current state of XML Editor Reloaded (M0–M27b and M27c stage 1 done, B1–B2 closed, F0–F9 fixed, UI smoke parts A–G plus S98/S100/S101 automated; M27c search/jump next), approved M18–M28 roadmap and documentation policy.
 metadata:
   node_type: memory
   type: project
   originSessionId: sess_9123e0d2-50a3-44a1-ac9f-49aedbc18523
 ---
 
-**Current status (2026-11-04):** M0–M27b завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 724 теста,
-corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9, UI-smoke 94 сценария; маркер
+**Current status (2026-11-04):** M0–M27b и M27c этап 1 завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 725 тестов,
+corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9, UI-smoke 95 сценариев; маркер
 `M23: legacy functional parity gate` поставлен 2026-11-03 (ручной smoke: S04, S22, S53, S74 на v4;
 S83 автотест; колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя).
 M24a добавил `NestedTableWorkspaceViewModel` для `Map.Cities`/`Map.FacilityTypes`, resolved nested
@@ -27,13 +27,15 @@ S50 подтверждает только заявленные файлы. M25a 
 контролов, иконочные тулбары с тултипами и равной высотой, каталог горячих клавиш с подписями в меню,
 явную навигацию `Home`/`End`/`PageUp`/`PageDown` в гридах; S98 — PASS на v4. M27b добавил вкладки
 «Дерево»/«Список», иерархию реальных папок и файлов по `RelativePath`, фильтр по имени, Fold/Unfold
-all и «Find in tree» с очисткой фильтра; S100 — PASS на v4, S98 перепроверен. Далее M27c —
-read-only XML view, затем M28 — упаковка.
+all и «Find in tree» с очисткой фильтра; S100 — PASS на v4, S98 перепроверен. M27c этап 1 добавил
+вкладку «Данные»/«XML» с read-only снимком текущего документа, копированием и обновлением; S101 —
+PASS на v4. Далее поиск по ID/ключу и переход из валидации, затем M28 — упаковка.
 F0–F9 закрыты 2026-10-30 (`MANUAL-SMOKE-FIX-PLAN.md`); выпадающие значения фильтров и массовой
 правки (B1–B2) реализованы 2026-11-03 через `AllowedValueOption` и editable ComboBox. Детали
 раннера и UIA-грабли — [[ja2-editor-ui-smoke]], M24a —
 [[m24a-nested-editors]], M24b — [[m24b-nested-collections]], M25a — [[m25a-comparison-v2]],
-M25b — [[m25b-dataset-report]], M26a — [[m26a-lookup-ids]], M26b — [[m26b-lookup-protection]].
+M25b — [[m25b-dataset-report]], M26a — [[m26a-lookup-ids]], M26b — [[m26b-lookup-protection]],
+M27c — [[m27c-xml-view]].
 
 **Approved M18–M28 roadmap (2026-10-24, plan-only, commit `60d6695`):** full working legacy parity against
 `References/xml-editor`; hidden, dead and lossy legacy behavior is excluded. M18 relations + main-table
@@ -41,7 +43,7 @@ pickers; M19 item master-detail = item-workflow parity; M20 merc gear, shopkeepe
 language catalog; M21 multi-dataset and copy/merge; M22 grid/workflow polish; M23 audit = full legacy
 parity. After parity: M24 nested/list/dict editors and Cities/facilities (M24a, M24b done), M25 comparison v2
 (M25a done) and dataset-wide validation/search (M25b done), M26 lookup management (M26a, M26b done),
-M27a UI foundation (done), M27b table tree (done), M27c read-only XML, M28 packaging. Scope, acceptance criteria
+M27a UI foundation (done), M27b table tree (done), M27c read-only XML (stage 1 done; search/jump next), M28 packaging. Scope, acceptance criteria
 and risks — `PLAN.md`.
 
 **Documentation policy (2026-10-24, commit `d76e232`):** `PLAN.md` keeps current state, substeps, one-line

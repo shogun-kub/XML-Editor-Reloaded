@@ -94,6 +94,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private bool _isDirty;
 
     [ObservableProperty]
+    private string _xmlText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isXmlLoading;
+
+    [ObservableProperty]
     private bool _isEditable;
 
     [ObservableProperty]
@@ -203,6 +209,14 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         SaveText = Strings.Get("EditorSaveText");
         ValidateText = Strings.Get("EditorValidateText");
         ReloadText = Strings.Get("EditorReloadText");
+        DataTabText = Strings.Get("EditorDataTab");
+        XmlTabText = Strings.Get("EditorXmlTab");
+        XmlCopyText = Strings.Get("EditorXmlCopy");
+        XmlRefreshText = Strings.Get("EditorXmlRefresh");
+        XmlReadOnlyText = Strings.Get("EditorXmlReadOnly");
+        XmlSavedText = Strings.Get("EditorXmlSaved");
+        XmlUnsavedText = Strings.Get("EditorXmlUnsaved");
+        XmlUnavailableText = Strings.Get("EditorXmlUnavailable");
         SearchLabel = Strings.Get("EditorSearchLabel");
         ColumnsLabel = Strings.Get("EditorColumnsLabel");
         ColumnSearchLabel = Strings.Get("EditorColumnSearchLabel");
@@ -394,6 +408,51 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Gets the reload button text.
     /// </summary>
     public string ReloadText { get; }
+
+    /// <summary>
+    /// Gets the data-grid tab label.
+    /// </summary>
+    public string DataTabText { get; }
+
+    /// <summary>
+    /// Gets the read-only XML tab label.
+    /// </summary>
+    public string XmlTabText { get; }
+
+    /// <summary>
+    /// Gets the copy-XML button text.
+    /// </summary>
+    public string XmlCopyText { get; }
+
+    /// <summary>
+    /// Gets the refresh-XML button text.
+    /// </summary>
+    public string XmlRefreshText { get; }
+
+    /// <summary>
+    /// Gets the read-only source description.
+    /// </summary>
+    public string XmlReadOnlyText { get; }
+
+    /// <summary>
+    /// Gets the saved-state label.
+    /// </summary>
+    public string XmlSavedText { get; }
+
+    /// <summary>
+    /// Gets the unsaved-state label.
+    /// </summary>
+    public string XmlUnsavedText { get; }
+
+    /// <summary>
+    /// Gets the unavailable-XML label.
+    /// </summary>
+    public string XmlUnavailableText { get; }
+
+    /// <summary>
+    /// Gets the current save-state label for the XML tab.
+    /// </summary>
+    public string XmlDirtyText => IsDirty ? XmlUnsavedText : XmlSavedText;
 
     /// <summary>
     /// Gets the search label.
@@ -720,6 +779,35 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         {
             RefreshHistoryState();
             IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds the read-only XML snapshot from the current in-memory document.
+    /// </summary>
+    /// <returns>A task that completes when the snapshot has been refreshed.</returns>
+    [RelayCommand]
+    private async Task RefreshXmlSnapshotAsync()
+    {
+        var workspace = Workspace;
+        if (workspace is null)
+        {
+            XmlText = string.Empty;
+            return;
+        }
+
+        IsXmlLoading = true;
+        try
+        {
+            var snapshot = await Task.Run(workspace.BaseDocument.CreateXmlSnapshot).ConfigureAwait(true);
+            if (ReferenceEquals(Workspace, workspace))
+            {
+                XmlText = snapshot;
+            }
+        }
+        finally
+        {
+            IsXmlLoading = false;
         }
     }
 
@@ -1955,8 +2043,11 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     partial void OnShowDetailsChanged(bool value) =>
         OnPropertyChanged(nameof(DetailToggleText));
 
-    partial void OnIsDirtyChanged(bool value) =>
+    partial void OnIsDirtyChanged(bool value)
+    {
         DisplayName = value ? Title + " *" : Title;
+        OnPropertyChanged(nameof(XmlDirtyText));
+    }
 
     partial void OnCanUndoChanged(bool value) => UndoCommand.NotifyCanExecuteChanged();
 

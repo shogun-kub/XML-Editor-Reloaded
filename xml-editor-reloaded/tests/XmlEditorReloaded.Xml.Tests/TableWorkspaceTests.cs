@@ -50,6 +50,29 @@ public class TableWorkspaceTests
     }
 
     /// <summary>
+    /// A read-only XML snapshot reflects unsaved grid edits without changing the source file.
+    /// </summary>
+    [Fact]
+    public async Task BaseDocument_XmlSnapshot_ReflectsUnsavedEdit()
+    {
+        using var workspace = new TestWorkspace();
+        var path = workspace.CopyFixture("items-mini.xml");
+        var load = await TableWorkspace.LoadAsync(Descriptor(path), OverlayTestData.ItemsMetadata());
+        var table = load.Data!;
+
+        Assert.True(table.SetValue("1", "szItemName", "Glock 18").IsSuccess);
+        var snapshot = table.BaseDocument.CreateXmlSnapshot();
+
+        Assert.StartsWith("<?xml", snapshot, StringComparison.Ordinal);
+        Assert.Contains("<szItemName>Glock 18</szItemName>", snapshot, StringComparison.Ordinal);
+        Assert.DoesNotContain("<szItemName>Glock 17</szItemName>", snapshot, StringComparison.Ordinal);
+        Assert.Contains(
+            "<szItemName>Glock 17</szItemName>",
+            await File.ReadAllTextAsync(path),
+            StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// A sparse record can receive a field that other records already define.
     /// </summary>
     [Fact]
