@@ -20,6 +20,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock FontSize="15"
@@ -49,15 +50,38 @@
                     </TextBlock.Style>
                 </TextBlock>
             </StackPanel>
-            <Button Grid.Column="1"
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <TextBox x:Name="XmlSearchBox"
+                         Width="170"
+                         VerticalAlignment="Center"
+                         AutomationProperties.AutomationId="XmlSearchBox"
+                         AutomationProperties.Name="{Binding XmlSearchLabel}"
+                         Text="{Binding XmlSearchText, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="{Binding XmlSearchLabel}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding FindXmlRecordCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Style="{DynamicResource IconButton}"
+                        Margin="4,0,0,0"
+                        AutomationProperties.AutomationId="XmlSearchButton"
+                        AutomationProperties.Name="{Binding XmlSearchButtonText}"
+                        Content="{DynamicResource Icon.Find}"
+                        Command="{Binding FindXmlRecordCommand}"
+                        ToolTip="{Binding XmlSearchButtonText}" />
+            </StackPanel>
+            <Button Grid.Column="2"
                     Style="{DynamicResource IconButton}"
-                    Margin="6,0,4,0"
+                    Margin="12,0,4,0"
                     AutomationProperties.AutomationId="CopyXmlButton"
                     AutomationProperties.Name="{Binding XmlCopyText}"
                     Content="{DynamicResource Icon.CopyData}"
                     Click="OnCopyXmlClick"
                     ToolTip="{Binding XmlCopyText}" />
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Style="{DynamicResource IconButton}"
                     AutomationProperties.AutomationId="RefreshXmlButton"
                     AutomationProperties.Name="{Binding XmlRefreshText}"

@@ -63,9 +63,25 @@ public class TableWorkspaceTests
         Assert.True(table.SetValue("1", "szItemName", "Glock 18").IsSuccess);
         var snapshot = table.BaseDocument.CreateXmlSnapshot();
 
-        Assert.StartsWith("<?xml", snapshot, StringComparison.Ordinal);
-        Assert.Contains("<szItemName>Glock 18</szItemName>", snapshot, StringComparison.Ordinal);
-        Assert.DoesNotContain("<szItemName>Glock 17</szItemName>", snapshot, StringComparison.Ordinal);
+        Assert.StartsWith("<?xml", snapshot.Text, StringComparison.Ordinal);
+        Assert.Contains("<szItemName>Glock 18</szItemName>", snapshot.Text, StringComparison.Ordinal);
+        Assert.DoesNotContain("<szItemName>Glock 17</szItemName>", snapshot.Text, StringComparison.Ordinal);
+        Assert.Equal(new[] { "0", "1" }, snapshot.Records.Select(static record => record.Key));
+        foreach (var record in snapshot.Records)
+        {
+            Assert.StartsWith(
+                "<ITEM>",
+                snapshot.Text.Substring(record.Start, record.Length),
+                StringComparison.Ordinal);
+        }
+
+        var editedRecord = Assert.Single(snapshot.Records, static record => record.Key == "1");
+        Assert.Contains(
+            "<szItemName>Glock 18</szItemName>",
+            snapshot.Text.Substring(editedRecord.Start, snapshot.Text.Length - editedRecord.Start),
+            StringComparison.Ordinal);
+        Assert.Same(editedRecord, snapshot.FindRecord("1"));
+        Assert.Null(snapshot.FindRecord("missing"));
         Assert.Contains(
             "<szItemName>Glock 17</szItemName>",
             await File.ReadAllTextAsync(path),

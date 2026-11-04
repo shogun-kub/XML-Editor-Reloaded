@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Xml;
 using System.Xml.Linq;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Api;
@@ -118,18 +119,142 @@ public sealed class TableDocument
     /// Creates a read-only textual snapshot of the current in-memory document, including unsaved edits.
     /// The snapshot is for display only; saving still uses the lossless document patcher.
     /// </summary>
-    /// <returns>The current XML text, or an empty string when the document has no root.</returns>
-    public string CreateXmlSnapshot()
+    /// <returns>
+    /// The current XML text with the locations of its record elements, or an empty snapshot when the
+    /// document has no root.
+    /// </returns>
+    public XmlSnapshot CreateXmlSnapshot()
     {
         if (_document.Root is null)
         {
-            return string.Empty;
+            return XmlSnapshot.Empty;
         }
 
         var body = _document.ToString();
-        return _document.Declaration is { } declaration
+        var text = _document.Declaration is { } declaration
             ? $"{declaration}{Environment.NewLine}{body}"
             : body;
+        return new XmlSnapshot(text, LocateRecordSpans(text));
+    }
+
+    /// <summary>
+    /// Locates record opening tags in the serialized body. The body is parsed again with line
+    /// information because formatting may create or remove nodes compared with the original source,
+    /// so the original line information cannot be reused.
+    /// </summary>
+    private IReadOnlyList<XmlRecordSpan> LocateRecordSpans(string body)
+    {
+        if (body.Length == 0 || _records.Count == 0)
+        {
+            return Array.Empty<XmlRecordSpan>();
+        }
+
+        XDocument parsed;
+        try
+        {
+            parsed = XDocument.Parse(
+                body,
+                LoadOptions.PreserveWhitespace | LoadOptions.SetLineInfo);
+        }
+        catch (XmlException)
+        {
+            // The snapshot came from an XML document, so a parse failure is unexpected. A missing
+            // navigation map is safer than failing the entire read-only view.
+            return Array.Empty<XmlRecordSpan>();
+        }
+
+        var elements = ResolveRecordElements(parsed);
+        if (elements.Count == 0)
+        {
+            return Array.Empty<XmlRecordSpan>();
+        }
+
+        var lineStarts = BuildLineStarts(body);
+        var spans = new List<XmlRecordSpan>(Math.Min(elements.Count, _records.Count));
+        var count = Math.Min(elements.Count, _records.Count);
+        for (var index = 0; index < count; index++)
+        {
+            if (elements[index] is not IXmlLineInfo lineInfo || !lineInfo.HasLineInfo())
+            {
+                continue;
+            }
+
+            var start = AlignToOpeningTag(
+                body,
+                OffsetOf(body, lineStarts, lineInfo.LineNumber, lineInfo.LinePosition));
+            if (start < 0)
+            {
+                continue;
+            }
+
+            var length = OpeningTagLength(body, start);
+            if (length <= 0)
+            {
+                continue;
+            }
+
+            var record = _records[index];
+            spans.Add(new XmlRecordSpan(record.GetKey(), record.KeyDisplay, start, length));
+        }
+
+        return spans;
+    }
+
+    private static List<int> BuildLineStarts(string text)
+    {
+        var starts = new List<int> { 0 };
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (text[index] == '\n'
+                || (text[index] == '\r'
+                    && (index + 1 == text.Length || text[index + 1] != '\n')))
+            {
+                starts.Add(index + 1);
+            }
+        }
+
+        return starts;
+    }
+
+    private static int OffsetOf(string text, IReadOnlyList<int> lineStarts, int line, int position)
+    {
+        if (line < 1 || line > lineStarts.Count || position < 1)
+        {
+            return -1;
+        }
+
+        var offset = lineStarts[line - 1] + position - 1;
+        return offset >= 0 && offset < text.Length ? offset : -1;
+    }
+
+    private static int AlignToOpeningTag(string text, int offset)
+    {
+        if (offset < 0 || offset >= text.Length)
+        {
+            return -1;
+        }
+
+        if (text[offset] == '<')
+        {
+            return offset;
+        }
+
+        // IXmlLineInfo may point inside the opening tag rather than at its '<'. Walk back only
+        // within the current line so a value on a previous line can never be mistaken for a record.
+        var lineStart = offset;
+        while (lineStart > 0 && text[lineStart - 1] is not ('\r' or '\n'))
+        {
+            lineStart--;
+        }
+
+        var previous = text.LastIndexOf('<', offset);
+        return previous >= lineStart ? previous : offset;
+    }
+
+    private static int OpeningTagLength(string text, int start)
+    {
+        var end = text.IndexOf('>', start);
+        return end < 0 ? 0 : end - start + 1;
     }
 
     private string? PrimaryKeyField => Metadata?.RecordKeyFields is { Count: 1 } single

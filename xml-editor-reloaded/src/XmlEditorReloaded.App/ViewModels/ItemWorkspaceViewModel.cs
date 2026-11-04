@@ -250,7 +250,8 @@ public sealed partial class ItemWorkspaceViewModel :
     public string DatasetLabel => DatasetNames.LabelFor(_session);
 
     /// <inheritdoc />
-    public string CreateXmlSnapshot() => _set?.Primary.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+    public XmlSnapshot CreateXmlSnapshot() =>
+        _set?.Primary.BaseDocument.CreateXmlSnapshot() ?? XmlSnapshot.Empty;
 
     /// <inheritdoc />
     public string? SelectedRecordKey => SelectedItem?.Key;
@@ -1164,6 +1165,30 @@ public sealed partial class ItemWorkspaceViewModel :
         {
             SelectedItem = entry;
         }
+    }
+
+    /// <summary>
+    /// Selects the item referenced by a validation issue. Issues from child tables of the item set
+    /// cannot be addressed from the base item list, so they report the owning table instead.
+    /// </summary>
+    /// <param name="issue">Validation issue selected in the issue list.</param>
+    public void NavigateToValidationIssue(ValidationIssueItem issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        if (issue.TableName is { } tableName
+            && !string.Equals(tableName.Value, _descriptor.TableName.Value, StringComparison.Ordinal))
+        {
+            StatusText = Strings.Format("EditorValidationIssueOtherTable", tableName.Value);
+            return;
+        }
+
+        if (issue.RecordKey is not { Length: > 0 } key)
+        {
+            StatusText = Strings.Get("EditorValidationIssueNoRecord");
+            return;
+        }
+
+        SelectRecord(key);
     }
 
     /// <inheritdoc />

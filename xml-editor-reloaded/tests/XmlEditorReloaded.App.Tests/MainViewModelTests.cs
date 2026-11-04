@@ -227,6 +227,20 @@ public class MainViewModelTests
         Assert.Contains("<NOTES>", viewModel.XmlText, StringComparison.Ordinal);
         Assert.StartsWith("<?xml", viewModel.XmlText, StringComparison.Ordinal);
 
+        viewModel.XmlSearchText = "1";
+        viewModel.FindXmlRecordCommand.Execute(null);
+        var selection = Assert.IsType<XmlTextSelection>(viewModel.XmlSelection);
+        Assert.StartsWith(
+            "<NOTE>",
+            viewModel.XmlText.Substring(selection.Start, selection.Length),
+            StringComparison.Ordinal);
+        Assert.Contains("Found", viewModel.StatusText, StringComparison.Ordinal);
+
+        viewModel.XmlSearchText = "missing";
+        viewModel.FindXmlRecordCommand.Execute(null);
+        Assert.Null(viewModel.XmlSelection);
+        Assert.Contains("Not found", viewModel.StatusText, StringComparison.Ordinal);
+
         viewModel.IsGridMode = true;
 
         Assert.False(viewModel.IsXmlMode);

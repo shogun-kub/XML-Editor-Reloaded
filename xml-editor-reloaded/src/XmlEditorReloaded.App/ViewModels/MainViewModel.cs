@@ -77,8 +77,16 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isXmlMode;
 
+    private XmlSnapshot _xmlSnapshot = XmlSnapshot.Empty;
+
     [ObservableProperty]
     private string _xmlText = string.Empty;
+
+    [ObservableProperty]
+    private string _xmlSearchText = string.Empty;
+
+    [ObservableProperty]
+    private XmlTextSelection? _xmlSelection;
 
     [ObservableProperty]
     private bool _isXmlLoading;
@@ -176,6 +184,8 @@ public partial class MainViewModel : ObservableObject
         XmlRefreshText = Strings.Get("EditorXmlRefresh");
         XmlSavedText = Strings.Get("EditorXmlSaved");
         XmlUnsavedText = Strings.Get("EditorXmlUnsaved");
+        XmlSearchLabel = Strings.Get("EditorXmlSearchLabel");
+        XmlSearchButtonText = Strings.Get("EditorXmlSearchButton");
         DetailsLabel = Strings.Get("DetailsLabel");
         DiagnosticsLabel = Strings.Get("DiagnosticsLabel");
         TableColumn = Strings.Get("TableColumn");
@@ -399,6 +409,16 @@ public partial class MainViewModel : ObservableObject
     /// Gets the unsaved-state label.
     /// </summary>
     public string XmlUnsavedText { get; }
+
+    /// <summary>
+    /// Gets the XML-search input label.
+    /// </summary>
+    public string XmlSearchLabel { get; }
+
+    /// <summary>
+    /// Gets the XML-search button text.
+    /// </summary>
+    public string XmlSearchButtonText { get; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the grid view is active.
@@ -943,7 +963,9 @@ public partial class MainViewModel : ObservableObject
         var editor = SelectedEditor;
         if (editor is null)
         {
+            _xmlSnapshot = XmlSnapshot.Empty;
             XmlText = string.Empty;
+            XmlSelection = null;
             return;
         }
 
@@ -953,13 +975,51 @@ public partial class MainViewModel : ObservableObject
             var snapshot = await Task.Run(editor.CreateXmlSnapshot).ConfigureAwait(true);
             if (ReferenceEquals(SelectedEditor, editor))
             {
-                XmlText = snapshot;
+                _xmlSnapshot = snapshot;
+                XmlText = snapshot.Text;
+                XmlSelection = null;
+                if (!string.IsNullOrWhiteSpace(XmlSearchText))
+                {
+                    FindXmlRecord();
+                }
             }
         }
         finally
         {
             IsXmlLoading = false;
         }
+    }
+
+    /// <summary>
+    /// Locates a record by its ID or key in the current read-only XML snapshot and selects its opening
+    /// tag in the text view.
+    /// </summary>
+    [RelayCommand]
+    private void FindXmlRecord()
+    {
+        if (SelectedEditor is null || _xmlSnapshot.Text.Length == 0)
+        {
+            StatusText = Strings.Get("EditorXmlSearchUnavailable");
+            return;
+        }
+
+        var query = XmlSearchText.Trim();
+        if (query.Length == 0)
+        {
+            StatusText = Strings.Get("EditorXmlSearchEmpty");
+            return;
+        }
+
+        var record = _xmlSnapshot.FindRecord(query);
+        if (record is null)
+        {
+            XmlSelection = null;
+            StatusText = Strings.Format("EditorXmlSearchNotFound", query);
+            return;
+        }
+
+        XmlSelection = new XmlTextSelection(record.Start, record.Length);
+        StatusText = Strings.Format("EditorXmlSearchFound", record.KeyDisplay);
     }
 
     partial void OnIsXmlModeChanged(bool value)

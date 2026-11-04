@@ -858,7 +858,8 @@
             <ListBox Height="110"
                      Margin="6,6,0,0"
                      AutomationProperties.AutomationId="ItemValidationList"
-                     ItemsSource="{Binding ValidationIssues}">
+                     ItemsSource="{Binding ValidationIssues}"
+                     views:ValidationIssueNavigation.NavigateOnSelection="True">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />

@@ -43,7 +43,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M27b и M27c этап 1 готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b/M27a/M27b/M27c-1 пройдены, B1–B2 закрыты, 726 тестов, UI-smoke A–G + S51–S98, S100–S104, ручной smoke принят; далее поиск/переходы M27c; roadmap M18–M28 |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M27c готовы, автогейты M23b/M24a/M24b/M25a/M25b/M26a/M26b/M27a/M27b/M27c пройдены, B1–B2 закрыты, 726 тестов, UI-smoke A–G + S51–S98, S100–S104, ручной smoke принят; далее M28 packaging; roadmap M18–M28 |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |
@@ -60,7 +60,7 @@
 | Справочники: ID значений | [memory/m26a-lookup-ids.md](memory/m26a-lookup-ids.md) | M26a: свободный бит для битовых lookup, максимум + 1 для последовательных, свободный 64-битный ID, undo, вид справочника в метаданных |
 | Справочники: защита значений | [memory/m26b-lookup-protection.md](memory/m26b-lookup-protection.md) | M26b: «где используется», запрет удаления/смены ID используемого значения, биты маски без имени, переход к записи, S97 |
 | Дерево таблиц | [memory/m27b-table-tree.md](memory/m27b-table-tree.md) | M27b: вкладки «Дерево»/«Список», папки по `RelativePath`, фильтр, Fold/Unfold all, Find in tree, S100 |
-| XML-просмотр | [memory/m27c-xml-view.md](memory/m27c-xml-view.md) | M27c этап 1: глобальный переключатель Grid/XML для всех таблиц, read-only снимок базовой таблицы, копирование/обновление, S101–S104 |
+| XML-просмотр | [memory/m27c-xml-view.md](memory/m27c-xml-view.md) | M27c: глобальный Grid/XML для всех таблиц, read-only снимок базовой таблицы, поиск по ID/ключу, переход из валидации, S101–S104 |
 | Паритет с legacy | [memory/ja2-editor-parity.md](memory/ja2-editor-parity.md) | Аудиты M23a0–M23a7, реестр пробелов, исправления M23b1–M23b8 |
 | STI-изображения | [memory/ja2-editor-imaging.md](memory/ja2-editor-imaging.md) | Парсер STI/ETRLE, каталоги, просмотр и chooser кадров |
 | UI-smoke | [memory/ja2-editor-ui-smoke.md](memory/ja2-editor-ui-smoke.md) | Автоматический прогон чеклиста (части A–G): запуск, изоляция `%AppData%`, грабли UIA |

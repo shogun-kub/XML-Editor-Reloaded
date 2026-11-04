@@ -259,7 +259,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     public string DatasetLabel => DatasetNames.LabelFor(_session);
 
     /// <inheritdoc />
-    public string CreateXmlSnapshot() => Workspace?.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+    public XmlSnapshot CreateXmlSnapshot() =>
+        Workspace?.BaseDocument.CreateXmlSnapshot() ?? XmlSnapshot.Empty;
 
     /// <inheritdoc />
     public string? SelectedRecordKey => SelectedRow?.Key;
@@ -2574,6 +2575,29 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         {
             SelectedRow = row;
         }
+    }
+
+    /// <summary>
+    /// Selects the row referenced by a validation issue. Table-level issues leave the grid unchanged.
+    /// </summary>
+    /// <param name="issue">Validation issue selected in the issue list.</param>
+    public void NavigateToValidationIssue(ValidationIssueItem issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        if (issue.TableName is { } tableName
+            && !string.Equals(tableName.Value, TableName.Value, StringComparison.Ordinal))
+        {
+            StatusText = Strings.Format("EditorValidationIssueOtherTable", tableName.Value);
+            return;
+        }
+
+        if (issue.RecordKey is not { Length: > 0 } key)
+        {
+            StatusText = Strings.Get("EditorValidationIssueNoRecord");
+            return;
+        }
+
+        SelectRecord(key);
     }
 
     /// <summary>

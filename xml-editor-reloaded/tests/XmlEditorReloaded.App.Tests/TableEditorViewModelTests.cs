@@ -137,6 +137,15 @@ public class TableEditorViewModelTests
         Assert.False(editor.IsReadOnly);
         Assert.All(editor.Rows, static row => Assert.True(row.CanEdit));
 
+        var snapshot = editor.CreateXmlSnapshot();
+        Assert.Equal(new[] { "1", "2" }, snapshot.Records.Select(static record => record.Key));
+        Assert.All(
+            snapshot.Records,
+            record => Assert.StartsWith(
+                "<CITY>",
+                snapshot.Text.Substring(record.Start, record.Length),
+                StringComparison.Ordinal));
+
         editor.Rows[0]["townName"] = "Changed";
 
         Assert.Equal("Changed", editor.Rows[0]["townName"]);
@@ -1658,6 +1667,10 @@ public class TableEditorViewModelTests
             candidate => candidate.Code == "validation.lookup_missing"
                 && candidate.Text.Contains("DiscardedLauncherItem", StringComparison.Ordinal));
         Assert.Contains("99", issue.Text, StringComparison.Ordinal);
+
+        editor.NavigateToValidationIssue(issue);
+
+        Assert.Equal("2", editor.SelectedRow?.Key);
     }
 
     /// <summary>

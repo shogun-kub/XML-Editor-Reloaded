@@ -67,6 +67,47 @@ internal sealed class XmlViewScenario : SmokeScenario
             window.FindById("CopyXmlButton") is not null,
             "CopyXmlButton");
 
+        var search = window.WaitById("XmlSearchBox");
+        context.Recorder.Check(
+            "Поиск по ID/ключу доступен",
+            window.FindById("XmlSearchButton") is not null,
+            "XmlSearchBox/XmlSearchButton");
+        search.SetText("1");
+        window.WaitById("XmlSearchButton").InvokeButton();
+        var found = ScenarioUi.WaitForStatus(
+            context,
+            text => text == context.Strings.Format("EditorXmlSearchFound", "1"),
+            "найдена запись 1",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Поиск по ID/ключу нашёл запись 1",
+            found == context.Strings.Format("EditorXmlSearchFound", "1"),
+            found);
+        var selectedXml = string.Empty;
+        if (xmlBox.TryGetCurrentPattern(TextPattern.Pattern, out var textPattern)
+            && textPattern is TextPattern pattern)
+        {
+            var ranges = pattern.GetSelection();
+            selectedXml = ranges.Length > 0 ? ranges[0].GetText(-1) : string.Empty;
+        }
+
+        context.Recorder.Check(
+            "Поиск выделил открывающий тег записи",
+            selectedXml.StartsWith("<WEAPON>", StringComparison.Ordinal),
+            selectedXml);
+
+        search.SetText("no-such-key");
+        window.WaitById("XmlSearchButton").InvokeButton();
+        var notFound = ScenarioUi.WaitForStatus(
+            context,
+            text => text == context.Strings.Format("EditorXmlSearchNotFound", "no-such-key"),
+            "сообщение об отсутствии записи",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Поиск сообщает об отсутствии записи",
+            notFound == context.Strings.Format("EditorXmlSearchNotFound", "no-such-key"),
+            notFound);
+
         Screenshots.Capture(
             context.App,
             Path.Combine(context.Directory, "S101-xml-view.png"));

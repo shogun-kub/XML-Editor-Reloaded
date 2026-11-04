@@ -318,6 +318,39 @@ internal sealed class MercStatusRangeScenario : SmokeScenario
             issue600.Contains("100", StringComparison.Ordinal),
             issue600);
 
+        window.WaitById("MercSearchBox").SetText(string.Empty);
+        var otherMerc = Ui.WaitFor(
+            () => window.WaitById("MercList")
+                .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
+                .FirstOrDefault(item => !Ui.ItemText(item).Contains("237: Kelly", StringComparison.Ordinal)),
+            "другой наёмник в списке");
+        otherMerc.SelectItem();
+        Ui.WaitUntil(
+            () => window.WaitById("MercDetailHeader").ReadName() != "237: Kelly",
+            "выбран другой наёмник",
+            TimeSpan.FromSeconds(10));
+        var issueItem = window.WaitById("MercValidationList")
+            .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
+            .FirstOrDefault(item => Ui.ItemText(item).Contains("mSmall1Status", StringComparison.Ordinal));
+        context.Recorder.Check("Замечание Kelly доступно в списке", issueItem is not null);
+        issueItem!.SelectItem();
+        WorkspaceUi.WaitForStatus(
+            context,
+            "MercDetailHeader",
+            text => text == "237: Kelly",
+            "выбор замечания вернул Kelly",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Выбор замечания перешёл к записи 237",
+            window.WaitById("MercDetailHeader").ReadName() == "237: Kelly",
+            window.WaitById("MercDetailHeader").ReadName());
+
+        WorkspaceUi.SelectTab(window, "MercKitTabs", "Premium");
+        Ui.WaitUntil(
+            () => window.WaitById("mSmall1Status").ReadValue() == "600",
+            "комплект Premium восстановлен после перехода",
+            TimeSpan.FromSeconds(10));
+
         var helmetStatus = window.WaitById("mHelmetStatus");
         helmetStatus.Focus();
         Thread.Sleep(100);

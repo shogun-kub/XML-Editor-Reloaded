@@ -1,4 +1,5 @@
 using XmlEditorReloaded.Core.Metadata;
+using XmlEditorReloaded.Xml.Documents;
 
 namespace XmlEditorReloaded.App.ViewModels;
 
@@ -28,8 +29,8 @@ public interface IEditorTab
     /// <summary>
     /// Creates a read-only XML snapshot of the tab's primary table for the shared text view.
     /// </summary>
-    /// <returns>The current XML text, or an empty string when the tab has no loaded document.</returns>
-    string CreateXmlSnapshot();
+    /// <returns>The current XML snapshot, or <see cref="XmlSnapshot.Empty"/> when the tab has no loaded document.</returns>
+    XmlSnapshot CreateXmlSnapshot();
 
     /// <summary>
     /// Gets the primary key of the selected record, or <see langword="null"/> when no record is selected.
@@ -109,4 +110,11 @@ public interface IEditorTab
     /// </summary>
     /// <param name="key">Primary record key.</param>
     void SelectRecord(string key);
+
+    /// <summary>
+    /// Navigates to the record referenced by a validation issue. Issues without a record reference,
+    /// or issues of another table in the same workspace, leave the selection unchanged and report why.
+    /// </summary>
+    /// <param name="issue">Validation issue selected by the user.</param>
+    void NavigateToValidationIssue(ValidationIssueItem issue);
 }

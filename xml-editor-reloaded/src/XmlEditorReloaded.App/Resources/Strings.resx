@@ -237,6 +237,24 @@
   <data name="EditorXmlUnsaved" xml:space="preserve">
     <value>Unsaved changes</value>
   </data>
+  <data name="EditorXmlSearchLabel" xml:space="preserve">
+    <value>ID/key</value>
+  </data>
+  <data name="EditorXmlSearchButton" xml:space="preserve">
+    <value>Find record</value>
+  </data>
+  <data name="EditorXmlSearchEmpty" xml:space="preserve">
+    <value>Enter an ID or key.</value>
+  </data>
+  <data name="EditorXmlSearchFound" xml:space="preserve">
+    <value>Found: {0}</value>
+  </data>
+  <data name="EditorXmlSearchNotFound" xml:space="preserve">
+    <value>Not found: {0}</value>
+  </data>
+  <data name="EditorXmlSearchUnavailable" xml:space="preserve">
+    <value>XML is not loaded yet.</value>
+  </data>
   <data name="EditorSearchLabel" xml:space="preserve">
     <value>Search</value>
   </data>
@@ -323,6 +341,12 @@
   </data>
   <data name="EditorValidationSummary" xml:space="preserve">
     <value>Validation issues: {0}.</value>
+  </data>
+  <data name="EditorValidationIssueNoRecord" xml:space="preserve">
+    <value>The issue does not reference a record.</value>
+  </data>
+  <data name="EditorValidationIssueOtherTable" xml:space="preserve">
+    <value>The issue belongs to table '{0}'; open it separately.</value>
   </data>
   <data name="EditorBaseLanguage" xml:space="preserve">
     <value>Base</value>

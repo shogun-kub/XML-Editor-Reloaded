@@ -140,7 +140,8 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
     public string DatasetLabel => DatasetNames.LabelFor(_session);
 
     /// <inheritdoc />
-    public string CreateXmlSnapshot() => _workspace?.Primary.BaseDocument.CreateXmlSnapshot() ?? string.Empty;
+    public XmlSnapshot CreateXmlSnapshot() =>
+        _workspace?.Primary.BaseDocument.CreateXmlSnapshot() ?? XmlSnapshot.Empty;
 
     /// <inheritdoc />
     public string? SelectedRecordKey => SelectedMerc?.Key;
@@ -542,6 +543,30 @@ public sealed partial class MercGearWorkspaceViewModel : ObservableObject, IEdit
         {
             SelectedMerc = entry;
         }
+    }
+
+    /// <summary>
+    /// Selects the mercenary record referenced by a validation issue. Table-level issues leave the
+    /// current selection unchanged.
+    /// </summary>
+    /// <param name="issue">Validation issue selected in the issue list.</param>
+    public void NavigateToValidationIssue(ValidationIssueItem issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        if (issue.TableName is { } tableName
+            && !string.Equals(tableName.Value, _descriptor.TableName.Value, StringComparison.Ordinal))
+        {
+            StatusText = Strings.Format("EditorValidationIssueOtherTable", tableName.Value);
+            return;
+        }
+
+        if (issue.RecordKey is not { Length: > 0 } key)
+        {
+            StatusText = Strings.Get("EditorValidationIssueNoRecord");
+            return;
+        }
+
+        SelectRecord(key);
     }
 
     /// <summary>

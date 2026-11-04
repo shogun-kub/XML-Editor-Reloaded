@@ -275,7 +275,8 @@
             <ListBox Height="120"
                      AutomationProperties.AutomationId="NestedValidationList"
                      ItemsSource="{Binding ValidationIssues}"
-                     DisplayMemberPath="Text" />
+                     DisplayMemberPath="Text"
+                     views:ValidationIssueNavigation.NavigateOnSelection="True" />
         </GroupBox>
 
         <TextBlock Grid.Row="4"
