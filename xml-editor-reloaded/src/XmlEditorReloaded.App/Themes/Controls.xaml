@@ -573,6 +573,23 @@
         <Setter Property="Background" Value="{DynamicResource Theme.Menu.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Theme.Border}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="2">
+                        <ScrollViewer Focusable="False"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="ToolTip">
