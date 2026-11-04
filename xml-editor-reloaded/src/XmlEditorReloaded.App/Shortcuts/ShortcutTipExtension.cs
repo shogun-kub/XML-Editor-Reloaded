@@ -1,4 +1,7 @@
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Markup;
 
 namespace XmlEditorReloaded.App.Shortcuts;
@@ -29,12 +32,33 @@ public sealed class ShortcutTipExtension : MarkupExtension
             return gesture;
         }
 
-        var binding = new MultiBinding
+        // The tooltip must be a visual tree element, not a MultiBinding object: a raw binding object
+        // would be displayed as "System.Windows.Data.MultiBinding". A ToolTip is detached from the
+        // owner's logical tree, so its DataContext is bound explicitly to the owner.
+        var text = new TextBlock();
+        var actionText = new Run();
+        if (Text is Binding actionBinding)
         {
-            StringFormat = "{0} ({1})",
-        };
-        binding.Bindings.Add(Text);
-        binding.Bindings.Add(new Binding { Source = gesture, Mode = BindingMode.OneTime });
-        return binding;
+            // Run.Text defaults to a read/write binding for some targets; the view-model property is
+            // read-only, so force a one-way expression.
+            actionBinding.Mode = BindingMode.OneWay;
+        }
+
+        BindingOperations.SetBinding(actionText, Run.TextProperty, Text);
+        text.Inlines.Add(actionText);
+        text.Inlines.Add(new Run($" ({gesture})"));
+        var toolTip = new ToolTip { Content = text };
+        if (serviceProvider?.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget target
+            && target.TargetObject is FrameworkElement owner)
+        {
+            actionText.SetBinding(
+                FrameworkContentElement.DataContextProperty,
+                new Binding(nameof(FrameworkElement.DataContext)) { Source = owner });
+            toolTip.SetBinding(
+                FrameworkElement.DataContextProperty,
+                new Binding(nameof(FrameworkElement.DataContext)) { Source = owner });
+        }
+
+        return toolTip;
     }
 }

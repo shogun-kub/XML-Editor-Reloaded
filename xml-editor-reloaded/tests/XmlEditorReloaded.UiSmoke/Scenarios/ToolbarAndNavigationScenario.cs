@@ -55,7 +55,18 @@ internal sealed class ToolbarAndNavigationScenario : SmokeScenario
                 $"У кнопки {id} есть доступное имя",
                 !string.IsNullOrWhiteSpace(button.ReadName()),
                 button.ReadName());
+            var help = button.Current.HelpText;
+            context.Recorder.Check(
+                $"Подсказка {id} не содержит имя типа",
+                !help.Contains("System.Windows.Data", StringComparison.Ordinal),
+                help);
         }
+
+        var saveAllHelp = window.WaitById("SaveAllButton");
+        context.Recorder.Check(
+            "Кнопка Save all доступна",
+            saveAllHelp.Current.IsEnabled,
+            "Сохранить всё");
 
         var search = window.WaitById("SearchBox");
         grid.Cell(0, 0).Click();

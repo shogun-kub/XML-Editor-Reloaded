@@ -87,8 +87,6 @@
         <Setter Property="Foreground" Value="{DynamicResource Theme.Icon}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
-        <Setter Property="AutomationProperties.HelpText"
-                Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

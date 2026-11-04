@@ -1,3 +1,7 @@
+using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using XmlEditorReloaded.App.Shortcuts;
 
 namespace XmlEditorReloaded.App.Tests;
@@ -38,6 +42,42 @@ public sealed class ShortcutCatalogTests
         var text = ShortcutCatalog.GetText(action);
 
         Assert.Contains(expected, text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// The tooltip markup extension must return a visual element with a bound action text and a literal
+    /// shortcut, not a raw MultiBinding that WPF would render as its type name.
+    /// </summary>
+    [Fact]
+    public void Shortcut_tip_returns_visual_content()
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var extension = new ShortcutTipExtension
+                {
+                    Action = ShortcutCatalog.Save,
+                    Text = new Binding("Text"),
+                };
+                var tip = Assert.IsType<ToolTip>(extension.ProvideValue(null!));
+                var text = Assert.IsType<TextBlock>(tip.Content);
+                var runs = text.Inlines.OfType<Run>().ToArray();
+                Assert.Equal(2, runs.Length);
+                Assert.NotNull(BindingOperations.GetBindingExpression(runs[0], Run.TextProperty));
+                Assert.Contains("Ctrl+S", runs[1].Text, StringComparison.Ordinal);
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(failure);
     }
 
     /// <summary>
