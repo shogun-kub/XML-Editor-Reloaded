@@ -341,7 +341,6 @@
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="RowsGrid"
                   Grid.Column="0"
-                  PreviewKeyDown="OnRowsGridPreviewKeyDown"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"

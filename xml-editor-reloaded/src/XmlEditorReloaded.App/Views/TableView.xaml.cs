@@ -505,65 +505,6 @@ public partial class TableView : UserControl
     }
 
     /// <summary>
-    /// Gives the grid explicit Home/End/PageUp/PageDown row navigation. The WPF DataGrid moves between
-    /// columns for Home/End, which is surprising in a full-row editor.
-    /// </summary>
-    private void OnRowsGridPreviewKeyDown(object sender, KeyEventArgs e)
-    {
-        if (Keyboard.Modifiers != ModifierKeys.None || IsTextEditing(e.OriginalSource))
-        {
-            return;
-        }
-
-        var rows = RowsGrid.Items.Count;
-        if (rows == 0)
-        {
-            return;
-        }
-
-        switch (e.Key)
-        {
-            case Key.Home:
-                SelectGridRow(0);
-                e.Handled = true;
-                break;
-            case Key.End:
-                SelectGridRow(rows - 1);
-                e.Handled = true;
-                break;
-            case Key.PageUp:
-                SelectGridRow(RowsGrid.SelectedIndex - PageRowCount());
-                e.Handled = true;
-                break;
-            case Key.PageDown:
-                SelectGridRow(RowsGrid.SelectedIndex + PageRowCount());
-                e.Handled = true;
-                break;
-        }
-    }
-
-    private int PageRowCount() =>
-        Math.Max(1, (int)(RowsGrid.ActualHeight / 24) - 1);
-
-    private void SelectGridRow(int index)
-    {
-        if (RowsGrid.Items.Count == 0)
-        {
-            return;
-        }
-
-        var target = Math.Clamp(index, 0, RowsGrid.Items.Count - 1);
-        RowsGrid.SelectedIndex = target;
-        RowsGrid.ScrollIntoView(RowsGrid.Items[target]);
-        if (RowsGrid.Columns.Count > 0)
-        {
-            RowsGrid.CurrentCell = new DataGridCellInfo(RowsGrid.Items[target], RowsGrid.Columns[0]);
-        }
-
-        RowsGrid.Focus();
-    }
-
-    /// <summary>
     /// Handles view-level shortcuts that need focus context: Ctrl+F focuses the search box, Ctrl+G
     /// reveals and focuses the first filter value, and Insert/Delete only act when no text editor owns
     /// the key.

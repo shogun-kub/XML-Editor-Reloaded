@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:behaviors="clr-namespace:XmlEditorReloaded.App.Behaviors">
     <!-- Shared control styles. All colors come from the active Theme.* palette. -->
 
     <Style TargetType="Window">
@@ -374,6 +375,7 @@
         <Setter Property="RowBackground" Value="{DynamicResource Theme.Panel.Background}" />
         <Setter Property="AlternatingRowBackground" Value="{DynamicResource Theme.Grid.Alternate}" />
         <Setter Property="RowHeight" Value="22" />
+        <Setter Property="behaviors:DataGridNavigation.IsEnabled" Value="True" />
     </Style>
 
     <Style TargetType="DataGridColumnHeader">

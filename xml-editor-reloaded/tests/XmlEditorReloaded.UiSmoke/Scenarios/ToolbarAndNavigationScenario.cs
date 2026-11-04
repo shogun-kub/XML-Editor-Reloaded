@@ -58,7 +58,7 @@ internal sealed class ToolbarAndNavigationScenario : SmokeScenario
         }
 
         var search = window.WaitById("SearchBox");
-        grid.Focus();
+        grid.Cell(0, 0).Click();
         Thread.Sleep(150);
         NativeInput.PressIn(grid, NativeInput.VirtualKey.F, control: true);
         Thread.Sleep(150);
