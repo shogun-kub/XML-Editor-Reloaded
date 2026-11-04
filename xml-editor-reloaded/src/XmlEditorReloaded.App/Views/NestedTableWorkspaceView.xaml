@@ -198,13 +198,15 @@
                                             <TextBlock FontWeight="SemiBold"
                                                        VerticalAlignment="Center"
                                                        Text="{Binding Header}" />
-                                            <Button Margin="6,0,0,0"
-                                                    Padding="8,0"
+                                            <Button Style="{DynamicResource IconButton}"
+                                                    Margin="6,0,0,0"
                                                     VerticalAlignment="Center"
                                                     AutomationProperties.AutomationId="{Binding DeleteAutomationId}"
+                                                    AutomationProperties.Name="{Binding DeleteText}"
                                                     Command="{Binding DataContext.DeleteSectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Content="{Binding DeleteText}"
+                                                    Content="{DynamicResource Icon.Delete}"
+                                                    ToolTip="{Binding DeleteText}"
                                                     Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibility}}" />
                                         </StackPanel>
                                     </Expander.Header>
@@ -228,26 +230,30 @@
                                                                     <DataTemplate>
                                                                         <DockPanel Margin="0,0,0,6">
                                                                             <Button DockPanel.Dock="Right"
+                                                                                    Style="{DynamicResource IconButton}"
                                                                                     Margin="6,0,0,0"
-                                                                                    Padding="8,1"
                                                                                     AutomationProperties.AutomationId="{Binding RemoveAutomationId}"
+                                                                                    AutomationProperties.Name="{Binding RemoveText}"
                                                                                     Command="{Binding RemoveCommand}"
                                                                                     CommandParameter="{Binding}"
-                                                                                    Content="{Binding RemoveText}"
-                                                                                    IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                                                                    Content="{DynamicResource Icon.Delete}"
+                                                                                    IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                                    ToolTip="{Binding RemoveText}" />
                                                                             <TextBox AutomationProperties.AutomationId="{Binding ValueAutomationId}"
                                                                                      Text="{Binding Value, UpdateSourceTrigger=LostFocus}" />
                                                                         </DockPanel>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>
                                                             </ItemsControl>
-                                                            <Button Margin="0,6,0,0"
-                                                                    Padding="10,2"
+                                                            <Button Style="{DynamicResource IconButton}"
+                                                                    Margin="0,6,0,0"
                                                                     HorizontalAlignment="Left"
                                                                     AutomationProperties.AutomationId="{Binding AddAutomationId}"
+                                                                    AutomationProperties.Name="{Binding AddText}"
                                                                     Command="{Binding AddCommand}"
-                                                                    Content="{Binding AddText}"
-                                                                    IsEnabled="{Binding CanEdit}" />
+                                                                    Content="{DynamicResource Icon.Add}"
+                                                                    IsEnabled="{Binding CanEdit}"
+                                                                    ToolTip="{Binding AddText}" />
                                                         </StackPanel>
                                                     </GroupBox>
                                                 </DataTemplate>

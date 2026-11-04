@@ -280,19 +280,25 @@
                                           SelectedItem="{Binding CustomItemFilter.SelectedLogicalOperator, Mode=TwoWay}"
                                           DisplayMemberPath="DisplayText"
                                           Visibility="{Binding CustomItemFilter.HasMultipleCriteria, Converter={StaticResource BoolToVisibility}}" />
-                                <Button Padding="8,2"
-                                        Margin="0,0,6,0"
-                                        Content="{Binding FilterAddText}"
-                                        Command="{Binding CustomItemFilter.AddCriterionCommand}" />
-                                <Button Padding="8,2"
-                                        Content="{Binding FilterClearText}"
-                                        Command="{Binding CustomItemFilter.ClearCommand}" />
+                                <Button Style="{DynamicResource IconButton}"
+                                        Margin="0,0,4,0"
+                                        AutomationProperties.Name="{Binding FilterAddText}"
+                                        Content="{DynamicResource Icon.FilterAdd}"
+                                        Command="{Binding CustomItemFilter.AddCriterionCommand}"
+                                        ToolTip="{Binding FilterAddText}" />
+                                <Button Style="{DynamicResource IconButton}"
+                                        AutomationProperties.Name="{Binding FilterClearText}"
+                                        Content="{DynamicResource Icon.FilterClear}"
+                                        Command="{Binding CustomItemFilter.ClearCommand}"
+                                        ToolTip="{Binding FilterClearText}" />
                             </WrapPanel>
-                            <Button Padding="8,2"
+                            <Button Style="{DynamicResource IconButton}"
                                     Margin="0,0,0,6"
                                     HorizontalAlignment="Left"
-                                    Content="{Binding ItemFilterClearText}"
-                                    Command="{Binding ClearItemFiltersCommand}" />
+                                    AutomationProperties.Name="{Binding ItemFilterClearText}"
+                                    Content="{DynamicResource Icon.FilterClear}"
+                                    Command="{Binding ClearItemFiltersCommand}"
+                                    ToolTip="{Binding ItemFilterClearText}" />
                             <ItemsControl ItemsSource="{Binding CustomItemFilter.Criteria}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -309,10 +315,12 @@
                                             <TextBox Width="65"
                                                      Margin="6,0,0,0"
                                                      Text="{Binding Operand, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Button Margin="6,0,0,0"
-                                                    Padding="6,0"
-                                                    Content="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    Command="{Binding RemoveCommand}" />
+                                            <Button Style="{DynamicResource IconButton}"
+                                                    Margin="6,0,0,0"
+                                                    AutomationProperties.Name="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    Content="{DynamicResource Icon.FilterRemove}"
+                                                    Command="{Binding RemoveCommand}"
+                                                    ToolTip="{Binding DataContext.FilterRemoveText, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -414,12 +422,14 @@
                         <TextBox Width="90"
                                  AutomationProperties.AutomationId="ItemIdBox"
                                  Text="{Binding ItemIdText, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Margin="6,0,6,0"
-                                Padding="10,2"
+                        <Button Style="{DynamicResource IconButton}"
+                                Margin="6,0,6,0"
                                 AutomationProperties.AutomationId="ItemChangeIdButton"
-                                Content="{Binding ChangeIdText}"
+                                AutomationProperties.Name="{Binding ChangeIdText}"
+                                Content="{DynamicResource Icon.ChangeId}"
                                 Command="{Binding ChangeItemIdCommand}"
-                                IsEnabled="{Binding IsEditable}" />
+                                IsEnabled="{Binding IsEditable}"
+                                ToolTip="{Binding ChangeIdText}" />
                         <TextBlock VerticalAlignment="Center"
                                    Margin="0,0,6,0"
                                    Text="{Binding ClassLabel}" />
@@ -504,9 +514,12 @@
                                                 <StackPanel Orientation="Horizontal"
                                                             Margin="0,0,0,6"
                                                             Visibility="{Binding HasRow, Converter={StaticResource InverseBoolToVisibility}}">
-                                                    <Button Padding="10,2"
-                                                            Content="{Binding CreateText}"
-                                                            Command="{Binding CreateCommand}" />
+                                                    <Button Style="{DynamicResource IconButton}"
+                                                            Margin="0,0,4,0"
+                                                            AutomationProperties.Name="{Binding CreateText}"
+                                                            Content="{DynamicResource Icon.NewItem}"
+                                                            Command="{Binding CreateCommand}"
+                                                            ToolTip="{Binding CreateText}" />
                                                     <TextBlock Margin="6,0,0,0"
                                                                VerticalAlignment="Center"
                                                                Foreground="{DynamicResource Theme.Text.Muted}"
@@ -623,11 +636,13 @@
                                                          AutomationProperties.Name="{Binding DealerName}"
                                                          Text="{Binding Quantity, UpdateSourceTrigger=LostFocus}" />
                                                 <Button Grid.Column="2"
+                                                        Style="{DynamicResource IconButton}"
                                                         Margin="6,0,0,0"
-                                                        Padding="10,1"
+                                                        AutomationProperties.Name="{Binding DataContext.ShopkeeperRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                         Command="{Binding RemoveCommand}"
-                                                        Content="{Binding DataContext.ShopkeeperRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                                        Content="{DynamicResource Icon.Delete}"
+                                                        IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        ToolTip="{Binding DataContext.ShopkeeperRemoveText, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -661,11 +676,13 @@
                                          IsEnabled="{Binding IsEditable}"
                                          Text="{Binding NewShopkeeperQuantity, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="{Binding ShopkeeperQuantityColumn}" />
-                                <Button Margin="6,0,0,0"
-                                        Padding="10,2"
+                                <Button Style="{DynamicResource IconButton}"
+                                        Margin="6,0,0,0"
                                         AutomationProperties.AutomationId="ShopkeeperAddButton"
+                                        AutomationProperties.Name="{Binding ShopkeeperAddText}"
                                         Command="{Binding AddShopkeeperEntryCommand}"
-                                        Content="{Binding ShopkeeperAddText}" />
+                                        Content="{DynamicResource Icon.Add}"
+                                        ToolTip="{Binding ShopkeeperAddText}" />
                                 <TextBlock Margin="6,0,0,0"
                                            VerticalAlignment="Center"
                                            Foreground="{DynamicResource Theme.Text.Muted}"
