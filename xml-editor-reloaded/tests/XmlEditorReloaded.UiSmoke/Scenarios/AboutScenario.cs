@@ -1,4 +1,5 @@
 using System.Windows.Automation;
+using System.Xml.Linq;
 
 namespace XmlEditorReloaded.UiSmoke.Scenarios;
 
@@ -20,6 +21,7 @@ internal sealed class AboutScenario : SmokeScenario
     {
         var main = context.Window;
         var russian = context.Strings;
+        var expectedVersion = ExpectedVersion(context);
         OpenAbout(context);
         var found = FindAbout(context.App);
         context.Recorder.Check(
@@ -38,7 +40,7 @@ internal sealed class AboutScenario : SmokeScenario
             about.WaitById("AboutProductText").ReadName());
         context.Recorder.Check(
             "Версия в About",
-            about.WaitById("AboutVersionText").ReadName() == "0.1.0",
+            about.WaitById("AboutVersionText").ReadName() == expectedVersion,
             about.WaitById("AboutVersionText").ReadName());
         context.Recorder.Check(
             "Описание сборки в About",
@@ -72,15 +74,11 @@ internal sealed class AboutScenario : SmokeScenario
         context.Recorder.Check("OK закрывает About и приложение остаётся", !context.App.HasExited, null);
 
         OpenAbout(context);
-        about = FindAbout(context.App)!;
-        NativeInput.PressIn(about, NativeInput.VirtualKey.Return);
-        ScenarioUi.WaitForWindowWithIdClosed(context.App, "AboutOkButton");
+        PressCloseKey(context, NativeInput.VirtualKey.Return);
         context.Recorder.Check("Enter закрывает About", !context.App.HasExited, null);
 
         OpenAbout(context);
-        about = FindAbout(context.App)!;
-        NativeInput.PressIn(about, NativeInput.VirtualKey.Escape);
-        ScenarioUi.WaitForWindowWithIdClosed(context.App, "AboutOkButton");
+        PressCloseKey(context, NativeInput.VirtualKey.Escape);
         context.Recorder.Check("Esc закрывает About", !context.App.HasExited, null);
 
         OpenAbout(context);
@@ -126,6 +124,30 @@ internal sealed class AboutScenario : SmokeScenario
             TimeSpan.FromSeconds(30));
     }
 
+    private static void PressCloseKey(ScenarioContext context, NativeInput.VirtualKey key)
+    {
+        for (var attempt = 0; attempt < 3; attempt++)
+        {
+            var about = FindAbout(context.App)
+                ?? throw new UiTimeoutException("Окно About не найдено.");
+            about.WaitById("AboutOkButton").SetFocus();
+            NativeInput.PressIn(about, key);
+            try
+            {
+                ScenarioUi.WaitForWindowWithIdClosed(
+                    context.App,
+                    "AboutOkButton",
+                    TimeSpan.FromSeconds(3));
+                return;
+            }
+            catch (UiTimeoutException) when (attempt < 2)
+            {
+                // The first synthetic keystroke can be lost while the modal window is still activating.
+                Thread.Sleep(200);
+            }
+        }
+    }
+
     private static AutomationElement? FindAbout(UiApp app) =>
         AutomationElement.RootElement
             .FindAll(
@@ -154,4 +176,13 @@ internal sealed class AboutScenario : SmokeScenario
             "src",
             "XmlEditorReloaded.App",
             "Resources");
+
+    private static string ExpectedVersion(ScenarioContext context)
+    {
+        var propsPath = System.IO.Path.Combine(
+            context.Options.RepositoryRoot,
+            "xml-editor-reloaded",
+            "Directory.Build.props");
+        return XDocument.Load(propsPath).Descendants("Version").First().Value;
+    }
 }

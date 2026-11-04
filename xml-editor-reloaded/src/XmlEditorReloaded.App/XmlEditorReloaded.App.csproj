@@ -6,8 +6,15 @@
     <UseWPF>true</UseWPF>
     <AssemblyTitle>XML Editor Reloaded</AssemblyTitle>
     <Product>XML Editor Reloaded</Product>
+    <Company>XML Editor Reloaded contributors</Company>
+    <Copyright>Copyright (c) Everyone, except Author. Licensed under the GLWTPL.</Copyright>
     <Description>Viewer and editor for Jagged Alliance 2 1.13 XML table data and STI item images.</Description>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

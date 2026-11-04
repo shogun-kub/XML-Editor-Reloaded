@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build portable package
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+              $version = $env:GITHUB_REF_NAME.TrimStart('v')
+              pwsh -NoProfile -ExecutionPolicy Bypass -File ./util-scripts/release.ps1 -Version $version
+          }
+          else {
+              pwsh -NoProfile -ExecutionPolicy Bypass -File ./util-scripts/release.ps1
+          }
+          if ($LASTEXITCODE -ne 0) {
+              throw "Release packaging failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: xml-editor-reloaded-win-x64
+          path: out/release/*
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $zip = Get-ChildItem -LiteralPath out/release -Filter '*.zip' | Select-Object -First 1
+          $hash = Get-ChildItem -LiteralPath out/release -Filter '*.sha256' | Select-Object -First 1
+          if ($null -eq $zip -or $null -eq $hash) {
+              throw 'Release archive or checksum was not produced.'
+          }
+
+          gh release create $tag $zip.FullName $hash.FullName --title "XML Editor Reloaded $tag" --generate-notes

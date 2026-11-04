@@ -21,10 +21,11 @@ JA2_1.13 Tools/
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
-├── util-scripts/                    # Repository scripts: build+test runner and `.tmp` cleanup
+├── .github/workflows/               # CI build/test and tag-driven release
+├── util-scripts/                    # Build+test, release packaging and `.tmp` cleanup
 ├── References/                      # Read-only reference projects and game data (not in git)
-├── out/                             # Build output: bin/obj of every project (not in git)
-└── xml-editor-reloaded/             # Solution root — all project code
+├── out/                             # Build output, publish and release ZIPs (not in git)
+└── xml-editor-reloaded/             # Solution root — project code and release documents
 ```
 
 `References/` is read-only and never referenced by the solution. `util-scripts/` holds the scripts
@@ -38,7 +39,13 @@ xml-editor-reloaded/
 ├── XmlEditorReloaded.slnx
 ├── Directory.Build.props            # Nullable, implicit usings, code-style enforcement, version
 ├── .editorconfig
-├── README.md
+├── README.md                         # Download, build, release and data-safety overview
+├── USER-GUIDE.md                     # Russian end-user guide
+├── CHANGELOG.md                      # Release history
+├── LICENSE                           # GLWTPL
+├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
+├── licenses/                         # Full MIT and Apache-2.0 texts
+├── packaging/start-portable.cmd      # Portable launcher using XER_APP_DATA
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/
@@ -97,7 +104,9 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 WPF shell and MVVM layer: data-set and table browser, grid and workspace editors, detail panel, dialogs,
 image viewer, settings, and RESX localization (English and Russian).
 
-Folders: `Imaging`, `Resources`, `Services`, `ViewModels`, `Views`. All UI strings come from RESX.
+Folders: `Assets`, `Behaviors`, `Imaging`, `Resources`, `Services`, `Shortcuts`, `Themes`,
+`ViewModels`, `Views`. All UI strings come from RESX. `Assets/app.ico` is both the executable icon
+and the window icon resource.
 
 ### Test projects
 
@@ -110,8 +119,9 @@ UI-automation runner for the manual WPF smoke checklist. It starts the real appl
 isolated application-data directory, drives it through UI Automation and synthetic input, compares the
 visible texts with the application RESX files, and writes `report.md`/`report.json`. The reference data
 sets are copied per scenario, and `References/` is hashed before and after the run. It is not an xUnit
-project and is not executed by `test.ps1`. Automated scenarios cover parts A–G of the checklist
-(S01–S03, S05–S21, S23–S49, S50); S04, S22, S71–S75, S82 and S83 need a human.
+project and is not executed by `test.ps1`. It covers 98 automated scenarios from the checklist,
+including S50 integrity and the M23b–M27c blocks; S04, S22, S53 and S74 need a human. It accepts
+`--app <exe>` to run the same scenarios against a published self-contained build.
 
 ## Dependency rules
 
@@ -147,6 +157,18 @@ Fixtures and `report.md` go to `.tmp/ui-smoke/<run>/`, and settings are isolated
 the workspace starts at low integrity and cannot write `%APPDATA%` (`SQLite error 14`).
 
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
+
+## Release
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
+```
+
+The script validates the version in `Directory.Build.props`, runs the xUnit suite, publishes a
+self-contained `win-x64` build, stages the release documents and the portable launcher, and writes the
+portable ZIP plus SHA-256 to `out/release/`. `-SkipTests` is only for an already verified build.
+`.github/workflows/release.yml` runs the same script for tags matching `v*` and publishes a GitHub
+release when the repository has a remote.
 
 ## Conventions
 

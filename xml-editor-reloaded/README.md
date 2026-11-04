@@ -1,42 +1,98 @@
 # XML Editor Reloaded
 
-Desktop editor for Jagged Alliance 2 1.13 `TableData` XML files and STI item images.
+Редактор XML-таблиц `TableData` мода **Jagged Alliance 2 1.13** и просмотрщик STI-изображений
+предметов. Работает с наборами данных v4 и v5, сохраняет структуру и лексическое представление
+файлов, поддерживает русские и английские оверлеи переводов.
 
-## Build
+## Что умеет
 
+- Просмотр и редактирование всех таблиц `TableData` в schema-driven grid.
+- Дерево таблиц с папками, фильтром и поиском; отдельный список таблиц.
+- Item master-detail, merc gear, shopkeeper и вспомогательные таблицы.
+- Вложенные редакторы `Map.Cities` и `Map.FacilityTypes`.
+- Lookup- и flag-редакторы, связи, pickers, массовые правки, undo/redo.
+- Локализационные оверлеи: правка перевода пишется только в оверлей, база не меняется.
+- Сравнение v4↔v5 по структуре и значениям, копирование строк между датасетами с remap.
+- Проверка всего датасета одним отчётом и глобальный поиск по таблицам и оверлеям.
+- Просмотр STI-изображений Big/Medium/Small с выбором кадра.
+- Глобальный режим **Grid / XML**: read-only снимок базовой таблицы, поиск по ID/ключу и переход
+  из замечания валидации к записи.
+- Тёмная, светлая и системная темы; русский и английский интерфейс.
+
+## Скачать и запустить
+
+Готовый архив: `XmlEditorReloaded-<версия>-win-x64.zip` и файл `.sha256` рядом с ним.
+
+1. Распакуйте архив в любую папку.
+2. Запустите `XmlEditorReloaded.App.exe`.
+3. Нажмите **Обзор** и выберите каталог игры, каталог `Data-1.13` или сразу `Data-1.13\TableData`.
+4. Откройте таблицу двойным щелчком в дереве или списке.
+
+Архив содержит self-contained сборку: устанавливать .NET отдельно не нужно. Требуется Windows 10/11
+x64 и установленная игра с `Data-1.13\TableData`.
+
+Для полностью переносимого режима запускайте `start-portable.cmd`: настройки, layout, метабаза и
+лог будут лежать в подпапке `data` рядом с программой. Обычный запуск хранит их в
+`%AppData%\XmlEditorReloaded`.
+
+Подробная инструкция: [USER-GUIDE.md](USER-GUIDE.md).
+
+## Безопасность данных
+
+- Редактор меняет только те файлы, которые вы явно открыли и сохранили.
+- Загрузка → сохранение без правок не перезаписывает файл.
+- Неизвестные элементы и атрибуты сохраняются; порядок элементов и лексика значений не
+  нормализуются без необходимости.
+- Ошибки XML показываются пользователю; редактор не исправляет и не перезаписывает повреждённый
+  файл автоматически.
+- Валидация предупреждает, но ничего не удаляет и не нормализует.
+- Перед первым сохранением сделайте резервную копию `TableData`: автоматического backup XML нет.
+
+Настройки, layout, `metadata.sqlite` и `XmlEditorReloaded.log` находятся в
+`%AppData%\XmlEditorReloaded` (или в `XER_APP_DATA`, если переменная задана).
+
+## Сборка из исходников
+
+Требуется .NET 10 SDK.
+
+```powershell
+dotnet restore xml-editor-reloaded/XmlEditorReloaded.slnx
+dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx -m:1 --no-restore -warnaserror
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1
 ```
-dotnet build xml-editor-reloaded/XmlEditorReloaded.slnx
+
+Приложение запускается из `out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
+Все `bin/obj` складываются в `out/`.
+
+Полный набор тестов — 726 тестов в пяти xUnit-проектах. Корпусные, сравнительные, copy- и
+perf-гейты описаны в `PLAN.md`; они требуют `XER_CORPUS_DIR` и временных копий данных.
+
+## Сборка релиза
+
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 ```
 
-All projects build into the repository-level `out/` folder (`out/bin/<Project>/<Configuration>`,
-`out/obj/...`). Run the application from
-`out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
+Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained
+`win-x64`, складывает `README`, `USER-GUIDE`, `CHANGELOG`, лицензию и third-party notices в ZIP и
+пишет SHA-256. Результат: `out/release/`.
 
-## Test
+## Структура
 
-```
-dotnet test xml-editor-reloaded/XmlEditorReloaded.slnx
-```
+| Каталог | Назначение |
+|---|---|
+| `src/XmlEditorReloaded.Core` | контракты и доменные примитивы, без I/O |
+| `src/XmlEditorReloaded.Xml` | загрузка, lossless-сохранение, оверлеи, сравнение |
+| `src/XmlEditorReloaded.Data` | SQLite-метабаза, каталог, настройки, лог |
+| `src/XmlEditorReloaded.Imaging` | STI/ETRLE → RGBA |
+| `src/XmlEditorReloaded.App` | WPF-оболочка и MVVM |
+| `tests/` | xUnit-тесты и UI-smoke runner |
 
-Optional full-corpus round-trip tests (runs against a temporary copy, never writes to the source):
+Архитектура и правила — в `PROJECT-STRUCTURE.md` и `AGENTS.md`, план — в `PLAN.md` исходного
+репозитория. История версий — в [CHANGELOG.md](CHANGELOG.md).
 
-```
-XER_CORPUS_DIR="<GameDir>\Data-1.13\TableData" dotnet test
-```
+## Лицензия
 
-Optional performance gates (read-only; each operation must stay under 2 seconds):
-
-```
-XER_CORPUS_DIR="<GameDir>\Data-1.13\TableData" dotnet test --filter "Category=Performance"
-```
-
-## Layout
-
-- `src/XmlEditorReloaded.Core` — domain primitives and abstractions (no I/O).
-- `src/XmlEditorReloaded.Xml` — XML table loading, round-trip saving, overlays.
-- `src/XmlEditorReloaded.Data` — SQLite metadata, table catalog, settings.
-- `src/XmlEditorReloaded.Imaging` — STI/ETRLE decoding to RGBA buffers.
-- `src/XmlEditorReloaded.App` — WPF application shell.
-- `tests/` — xUnit test projects.
-
-See `PLAN.md` in the repository root for the implementation plan and `PROJECT-STRUCTURE.md` for the architecture.
+Проект распространяется по [GLWT(Good Luck With That) Public License](LICENSE). Сторонние
+библиотеки сохраняют свои лицензии; полный список и тексты — в
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) и `licenses/`.

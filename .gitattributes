@@ -2,3 +2,6 @@
 xml-editor-reloaded/tests/XmlEditorReloaded.Xml.Tests/Fixtures/** -text
 # STI fixtures are binary and must never be line-ending converted.
 xml-editor-reloaded/tests/XmlEditorReloaded.Imaging.Tests/Fixtures/** -text -diff
+# Windows launchers and the application icon.
+*.cmd text eol=crlf
+*.ico binary

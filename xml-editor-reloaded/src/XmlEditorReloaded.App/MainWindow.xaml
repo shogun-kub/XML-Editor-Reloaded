@@ -8,6 +8,7 @@
         xmlns:shortcuts="clr-namespace:XmlEditorReloaded.App.Shortcuts"
         mc:Ignorable="d"
         Title="{Binding Title}"
+        Icon="pack://application:,,,/XmlEditorReloaded.App;component/Assets/app.ico"
         Height="780"
         Width="1280"
         MinHeight="520"

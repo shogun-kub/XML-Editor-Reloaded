@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="{Binding Title}"
+        Icon="pack://application:,,,/XmlEditorReloaded.App;component/Assets/app.ico"
         AutomationProperties.AutomationId="AboutWindow"
         Width="480"
         SizeToContent="Height"
