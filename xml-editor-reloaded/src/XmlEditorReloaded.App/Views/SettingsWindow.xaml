@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.SettingsWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -91,6 +91,9 @@
 
             <GroupBox Grid.Column="0" Header="{Binding RecentDirectoriesLabel}">
                 <ListBox Margin="8"
+                         Background="{DynamicResource Theme.Panel.Background}"
+                         BorderBrush="{DynamicResource Theme.Border}"
+                         Foreground="{DynamicResource Theme.Text.Muted}"
                          ItemsSource="{Binding RecentDirectories}"
                          IsEnabled="False" />
             </GroupBox>
@@ -128,7 +131,7 @@
             <TextBlock Margin="0,6,0,0"
                        TextWrapping="Wrap"
                        AutomationProperties.AutomationId="SettingsResetLayoutsPendingText"
-                       Foreground="#FF996600"
+                       Foreground="{DynamicResource Theme.Warning}"
                        Text="{Binding ResetLayoutsPendingText}"
                        Visibility="{Binding IsResetLayoutsPending, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <TextBlock Margin="0,6,0,0"

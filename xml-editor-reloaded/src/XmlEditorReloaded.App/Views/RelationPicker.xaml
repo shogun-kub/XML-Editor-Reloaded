@@ -28,7 +28,7 @@
                PopupAnimation="Fade"
                Closed="OnPopupClosed">
             <Border Background="White"
-                    BorderBrush="#FFB0B0B0"
+                    BorderBrush="{DynamicResource Theme.Border}"
                     BorderThickness="1"
                     MinWidth="{Binding ActualWidth, ElementName=ValueBox}">
                 <ListBox x:Name="OptionsList"

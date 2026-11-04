@@ -298,8 +298,8 @@ public partial class TableView : UserControl
 
     private Style BuildTranslationCellStyle(string fieldName)
     {
-        var background = new SolidColorBrush(Color.FromRgb(0xFF, 0xF4, 0xCE));
-        background.Freeze();
+        var background = ThemeBrush("Theme.Translation.Background", Brushes.Transparent);
+        var foreground = ThemeBrush("Theme.Translation.Foreground", Brushes.Black);
         var style = new Style(typeof(TextBlock));
         var trigger = new DataTrigger
         {
@@ -311,12 +311,16 @@ public partial class TableView : UserControl
             Value = true,
         };
         trigger.Setters.Add(new Setter(TextBlock.BackgroundProperty, background));
+        trigger.Setters.Add(new Setter(TextBlock.ForegroundProperty, foreground));
         trigger.Setters.Add(new Setter(
             TextBlock.ToolTipProperty,
             _viewModel?.DetailUntranslatedText ?? string.Empty));
         style.Triggers.Add(trigger);
         return style;
     }
+
+    private static Brush ThemeBrush(string key, Brush fallback) =>
+        Application.Current?.TryFindResource(key) as Brush ?? fallback;
 
     private void OnFilterOperandFocusWithinChanged(
         object sender,

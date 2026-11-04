@@ -80,14 +80,14 @@
             <TextBlock Grid.Column="2"
                        Margin="6,0,0,0"
                        VerticalAlignment="Center"
-                       Foreground="#FF666666"
+                       Foreground="{DynamicResource Theme.Text.Muted}"
                        AutomationProperties.AutomationId="MercCountText"
                        Text="{Binding CountText}" />
         </Grid>
 
         <TextBlock Grid.Row="1"
                    Margin="0,0,0,6"
-                   Foreground="#FF8B6F00"
+                   Foreground="{DynamicResource Theme.Warning}"
                    TextWrapping="Wrap"
                    Text="{Binding WarningsText}">
             <TextBlock.Style>
@@ -199,7 +199,7 @@
                                                    Grid.Column="2"
                                                    Margin="6,0,0,0"
                                                    VerticalAlignment="Center"
-                                                   Foreground="#FF8B6F00"
+                                                   Foreground="{DynamicResource Theme.Warning}"
                                                    Text="{Binding NameMarker}"
                                                    ToolTip="{Binding NameMarkerTooltip}"
                                                    Visibility="{Binding ShowNameMarker, Converter={StaticResource BoolToVisibility}}" />

@@ -31,20 +31,42 @@ public class ThemeResourcesTests
     }
 
     /// <summary>
-    /// The primary text color has a readable contrast ratio against the panel background in both
-    /// palettes.
+    /// Every text color used on a panel keeps a readable contrast ratio in both palettes.
     /// </summary>
     [Theory]
     [InlineData("Light")]
     [InlineData("Dark")]
-    public void TextOnPanel_HasReadableContrast(string name)
+    public void TextColors_HaveReadableContrast(string name)
     {
         var palette = Load(name);
-        var text = ColorOf(palette, "Theme.Text");
         var panel = ColorOf(palette, "Theme.Panel.Background");
+        foreach (var key in new[]
+                 {
+                     "Theme.Text",
+                     "Theme.Text.Muted",
+                     "Theme.Danger",
+                     "Theme.Warning",
+                     "Theme.Success",
+                 })
+        {
+            var ratio = Contrast(ColorOf(palette, key), panel);
+            Assert.True(ratio >= 4.5, $"{name}: {key} contrast {ratio:F2} is below 4.5.");
+        }
 
-        var ratio = Contrast(text, panel);
-        Assert.True(ratio >= 4.5, $"{name}: contrast {ratio:F2} is below 4.5.");
+        var selection = Contrast(
+            ColorOf(palette, "Theme.Selection.Text"),
+            ColorOf(palette, "Theme.Selection"));
+        Assert.True(selection >= 4.5, $"{name}: selection contrast {selection:F2} is below 4.5.");
+
+        var translation = Contrast(
+            ColorOf(palette, "Theme.Translation.Foreground"),
+            ColorOf(palette, "Theme.Translation.Background"));
+        Assert.True(translation >= 4.5, $"{name}: translation contrast {translation:F2} is below 4.5.");
+
+        var mutedHeader = Contrast(
+            ColorOf(palette, "Theme.Text.Muted"),
+            ColorOf(palette, "Theme.Grid.Header"));
+        Assert.True(mutedHeader >= 4.5, $"{name}: muted header contrast {mutedHeader:F2} is below 4.5.");
     }
 
     private static XDocument Load(string name) =>

@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.ExternalChangeWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.ExternalChangeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Width="500"

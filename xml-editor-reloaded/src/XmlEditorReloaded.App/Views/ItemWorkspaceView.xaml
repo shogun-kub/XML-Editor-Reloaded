@@ -39,7 +39,7 @@
                       Header="{Binding Label}"
                       AutomationProperties.AutomationId="{Binding SectionAutomationId}">
                 <StackPanel Margin="6">
-                    <TextBlock Foreground="#FF777777"
+                    <TextBlock Foreground="{DynamicResource Theme.Text.Muted}"
                                TextWrapping="Wrap"
                                Text="{Binding CompatibleNote}" />
                     <ItemsControl ItemsSource="{Binding Values}" Margin="0,6,0,0">
@@ -151,7 +151,7 @@
 
         <TextBlock Grid.Row="1"
                    Margin="0,0,0,6"
-                   Foreground="#FF8B6F00"
+                   Foreground="{DynamicResource Theme.Warning}"
                    TextWrapping="Wrap"
                    Text="{Binding WarningsText}">
             <TextBlock.Style>
@@ -201,7 +201,7 @@
                                    Margin="6,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="11"
-                                   Foreground="#FF666666"
+                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                    TextTrimming="CharacterEllipsis"
                                    ToolTip="{Binding CountText}"
                                    AutomationProperties.HelpText="{Binding CountText}"
@@ -260,7 +260,7 @@
                             <WrapPanel Margin="0,0,0,6">
                                 <TextBlock VerticalAlignment="Center"
                                            Margin="0,0,6,0"
-                                           Foreground="#FF666666"
+                                           Foreground="{DynamicResource Theme.Text.Muted}"
                                            Text="{Binding CustomItemFilter.SummaryText}" />
                                 <ComboBox Width="60"
                                           Margin="0,0,6,0"
@@ -328,7 +328,7 @@
                                             Height="26"
                                             Margin="0,0,6,0"
                                             Background="{StaticResource CheckerBrush}"
-                                            BorderBrush="#FFD0D0D0"
+                                            BorderBrush="{DynamicResource Theme.Border}"
                                             BorderThickness="1">
                                         <Image Source="{Binding Thumbnail}"
                                                Stretch="Uniform"
@@ -340,7 +340,7 @@
                                         <TextBlock Text="{Binding DisplayText}"
                                                    TextTrimming="CharacterEllipsis" />
                                         <TextBlock FontSize="10"
-                                                   Foreground="#FF777777"
+                                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                                    Text="{Binding ClassText}"
                                                    TextTrimming="CharacterEllipsis" />
                                     </StackPanel>
@@ -443,7 +443,7 @@
                                                         <TextBlock FontWeight="SemiBold"
                                                                    Text="{Binding Label}" />
                                                         <TextBlock Margin="6,0,0,0"
-                                                                   Foreground="#FF777777"
+                                                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                                                    Text="{Binding FieldCountText}" />
                                                     </StackPanel>
                                                 </Expander.Header>
@@ -479,7 +479,7 @@
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
                                                     <TextBlock Margin="6,0,0,0"
-                                                               Foreground="#FF777777"
+                                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                                Text="{Binding StatusText}" />
                                                 </StackPanel>
                                             </Expander.Header>
@@ -492,7 +492,7 @@
                                                             Command="{Binding CreateCommand}" />
                                                     <TextBlock Margin="6,0,0,0"
                                                                VerticalAlignment="Center"
-                                                               Foreground="#FF777777"
+                                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                                Text="{Binding SharedNote}" />
                                                 </StackPanel>
                                                 <ItemsControl ItemsSource="{Binding Fields}">
@@ -525,7 +525,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding Label}" />
                                         <TextBlock Margin="6,0,0,0"
-                                                   Foreground="#FF777777"
+                                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                                    Text="{Binding CountText}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -565,7 +565,7 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0"
                                        Margin="0,0,0,6"
-                                       Foreground="#FF666666"
+                                       Foreground="{DynamicResource Theme.Text.Muted}"
                                        AutomationProperties.AutomationId="ShopkeeperCountText"
                                        Text="{Binding ShopkeeperCountText}" />
                             <Grid Grid.Row="1" Margin="0,0,0,6">
@@ -614,7 +614,7 @@
                             </ScrollViewer>
                             <TextBlock Grid.Row="2"
                                        VerticalAlignment="Top"
-                                       Foreground="#FF777777"
+                                       Foreground="{DynamicResource Theme.Text.Muted}"
                                        TextWrapping="Wrap"
                                        Text="{Binding ShopkeeperEmptyText}"
                                        Visibility="{Binding HasShopkeeperEntries, Converter={StaticResource InverseBoolToVisibility}}" />
@@ -647,7 +647,7 @@
                                         Content="{Binding ShopkeeperAddText}" />
                                 <TextBlock Margin="6,0,0,0"
                                            VerticalAlignment="Center"
-                                           Foreground="#FF777777"
+                                           Foreground="{DynamicResource Theme.Text.Muted}"
                                            Text="{Binding ShopkeeperNoDealersText}"
                                            Visibility="{Binding HasShopkeeperDealerOptions, Converter={StaticResource InverseBoolToVisibility}}" />
                             </StackPanel>
@@ -667,7 +667,7 @@
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
                                                     <TextBlock Margin="6,0,0,0"
-                                                               Foreground="#FF777777"
+                                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                                Text="{Binding FieldCountText}" />
                                                 </StackPanel>
                                             </Expander.Header>
@@ -702,7 +702,7 @@
                                 <StackPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                                     <TextBlock FontWeight="SemiBold"
                                                Text="{Binding GraphicImageListLabel}" />
-                                    <TextBlock Foreground="#FF666666"
+                                    <TextBlock Foreground="{DynamicResource Theme.Text.Muted}"
                                                AutomationProperties.AutomationId="ItemGraphicImageListInfo"
                                                Text="{Binding GraphicImageListInfo}" />
                                 </StackPanel>
@@ -722,7 +722,7 @@
                                                 <Border Width="40"
                                                         Height="40"
                                                         Background="{StaticResource CheckerBrush}"
-                                                        BorderBrush="#FFD0D0D0"
+                                                        BorderBrush="{DynamicResource Theme.Border}"
                                                         BorderThickness="1">
                                                     <Image Source="{Binding Thumbnail}"
                                                            Stretch="Uniform"
@@ -773,7 +773,7 @@
                                                         <TextBlock Grid.Column="1"
                                                                    Margin="6,0,0,0"
                                                                    HorizontalAlignment="Right"
-                                                                   Foreground="#FF666666"
+                                                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                                                    TextTrimming="CharacterEllipsis"
                                                                    AutomationProperties.AutomationId="{Binding InfoAutomationId}"
                                                                    Text="{Binding InfoText}" />
@@ -782,7 +782,7 @@
                                                             Height="{Binding PanelHeight}"
                                                             Margin="0,6,0,0"
                                                             Background="{StaticResource CheckerBrush}"
-                                                            BorderBrush="#FFAFAFAF"
+                                                            BorderBrush="{DynamicResource Theme.Border}"
                                                             BorderThickness="1">
                                                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                                                       VerticalScrollBarVisibility="Auto">

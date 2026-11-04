@@ -29,4 +29,20 @@
     <SolidColorBrush x:Key="Theme.ToolTip.Border" Color="#3A3F47" />
     <SolidColorBrush x:Key="Theme.Disabled.Text" Color="#6B737D" />
     <SolidColorBrush x:Key="Theme.Focus" Color="#5B9BD5" />
+    <SolidColorBrush x:Key="Theme.Translation.Background" Color="#4A3B1F" />
+    <SolidColorBrush x:Key="Theme.Translation.Foreground" Color="#FFE7B0" />
+
+    <!-- Default WPF templates for menus and native-looking controls use these system keys. -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#1B1D21" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#E6E7E9" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#26292F" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#E6E7E9" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#26292F" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#E6E7E9" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#2B4C6F" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#E6E7E9" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="#9AA0A6" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.ScrollBarBrushKey}" Color="#1F2227" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkBrushKey}" Color="#4A5058" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlLightBrushKey}" Color="#3A3F47" />
 </ResourceDictionary>

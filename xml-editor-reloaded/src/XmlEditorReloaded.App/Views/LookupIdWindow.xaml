@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.LookupIdWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.LookupIdWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,7 +28,7 @@
 
         <TextBlock Grid.Row="1"
                    Margin="0,0,0,6"
-                   Foreground="#FF555555"
+                   Foreground="{DynamicResource Theme.Text.Muted}"
                    TextWrapping="Wrap"
                    AutomationProperties.AutomationId="LookupIdKindHint"
                    Text="{Binding KindHint}" />
@@ -47,14 +47,14 @@
 
         <TextBlock Grid.Row="3"
                    Margin="0,0,0,6"
-                   Foreground="#FFB00020"
+                   Foreground="{DynamicResource Theme.Danger}"
                    TextWrapping="Wrap"
                    AutomationProperties.AutomationId="LookupIdErrorText"
                    Text="{Binding ValidationMessage}" />
 
         <TextBlock Grid.Row="4"
                    Margin="0,0,0,6"
-                   Foreground="#FF8A5A00"
+                   Foreground="{DynamicResource Theme.Warning}"
                    TextWrapping="Wrap"
                    AutomationProperties.AutomationId="LookupIdWarningText"
                    Text="{Binding WarningMessage}" />

@@ -62,7 +62,7 @@
                        Text="{Binding Title}" />
             <TextBlock Margin="6,0,0,0"
                        VerticalAlignment="Center"
-                       Foreground="#FF666666"
+                       Foreground="{DynamicResource Theme.Text.Muted}"
                        Text="{Binding LanguageText}" />
             <TextBlock Margin="6,0,0,0"
                        VerticalAlignment="Center"
@@ -122,7 +122,7 @@
                         IsEnabled="{Binding IsEditable}" />
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,6"
-                           Foreground="#FF666666"
+                           Foreground="{DynamicResource Theme.Text.Muted}"
                            AutomationProperties.AutomationId="LookupKindText"
                            Text="{Binding LookupKindText}"
                            Visibility="{Binding IsLookupTable, Converter={StaticResource BoolToVisibility}}" />
@@ -145,7 +145,7 @@
                         IsEnabled="{Binding IsDirty}" />
                 <TextBlock VerticalAlignment="Center"
                            Margin="0,0,6,6"
-                           Foreground="#FF666666"
+                           Foreground="{DynamicResource Theme.Text.Muted}"
                            AutomationProperties.AutomationId="SelectedRowCount"
                            Text="{Binding SelectedRowCountText}" />
                 <Button Padding="10,3"
@@ -186,7 +186,7 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock VerticalAlignment="Center"
                                Margin="0,0,6,0"
-                               Foreground="#FF666666"
+                               Foreground="{DynamicResource Theme.Text.Muted}"
                                AutomationProperties.AutomationId="FilterSummary"
                                Text="{Binding Filter.SummaryText}" />
                     <ComboBox Width="150"
@@ -279,7 +279,7 @@
                 </StackPanel>
                 <TextBlock Grid.Row="1"
                            Margin="0,3,0,3"
-                           Foreground="#FF666666"
+                           Foreground="{DynamicResource Theme.Text.Muted}"
                            AutomationProperties.AutomationId="VisibleColumnCount"
                            Text="{Binding VisibleColumnCountText}" />
                 <ListBox Grid.Row="2"
@@ -296,7 +296,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name}" />
                                     <TextBlock Margin="6,0,0,0"
-                                               Foreground="#FF777777"
+                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                Text="{Binding Description}" />
                                 </StackPanel>
                             </CheckBox>
@@ -391,7 +391,7 @@
             <Border Grid.Column="2"
                     Width="340"
                     Margin="6,0,0,0"
-                    BorderBrush="#FFB0B0B0"
+                    BorderBrush="{DynamicResource Theme.Border}"
                     BorderThickness="1"
                     Visibility="{Binding ShowDetails, Converter={StaticResource BoolToVisibility}}">
                 <GroupBox Header="{Binding DetailHeader}" BorderThickness="0">
@@ -417,7 +417,7 @@
                                                 <TextBlock Grid.Column="1"
                                                            Margin="6,0,0,0"
                                                            HorizontalAlignment="Right"
-                                                           Foreground="#FF666666"
+                                                           Foreground="{DynamicResource Theme.Text.Muted}"
                                                            TextTrimming="CharacterEllipsis"
                                                            Text="{Binding InfoText}" />
                                             </Grid>
@@ -425,7 +425,7 @@
                                                     Height="{Binding PanelHeight}"
                                                     Margin="0,6,0,0"
                                                     Background="{StaticResource CheckerBrush}"
-                                                    BorderBrush="#FFAFAFAF"
+                                                    BorderBrush="{DynamicResource Theme.Border}"
                                                     BorderThickness="1">
                                                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                                               VerticalScrollBarVisibility="Auto">
@@ -465,7 +465,7 @@
                                                     <TextBlock FontWeight="SemiBold"
                                                                Text="{Binding Label}" />
                                                     <TextBlock Margin="6,0,0,0"
-                                                               Foreground="#FF777777"
+                                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                                Text="{Binding FieldCountText}" />
                                                 </StackPanel>
                                             </Expander.Header>

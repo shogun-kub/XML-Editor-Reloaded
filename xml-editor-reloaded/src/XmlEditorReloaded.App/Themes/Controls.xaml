@@ -422,6 +422,23 @@
         <Setter Property="Background" Value="{DynamicResource Theme.Panel.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource Theme.Text}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Theme.Border}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                        <ScrollViewer Focusable="False"
+                                      Padding="2"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="ListBoxItem">

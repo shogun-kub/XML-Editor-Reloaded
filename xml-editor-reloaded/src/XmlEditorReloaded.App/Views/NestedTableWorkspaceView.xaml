@@ -152,7 +152,7 @@
                     <TextBlock Grid.Row="1"
                                Margin="0,0,0,6"
                                FontSize="11"
-                               Foreground="#FF666666"
+                               Foreground="{DynamicResource Theme.Text.Muted}"
                                AutomationProperties.AutomationId="NestedCountText"
                                Text="{Binding RecordCountText}" />
                     <ListBox Grid.Row="2"

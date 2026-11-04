@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
                    VerticalAlignment="Center"
-                   Foreground="#FFB8860B"
+                   Foreground="{DynamicResource Theme.Warning}"
                    Text="●"
                    ToolTip="{Binding UntranslatedTooltip}"
                    Visibility="{Binding IsUntranslated, Converter={StaticResource BoolToVisibility}}" />
@@ -38,7 +38,7 @@
             <TextBlock Grid.Column="1"
                        Margin="3,0,0,0"
                        VerticalAlignment="Center"
-                       Foreground="#FFB8860B"
+                       Foreground="{DynamicResource Theme.Warning}"
                        Text="⚠"
                        Visibility="{Binding HasSourceError, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
@@ -79,7 +79,7 @@
         <TextBlock Grid.Column="3"
                    Margin="6,0,0,0"
                    VerticalAlignment="Center"
-                   Foreground="#FF8B6F00"
+                   Foreground="{DynamicResource Theme.Warning}"
                    AutomationProperties.AutomationId="{Binding CounterAutomationId}"
                    Visibility="{Binding ShowCharacterCounter, Converter={StaticResource BoolToVisibility}}">
             <TextBlock.Text>

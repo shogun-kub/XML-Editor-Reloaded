@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.LookupUsageWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.LookupUsageWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -49,7 +49,7 @@
             </DataGrid>
             <TextBlock HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Foreground="#FF666666"
+                       Foreground="{DynamicResource Theme.Text.Muted}"
                        AutomationProperties.AutomationId="LookupUsageEmptyText"
                        Text="{Binding EmptyText}"
                        Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}" />

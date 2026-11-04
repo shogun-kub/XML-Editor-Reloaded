@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.DatasetWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.DatasetWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -67,7 +67,7 @@
 
                     <TextBlock Grid.Row="2"
                                Margin="0,6,0,0"
-                               Foreground="#FF666666"
+                               Foreground="{DynamicResource Theme.Text.Muted}"
                                TextWrapping="Wrap"
                                AutomationProperties.AutomationId="DatasetValidationNote"
                                Text="{Binding ValidationNoteText}"
@@ -135,7 +135,7 @@
                         </DataGrid>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Foreground="#FF666666"
+                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                    AutomationProperties.AutomationId="DatasetValidationEmptyText"
                                    Text="{Binding EmptyText}"
                                    Visibility="{Binding IsValidationEmpty, Converter={StaticResource BoolToVisibility}}" />
@@ -143,7 +143,7 @@
 
                     <TextBlock Grid.Row="5"
                                Margin="0,6,0,0"
-                               Foreground="#FF666666"
+                               Foreground="{DynamicResource Theme.Text.Muted}"
                                TextWrapping="Wrap"
                                Text="{Binding ValidationHintText}" />
                 </Grid>
@@ -208,7 +208,7 @@
 
                     <TextBlock Grid.Row="2"
                                Margin="0,6,0,0"
-                               Foreground="#FF666666"
+                               Foreground="{DynamicResource Theme.Text.Muted}"
                                TextWrapping="Wrap"
                                AutomationProperties.AutomationId="DatasetSearchNote"
                                Text="{Binding SearchNoteText}"
@@ -248,7 +248,7 @@
                         </DataGrid>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Foreground="#FF666666"
+                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                    AutomationProperties.AutomationId="DatasetSearchEmptyText"
                                    Text="{Binding SearchEmptyText}"
                                    Visibility="{Binding IsSearchEmpty, Converter={StaticResource BoolToVisibility}}" />
@@ -263,7 +263,7 @@
                                 Command="{Binding OpenHitCommand}" />
                         <TextBlock Margin="6,0,0,0"
                                    VerticalAlignment="Center"
-                                   Foreground="#FF666666"
+                                   Foreground="{DynamicResource Theme.Text.Muted}"
                                    TextWrapping="Wrap"
                                    Text="{Binding SearchHintText}" />
                     </StackPanel>

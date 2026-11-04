@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.EnemyAmmoWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.EnemyAmmoWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,7 +25,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0"
-                   Foreground="#FF555555"
+                   Foreground="{DynamicResource Theme.Text.Muted}"
                    TextWrapping="Wrap"
                    Text="{Binding HintText}" />
 
@@ -35,14 +35,14 @@
                       Visibility="{Binding HasWarnings, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Foreground="#FFB03030" TextWrapping="Wrap" Text="{Binding}" />
+                    <TextBlock Foreground="{DynamicResource Theme.Danger}" TextWrapping="Wrap" Text="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
         <Border Grid.Row="2"
                 Margin="0,6,0,0"
-                BorderBrush="#FFB0B0B0"
+                BorderBrush="{DynamicResource Theme.Border}"
                 BorderThickness="1">
             <ScrollViewer HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto">
@@ -68,7 +68,7 @@
                                                 <StackPanel Width="94" Margin="3,0">
                                                     <TextBlock FontSize="10"
                                                                Margin="0,0,0,3"
-                                                               Foreground="#FF777777"
+                                                               Foreground="{DynamicResource Theme.Text.Muted}"
                                                                Text="{Binding FieldLabel}"
                                                                ToolTip="{Binding FieldName}" />
                                                     <views:RelationPicker RelationData="{Binding Relation}"
@@ -88,7 +88,7 @@
 
         <TextBlock Grid.Row="3"
                    Margin="0,6,0,0"
-                   Foreground="#FF555555"
+                   Foreground="{DynamicResource Theme.Text.Muted}"
                    TextWrapping="Wrap"
                    Text="{Binding StatusText}" />
 

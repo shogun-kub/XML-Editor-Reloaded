@@ -1,4 +1,4 @@
-<Window x:Class="XmlEditorReloaded.App.Views.AboutWindow"
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Foreground="#FF555555" Margin="0,0,6,0" Text="{Binding VersionLabel}" />
+            <TextBlock Foreground="{DynamicResource Theme.Text.Muted}" Margin="0,0,6,0" Text="{Binding VersionLabel}" />
             <TextBlock Grid.Column="1"
                        AutomationProperties.AutomationId="AboutVersionText"
                        Text="{Binding VersionText}" />
@@ -49,7 +49,7 @@
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Foreground="#FF555555"
+            <TextBlock Foreground="{DynamicResource Theme.Text.Muted}"
                        Margin="0,0,6,0"
                        VerticalAlignment="Top"
                        Text="{Binding DescriptionLabel}" />
@@ -66,7 +66,7 @@
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Foreground="#FF555555" Margin="0,0,6,0" Text="{Binding CopyrightLabel}" />
+            <TextBlock Foreground="{DynamicResource Theme.Text.Muted}" Margin="0,0,6,0" Text="{Binding CopyrightLabel}" />
             <TextBlock Grid.Column="1"
                        TextWrapping="Wrap"
                        Text="{Binding CopyrightText}" />
