@@ -168,9 +168,30 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnTableTreePreviewKeyDown(object sender, KeyEventArgs e)
+    /// <summary>
+    /// Opens a table leaf on double-click, matching the flat table list. Folder double-clicks keep
+    /// their normal expand/collapse behavior.
+    /// </summary>
+    private void OnTableTreeItemDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        if (DataContext is not MainViewModel viewModel
+            || e.ChangedButton != MouseButton.Left
+            || sender is not TreeViewItem { DataContext: TableTreeItem { Table: { } table } })
+        {
+            return;
+        }
+
+        viewModel.SelectedTable = table;
+        if (viewModel.OpenTableCommand.CanExecute(null))
+        {
+            viewModel.OpenTableCommand.Execute(null);
+        }
+
+        e.Handled = true;
+    }
+
+    private void OnTableTreePreviewKeyDown(object sender, KeyEventArgs e)
+    {        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
         {
             TableTreeFilterBox.Focus();
             TableTreeFilterBox.SelectAll();

@@ -51,11 +51,11 @@ internal sealed class TableTreeScenario : SmokeScenario
 
         var weapons = TreeItems(tree).First(item => item.ReadName() == "Weapons");
         weapons.SelectItem();
-        window.WaitById("OpenTableButton").InvokeButton();
+        NativeInput.DoubleClick(weapons);
         ScenarioUi.WaitForEditorStatus(
             context,
             text => text == context.Strings.Get("EditorReady"),
-            "Items.Weapons открыт из дерева");
+            "Items.Weapons открыт двойным щелчком из дерева");
         ScenarioUi.WaitForEditorTabCount(window, 1);
 
         var find = window.WaitById("TableTreeFindButton");
