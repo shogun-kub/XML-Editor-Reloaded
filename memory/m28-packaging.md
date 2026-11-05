@@ -31,9 +31,11 @@ THIRD-PARTY-NOTICES/licenses/start-portable.cmd и пишет ZIP + `.sha256` в
 создаёт GitHub release; версия тега должна совпасть с props.
 
 **Проверка.** Build 0/0; release-прогон: 726 тестов (App 265, Core 62, Data 97, Imaging 24, Xml 278);
-UI-smoke S81 против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS (About `1.0.0`, RU/EN,
-S50: 504 файла `References/` не изменены). S81 иногда теряет синтетический Enter при повторном
-открытии About; сценарий теперь повторяет клавишу и проверяет исчезновение окна.
+UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104
+(About `1.0.0`, RU/EN; S68: переход из валидации; S66: editable lookup-combo; S50: 504 файла
+`References/` не изменены). S81 иногда теряет синтетический Enter при повторном открытии About;
+сценарий повторяет клавишу и проверяет исчезновение окна. S66 читал editable lookup-combo через
+`SelectionPattern` и получал пустую строку до первого выбора; добавлен `Ui.ReadComboText`.
 
 **Осталось за release-gate:** полный 98-сценарный UI-smoke, ручная перепроверка v5 S22/S53/S74,
 ветка ошибки сохранения S13; кодовая подпись и установщик не входят в M28.

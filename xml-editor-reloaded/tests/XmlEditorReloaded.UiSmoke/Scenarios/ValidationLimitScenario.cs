@@ -34,7 +34,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         var row = WaitForRow(grid, "22");
 
         var classCombo = DetailsUi.ShowField(context, grid, row, "lbeClass");
-        var classBefore = classCombo.ReadComboSelection();
+        var classBefore = ReadClassDisplay(classCombo);
         context.Recorder.Check(
             "lbeClass показывает Combat Pack",
             classBefore.Contains("Combat Pack", StringComparison.Ordinal),
@@ -51,7 +51,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         Ui.WaitUntil(
             () => window.WaitById("SaveButton").IsEnabled(),
             "смена класса сделала таблицу грязной");
-        var classAfter = DetailsUi.ShowField(context, grid, row, "lbeClass").ReadComboSelection();
+        var classAfter = ReadClassDisplay(DetailsUi.ShowField(context, grid, row, "lbeClass"));
         context.Recorder.Check(
             "lbeClass изменён на Thigh Pack",
             classAfter.Contains("Thigh Pack", StringComparison.Ordinal),
@@ -94,7 +94,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         Ui.WaitUntil(
             () => !window.WaitById("SaveButton").IsEnabled(),
             "отмена вернула таблицу в чистое состояние");
-        var restored = DetailsUi.ShowField(context, grid, row, "lbeClass").ReadComboSelection();
+        var restored = ReadClassDisplay(DetailsUi.ShowField(context, grid, row, "lbeClass"));
         context.Recorder.Check(
             "Undo вернул класс Combat Pack",
             restored.Contains("Combat Pack", StringComparison.Ordinal),
@@ -103,6 +103,12 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
             "Проверка и Undo не изменили XML",
             SaveDirtyTabScenario.HashFile(file) == hashBefore,
             null);
+    }
+
+    private static string ReadClassDisplay(AutomationElement combo)
+    {
+        var selection = combo.ReadComboSelection();
+        return string.IsNullOrWhiteSpace(selection) ? combo.ReadComboText() : selection;
     }
 
     private static AutomationElement WaitForRow(AutomationElement grid, string key) =>

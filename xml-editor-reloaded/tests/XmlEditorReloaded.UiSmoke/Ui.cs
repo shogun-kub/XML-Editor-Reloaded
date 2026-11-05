@@ -308,6 +308,26 @@ internal static class Ui
     }
 
     /// <summary>
+    /// Reads the text shown by an editable combo box without expanding it. Selection patterns are not
+    /// reliable for a combo whose text is bound directly instead of selecting an item.
+    /// </summary>
+    /// <param name="combo">Combo box.</param>
+    /// <returns>Visible text, or an empty string.</returns>
+    public static string ReadComboText(this AutomationElement combo)
+    {
+        var value = combo.ReadValue();
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        var editor = combo.FindFirst(
+            TreeScope.Descendants,
+            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+        return editor?.ReadValue() ?? string.Empty;
+    }
+
+    /// <summary>
     /// Reads the visible text of the selected item of a combo box. The automation name of a WPF combo box
     /// with an item template is empty, so the selected item element is read instead.
     /// </summary>
