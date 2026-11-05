@@ -43,7 +43,7 @@
 
 | Тема | Файл | О чём |
 |---|---|---|
-| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M28 готовы, автогейты M23b–M27c пройдены, B1–B2 закрыты, 726 тестов, UI-smoke A–G + S51–S104, ручной smoke принят; M28 portable release; roadmap M18–M28 закрыт |
+| Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M28 готовы, автогейты M23b–M27c пройдены, B1–B2 закрыты, 726 тестов, полный UI-smoke 99/99, ручной smoke принят; M28 portable release; roadmap M18–M28 закрыт |
 | Упаковка и релиз | [memory/m28-packaging.md](memory/m28-packaging.md) | M28: версия 1.0.0, иконка, self-contained win-x64, portable ZIP/SHA-256, GLWTPL, release-скрипт, CI/release workflow |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |

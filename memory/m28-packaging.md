@@ -19,7 +19,7 @@ metadata:
 `-Version` требует совпадения, прогоняет `test.ps1 -Configuration Release`, публикует
 self-contained `win-x64` (не single-file, не trimmed), копирует README/USER-GUIDE/CHANGELOG/LICENSE/
 THIRD-PARTY-NOTICES/licenses/start-portable.cmd и пишет ZIP + `.sha256` в `out/release/`.
-Пакет 1.0.0: 425 файлов, 64,3 МБ, SHA-256 `4bbc586feebc7381a1607fa3e9609a3fc7a4bd054f50d088d6e2ecc298dc077c`.
+Пакет 1.0.0: 425 файлов, 64,3 МБ, SHA-256 `3121d5f5a0973114e90e0e8f9f09f229cd6d9fe86a2f522d33df8faf3014d097`.
 `-SkipTests` — только для уже проверенной сборки.
 
 **Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
@@ -37,5 +37,6 @@ UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS �
 сценарий повторяет клавишу и проверяет исчезновение окна. S66 читал editable lookup-combo через
 `SelectionPattern` и получал пустую строку до первого выбора; добавлен `Ui.ReadComboText`.
 
-**Осталось за release-gate:** полный 98-сценарный UI-smoke, ручная перепроверка v5 S22/S53/S74,
-ветка ошибки сохранения S13; кодовая подпись и установщик не входят в M28.
+**Полный UI-smoke (2026-11-05):** 99/99 PASS (98 автоматических + S50), 0 failed. Остались ручная
+перепроверка v5 S04/S22/S53/S74 и ветка ошибки сохранения S13; кодовая подпись и установщик не
+входят в M28.

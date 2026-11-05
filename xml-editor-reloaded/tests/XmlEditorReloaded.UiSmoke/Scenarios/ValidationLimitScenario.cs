@@ -34,7 +34,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         var row = WaitForRow(grid, "22");
 
         var classCombo = DetailsUi.ShowField(context, grid, row, "lbeClass");
-        var classBefore = ReadClassDisplay(classCombo);
+        var classBefore = classCombo.ReadComboDisplay();
         context.Recorder.Check(
             "lbeClass показывает Combat Pack",
             classBefore.Contains("Combat Pack", StringComparison.Ordinal),
@@ -51,7 +51,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         Ui.WaitUntil(
             () => window.WaitById("SaveButton").IsEnabled(),
             "смена класса сделала таблицу грязной");
-        var classAfter = ReadClassDisplay(DetailsUi.ShowField(context, grid, row, "lbeClass"));
+        var classAfter = DetailsUi.ShowField(context, grid, row, "lbeClass").ReadComboDisplay();
         context.Recorder.Check(
             "lbeClass изменён на Thigh Pack",
             classAfter.Contains("Thigh Pack", StringComparison.Ordinal),
@@ -94,7 +94,7 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
         Ui.WaitUntil(
             () => !window.WaitById("SaveButton").IsEnabled(),
             "отмена вернула таблицу в чистое состояние");
-        var restored = ReadClassDisplay(DetailsUi.ShowField(context, grid, row, "lbeClass"));
+        var restored = DetailsUi.ShowField(context, grid, row, "lbeClass").ReadComboDisplay();
         context.Recorder.Check(
             "Undo вернул класс Combat Pack",
             restored.Contains("Combat Pack", StringComparison.Ordinal),
@@ -103,12 +103,6 @@ internal sealed class LbeClassLimitScenario : SmokeScenario
             "Проверка и Undo не изменили XML",
             SaveDirtyTabScenario.HashFile(file) == hashBefore,
             null);
-    }
-
-    private static string ReadClassDisplay(AutomationElement combo)
-    {
-        var selection = combo.ReadComboSelection();
-        return string.IsNullOrWhiteSpace(selection) ? combo.ReadComboText() : selection;
     }
 
     private static AutomationElement WaitForRow(AutomationElement grid, string key) =>
@@ -745,7 +739,7 @@ internal sealed class ValidationUndoScenario : SmokeScenario
         window.WaitById("UndoButton").InvokeButton();
         Ui.WaitUntil(
             () => DetailsUi.ShowField(context, grid, row, "lbeClass")
-                .ReadComboSelection()
+                .ReadComboDisplay()
                 .Contains("Combat Pack", StringComparison.Ordinal),
             "Undo вернул Combat Pack");
         context.Recorder.Check(
@@ -756,7 +750,7 @@ internal sealed class ValidationUndoScenario : SmokeScenario
         window.WaitById("RedoButton").InvokeButton();
         Ui.WaitUntil(
             () => DetailsUi.ShowField(context, grid, row, "lbeClass")
-                .ReadComboSelection()
+                .ReadComboDisplay()
                 .Contains("Thigh Pack", StringComparison.Ordinal),
             "Redo вернул Thigh Pack");
         context.Recorder.Check(

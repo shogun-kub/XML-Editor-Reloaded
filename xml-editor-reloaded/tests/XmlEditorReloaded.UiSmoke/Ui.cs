@@ -328,6 +328,18 @@ internal static class Ui
     }
 
     /// <summary>
+    /// Reads the display text of a combo box, preferring the selected item and falling back to the
+    /// editable text. Some detail lookup combos show a name without selecting an item.
+    /// </summary>
+    /// <param name="combo">Combo box.</param>
+    /// <returns>Display text, or an empty string.</returns>
+    public static string ReadComboDisplay(this AutomationElement combo)
+    {
+        var selection = combo.ReadComboSelection();
+        return string.IsNullOrWhiteSpace(selection) ? combo.ReadComboText() : selection;
+    }
+
+    /// <summary>
     /// Reads the visible text of the selected item of a combo box. The automation name of a WPF combo box
     /// with an item template is empty, so the selected item element is read instead.
     /// </summary>

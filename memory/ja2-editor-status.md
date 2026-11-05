@@ -35,8 +35,8 @@ all и «Find in tree» с очисткой фильтра; S100 — PASS на v
 поиска и перехода. M28 добавил версию `1.0.0`, иконку, self-contained publish `win-x64`, portable ZIP
 с SHA-256, README/руководство/changelog, лицензию GLWTPL, portable launcher и CI/release workflow;
 release-скрипт прогоняет тесты и собирает пакет. S81 против опубликованного exe — PASS, S50 без
-изменений в `References/`. Полный 98-сценарный UI-smoke и ручная перепроверка v5 S22/S53/S74, а также
-ветка ошибки сохранения S13 остаются отдельным release-gate.
+изменений в `References/`. Полный UI-smoke — 99/99 PASS (98 автоматических + S50) 2026-11-05.
+Остались ручная перепроверка v5 S04/S22/S53/S74 и ветка ошибки сохранения S13.
 F0–F9 закрыты 2026-10-30 (`MANUAL-SMOKE-FIX-PLAN.md`); выпадающие значения фильтров и массовой
 правки (B1–B2) реализованы 2026-11-03 через `AllowedValueOption` и editable ComboBox. Детали
 раннера и UIA-грабли — [[ja2-editor-ui-smoke]], M24a —

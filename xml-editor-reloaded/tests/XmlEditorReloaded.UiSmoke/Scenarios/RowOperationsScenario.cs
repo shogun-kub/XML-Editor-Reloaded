@@ -31,20 +31,18 @@ internal sealed class RowOperationsScenario : SmokeScenario
 
         window.WaitById("AddRowButton").InvokeButton();
         WaitForRowCount(window, 24);
-        var added = context.Strings.Format("EditorRowAdded", "24");
-        ScenarioUi.WaitForEditorStatus(context, text => text == added, "статус добавления записи");
-        context.Recorder.Check("Новая запись получает следующий ключ", true, added);
-
         grid.ScrollToBottom();
+        var addedKey = grid.Cell(23, 0).ReadName();
+        context.Recorder.Check("Новая запись получает следующий ключ", addedKey == "24", addedKey);
+
         grid.EditCell(23, 1, "Smoke added row");
         Ui.WaitUntil(() => grid.Cell(23, 1).ReadName() == "Smoke added row", "имя новой записи записано");
 
         window.WaitById("DuplicateRowButton").InvokeButton();
         WaitForRowCount(window, 25);
-        var duplicated = context.Strings.Format("EditorRowDuplicated", "24", "25");
-        ScenarioUi.WaitForEditorStatus(context, text => text == duplicated, "статус дублирования записи");
-        context.Recorder.Check("Дубликат получает новый ключ", true, duplicated);
         grid.ScrollToBottom();
+        var duplicateKey = grid.Cell(24, 0).ReadName();
+        context.Recorder.Check("Дубликат получает новый ключ", duplicateKey == "25", duplicateKey);
         context.Recorder.Check(
             "Дубликат содержит имя исходной записи",
             grid.Cell(24, 1).ReadName() == "Smoke added row",

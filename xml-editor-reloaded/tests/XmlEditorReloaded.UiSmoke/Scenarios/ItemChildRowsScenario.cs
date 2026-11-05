@@ -123,6 +123,10 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
             TimeSpan.FromSeconds(20));
         context.Recorder.Check("Удаление убирает строку", true);
 
+        Ui.WaitUntil(
+            () => window.WaitById("ItemUndoButton").IsEnabled(),
+            "Undo доступен после удаления",
+            TimeSpan.FromSeconds(20));
         window.WaitById("ItemUndoButton").InvokeButton();
         Ui.WaitUntil(
             () => grid.RowCount() == 28

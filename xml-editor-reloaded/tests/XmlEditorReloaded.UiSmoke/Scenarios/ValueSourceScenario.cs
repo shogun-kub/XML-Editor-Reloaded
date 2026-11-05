@@ -37,14 +37,14 @@ internal sealed class RobotSkillGrantScenario : SmokeScenario
         WorkspaceUi.ExpandAll(window.WaitById("ItemTabs"));
 
         var targeting = window.WaitById("RobotTargetingSkillGrant");
-        var targetingValue = targeting.ReadComboSelection();
+        var targetingValue = targeting.ReadComboDisplay();
         context.Recorder.Check(
             "RobotTargetingSkillGrant показывает NoTrait",
             targetingValue.Contains("NoTrait", StringComparison.Ordinal),
             $"выбрано: «{targetingValue}»");
 
         var utility = window.WaitById("RobotUtilitySkillGrant");
-        var utilityValue = utility.ReadComboSelection();
+        var utilityValue = utility.ReadComboDisplay();
         context.Recorder.Check(
             "RobotUtilitySkillGrant показывает NoTrait",
             utilityValue.Contains("NoTrait", StringComparison.Ordinal),
@@ -56,7 +56,7 @@ internal sealed class RobotSkillGrantScenario : SmokeScenario
             $"вариантов: {optionCount}");
 
         var chassis = window.WaitById("RobotChassisSkillGrant");
-        var chassisValue = chassis.ReadComboSelection();
+        var chassisValue = chassis.ReadComboDisplay();
         context.Recorder.Check(
             "RobotChassisSkillGrant показывает NoTrait",
             chassisValue.Contains("NoTrait", StringComparison.Ordinal),
@@ -64,7 +64,7 @@ internal sealed class RobotSkillGrantScenario : SmokeScenario
 
         WorkspaceUi.SelectItem(context, "1697", "Radio Set");
         utility = WorkspaceUi.ShowField(context, "RobotUtilitySkillGrant");
-        var radioValue = utility.ReadComboSelection();
+        var radioValue = utility.ReadComboDisplay();
         context.Recorder.Check(
             "У Radio Set RobotUtilitySkillGrant показывает RadioOperator",
             radioValue.Contains("RadioOperator", StringComparison.Ordinal),
