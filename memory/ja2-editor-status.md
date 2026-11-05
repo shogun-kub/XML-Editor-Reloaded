@@ -35,7 +35,8 @@ all и «Find in tree» с очисткой фильтра; S100 — PASS на v
 поиска и перехода. M28 добавил версию `1.0.0`, иконку, self-contained publish `win-x64`, portable ZIP
 с SHA-256, README/руководство/changelog, лицензию GLWTPL, portable launcher и CI/release workflow;
 release-скрипт прогоняет тесты и собирает пакет. S81 против опубликованного exe — PASS, S50 без
-изменений в `References/`. Полный UI-smoke — 99/99 PASS (98 автоматических + S50) 2026-11-05.
+изменений в `References/`. Полный UI-smoke — 99/99 PASS (98 автоматических + S50) 2026-11-05. Финальный automated gate
+2026-11-05: corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9 на каждом корпусе.
 Остались ручная перепроверка v5 S04/S22/S53/S74 и ветка ошибки сохранения S13.
 F0–F9 закрыты 2026-10-30 (`MANUAL-SMOKE-FIX-PLAN.md`); выпадающие значения фильтров и массовой
 правки (B1–B2) реализованы 2026-11-03 через `AllowedValueOption` и editable ComboBox. Детали
