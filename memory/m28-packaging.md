@@ -26,6 +26,11 @@ Framework-dependent требует .NET 10 Desktop Runtime x64; функция �
 `coreclr.dll`/`hostfxr.dll`/`hostpolicy.dll` в его publish. `-SkipTests` — только для уже
 проверенной сборки.
 
+**Проверка распакованных ZIP (2026-11-06).** Оба архива распакованы после сверки checksums;
+S01 + обязательный S50 — 2/2 для self-contained и framework-dependent. `start-portable.cmd` из
+framework-dependent пакета создал `data` и `metadata.sqlite` с путём рядом с приложением
+(`XER_APP_DATA`), запись в `References/` не было.
+
 **Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
 `THIRD-PARTY-NOTICES.md`, `licenses/MIT.txt`, `licenses/Apache-2.0.txt`. `start-portable.cmd`
 задаёт `XER_APP_DATA=%~dp0data`, чтобы настройки/метабаза/лог оставались рядом с программой.
