@@ -36,8 +36,10 @@ framework-dependent пакета создал `data` и `metadata.sqlite` с п�
 задаёт `XER_APP_DATA=%~dp0data`, чтобы настройки/метабаза/лог оставались рядом с программой.
 
 **CI.** `.github/workflows/ci.yml` — restore, Release build `-warnaserror`, тесты через `test.ps1
--NoBuild`. `.github/workflows/release.yml` — по тегу `v*` собирает оба пакета, загружает artifact
-и создаёт GitHub release с двумя ZIP и двумя `.sha256`; версия тега должна совпасть с props.
+-NoBuild` для `main`, `dev` и `release/**`; артефакты не публикует. `.github/workflows/release.yml`:
+`workflow_dispatch` из `release/<version>` собирает оба пакета и по флагу публикует pre-release
+(`pre-v<version>-<run>`); пуш финального тега `v<version>` собирает и публикует GitHub Release.
+Версия ветки/тега должна совпасть с props. Процесс — в `RELEASING.md`.
 
 **Проверка.** Build 0/0; release-прогон: 726 тестов (App 265, Core 62, Data 97, Imaging 24, Xml 278);
 UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104;

@@ -9,6 +9,7 @@ libraries, and the WPF application is the only frontend.
 ```
 JA2_1.13 Tools/
 ├── AGENTS.md                        # Rules for AI assistants
+├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
 ├── PROJECT-STRUCTURE.md             # This document
@@ -21,7 +22,7 @@ JA2_1.13 Tools/
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
-├── .github/workflows/               # CI build/test and tag-driven release
+├── .github/workflows/               # CI build/test; manual pre-release and tag final release
 ├── util-scripts/                    # Build+test, release packaging and `.tmp` cleanup
 ├── References/                      # Read-only reference projects and game data (not in git)
 ├── out/                             # Build output, publish and release ZIPs (not in git)
@@ -159,7 +160,23 @@ the workspace starts at low integrity and cannot write `%APPDATA%` (`SQLite erro
 
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 
-## Release
+## Branches and releases
+
+- `main` is the released branch. It only receives merge commits from `release/<version>`.
+- `dev` is the active development branch. `.github/workflows/ci.yml` runs build and tests for
+  `dev`, `main` and `release/**`; it never uploads release artifacts.
+- `release/<version>` is cut from `dev` when a release is planned. Its `Directory.Build.props`
+  version must match the branch name. Changes are cherry-picked from `dev` or made in place.
+- A manual `workflow_dispatch` run of `.github/workflows/release.yml` on `release/<version>`
+  builds both packages; setting `publish_prerelease` publishes them as a GitHub pre-release
+  (`pre-v<version>-<run>`).
+- The final release merges the release branch into both `dev` and `main`, deletes the branch, and
+  creates an annotated `v<version>` tag on `main`. Pushing that tag runs the final release build
+  and publishes both archives and checksums.
+
+The detailed commands are in `RELEASING.md`.
+
+## Release script
 
 ```sh
 pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
@@ -169,8 +186,6 @@ The script validates the version in `Directory.Build.props`, runs the xUnit suit
 self-contained and framework-dependent `win-x64` builds, stages the same release documents and the
 portable launcher into each package, and writes both ZIPs plus separate SHA-256 files to
 `out/release/`. `-SkipTests` is only for an already verified build.
-`.github/workflows/release.yml` runs the same script for tags matching `v*` and publishes both
-archives and checksums to a GitHub release when the repository has a remote.
 
 ## Conventions
 

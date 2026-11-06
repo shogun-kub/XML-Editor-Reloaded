@@ -45,6 +45,7 @@
 |---|---|---|
 | Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M28 готовы, автогейты M23b–M27c пройдены, B1–B2 закрыты, 726 тестов, полный UI-smoke 99/99, ручной smoke принят; M28 portable release; roadmap M18–M28 закрыт |
 | Упаковка и релиз | [memory/m28-packaging.md](memory/m28-packaging.md) | M28: версия 1.0.0, иконка, self-contained + framework-dependent win-x64, два portable ZIP/SHA-256, GLWTPL, release-скрипт, CI/release workflow |
+| Ветки и релизы | [memory/release-branching.md](memory/release-branching.md) | `main` только релизы, `dev` разработка, `release/<version>` стабилизация, manual pre-release, финальный merge + тег |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |
 | Round-trip XML | [memory/ja2-editor-xml-roundtrip.md](memory/ja2-editor-xml-roundtrip.md) | Байтовый патчинг, нормализация `XmlWriter`, структурный патчинг, editing API |
 | Метаданные | [memory/ja2-editor-metadata.md](memory/ja2-editor-metadata.md) | Схема/seed SQLite, валидация, `ColumnHints` vs `Columns`, границы min/max, флаги |

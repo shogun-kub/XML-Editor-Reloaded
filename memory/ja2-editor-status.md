@@ -11,7 +11,9 @@ metadata:
 corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9, UI-smoke 99/99; маркер
 `M23: legacy functional parity gate` поставлен 2026-11-03 (ручной smoke: S04, S22, S53, S74 на v4;
 S83 автотест). 2026-11-06 v5-колонки S04/S22/S53 и ветка ошибки S13 — PASS, S74 — N/A
-(отдельной сетки нет); baseline unchanged.
+(отдельной сетки нет); baseline unchanged. 1.0.0 выпущен; с 2026-11-06 работа идёт в `dev`,
+`main` — только релизы, стабилизация — `release/<version>`; pre-release вручную, финал — merge
+в `dev`/`main` и тег `v<version>`. См. [[release-branching]] и `RELEASING.md`.
 M24a добавил `NestedTableWorkspaceViewModel` для `Map.Cities`/`Map.FacilityTypes`, resolved nested
 primary path, root singleton `COUNTRY`, `ASSIGNMENT` и overlay tooltip; UI-smoke S93 — PASS на v4.
 M24b добавил структурные `ASSIGNMENT` (add/delete), повторяемые блоки `PRODUCTIONLINE`, списки

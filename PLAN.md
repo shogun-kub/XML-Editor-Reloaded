@@ -8,6 +8,12 @@
 
 M28 добавляет версию `1.0.0`, иконку, self-contained и framework-dependent publish `win-x64`, два portable ZIP с отдельными SHA-256, README, руководство пользователя, changelog, лицензию GLWTPL, portable launcher и CI/release workflow; release-скрипт сам прогоняет тесты и собирает оба пакета.
 
+**Ветвление (2026-11-06, после релиза 1.0.0):** `main` — только стабильные релизы, `dev` —
+активная разработка, `release/<version>` — стабилизация. CI для `main`/`dev`/`release/**` делает
+только build и tests, без артефактов. Pre-release запускается вручную из release-ветки; финальный
+релиз — merge в `dev` и `main`, удаление release-ветки и annotated-тег `v<version>` на `main`.
+Подробности и команды — в `RELEASING.md`.
+
 **Реализовано:** датасеты и schema-grid, lossless round-trip/сохранение, детали и STI, lookup/flag-редакторы, undo/redo, оверлеи, сравнение v4↔v5 по структуре и значениям, relation pickers, item/merc/shopkeeper workspaces, вспомогательные таблицы, multi-dataset copy с remap, settings и безопасное закрытие, отдельные редакторы `Map.Cities`/`Map.FacilityTypes` с вложенными структурами и singleton-полями, проверка всего датасета одним отчётом, глобальный поиск по таблицам и оверлеям, управление значениями справочников и защита используемых значений. Валидация предупреждает о границах legacy-спиннеров, группах флагов, карманах LBE и битах маски без имени, ничего не обнуляя; lookup-id и маски `Flags` 64-битные; Images показывает кадры типа, границы индекса и live-миниатюры; shopkeeper адресует строки дилера точной записью. Ошибки и preflight пишутся в лог с путями и причиной. Подробности — в коде, тестах и чек-листе.
 
 **Метаданные:** 173 таблицы, 1042 `TableRelations`, 1981 `ColumnHint` (123 с границами min/max, 23 с `ComparisonField`), 46 declaring-колонок (23 lookup-таблицы), 25 правил видимости, 2 `SymmetricKeyPairs`, 1 `ExclusiveFlagGroups` (тип пусковой), 5 `ClassValueLimits` (класс LBE → карманы), 24 фиксированных lookup-значения, 7 `ColumnTextLimits` (лимиты ввода и счётчики символов, с китайским переопределением), 18 миграций, 7 языков, 64-битные lookup ID, 8 битовых lookup-таблиц. Известные дефекты данных: два в v5, дубликат дилера, burst-звуки item 1761 и `mSmall1Status=600` (mIndex 237, kit 5) — единственное ожидаемое предупреждение диапазона.
