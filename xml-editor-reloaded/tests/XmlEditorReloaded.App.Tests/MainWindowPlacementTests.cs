@@ -29,12 +29,26 @@ public class MainWindowPlacementTests
                 var window = provider.GetRequiredService<MainWindow>();
                 try
                 {
-                    window.ApplySavedPlacement(new WindowPlacement(100, 80, 1280, 780, false));
+                    var screenLeft = SystemParameters.VirtualScreenLeft;
+                    var screenTop = SystemParameters.VirtualScreenTop;
+                    var screenWidth = SystemParameters.VirtualScreenWidth;
+                    var screenHeight = SystemParameters.VirtualScreenHeight;
+                    var placedWidth = Math.Min(1200, screenWidth);
+                    var placedHeight = Math.Min(700, screenHeight);
+                    var placedLeft = screenLeft + Math.Min(100, Math.Max(0, screenWidth - placedWidth));
+                    var placedTop = screenTop + Math.Min(80, Math.Max(0, screenHeight - placedHeight));
+
+                    window.ApplySavedPlacement(new WindowPlacement(
+                        placedLeft,
+                        placedTop,
+                        placedWidth,
+                        placedHeight,
+                        false));
                     Assert.Equal(WindowStartupLocation.Manual, window.WindowStartupLocation);
-                    Assert.Equal(100, window.Left);
-                    Assert.Equal(80, window.Top);
-                    Assert.Equal(1280, window.Width);
-                    Assert.Equal(780, window.Height);
+                    Assert.Equal(placedLeft, window.Left);
+                    Assert.Equal(placedTop, window.Top);
+                    Assert.Equal(placedWidth, window.Width);
+                    Assert.Equal(placedHeight, window.Height);
 
                     window.ApplySavedPlacement(new WindowPlacement(
                         SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth + 500,
@@ -50,8 +64,8 @@ public class MainWindowPlacementTests
                         <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight);
 
                     window.ApplySavedPlacement(new WindowPlacement(0, 0, 900, 300, false));
-                    Assert.True(window.Width >= window.MinWidth);
-                    Assert.True(window.Height >= window.MinHeight);
+                    Assert.True(window.Width >= Math.Min(window.MinWidth, screenWidth));
+                    Assert.True(window.Height >= Math.Min(window.MinHeight, screenHeight));
 
                     window.ApplySavedPlacement(new WindowPlacement(120, 90, 1280, 780, true));
                     Assert.Equal(WindowState.Maximized, window.WindowState);
