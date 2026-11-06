@@ -1,6 +1,6 @@
 ---
 name: m28-packaging
-description: M28 portable release — version 1.0.0, icon, self-contained win-x64 publish, ZIP with SHA-256, GLWTPL license, release script and CI/release workflows.
+description: M28 portable release — version 1.0.0, icon, self-contained and framework-dependent win-x64 publishes, ZIPs with SHA-256, GLWTPL license, release script and CI/release workflows.
 metadata:
   node_type: memory
   type: project
@@ -17,21 +17,26 @@ metadata:
 
 **Релизный скрипт.** `util-scripts/release.ps1` читает версию из `Directory.Build.props`, при
 `-Version` требует совпадения, прогоняет `test.ps1 -Configuration Release`, публикует
-self-contained `win-x64` (не single-file, не trimmed), копирует README/USER-GUIDE/CHANGELOG/LICENSE/
-THIRD-PARTY-NOTICES/licenses/start-portable.cmd и пишет ZIP + `.sha256` в `out/release/`.
-Пакет 1.0.0: 425 файлов, 64,3 МБ, SHA-256 `beb9e2a97d665a491bdb46bd514f707456967567e4852f04d4b4c2291b094f1a` (пересобран 2026-11-06 с закрытым v5-гейтом).
-`-SkipTests` — только для уже проверенной сборки.
+self-contained и framework-dependent `win-x64` (не single-file, не trimmed), копирует
+README/USER-GUIDE/CHANGELOG/LICENSE/THIRD-PARTY-NOTICES/licenses/start-portable.cmd в каждый пакет
+и пишет ZIP + `.sha256` в `out/release/`. Пакеты 1.0.0: self-contained 425 файлов, 64,3 МБ,
+SHA-256 `0daa2075cb18a31ab68a7b54e2d6ce4c8cdf0fb16631fd2026b9b74ed3c736e1`; framework-dependent
+30 файлов, 2,2 МБ, SHA-256 `8b9493e32a4c25843247c8b797e8c8f5851b6eb4d414d8384a0ac300a553d836`.
+Framework-dependent требует .NET 10 Desktop Runtime x64; функция проверяет отсутствие
+`coreclr.dll`/`hostfxr.dll`/`hostpolicy.dll` в его publish. `-SkipTests` — только для уже
+проверенной сборки.
 
 **Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
 `THIRD-PARTY-NOTICES.md`, `licenses/MIT.txt`, `licenses/Apache-2.0.txt`. `start-portable.cmd`
 задаёт `XER_APP_DATA=%~dp0data`, чтобы настройки/метабаза/лог оставались рядом с программой.
 
 **CI.** `.github/workflows/ci.yml` — restore, Release build `-warnaserror`, тесты через `test.ps1
--NoBuild`. `.github/workflows/release.yml` — по тегу `v*` собирает пакет, загружает artifact и
-создаёт GitHub release; версия тега должна совпасть с props.
+-NoBuild`. `.github/workflows/release.yml` — по тегу `v*` собирает оба пакета, загружает artifact
+и создаёт GitHub release с двумя ZIP и двумя `.sha256`; версия тега должна совпасть с props.
 
 **Проверка.** Build 0/0; release-прогон: 726 тестов (App 265, Core 62, Data 97, Imaging 24, Xml 278);
-UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104
+UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104;
+framework-dependent exe — S01 + S50 PASS 2026-11-06
 (About `1.0.0`, RU/EN; S68: переход из валидации; S66: editable lookup-combo; S50: 504 файла
 `References/` не изменены). S81 иногда теряет синтетический Enter при повторном открытии About;
 сценарий повторяет клавишу и проверяет исчезновение окна. S66 читал editable lookup-combo через

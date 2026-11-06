@@ -10,6 +10,8 @@
 ### Добавлено
 
 - Self-contained сборка `win-x64`: .NET runtime внутри архива, установка не требуется.
+- Framework-dependent сборка `win-x64`: меньше по размеру, требует .NET 10 Desktop Runtime x64.
+- Оба архива содержат одинаковые README/USER-GUIDE/CHANGELOG/LICENSE, launcher и отдельный SHA-256.
 - Portable-архив с README, руководством пользователя, changelog, лицензией и third-party notices.
 - `start-portable.cmd` для хранения настроек, layout, метабазы и лога рядом с программой.
 - SHA-256 checksum для каждого архива.
@@ -39,7 +41,8 @@
 - Полный UI-smoke: 99/99 (98 автоматических сценариев + S50), 0 ошибок.
 - Ручной v5-gate: S04/S22/S53 — PASS, S74 — N/A (отдельной сетки нет), ветка ошибки сохранения
   S13 — PASS; baseline `TableData` unchanged.
-- Self-contained publish и содержимое portable ZIP проверены release-скриптом.
+- Self-contained и framework-dependent publish, содержимое обоих ZIP и checksum проверены
+  release-скриптом.
 - Корпусные прогоны v4/v5 — 726/726, compare — 1/1, copy — 1/1, perf — 9/9 на каждом корпусе;
   они требуют локальных копий `References/` и не входят в обычный CI.
 

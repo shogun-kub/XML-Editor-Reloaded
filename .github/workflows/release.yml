@@ -29,7 +29,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Build portable package
+      - name: Build release packages
         shell: pwsh
         run: |
           if ($env:GITHUB_REF_TYPE -eq 'tag') {
@@ -57,10 +57,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = $env:GITHUB_REF_NAME
-          $zip = Get-ChildItem -LiteralPath out/release -Filter '*.zip' | Select-Object -First 1
-          $hash = Get-ChildItem -LiteralPath out/release -Filter '*.sha256' | Select-Object -First 1
-          if ($null -eq $zip -or $null -eq $hash) {
-              throw 'Release archive or checksum was not produced.'
+          $zips = @(Get-ChildItem -LiteralPath out/release -Filter '*.zip')
+          $hashes = @(Get-ChildItem -LiteralPath out/release -Filter '*.sha256')
+          if ($zips.Count -ne 2 -or $hashes.Count -ne 2) {
+              throw "Expected two release archives and two checksums; found $($zips.Count) and $($hashes.Count)."
           }
 
-          gh release create $tag $zip.FullName $hash.FullName --title "XML Editor Reloaded $tag" --generate-notes
+          $assets = @($zips.FullName) + @($hashes.FullName)
+          gh release create $tag @assets --title "XML Editor Reloaded $tag" --generate-notes

@@ -10,15 +10,23 @@
 - Установленная JA2 1.13 с каталогом `Data-1.13\TableData`.
 - Для изображений — каталоги `Data-1.13\BigItems`, `Data-1.13\Interface` и
   `Data-1.13\tilesets\0`.
+- Для варианта framework-dependent — [.NET 10 Desktop Runtime x64](https://dotnet.microsoft.com/download/dotnet/10.0).
+  Self-contained сборке runtime не нужен.
 
-Релиз поставляется как `XmlEditorReloaded-<версия>-win-x64.zip`. Устанавливать .NET не нужно:
-runtime уже внутри. Распакуйте архив в любую папку и запустите `XmlEditorReloaded.App.exe`.
+Релиз поставляется в двух вариантах. Распакуйте архив в любую папку и запустите
+`XmlEditorReloaded.App.exe`:
+
+| Архив | Что внутри |
+|---|---|
+| `XmlEditorReloaded-<версия>-win-x64.zip` | Self-contained: .NET runtime уже внутри |
+| `XmlEditorReloaded-<версия>-win-x64-framework-dependent.zip` | Только приложение; нужен .NET 10 Desktop Runtime x64 |
 
 Windows может показать SmartScreen, потому что сборка не подписана коммерческим сертификатом.
 Проверьте SHA-256 архива по файлу `.sha256`:
 
 ```powershell
 Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64-framework-dependent.zip -Algorithm SHA256
 ```
 
 ### Переносимый режим

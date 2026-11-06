@@ -21,15 +21,21 @@
 
 ## Скачать и запустить
 
-Готовый архив: `XmlEditorReloaded-<версия>-win-x64.zip` и файл `.sha256` рядом с ним.
+Два варианта, оба с файлом `.sha256` рядом:
+
+| Архив | Требования |
+|---|---|
+| `XmlEditorReloaded-<версия>-win-x64.zip` | Self-contained: .NET устанавливать не нужно |
+| `XmlEditorReloaded-<версия>-win-x64-framework-dependent.zip` | Нужен .NET 10 Desktop Runtime x64 |
 
 1. Распакуйте архив в любую папку.
 2. Запустите `XmlEditorReloaded.App.exe`.
 3. Нажмите **Обзор** и выберите каталог игры, каталог `Data-1.13` или сразу `Data-1.13\TableData`.
 4. Откройте таблицу двойным щелчком в дереве или списке.
 
-Архив содержит self-contained сборку: устанавливать .NET отдельно не нужно. Требуется Windows 10/11
-x64 и установленная игра с `Data-1.13\TableData`.
+Оба варианта требуют Windows 10/11 x64 и установленную игру с `Data-1.13\TableData`.
+Framework-dependent сборка меньше, но запускается только при установленном
+[.NET 10 Desktop Runtime x64](https://dotnet.microsoft.com/download/dotnet/10.0).
 
 Для полностью переносимого режима запускайте `start-portable.cmd`: настройки, layout, метабаза и
 лог будут лежать в подпапке `data` рядом с программой. Обычный запуск хранит их в
@@ -73,9 +79,9 @@ perf-гейты описаны в `PLAN.md`; они требуют `XER_CORPUS_D
 pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 ```
 
-Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained
-`win-x64`, складывает `README`, `USER-GUIDE`, `CHANGELOG`, лицензию и third-party notices в ZIP и
-пишет SHA-256. Результат: `out/release/`.
+Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained и
+framework-dependent `win-x64`, складывает `README`, `USER-GUIDE`, `CHANGELOG`, лицензию и
+third-party notices в каждый ZIP и пишет отдельный SHA-256. Результат: `out/release/`.
 
 ## Структура
 

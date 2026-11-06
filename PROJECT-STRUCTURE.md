@@ -45,7 +45,7 @@ xml-editor-reloaded/
 ├── LICENSE                           # GLWTPL
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts
-├── packaging/start-portable.cmd      # Portable launcher using XER_APP_DATA
+├── packaging/start-portable.cmd      # Shared portable launcher using XER_APP_DATA
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/
@@ -165,11 +165,12 @@ Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 ```
 
-The script validates the version in `Directory.Build.props`, runs the xUnit suite, publishes a
-self-contained `win-x64` build, stages the release documents and the portable launcher, and writes the
-portable ZIP plus SHA-256 to `out/release/`. `-SkipTests` is only for an already verified build.
-`.github/workflows/release.yml` runs the same script for tags matching `v*` and publishes a GitHub
-release when the repository has a remote.
+The script validates the version in `Directory.Build.props`, runs the xUnit suite, publishes
+self-contained and framework-dependent `win-x64` builds, stages the same release documents and the
+portable launcher into each package, and writes both ZIPs plus separate SHA-256 files to
+`out/release/`. `-SkipTests` is only for an already verified build.
+`.github/workflows/release.yml` runs the same script for tags matching `v*` and publishes both
+archives and checksums to a GitHub release when the repository has a remote.
 
 ## Conventions
 

@@ -33,8 +33,8 @@ all и «Find in tree» с очисткой фильтра; S100 — PASS на v
 `IEditorTab.CreateXmlSnapshot`, поиск записи по ID/ключу с выделением открывающего тега, переход из
 замечания валидации к строке, копирование и обновление; в XML-режиме скрыт весь грид-хром, включая
 специализированные item/merc/map-редакторы; S101–S104 — PASS на v4, S101 и S68 перепроверены после
-поиска и перехода. M28 добавил версию `1.0.0`, иконку, self-contained publish `win-x64`, portable ZIP
-с SHA-256, README/руководство/changelog, лицензию GLWTPL, portable launcher и CI/release workflow;
+поиска и перехода. M28 добавил версию `1.0.0`, иконку, self-contained и framework-dependent publish
+`win-x64`, два portable ZIP с SHA-256, README/руководство/changelog, лицензию GLWTPL, portable launcher и CI/release workflow;
 release-скрипт прогоняет тесты и собирает пакет. S81 против опубликованного exe — PASS, S50 без
 изменений в `References/`. Полный UI-smoke — 99/99 PASS (98 автоматических + S50) 2026-11-05. Финальный automated gate
 2026-11-05: corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9 на каждом корпусе.
