@@ -394,16 +394,34 @@ public class MainViewModelTests
         var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.True(editor.IsTranslationMode);
 
-        editor.SelectedLanguageOption = editor.LanguageOptions[0];
-        await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+        var languageChanged = new TaskCompletionSource<string?>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        void OnLanguageChanged(object? sender, string? languageCode) =>
+            languageChanged.TrySetResult(languageCode);
+
+        editor.LanguageChanged += OnLanguageChanged;
+        try
+        {
+            editor.SelectedLanguageOption = editor.LanguageOptions[0];
+            Assert.Null(await languageChanged.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+            await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+        }
+        finally
+        {
+            editor.LanguageChanged -= OnLanguageChanged;
+        }
 
         AppSettings? persisted = null;
         for (var attempt = 0; attempt < 100; attempt++)
         {
-            persisted = (await settingsStore.LoadAsync()).Data;
-            if (persisted?.ActiveLanguageCode is null)
+            var load = await settingsStore.LoadAsync();
+            if (load.IsSuccess)
             {
-                break;
+                persisted = load.Data;
+                if (persisted?.ActiveLanguageCode is null)
+                {
+                    break;
+                }
             }
 
             await Task.Delay(25);

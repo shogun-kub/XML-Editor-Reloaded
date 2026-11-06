@@ -19,6 +19,7 @@ public sealed class JsonSettingsStore : ISettingsStore
     };
 
     private readonly string _settingsPath;
+    private readonly SemaphoreSlim _fileGate = new(1, 1);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonSettingsStore"/> class.
@@ -39,6 +40,19 @@ public sealed class JsonSettingsStore : ISettingsStore
 
     /// <inheritdoc />
     public async Task<OperationResult<AppSettings>> LoadAsync(CancellationToken cancellationToken = default)
+    {
+        await _fileGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            return await LoadCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _fileGate.Release();
+        }
+    }
+
+    private async Task<OperationResult<AppSettings>> LoadCoreAsync(CancellationToken cancellationToken)
     {
         if (!File.Exists(_settingsPath))
         {
@@ -73,6 +87,20 @@ public sealed class JsonSettingsStore : ISettingsStore
 
     /// <inheritdoc />
     public async Task<OperationResult> SaveAsync(AppSettings settings, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        await _fileGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            return await SaveCoreAsync(settings, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _fileGate.Release();
+        }
+    }
+
+    private async Task<OperationResult> SaveCoreAsync(AppSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
