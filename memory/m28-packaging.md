@@ -19,7 +19,7 @@ metadata:
 `-Version` требует совпадения, прогоняет `test.ps1 -Configuration Release`, публикует
 self-contained `win-x64` (не single-file, не trimmed), копирует README/USER-GUIDE/CHANGELOG/LICENSE/
 THIRD-PARTY-NOTICES/licenses/start-portable.cmd и пишет ZIP + `.sha256` в `out/release/`.
-Пакет 1.0.0: 425 файлов, 64,3 МБ, SHA-256 `3121d5f5a0973114e90e0e8f9f09f229cd6d9fe86a2f522d33df8faf3014d097`.
+Пакет 1.0.0: 425 файлов, 64,3 МБ, SHA-256 `beb9e2a97d665a491bdb46bd514f707456967567e4852f04d4b4c2291b094f1a` (пересобран 2026-11-06 с закрытым v5-гейтом).
 `-SkipTests` — только для уже проверенной сборки.
 
 **Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
@@ -39,5 +39,5 @@ UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS �
 
 **Полный UI-smoke (2026-11-05):** 99/99 PASS (98 автоматических + S50), 0 failed. Финальный
 automated gate 2026-11-05: corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9 на каждом корпусе.
-Остались ручная перепроверка v5 S04/S22/S53/S74 и ветка ошибки сохранения S13; кодовая подпись и
-установщик не входят в M28.
+Ручной v5-gate 2026-11-06: S04/S22/S53 PASS, S74 N/A (отдельной сетки нет), S13 error branch PASS;
+baseline `out/manual-v5` unchanged. Кодовая подпись и установщик не входят в M28.

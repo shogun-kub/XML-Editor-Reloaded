@@ -120,7 +120,8 @@ isolated application-data directory, drives it through UI Automation and synthet
 visible texts with the application RESX files, and writes `report.md`/`report.json`. The reference data
 sets are copied per scenario, and `References/` is hashed before and after the run. It is not an xUnit
 project and is not executed by `test.ps1`. It covers 98 automated scenarios from the checklist,
-including S50 integrity and the M23b–M27c blocks; S04, S22, S53 and S74 need a human. It accepts
+including S50 integrity and the M23b–M27c blocks; S04, S22, S53 and S74 are manual (v4 2026-11-03;
+v5 S04/S22/S53 2026-11-06, S74 N/A). It accepts
 `--app <exe>` to run the same scenarios against a published self-contained build.
 
 ## Dependency rules

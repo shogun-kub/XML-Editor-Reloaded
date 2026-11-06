@@ -28,6 +28,7 @@ metadata:
   2026-11-02), M23b7 7/7 and M23b8 4/4, plus image S71/S72/S73/S75 4/4, S55/S57 2/2 and S83 1/1
   (with screenshots) on 2026-11-03; see `LEGACY-PARITY-REPORT.md`, «Проверка M23b (gate)». Marker
   `M23: legacy functional parity gate` is set: the user accepted the manual smoke on 2026-11-03
-  (S04, S22, S53, S74 on v4; S83 automated; v5 columns for S22/S53/S74 waived by the user).
+  (S04, S22, S53, S74 on v4; S83 automated). On 2026-11-06 the v5 columns S04/S22/S53 and the S13
+  save-error branch passed; S74 is N/A (no separate grid in the rewrite); baseline unchanged.
   See [[ja2-editor-status]],
   [[ja2-editor-grid-polish]], [[ja2-editor-item-merc]], [[ja2-editor-metadata]].

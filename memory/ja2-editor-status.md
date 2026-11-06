@@ -7,10 +7,11 @@ metadata:
   originSessionId: sess_9123e0d2-50a3-44a1-ac9f-49aedbc18523
 ---
 
-**Current status (2026-11-05):** M0–M28 завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 726 тестов,
-corpus v4/v5 600/600, compare 1/1, copy 1/1, perf 9/9, UI-smoke 98 сценариев; маркер
+**Current status (2026-11-06):** M0–M28 завершены; бэклог B1–B2 закрыт. Gate M23b пройден: сборка, 726 тестов,
+corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9, UI-smoke 99/99; маркер
 `M23: legacy functional parity gate` поставлен 2026-11-03 (ручной smoke: S04, S22, S53, S74 на v4;
-S83 автотест; колонки v5 для S22/S53/S74 не перепроверялись по решению пользователя).
+S83 автотест). 2026-11-06 v5-колонки S04/S22/S53 и ветка ошибки S13 — PASS, S74 — N/A
+(отдельной сетки нет); baseline unchanged.
 M24a добавил `NestedTableWorkspaceViewModel` для `Map.Cities`/`Map.FacilityTypes`, resolved nested
 primary path, root singleton `COUNTRY`, `ASSIGNMENT` и overlay tooltip; UI-smoke S93 — PASS на v4.
 M24b добавил структурные `ASSIGNMENT` (add/delete), повторяемые блоки `PRODUCTIONLINE`, списки
@@ -37,7 +38,8 @@ all и «Find in tree» с очисткой фильтра; S100 — PASS на v
 release-скрипт прогоняет тесты и собирает пакет. S81 против опубликованного exe — PASS, S50 без
 изменений в `References/`. Полный UI-smoke — 99/99 PASS (98 автоматических + S50) 2026-11-05. Финальный automated gate
 2026-11-05: corpus v4/v5 726/726, compare 1/1, copy 1/1, perf 9/9 на каждом корпусе.
-Остались ручная перепроверка v5 S04/S22/S53/S74 и ветка ошибки сохранения S13.
+Ручной v5-gate 2026-11-06 закрыт: S04/S22/S53 PASS, S74 N/A, S13 error branch PASS; `References/`
+не изменялись, baseline `out/manual-v5` unchanged.
 F0–F9 закрыты 2026-10-30 (`MANUAL-SMOKE-FIX-PLAN.md`); выпадающие значения фильтров и массовой
 правки (B1–B2) реализованы 2026-11-03 через `AllowedValueOption` и editable ComboBox. Детали
 раннера и UIA-грабли — [[ja2-editor-ui-smoke]], M24a —
