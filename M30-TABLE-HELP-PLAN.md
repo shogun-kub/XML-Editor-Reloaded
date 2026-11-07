@@ -507,7 +507,7 @@ Tons of Guns, disease; `ubPerPocket` — ёмкость OIV (в NIV не упр�
 читается для признака "small"); `ItemSize` = `OLD_INVENTORY_ITEM_NUMBER` — OIV-only маркер;
 NCTH-поля сгруппированы. Одобрен пользователем 2026-11-07, документ переведён в
 `reviewed`; у опциональных полей есть отдельная строка `Only used with: ...` (NCTH/NIV/Sci-Fi/
-Tons of Guns/disease).
+Tons of Guns/disease). Повторно одобрен 2026-11-07 после введения отдельной строки `Only used with`.
 
 Статус B1b (2026-11-07): созданы `Items/Weapons.md`, `Items/AmmoTypes.md`,
 `Items/AmmoStrings.md`, `Items/Explosives.md`, `Items/ExplosionData.md`; 48 + 38 + 4 + 19 + 8
@@ -515,7 +515,8 @@ Tons of Guns/disease).
 limits, lookup lists и формулы из schema-комментариев. NCTH/OCTH в `Weapons` разведены,
 `AmmoTypes` использует schema-комментарий, `Explosives`/`ExplosionData` связаны через
 `ubAnimationID`/`ubFragType`. В `Weapons` у OCTH/NCTH-полей стоит `Only used with: ...`;
-`help-check -Write` проходит (452/2985 путей), документы ждут ревью пользователем. Следующий шаг — B2.
+`help-check -Write` проходит (452/2985 путей). Одобрен пользователем 2026-11-07, документы
+переведены в `reviewed`. Следующий шаг — B2.
 
 ### B2. Items: вложения и состав
 

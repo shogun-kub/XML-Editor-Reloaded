@@ -16,7 +16,7 @@ sources:
   - Ammo type table data
   - AmmoTypes schema comment
   - Item metadata and lookup tables
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

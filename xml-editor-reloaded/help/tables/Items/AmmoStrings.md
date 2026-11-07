@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Ammo string table data
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

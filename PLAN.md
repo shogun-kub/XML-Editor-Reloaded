@@ -222,4 +222,4 @@ M32 — русская версия с глоссарием. B0 одобрен 2
 `Map/Facilities.md`) — 28 таблиц, 78 полей. `util-scripts/help-inventory.ps1` и
 `help-check.ps1` проверяют инвентарь, front matter, покрытие полей и ссылки; `-Write`
 обновляет `Contents`, `INDEX.md` и `COVERAGE.md`, `-Release` требует все 239 таблиц.
-B0 одобрен пользователем 2026-11-07. B1a (`Items/Items.md`) одобрен пользователем 2026-11-07: 254 скалярных поля и 3 контейнера, 257/257 путей, `reviewed`. B1b: 5 документов (`Weapons`, `AmmoTypes`, `AmmoStrings`, `Explosives`, `ExplosionData`), 117 путей, 452/2985 всего, ждут ревью.
+B0 одобрен пользователем 2026-11-07. B1a (`Items/Items.md`) одобрен пользователем 2026-11-07: 254 скалярных поля и 3 контейнера, 257/257 путей, `reviewed`. B1b: 5 документов (`Weapons`, `AmmoTypes`, `AmmoStrings`, `Explosives`, `ExplosionData`), 117 путей, 452/2985 всего, одобрены 2026-11-07.

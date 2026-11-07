@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a approved, B1b draft 2026-11-07; twelve documents, 34 tables, 452 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b approved 2026-11-07; twelve documents, 34 tables, 452 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -30,14 +30,14 @@ container, 257/257 путей, `status: reviewed`. В документе нет 
 диапазонов; `Values` — только code/type/metadata limits и lookup lists. Есть `Game options`
 (NCTH/OCTH, OIV/NIV, SciFi, Tons of Guns, disease); `ubPerPocket` проверен по C++:
 OIV capacity, в NIV не capacity, но читается для `small`; `ItemSize == OLD_INVENTORY_ITEM_NUMBER`
-— OIV-only marker. У опциональных полей есть отдельная строка `Only used with: ...`;
+— OIV-only marker. У опциональных полей есть отдельная строка `Only used with: ...`.
 
-**B1b (2026-11-07, draft).** Пять документов: `Items/Weapons.md` (48), `AmmoTypes.md`
+**B1b (2026-11-07, approved).** Пять документов: `Items/Weapons.md` (48), `AmmoTypes.md`
 (38), `AmmoStrings.md` (4), `Explosives.md` (19), `ExplosionData.md` (8) — 117 путей.
 `help-check -Write` проходит (452/2985); row counts и наблюдаемые диапазоны не добавлены.
 NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на schema-комментарий; связи
 `Explosives.ubAnimationID` → `ExplosionData`, `ubFragType` → `AmmoTypes`; у OCTH/NCTH-полей
-стоит `Only used with: ...`. Ждут ревью.
+стоит отдельная строка `Only used with: ...`. Одобрены 2026-11-07, `reviewed`.
 
 **Дальше.** B2 — `Attachments` (4), `AttachmentSlots` (9), `AttachmentInfo` (5),
 `AttachmentComboMerges` (23), `IncompatibleAttachments` (2), `CompatibleFaceItems` (2),

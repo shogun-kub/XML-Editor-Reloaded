@@ -16,7 +16,7 @@ sources:
   - Weapon table data
   - Weapon table schema comments
   - Item metadata and lookup tables
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

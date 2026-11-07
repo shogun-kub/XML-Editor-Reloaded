@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Explosion data table
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 
