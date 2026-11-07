@@ -451,12 +451,12 @@ updated: 2026-11-07
 | B1. Items: ядро | 6 | 371 | 6 | `Utils/XML_Items.cpp`, `Tactical/Weapons.cpp`, `XML_AmmoTypes.cpp`, `XML_AmmoStrings.cpp`, `XML_Explosive.cpp`, `XML_ExplosionData.cpp` |
 | B2. Items: вложения и состав | 12 | 90 | 12 | `XML_Attachments.cpp`, `XML_AttachmentSlots.cpp`, `XML_AttachmentInfo.cpp`, `XML_ComboMergeInfo.cpp`, `XML_IncompatibleAttachments.cpp`, `XML_CompatibleFaceItems.cpp`, `XML_Merge.cpp`, `XML_Structure*.cpp` |
 | B3. Items: снаряжение и расходники | 7 | 114 | 7 | `XML_LBEPocket.cpp`, `XML_LBEPocketPopup.cpp`, `XML_LoadBearingEquipment.cpp`, `XML_Food.cpp`, `XML_FoodOpinions.cpp`, `XML_Drugs.cpp`, `XML_RandomItem.cpp` |
-| B4. Наёмники и профили | 11 | 228 | 11 | `XML_Profiles.cpp`, `XML_MercStartingGear.cpp`, `XML_Opinions.cpp`, `XML_Qarray.cpp`, `Laptop/XML_IMPPortraits.cpp`, `XML_IMPVoices.cpp`, `XML_OldAIMArchive.cpp` |
+| B4. Наёмники и профили | 11 | 229 | 11 | `XML_Profiles.cpp`, `XML_MercStartingGear.cpp`, `XML_Opinions.cpp`, `XML_Qarray.cpp`, `Laptop/XML_IMPPortraits.cpp`, `XML_IMPVoices.cpp`, `XML_OldAIMArchive.cpp` |
 | B5. Backgrounds, сложность, болезни | 5 | 244 | 5 | `XML_Background.cpp`, `Ja2/XML_DifficultySettings.cpp`, `XML_Disease.cpp`, `XML_RandomStats.cpp`, `XML_MilitiaIndividual.cpp` |
 | B6. Карта и стратегия | 15 | 179 | 34 | `XML_FacilityTypes.cpp`, `XML_SectorNames.cpp`, `XML_SectorLoadscreens.cpp`, `XML_Minerals.cpp`, `XML_DeliveryMethods.cpp`, `XML_InteractiveTiles.cpp`, `XML_Bloodcats.cpp`, `XML_Creatures.cpp`, `XML_ExtraItems.cpp` |
 | B7. Армия, ИИ и инвентари | 14 | 238 | 117 | `XML_Army.cpp`, `XML_SoldierProfiles.cpp`, `XML_Enemy*Drops.cpp`, `XML_Enemy*Choice.cpp`, `XML_IMPItemChoices.cpp`, `XML_Merchants.cpp`, `Arms Dealer Init.cpp`, `XML_TonyInventory.cpp` |
 | B8. Laptop, UI и прочее | 18 | 112 | 19 | `Laptop/XML_Email*.cpp`, `XML_BriefingRoom.cpp`, `XML_History.cpp`, `XML_CampaignStatsEvents.cpp`, `XML_LoadScreenHints.cpp`, `XML_Layout_MainMenu.cpp`, `Editor/XML_ActionItems.cpp`, `MPXmlTeams.cpp`, `XML_Sounds.cpp`, `XML_BurstSounds.cpp`, `XML_EnemyRank.cpp`, `XML_EnemyNames.cpp`, `XML_Vehicles.cpp` |
-| **Итого** | **94** | **1654** | **239** | |
+| **Итого** | **94** | **1655** | **239** | |
 
 B0 оставил `Lookup.md` одним документом; остальные блоки считаются по семействам.
 Число документов в таблице — верхняя оценка, а не обещание.
@@ -491,7 +491,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2/B3 подготовлены, следующий шаг — B4.
+B2/B3/B4 подготовлены, следующий шаг — B5.
 
 ### B1. Items: ядро
 
@@ -548,10 +548,16 @@ enum-значения. У полей NIV стоит `Only used with: NIV`, у fo
 
 ### B4. Наёмники и профили
 
-`MercProfiles` (106), `MercStartingGear` (67), `MercOpinions`, `MercQuote`,
-`MercAvailability`, `AIMAvailability`, `FaceGear`, `RPCFacesSmall`, `IMPPortraits`,
-`IMPVoices`, `OldAIMArchive`. Отдельные подразделы: профили AIM/MERC/RPC/NPC/IMP,
-наборы снаряжения, отношения, лица.
+`MercProfiles` (106), `MercStartingGear` (67), `MercOpinions` (3), `MercQuote` (9),
+`MercAvailability` (10), `AIMAvailability` (4), `FaceGear` (3), `RPCFacesSmall` (7),
+`IMPPortraits` (12), `IMPVoices` (3), `OldAIMArchive` (5). Отдельные подразделы: профили
+AIM/MERC/RPC/NPC/IMP, наборы снаряжения, отношения, лица.
+
+Статус B4 (2026-11-07, draft): созданы 11 документов; 229 путей (плановая оценка была 228).
+Row counts и наблюдаемые диапазоны не добавлены; `Values` — enum-списки из schema-комментариев
+и типы. `MercProfiles` покрывает 106 полей, `MercStartingGear` — 67 полей с повторяющимися
+`GEARKIT`; `l*`-поля стартового снаряжения помечены `Only used with: NIV`.
+`help-check -Write` проходит (885/2985 путей), документы ждут ревью.
 
 ### B5. Backgrounds, сложность, болезни
 
