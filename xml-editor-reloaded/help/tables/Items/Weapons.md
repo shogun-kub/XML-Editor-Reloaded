@@ -144,7 +144,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bAccuracy`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Old Chance to Hit (OCTH) accuracy value. The New Chance to Hit (NCTH) system uses `nAccuracy` instead; the two must be balanced separately.
+- **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart. Only used with: OCTH.
 - **Values:** `-100..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -180,7 +180,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bRecoilX`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Horizontal recoil value used by NCTH.
+- **Description:** Horizontal recoil value used by NCTH. Only used with: NCTH.
 - **Values:** `-20..20`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -189,7 +189,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bRecoilY`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Vertical recoil value used by NCTH.
+- **Description:** Vertical recoil value used by NCTH. Only used with: NCTH.
 - **Values:** `-20..20`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -225,7 +225,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/Handling`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control.
+- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control. Only used with: NCTH.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -261,7 +261,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/nAccuracy`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** New Chance to Hit (NCTH) accuracy value. OCTH uses `bAccuracy`; NCTH-only fields are not read when NCTH is disabled.
+- **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart. Only used with: NCTH.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -360,7 +360,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubAimLevels`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Number of aim levels available to the weapon in NCTH.
+- **Description:** Number of aim levels available to the weapon in NCTH. Only used with: NCTH.
 - **Values:** `0..8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -450,7 +450,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubRecoilDelay`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Delay before recoil recovery begins.
+- **Description:** Delay before recoil recovery begins. Only used with: NCTH.
 - **Values:** `0..5`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.

@@ -30,13 +30,15 @@ container, 257/257 путей, `status: reviewed`. В документе нет 
 диапазонов; `Values` — только code/type/metadata limits и lookup lists. Есть `Game options`
 (NCTH/OCTH, OIV/NIV, SciFi, Tons of Guns, disease); `ubPerPocket` проверен по C++:
 OIV capacity, в NIV не capacity, но читается для `small`; `ItemSize == OLD_INVENTORY_ITEM_NUMBER`
-— OIV-only marker.
+— OIV-only marker. Описания опциональных полей заканчиваются `Only used with: ...`;
+`NIS` — синоним NIV (new inventory system).
 
 **B1b (2026-11-07, draft).** Пять документов: `Items/Weapons.md` (48), `AmmoTypes.md`
 (38), `AmmoStrings.md` (4), `Explosives.md` (19), `ExplosionData.md` (8) — 117 путей.
 `help-check -Write` проходит (452/2985); row counts и наблюдаемые диапазоны не добавлены.
 NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на schema-комментарий; связи
-`Explosives.ubAnimationID` → `ExplosionData`, `ubFragType` → `AmmoTypes`. Ждут ревью.
+`Explosives.ubAnimationID` → `ExplosionData`, `ubFragType` → `AmmoTypes`; у OCTH/NCTH-полей
+стоит `Only used with: ...`. Ждут ревью.
 
 **Дальше.** B2 — `Attachments` (4), `AttachmentSlots` (9), `AttachmentInfo` (5),
 `AttachmentComboMerges` (23), `IncompatibleAttachments` (2), `CompatibleFaceItems` (2),

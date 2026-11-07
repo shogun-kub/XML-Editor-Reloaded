@@ -124,6 +124,11 @@ limits enforced by code or by the field type, including metadata validation limi
 code, or a list of values taken from a lookup/source definition. A range seen in one data set
 is not a contract and must not be presented as one.
 
+If a field is read only while a game option is active, end its `Description` with
+`Only used with: <option>`; combine several options with commas, for example
+`Only used with: NCTH, NIS`. `NIS` means the new inventory system, also called `NIV` in this
+help. Leave ungated fields unchanged.
+
 A family document may set `path_mode: relative` in the front matter. Then field headings are
 leaf names (`id`, `name`) and each must match the ending of a real path in every listed table.
 Use this only when the table has no nested containers with the same leaf name.
