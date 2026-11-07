@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b approved 2026-11-07; twelve documents, 34 tables, 452 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b approved and B2 draft 2026-11-07; twenty-four documents, 46 tables, 542 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -39,7 +39,12 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 `Explosives.ubAnimationID` → `ExplosionData`, `ubFragType` → `AmmoTypes`; у OCTH/NCTH-полей
 стоит отдельная строка `Only used with: ...`. Одобрены 2026-11-07, `reviewed`.
 
-**Дальше.** B2 — `Attachments` (4), `AttachmentSlots` (9), `AttachmentInfo` (5),
-`AttachmentComboMerges` (23), `IncompatibleAttachments` (2), `CompatibleFaceItems` (2),
-`Merges` (6), `Item_Transformations` (15), `StructureConstruct` (10),
-`StructureDeconstruct` (7), `StructureMove` (3), `Clothes` (4).
+**B2 (2026-11-07, draft).** 12 документов: `Attachments` (4), `AttachmentSlots` (9),
+`AttachmentInfo` (5), `AttachmentComboMerges` (23), `IncompatibleAttachments` (2),
+`CompatibleFaceItems` (2), `Merges` (6), `Item_Transformations` (15),
+`StructureConstruct` (10), `StructureDeconstruct` (7), `StructureMove` (3), `Clothes` (4) —
+90 путей. `help-check -Write` проходит (542/2985); row counts не добавлены. У NAS-полей
+`Only used with: NAS`; повторяющиеся `allowedtile`/`*facingtile` описаны. Ждут ревью.
+
+**Дальше.** B3 — `Pockets`, `PocketPopups`, `LoadBearingEquipment`, `Food`, `FoodOpinion`,
+`Drugs`, `RandomItem`.

@@ -490,8 +490,8 @@ B0 оставил `Lookup.md` одним документом; остальны�
 Статус B0 (2026-11-07): approved пользователем; документы переведены в `reviewed`.
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
-`FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. Следующий шаг — B1a/B1b
-(`Items.Items`, затем оружейное ядро).
+`FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
+B2 подготовлен, следующий шаг — B3.
 
 ### B1. Items: ядро
 
@@ -524,6 +524,14 @@ limits, lookup lists и формулы из schema-комментариев. NCT
 `IncompatibleAttachments` (2), `CompatibleFaceItems` (2), `Merges` (6),
 `Item_Transformations` (15), `StructureConstruct` (10), `StructureDeconstruct` (7),
 `StructureMove` (3), `Clothes` (4).
+
+Статус B2 (2026-11-07, draft): созданы 12 документов — `Attachments`, `AttachmentSlots`,
+`AttachmentInfo`, `AttachmentComboMerges`, `IncompatibleAttachments`, `CompatibleFaceItems`,
+`Merges`, `Item_Transformations`, `StructureConstruct`, `StructureDeconstruct`, `StructureMove`,
+`Clothes`; 90 путей. Row counts и наблюдаемые диапазоны не добавлены; `Values` — типы,
+lookup-списки и явные ограничения. У NAS-полей (`NASOnly`, `AttachmentSlots`) стоит отдельная
+строка `Only used with: NAS`; повторяющиеся `allowedtile` и `*facingtile` описаны как repeated.
+`help-check -Write` проходит (542/2985 путей), документы ждут ревью.
 
 ### B3. Items: снаряжение и расходники
 
