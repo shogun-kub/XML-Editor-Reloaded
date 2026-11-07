@@ -2,8 +2,10 @@
 schema: 1
 lang: en
 family: map-facilities
-title: "Map.Facilities - facility placement"
+title: "Facilities - facility placement"
 tables:
+  - Facilities
+table_ids:
   - Map.Facilities
 files:
   - Map/Facilities.xml
@@ -17,7 +19,7 @@ status: draft
 updated: 2026-11-07
 ---
 
-# Map.Facilities - facility placement
+# Facilities - facility placement
 
 ## Contents
 
@@ -38,7 +40,7 @@ updated: 2026-11-07
 
 `Facilities.xml` places facility instances on the strategic map. Each record says which
 facility type is present in a sector and how it is revealed in the sector popup. The facility
-type itself (name, assignment, effects) is defined in `Map.FacilityTypes`; this table only
+type itself (name, assignment, effects) is defined in `FacilityTypes`; this table only
 binds a type to a sector.
 
 The v5 file has 71 records. There are no duplicate sector/type pairs in the shipped data.
@@ -49,7 +51,7 @@ The v5 file has 71 records. There are no duplicate sector/type pairs in the ship
 |---|---|---:|---|
 | `Facilities` | `Map/Facilities.xml` | 71 | no metadata key; the logical key is sector + type |
 
-`Map.Facilities` has no row in the editor metadata (it is one of the 66 tables without a
+`Facilities` has no row in the editor metadata (it is one of the 66 tables without a
 metadata entry), so the editor shows it as a document-driven table.
 
 ## Structure
@@ -58,7 +60,7 @@ metadata entry), so the editor shows it as a document-driven table.
 SECTORFACILITIES
 └── FACILITY          one facility placement
     ├── SectorGrid    sector such as B13
-    ├── FacilityType  index into Map.FacilityTypes
+    ├── FacilityType  index into FacilityTypes
     └── ubHidden      0 always, 1 after exploration, 2 never
 ```
 
@@ -83,9 +85,9 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 ### `SECTORFACILITIES/FACILITY/FacilityType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Index of the facility type in `Map.FacilityTypes.ubIndex`. It selects the
+- **Description:** Index of the facility type in `FacilityTypes.ubIndex`. It selects the
   facility's name, assignment, staff limits and effects.
-- **Values:** valid `Map.FacilityTypes.ubIndex`; shipped data uses 1..25 (17 is not used).
+- **Values:** valid `FacilityTypes.ubIndex`; shipped data uses 1..25 (17 is not used).
   `0` means "no facility" and the loader skips the record.
 - **Default:** `0` (skipped).
 - **Source:** game code (facility placement loader); facility type data.
@@ -104,16 +106,16 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 
 ## Relations
 
-- `Map.Facilities.FacilityType` -> `Map.FacilityTypes.ubIndex` (future `Map/FacilityTypes.md`).
+- `Facilities.FacilityType` -> `FacilityTypes.ubIndex` (future `Map/FacilityTypes.md`).
 - The sector code determines which town/region the facility belongs to; town data is in
-  [Map.Cities](Cities.md).
-- Facility names, tooltips and assignment text live in `Map.FacilityTypes` and its
+  [Cities](Cities.md).
+- Facility names, tooltips and assignment text live in `FacilityTypes` and its
   `Russian.*` overlay, not in this table.
 
 ## Localization
 
 No strings in this table. The visible facility name and assignment text come from
-`Map.FacilityTypes`; see `Localization.md` for the overlay rules.
+`FacilityTypes`; see `Localization.md` for the overlay rules.
 
 ## Versions
 
@@ -127,7 +129,7 @@ placed facilities may differ; compare the files when a specific sector matters.
 
 ## Open questions
 
-- There is no metadata key row for `Map.Facilities`; the composite key is a logical contract
+- There is no metadata key row for `Facilities`; the composite key is a logical contract
   used by the editor, not a declared `TableKeys` entry. Adding a key would be a metadata task,
   not a data edit.
 - The parser stores `ubHidden` in a byte-like flag; the value 2 survives, but the internal

@@ -4,6 +4,30 @@ lang: en
 family: lookup
 title: "Lookup tables"
 tables:
+  - AmmoChoices
+  - AmmoFlag
+  - ArmourClass
+  - AttachmentClass
+  - AttachmentPoint
+  - AttachmentSystem
+  - Cursor
+  - DrugType
+  - ExplosionSize
+  - ExplosionType
+  - ItemClass
+  - ItemFlag
+  - LBEClass
+  - MagazineType
+  - MergeType
+  - NasAttachmentClass
+  - NasLayoutClass
+  - PocketSize
+  - Separability
+  - Silhouette
+  - SkillCheckType
+  - WeaponClass
+  - WeaponType
+table_ids:
   - Lookup.AmmoChoices
   - Lookup.AmmoFlag
   - Lookup.ArmourClass
@@ -69,29 +93,29 @@ updated: 2026-11-07
 - [Purpose](#purpose)
 - [Tables](#tables)
 - [Lookup details](#lookup-details)
-  - [Lookup.AmmoChoices](#lookupammochoices)
-  - [Lookup.AmmoFlag](#lookupammoflag)
-  - [Lookup.ArmourClass](#lookuparmourclass)
-  - [Lookup.AttachmentClass](#lookupattachmentclass)
-  - [Lookup.AttachmentPoint](#lookupattachmentpoint)
-  - [Lookup.AttachmentSystem](#lookupattachmentsystem)
-  - [Lookup.Cursor](#lookupcursor)
-  - [Lookup.DrugType](#lookupdrugtype)
-  - [Lookup.ExplosionSize](#lookupexplosionsize)
-  - [Lookup.ExplosionType](#lookupexplosiontype)
-  - [Lookup.ItemClass](#lookupitemclass)
-  - [Lookup.ItemFlag](#lookupitemflag)
-  - [Lookup.LBEClass](#lookuplbeclass)
-  - [Lookup.MagazineType](#lookupmagazinetype)
-  - [Lookup.MergeType](#lookupmergetype)
-  - [Lookup.NasAttachmentClass](#lookupnasattachmentclass)
-  - [Lookup.NasLayoutClass](#lookupnaslayoutclass)
-  - [Lookup.PocketSize](#lookuppocketsize)
-  - [Lookup.Separability](#lookupseparability)
-  - [Lookup.Silhouette](#lookupsilhouette)
-  - [Lookup.SkillCheckType](#lookupskillchecktype)
-  - [Lookup.WeaponClass](#lookupweaponclass)
-  - [Lookup.WeaponType](#lookupweapontype)
+  - [AmmoChoices](#ammochoices)
+  - [AmmoFlag](#ammoflag)
+  - [ArmourClass](#armourclass)
+  - [AttachmentClass](#attachmentclass)
+  - [AttachmentPoint](#attachmentpoint)
+  - [AttachmentSystem](#attachmentsystem)
+  - [Cursor](#cursor)
+  - [DrugType](#drugtype)
+  - [ExplosionSize](#explosionsize)
+  - [ExplosionType](#explosiontype)
+  - [ItemClass](#itemclass)
+  - [ItemFlag](#itemflag)
+  - [LBEClass](#lbeclass)
+  - [MagazineType](#magazinetype)
+  - [MergeType](#mergetype)
+  - [NasAttachmentClass](#nasattachmentclass)
+  - [NasLayoutClass](#naslayoutclass)
+  - [PocketSize](#pocketsize)
+  - [Separability](#separability)
+  - [Silhouette](#silhouette)
+  - [SkillCheckType](#skillchecktype)
+  - [WeaponClass](#weaponclass)
+  - [WeaponType](#weapontype)
 - [Structure](#structure)
 - [Fields](#fields)
   - [`id`](#id)
@@ -149,102 +173,102 @@ All 23 files use `JA2Data` as the document root and the lookup name as the recor
 Each entry repeats the kind and the source of its values. The full value lists stay in the
 XML files; the editor and the future help window read them from there.
 
-### Lookup.AmmoChoices
+### AmmoChoices
 
 Sequence lookup with 7 sparse IDs (19, 29, ... 79). Used by enemy/militia ammo choice tables,
 not by the item data directly.
 
-### Lookup.AmmoFlag
+### AmmoFlag
 
-Flag lookup with 5 values (0..4). Ammo property bits used by `Items.AmmoTypes.ammoflag`.
+Flag lookup with 5 values (0..4). Ammo property bits used by `AmmoTypes.ammoflag`.
 
-### Lookup.ArmourClass
+### ArmourClass
 
 Sequence lookup with 6 values (0..5). Matches `ARMOURCLASS_*`; used by
-[Items.Armours](Items/Armours.md).
+[Armours](Items/Armours.md).
 
-### Lookup.AttachmentClass
+### AttachmentClass
 
 Flag lookup with 36 values. OAS attachment class bits; the largest value is `0x02000000`.
 
-### Lookup.AttachmentPoint
+### AttachmentPoint
 
 Flag lookup with 8 values (0..16). Same values in v4 and v5. Used by the attachment slot
 and NAS fields.
 
-### Lookup.AttachmentSystem
+### AttachmentSystem
 
 Sequence lookup with 3 values: Any, OAS only, NAS only.
 
-### Lookup.Cursor
+### Cursor
 
 Sequence lookup with 23 values (0..23). Cursor IDs used by the UI.
 
-### Lookup.DrugType
+### DrugType
 
-Flag lookup with 26 values. Drug effect bits used by `Items.Drugs`.
+Flag lookup with 26 values. Drug effect bits used by `Drugs`.
 
-### Lookup.ExplosionSize
+### ExplosionSize
 
 Sequence lookup with 5 values (0..4), from none to large.
 
-### Lookup.ExplosionType
+### ExplosionType
 
 Sequence lookup with 13 values (0..12), such as normal, stun and tear gas.
 
-### Lookup.ItemClass
+### ItemClass
 
 Flag lookup with 23 values. `IC_*` item class bits; the largest value is `0x40000000`.
 
-### Lookup.ItemFlag
+### ItemFlag
 
 Flag lookup with 36 values. Item flags, including 64-bit values; the largest is
 `0x200000000`.
 
-### Lookup.LBEClass
+### LBEClass
 
 Sequence lookup with 5 values (0..4). Load-bearing equipment class.
 
-### Lookup.MagazineType
+### MagazineType
 
 Sequence lookup with 4 values: magazine, bullet(s), box, crate. Matches `AMMO_MAGAZINE`,
-`AMMO_BULLET`, `AMMO_BOX`, `AMMO_CRATE`; used by [Items.Magazines](Items/Magazines.md).
+`AMMO_BULLET`, `AMMO_BOX`, `AMMO_CRATE`; used by [Magazines](Items/Magazines.md).
 
-### Lookup.MergeType
+### MergeType
 
 Sequence lookup with 16 values (0..15). Merge/transformation kind.
 
-### Lookup.NasAttachmentClass
+### NasAttachmentClass
 
 Flag lookup with 16 values. NAS attachment class bits.
 
-### Lookup.NasLayoutClass
+### NasLayoutClass
 
 Flag lookup with 7 values. NAS layout class bits.
 
-### Lookup.PocketSize
+### PocketSize
 
 Sequence lookup with 4 values: none, small, medium, large.
 
-### Lookup.Separability
+### Separability
 
 Sequence lookup with 3 values: removable, inseparable, replaceable.
 
-### Lookup.Silhouette
+### Silhouette
 
 Sequence lookup with 56 values (0..55). Item silhouette used by the inventory display.
 
-### Lookup.SkillCheckType
+### SkillCheckType
 
 Sequence lookup with 16 values (0..15). Skill check kind.
 
-### Lookup.WeaponClass
+### WeaponClass
 
-Sequence lookup with 8 values (0..7). `WEAPONCLASS_*` used by `Items.Weapons.ubWeaponClass`.
+Sequence lookup with 8 values (0..7). `WEAPONCLASS_*` used by `Weapons.ubWeaponClass`.
 
-### Lookup.WeaponType
+### WeaponType
 
-Sequence lookup with 9 values (0..8). `WEAPONTYPE_*` used by `Items.Weapons.ubWeaponType`.
+Sequence lookup with 9 values (0..8). `WEAPONTYPE_*` used by `Weapons.ubWeaponType`.
 
 ## Structure
 
@@ -288,12 +312,12 @@ JA2Data
 
 The lookups mirror numeric constants used by item and weapon fields. Examples:
 
-- `Items.Items.usItemClass` and `Items.Items.<flag fields>` use `Lookup.ItemClass` and
-  `Lookup.ItemFlag`.
-- `Items.Weapons.ubWeaponClass` / `ubWeaponType` use `Lookup.WeaponClass` and
-  `Lookup.WeaponType`.
-- `Items.Armours.ubArmourClass` uses `Lookup.ArmourClass`.
-- `Items.Magazines.ubMagType` uses `Lookup.MagazineType`.
+- `Items.usItemClass` and `Items.<flag fields>` use `ItemClass` and
+  `ItemFlag`.
+- `Weapons.ubWeaponClass` / `ubWeaponType` use `WeaponClass` and
+  `WeaponType`.
+- `Armours.ubArmourClass` uses `ArmourClass`.
+- `Magazines.ubMagType` uses `MagazineType`.
 
 The table documents are the authority for which field uses which lookup; this page only
 defines the dictionaries.

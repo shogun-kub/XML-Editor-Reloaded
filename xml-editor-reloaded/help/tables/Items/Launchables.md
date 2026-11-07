@@ -2,8 +2,10 @@
 schema: 1
 lang: en
 family: items-launchables
-title: "Items.Launchables - launcher-to-ammo pairs"
+title: "Launchables - launcher-to-ammo pairs"
 tables:
+  - Launchables
+table_ids:
   - Items.Launchables
 files:
   - Items/Launchables.xml
@@ -17,7 +19,7 @@ status: draft
 updated: 2026-11-07
 ---
 
-# Items.Launchables - launcher-to-ammo pairs
+# Launchables - launcher-to-ammo pairs
 
 ## Contents
 
@@ -67,9 +69,9 @@ meaningful until a caller proves otherwise.
 ### `LAUNCHABLELIST/LAUNCHABLE/launchableIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item index of the launcher in `Items.Items.uiIndex`. It identifies the
+- **Description:** Item index of the launcher in `Items.uiIndex`. It identifies the
   weapon that can fire the item on the other side of the pair.
-- **Values:** valid `Items.Items.uiIndex` values; shipped data uses 140, 147, and other
+- **Values:** valid `Items.uiIndex` values; shipped data uses 140, 147, and other
   launcher items.
 - **Default:** `0`; the pair is still stored, so a zero value is a data error, not "none".
 - **Source:** game code (launcher loader); item table data.
@@ -78,18 +80,18 @@ meaningful until a caller proves otherwise.
 ### `LAUNCHABLELIST/LAUNCHABLE/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item index of the launchable ammo/projectile in `Items.Items.uiIndex`.
+- **Description:** Item index of the launchable ammo/projectile in `Items.uiIndex`.
   It is the item the launcher fires.
-- **Values:** valid `Items.Items.uiIndex` values.
+- **Values:** valid `Items.uiIndex` values.
 - **Default:** `0`; a zero value is a data error.
 - **Source:** game code (launcher loader); item table data.
 - **Confidence:** `source`
 
 ## Relations
 
-- `Items.Launchables.launchableIndex` -> `Items.Items.uiIndex` (launcher).
-- `Items.Launchables.itemIndex` -> `Items.Items.uiIndex` (ammo/projectile).
-- The launcher item itself is an `Items.Items` record with a launcher class; the ammo item is
+- `Launchables.launchableIndex` -> `Items.uiIndex` (launcher).
+- `Launchables.itemIndex` -> `Items.uiIndex` (ammo/projectile).
+- The launcher item itself is an `Items` record with a launcher class; the ammo item is
   usually an `IC_AMMO` or explosive item.
 
 ## Localization

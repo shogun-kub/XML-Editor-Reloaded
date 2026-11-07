@@ -2,8 +2,10 @@
 schema: 1
 lang: en
 family: items-armours
-title: "Items.Armours - body armour"
+title: "Armours - body armour"
 tables:
+  - Armours
+table_ids:
   - Items.Armours
 files:
   - Items/Armours.xml
@@ -17,7 +19,7 @@ status: draft
 updated: 2026-11-07
 ---
 
-# Items.Armours - body armour
+# Armours - body armour
 
 ## Contents
 
@@ -39,12 +41,12 @@ updated: 2026-11-07
 
 ## Purpose
 
-`Armours.xml` defines the protective values of body armour. An armour item in `Items.Items`
+`Armours.xml` defines the protective values of body armour. An armour item in `Items`
 points to one row through its `ubClassIndex`; the row is stored in the runtime armour table.
 The values drive damage reduction, armour wear, Bobby Ray's filters and the item description
 panel.
 
-`Items.Armours` is a flat table: one `ARMOUR` record per armour type, keyed by `uiIndex`.
+`Armours` is a flat table: one `ARMOUR` record per armour type, keyed by `uiIndex`.
 The v5 file has 201 records.
 
 ## Tables
@@ -75,7 +77,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the row in the runtime armour table and the identity of the
-  XML record. `Items.Items.ubClassIndex` of an armour item points here.
+  XML record. `Items.ubClassIndex` of an armour item points here.
 - **Values:** `0..N-1`; the shipped data uses 0..200.
 - **Default:** none; a missing value leaves the table slot at zero.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -127,10 +129,10 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 
 ## Relations
 
-- `Items.Items.ubClassIndex` -> `Items.Armours.uiIndex` for items whose `usItemClass` is
+- `Items.ubClassIndex` -> `Armours.uiIndex` for items whose `usItemClass` is
   `IC_ARMOUR`.
-- `Items.Armours.ubArmourClass` -> `Lookup.ArmourClass` (`../Lookup.md#lookuparmourclass`).
-- The item's `usItemClass` and `ubClassIndex` live in `Items.Items`; see the future
+- `Armours.ubArmourClass` -> `ArmourClass` (`../Lookup.md#armourclass`).
+- The item's `usItemClass` and `ubClassIndex` live in `Items`; see the future
   `Items/Items.md`.
 
 ## Related formulas
@@ -146,7 +148,7 @@ The field entries above define the inputs; they do not repeat the formulas.
 
 ## Localization
 
-No strings in this table. Armour names and descriptions are fields of `Items.Items` and are
+No strings in this table. Armour names and descriptions are fields of `Items` and are
 translated there.
 
 ## Versions

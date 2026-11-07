@@ -37,15 +37,15 @@ entry. The English column is the source of truth; the Russian column is a contro
 | ammo type | тип боеприпаса | — |
 | magazine type | тип магазина | also covers bullet/box/crate |
 | launchable | боеприпас | **approved 2026-11-07**. Not "Запускаемые предметы", not "запускаемое" |
-| AmmoTypes | Типы боеприпасов | table `Items.AmmoTypes` |
-| AmmoStrings | Названия калибров | table `Items.AmmoStrings` |
+| AmmoTypes | Типы боеприпасов | table `AmmoTypes` |
+| AmmoStrings | Названия калибров | table `AmmoStrings` |
 | trader | торговец | covers merchants and dealers |
 | dealer | дилер | shopkeeper inventory files |
-| merchant | торговец | `NPCInventory.Merchants` |
+| merchant | торговец | `Merchants` |
 | town | город | — |
 | sector | сектор | map sector, e.g. `B13` |
 | facility | объект | map facility instance |
-| facility type | тип объекта | `Map.FacilityTypes` |
+| facility type | тип объекта | `FacilityTypes` |
 | loyalty | лояльность | — |
 | rebel sentiment | склонность к мятежу | `townRebelSentiment` |
 | militia | ополчение | — |
@@ -62,7 +62,7 @@ entry. The English column is the source of truth; the Russian column is a contro
 - `Launchables` is the user-approved exception: the Russian UI uses **«Боеприпасы»**.
   `Strings.ru.resx` currently contains both «Запускаемые предметы» and «Боеприпасы»; M32
   must align every occurrence with this row.
-- Table names are never translated: `Items.Armours`, `Map.Cities`, `Lookup.ItemClass`.
+- Table names are never translated: `Armours`, `Cities`, `ItemClass`.
 - Field names are never translated: `ubArmourClass`, `townRebelSentiment`.
 - When a term has no approved Russian row yet, keep the English term in the Russian text and
   add the row before release.

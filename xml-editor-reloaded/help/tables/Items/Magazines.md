@@ -2,8 +2,10 @@
 schema: 1
 lang: en
 family: items-magazines
-title: "Items.Magazines - magazines and ammo items"
+title: "Magazines - magazines and ammo items"
 tables:
+  - Magazines
+table_ids:
   - Items.Magazines
 files:
   - Items/Magazines.xml
@@ -17,7 +19,7 @@ status: draft
 updated: 2026-11-07
 ---
 
-# Items.Magazines - magazines and ammo items
+# Magazines - magazines and ammo items
 
 ## Contents
 
@@ -73,7 +75,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 ### `MAGAZINELIST/MAGAZINE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** XML identity and the index in the runtime `Magazine[]` array. `Items.Items`
+- **Description:** XML identity and the index in the runtime `Magazine[]` array. `Items`
   uses `ubClassIndex` to point at this row for ammo items.
 - **Values:** `0..MAXITEMS-1`; shipped data is contiguous.
 - **Default:** none; a missing value leaves the array slot at zero.
@@ -107,7 +109,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 ### `MAGAZINELIST/MAGAZINE/ubAmmoType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Ammo type index into `Items.AmmoTypes`. It selects the damage, armour
+- **Description:** Ammo type index into `AmmoTypes`. It selects the damage, armour
   interaction, tracer and other projectile properties.
 - **Values:** `0..34` in the shipped data; the valid range is the `AmmoTypes` row count.
 - **Default:** `0` (regular ammo).
@@ -127,12 +129,12 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 ## Relations
 
-- `Items.Items.ubClassIndex` -> `Items.Magazines.uiIndex` for `IC_AMMO` items.
-- `Items.Magazines.ubCalibre` -> `Items.AmmoStrings` (caliber name), filled in file order.
-- `Items.Magazines.ubAmmoType` -> `Items.AmmoTypes.uiIndex`.
-- `Items.Magazines.ubMagType` -> `Lookup.MagazineType`
-  (`../Lookup.md#lookupmagazinetype`).
-- `Items.Weapons` uses the same caliber/capacity/ammo type triple to find a magazine.
+- `Items.ubClassIndex` -> `Magazines.uiIndex` for `IC_AMMO` items.
+- `Magazines.ubCalibre` -> `AmmoStrings` (caliber name), filled in file order.
+- `Magazines.ubAmmoType` -> `AmmoTypes.uiIndex`.
+- `Magazines.ubMagType` -> `MagazineType`
+  (`../Lookup.md#magazinetype`).
+- `Weapons` uses the same caliber/capacity/ammo type triple to find a magazine.
 
 ## Related formulas
 
@@ -148,7 +150,7 @@ The field entries above define the inputs; they do not repeat the formulas.
 
 ## Localization
 
-No strings in this table. Caliber names are in `Items.AmmoStrings`, which the game's language
+No strings in this table. Caliber names are in `AmmoStrings`, which the game's language
 files provide; the table itself is not covered by `Russian.*` overlays.
 
 ## Versions

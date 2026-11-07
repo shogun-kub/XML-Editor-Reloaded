@@ -326,6 +326,8 @@ lang: en
 family: items-weapons
 title: "Items.Weapons — weapons"
 tables:
+  - Weapons
+table_ids:
   - Items.Weapons
 files:
   - Items/Weapons.xml
@@ -340,9 +342,10 @@ updated: 2026-11-07
 ---
 ```
 
-`tables` — точные точки-имена из каталога; `files` — пути относительно `TableData`.
-`key` может быть пустым, если ключ составной или не определён; тогда это описывается
-в разделе `Structure`. В `help/ru/` те же ключи, но `lang: ru` и переведённые `title`.
+`tables` — чистые имена для чтения; `table_ids` — точные точки-имена из каталога для
+`help-check`; `files` — пути относительно `TableData`. `key` может быть пустым, если ключ
+составной или не определён; тогда это описывается в разделе `Structure`. В `help/ru/` те же
+ключи, но `lang: ru` и переведённые `title`.
 
 ### 6.2. Обязательные разделы (английские заголовки)
 

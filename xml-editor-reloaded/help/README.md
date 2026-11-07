@@ -65,8 +65,10 @@ Each table document starts with YAML front matter:
 schema: 1
 lang: en
 family: items-weapons
-title: "Items.Weapons - weapons"
+title: "Weapons - weapons"
 tables:
+  - Weapons
+table_ids:
   - Items.Weapons
 files:
   - Items/Weapons.xml
@@ -80,6 +82,11 @@ status: draft
 updated: 2026-11-07
 ---
 ```
+
+The front-matter `table_ids` list keeps the canonical catalog ID (`Items.Weapons`) because the
+tooling matches tables by that ID. The visible `tables` list and everything rendered in the
+body use the clean name: `Weapons` for the table, `Weapons.ubWeaponClass` for a field. A dot
+means "field of this table"; it never means a folder in the visible documentation.
 
 The body has these sections, in this order:
 
@@ -123,7 +130,7 @@ underscores preserved, spaces replaced with `-`. A field heading
 `CITY_INFO` becomes `#city_info...`.
 
 Cross-document links are relative: use the target document path and, when needed, an anchor
-such as `tables/Lookup.md` plus `#lookupitemclass`.
+such as `tables/Lookup.md` plus `#itemclass`.
 
 **Preview limitation.** The DSH document preview renders headings without `id` attributes, so
 same-page anchor clicks do nothing there. The links are valid in GitHub, VS Code and other
@@ -145,7 +152,7 @@ against the GitHub-style slug.
   flag/bitmask dictionaries and fifteen are sequential value lists. One `Lookup.md` with
   per-lookup sections keeps the shared rules in one place. B0 analysis found no reason to
   split it; the decision is recorded here and in `COVERAGE.md`.
-- **All traders are one document.** `NPCInventory.Merchants` and the 80 dealer inventory
+- **All traders are one document.** `Merchants` and the 80 dealer inventory
   files are covered by `tables/Traders.md`; the document has two structure sections and one
   file-to-dealer table.
 

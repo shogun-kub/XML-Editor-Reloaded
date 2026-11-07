@@ -55,7 +55,7 @@ foreach ($file in $docFiles) {
     }
 
     $data = $frontMatter.Data
-    $required = @('schema', 'lang', 'family', 'title', 'tables', 'files', 'root', 'record', 'status')
+    $required = @('schema', 'lang', 'family', 'title', 'tables', 'table_ids', 'files', 'root', 'record', 'status')
     foreach ($key in $required) {
         if (-not $data.ContainsKey($key)) {
             $errors.Add("${relative}: front matter is missing '$key'")
@@ -80,9 +80,16 @@ foreach ($file in $docFiles) {
     }
 
     $tables = @($data['tables'])
+    $tableIds = @($data['table_ids'])
     $files = @($data['files'])
     if ($tables.Count -eq 0) {
         $errors.Add("${relative}: 'tables' is empty")
+    }
+    if ($tableIds.Count -eq 0) {
+        $errors.Add("${relative}: 'table_ids' is empty")
+    }
+    if ($tableIds.Count -ne $tables.Count) {
+        $errors.Add("${relative}: 'tables' and 'table_ids' must have the same length")
     }
     if ($files.Count -eq 0) {
         $errors.Add("${relative}: 'files' is empty")
@@ -127,7 +134,7 @@ foreach ($file in $docFiles) {
 
     $tableInfo = [System.Collections.Generic.List[object]]::new()
     $allExpected = [System.Collections.Generic.List[string]]::new()
-    foreach ($tableName in $tables) {
+    foreach ($tableName in $tableIds) {
         if (-not $byTable.ContainsKey($tableName)) {
             $errors.Add("${relative}: table '$tableName' is not present in the inventory")
             continue
@@ -210,7 +217,7 @@ foreach ($file in $docFiles) {
         Relative = $relative
         FrontMatter = $data
         Fields = $fields
-        Tables = $tables
+        Tables = $tableIds
         TableInfo = $tableInfo
         PathMode = $pathMode
     })

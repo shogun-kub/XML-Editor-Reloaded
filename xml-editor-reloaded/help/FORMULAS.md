@@ -33,12 +33,12 @@ that combines the armour slots.
 
 | Symbol | Meaning | Source |
 |---|---|---|
-| `P0` | raw protection | `Items.Armours.ubProtection` |
-| `C` | coverage, percent | `Items.Armours.ubCoverage` |
+| `P0` | raw protection | `Armours.ubProtection` |
+| `C` | coverage, percent | `Armours.ubCoverage` |
 | `S` | current condition, 0..100 | item `objectStatus` |
-| `D` | wear per hit, percent | `Items.Armours.ubDegradePercent` |
+| `D` | wear per hit, percent | `Armours.ubDegradePercent` |
 | `I` | incoming impact | bullet impact after the ammo life factor and the random/accuracy step |
-| `K` | armour class | `Items.Armours.ubArmourClass` |
+| `K` | armour class | `Armours.ubArmourClass` |
 
 ### Coverage and condition
 
@@ -80,7 +80,7 @@ P = trunc(P0 * AmmoTypes[type].armourImpactReductionMultiplier
                 / max(1, AmmoTypes[type].armourImpactReductionDivisor))
 ```
 
-The ammo factors come from `Items.AmmoTypes`; the two divisor fields are integers, not percentages.
+The ammo factors come from `AmmoTypes`; the two divisor fields are integers, not percentages.
 The result `P` is the protection actually offered by the armour after the ammo's penetration
 modifier.
 
@@ -145,8 +145,8 @@ then applies. A plate can also break when its condition drops below the usable t
 
 ### Related data
 
-- [Items.Armours](tables/Items/Armours.md) - protection, coverage, wear and class.
-- `Items.AmmoTypes` - armour-penetration and damage multipliers.
+- [Armours](tables/Items/Armours.md) - protection, coverage, wear and class.
+- `AmmoTypes` - armour-penetration and damage multipliers.
 - The calculation lives in the game's armour/protection code; no source file or line
   references are kept in this help.
 
@@ -167,7 +167,7 @@ B2 = B1 + itemDamageBonus
 B  = min(255, globalGunAdjustment(B2))
 ```
 
-`ubImpact` is the `Items.Weapons.ubImpact` field; `fDamageModifierGun` is an item-setting
+`ubImpact` is the `Weapons.ubImpact` field; `fDamageModifierGun` is an item-setting
 multiplier by weapon type. The exact composition of the item damage bonus is attachment- and
 trait-dependent; it is added before the global gun-damage adjustment, not after.
 
@@ -269,7 +269,7 @@ I4 = max(0 or 1, trunc(I3 * (100 - target.damageResistance) / 100))
 
 The floor is `0` for `zeroMinimumDamage` ammo and `1` otherwise. the target damage resistance
 combines the target's armour/robot/creature resistances and the current difficulty/option
-state; it is not only the armour value from `Items.Armours`.
+state; it is not only the armour value from `Armours`.
 
 ### 11. Hit location and criticals
 
@@ -279,10 +279,10 @@ Drug effects, cryo, knockdown and other special effects run after this core pipe
 
 ### Related data
 
-- [Items.Armours](tables/Items/Armours.md) - the armour that reduces the result.
-- [Items.Magazines](tables/Items/Magazines.md) - the ammo item that selects the ammo type.
-- `Items.AmmoTypes` - damage, penetration, projectile count and special-ammo flags.
-- `Items.Weapons` - base impact and weapon-type modifier.
+- [Armours](tables/Items/Armours.md) - the armour that reduces the result.
+- [Magazines](tables/Items/Magazines.md) - the ammo item that selects the ammo type.
+- `AmmoTypes` - damage, penetration, projectile count and special-ammo flags.
+- `Weapons` - base impact and weapon-type modifier.
 - The calculation lives in the game's damage pipeline; no source file or line references are
   kept in this help.
 
@@ -290,17 +290,17 @@ Drug effects, cryo, knockdown and other special effects run after this core pipe
 
 | Formula | Data used |
 |---|---|
-| Armour protection | `Items.Armours`, `Items.AmmoTypes` |
-| Total armour | `Items.Armours`, `Items.Items` |
-| Weapon base damage | `Items.Weapons`, `Items.Items` |
-| Bullet damage | `Items.AmmoTypes`, `Items.Weapons`, `Items.Armours` |
+| Armour protection | `Armours`, `AmmoTypes` |
+| Total armour | `Armours`, `Items` |
+| Weapon base damage | `Weapons`, `Items` |
+| Bullet damage | `AmmoTypes`, `Weapons`, `Armours` |
 
 ## Open questions
 
 - The formulas above describe the ordinary gun path. Melee, explosions, structures and
   vehicle-specific branches are separate and are not documented here.
 - The item damage bonus and the global gun-damage adjustment are stages, not expanded into
-  every attachment and trait contribution; those contributions belong to `Items.Items` and
-  `Items.Weapons` once those tables are documented.
+  every attachment and trait contribution; those contributions belong to `Items` and
+  `Weapons` once those tables are documented.
 - The target damage resistance is an aggregate; it will be documented with the soldier
   profile/armour tables if the user asks for it.

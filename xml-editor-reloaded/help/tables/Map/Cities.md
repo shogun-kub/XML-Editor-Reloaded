@@ -2,8 +2,10 @@
 schema: 1
 lang: en
 family: map-cities
-title: "Map.Cities - towns, country and sector-to-town map"
+title: "Cities - towns, country and sector-to-town map"
 tables:
+  - Cities
+table_ids:
   - Map.Cities
 files:
   - Map/Cities.xml
@@ -17,7 +19,7 @@ status: draft
 updated: 2026-11-07
 ---
 
-# Map.Cities - towns, country and sector-to-town map
+# Cities - towns, country and sector-to-town map
 
 ## Contents
 
@@ -266,8 +268,8 @@ overwrite earlier rows; the shipped data has no duplicates.
 ## Relations
 
 - `CITY_INFO/CITY_TABLE/CITY_TABLE_ROW` cells -> `CITY_INFO/CITYLIST/CITY/uiIndex`.
-- [Map.Facilities](Facilities.md) places facilities in sectors; facility names come from
-  `Map.FacilityTypes` (future docs).
+- [Facilities](Facilities.md) places facilities in sectors; facility names come from
+  `FacilityTypes` (future docs).
 - `townName`, `countryName` and `countryNoun` are the only translatable fields; see
   `../../Localization.md`.
 
@@ -297,4 +299,3 @@ v4 and v5 have the same fields and structure. v4 ships the Russian overlay; v5 h
   the internal flag name as the meaning of the XML field.
 - The matrix is 18x18 for the shipped world. A total-conversion mod with a different world
   size would need a code change, not only XML edits.
-
