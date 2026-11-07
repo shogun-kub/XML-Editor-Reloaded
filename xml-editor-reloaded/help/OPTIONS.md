@@ -17,7 +17,8 @@ The game has two aiming models:
 
 - **OCTH** - old Chance to Hit, the original JA2 calculation.
 - **NCTH** - new Chance to Hit, selected by the `NCTH` option in the game option file.
-  `NCTH = TRUE` enables it; `FALSE` keeps OCTH.
+  `NCTH = TRUE` enables it; `FALSE` keeps OCTH. NCTH is forced off in multiplayer, so
+the NCTH-only fields are not read there.
 
 NCTH-only fields in `Items`:
 
