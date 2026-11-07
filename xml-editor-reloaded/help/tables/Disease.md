@@ -13,10 +13,11 @@ root: DISEASESLIST
 record: DISEASE
 key: uiIndex
 sources:
+  - Game code (disease loader and hourly update)
   - Disease table data
   - Disease schema comments
 status: draft
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Disease - disease definitions
@@ -82,7 +83,9 @@ updated: 2026-11-07
 
 ## Purpose
 
-`Disease.xml` defines diseases: infection thresholds, infection chances by source, cure/reinfection flags, stat and AP effects, sleep/food/drink modifiers and special severe-limitation flags. The table is active only when the disease system is enabled.
+`Disease.xml` defines each disease as a set of disease points plus the effects those points produce. Infection adds initial points; the points then rise or fall each hour until they cross the outbreak threshold, and the full threshold scales the symptoms. The table also defines the base chance for each infection source and the flags that control cure, reinfection, visibility and severe limitations. It is active only when the disease system is enabled.
+
+Infection chances are percentages, not points: each field is the base chance for one qualifying event, such as an hourly check in a swamp, a wound, or a bad meal. Disease resistance and situational modifiers reduce the final chance. Effects are defined at full infection and are interpolated from `1.0` down to the current magnitude.
 
 ## Tables
 
@@ -149,472 +152,472 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease row identity.
+- **Description:** Index of this disease in the `Disease` array. It is an array key, not a magnitude; indexes must be unique and non-negative.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/szName`
 
 - **Type:** `String` (`String`)
-- **Description:** Display name of the disease.
+- **Description:** Display name shown in the disease list and diagnosis messages.
 - **Only used with:** DISEASE.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/szFatName`
 
 - **Type:** `String` (`String`)
-- **Description:** Fat/alternate display name used by the disease UI.
+- **Description:** Alternate name used by the diagnosis/status display. The `|` characters control letter-by-letter highlighting; they are not part of the displayed name.
 - **Only used with:** DISEASE.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/szDescription`
 
 - **Type:** `String` (`String`)
-- **Description:** Player-facing disease description.
+- **Description:** Player-facing description of the disease, shown in the disease details panel.
 - **Only used with:** DISEASE.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sInfectionPtsInitial`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Initial infection points. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
+- **Description:** Disease points added when the mercenary is first infected. Points accumulate toward `sInfectionPtsOutbreak` and `sInfectionPtsFull`. Numeric semantics: higher values start the infection closer to an outbreak; negative values are not meaningful.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Integer disease points.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sInfectionPtsOutbreak`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points at which the disease breaks out. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
+- **Description:** Disease points at which the infection breaks out: symptoms and stat effects begin, and the disease becomes visible. Numeric semantics: higher values delay the outbreak; negative values are not meaningful.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Integer disease points.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sInfectionPtsFull`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points at which the disease is fully developed. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
+- **Description:** Nominal disease points of a full-blown infection. Effects are scaled by current points divided by this value. Numeric semantics: higher values require more points to reach full effect; negative values are not meaningful.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Integer disease points.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sInfectionPtsGainPerHour`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points gained per hour. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
+- **Description:** Disease points added each hour while infected. A negative value removes points each hour, so the disease improves. With `fReverseOnFull`, the sign of this gain is reversed at the full stage, so a normal positive gain starts removing points. Numeric semantics: higher values progress faster; negative values recover.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Integer points per hour; negative values remove points.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_SWAMP`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Infection chance from swamp. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Description:** Base chance, in percent, of infection during each hourly disease check while the mercenary is in a swamp or swamp-road sector. Disease resistance and fear of insects modify the final chance. Numeric semantics: higher values are more infectious; `0.5` means 0.5%, and negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`; fractional values are allowed (`0.5` = 0.5%).
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_TROPICS`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Infection chance from tropics. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Description:** Base chance, in percent, of infection during each hourly disease check while the mercenary is in a tropical or tropical-road sector. Disease resistance and fear of insects modify the final chance. Numeric semantics: higher values are more infectious; `0.25` means 0.25%, and negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`; fractional values are allowed (`0.25` = 0.25%).
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_SEX`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from sex. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, of infection from one sexual encounter. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_CONTACT_HUMAN`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from contact human. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, of infection per hourly check when another infected mercenary is in the same sector. Sharing a squad or vehicle, or both being patients, increases the final chance. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_CONTACT_CORPSE`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from contact corpse. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, of infection per hourly check when the sector contains disease points from corpses. The final chance also scales with the sector disease load. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_ANIMAL`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound animal. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when the mercenary is wounded by an animal or creature, such as a bloodcat or tentacles. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_OPEN`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound open. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a blade, hand-to-hand or explosion wound leaves a fresh open wound. The final chance is modified by the damage dealt. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_GUNSHOT`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound gunshot. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a gunshot wound deals more than 20 damage. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_FIRE`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound fire. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when the mercenary is wounded by fire. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_GAS`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound gas. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when the mercenary is wounded by gas that is not fire. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_AGI`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound agi. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a wound causes critical Agility loss, not merely any wound. This is the `WOUND_AGI` event from the disease system. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_DEX`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound dex. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a wound causes critical Dexterity loss, not merely any wound. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_STR`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound str. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a wound causes critical Strength loss, not merely any wound. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_WIS`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound wis. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when a wound causes critical Wisdom loss, not merely any wound. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_TRAUMATIC`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound traumatic. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, for a traumatic event rather than a physical wound: life falling below `OKLIFE` after damage, or a severe morale shock with morale below 15. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_BADFOOD`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from badfood. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when eating food in bad condition. The final chance rises as the food condition worsens. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/InfectionChance_BADWATER`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from badwater. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Base chance, in percent, when drinking water in bad condition. The final chance rises as the water condition worsens. Numeric semantics: higher values are more infectious; negative values are outside the valid range.
 - **Only used with:** DISEASE.
-- **Values:** Decimal infection chance.
+- **Values:** Percentage, clamped to `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fCanBeCured`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the disease can be cured.
+- **Description:** If set, doctors can cure the disease. If clear, the infection can only run its course or reverse through its point gain.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fReverseOnFull`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the disease reverses when the full stage is reached.
+- **Description:** If set, once disease points reach `sInfectionPtsFull`, the sign of `sInfectionPtsGainPerHour` is reversed. With a normal positive gain this makes the infection decline.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fCanReInfect`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the mercenary can be reinfected.
+- **Description:** If set, the disease can be applied again while the mercenary is already infected; if clear, an existing infection blocks a new one.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fHideSymbol`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the disease symbol is hidden in the UI.
+- **Description:** If set, no disease symbol is shown on the mercenary portrait, even after diagnosis.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fDisgusting`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Marks the disease as disgusting for reactions and descriptions.
+- **Description:** If set, other mercenaries react with disgust when the disease is diagnosed and has broken out.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fSpecialFlagPTSDBuns`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Special PTSB flag used by the disease system.
+- **Description:** If set and the mercenary is Buns (or her chaotic personality), this disease can trigger her PTSD personality change.
 - **Only used with:** DISEASE.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fSpecialFlagContractDisability`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Adds a contract disability; only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
+- **Description:** If set, contracting this disease adds a new disability to the mercenary. Only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
 - **Only used with:** DISEASE, DISEASE_SEVERE_LIMITATIONS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fSpecialFlagLimitedUseArms`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Limits use of the arms; only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
+- **Description:** If set, the disease limits use of the arms. A splint can improve the condition. Only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
 - **Only used with:** DISEASE, DISEASE_SEVERE_LIMITATIONS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/fSpecialFlagLimitedUseLegs`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Limits use of the legs; only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
+- **Description:** If set, the disease limits use of the legs. A splint can improve the condition. Only read when `DISEASE_SEVERE_LIMITATIONS` is enabled.
 - **Only used with:** DISEASE, DISEASE_SEVERE_LIMITATIONS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffStatAGI`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Agility effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
+- **Description:** Percentage change to effective Agility at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: `+10` means +10% effective Agility, `-10` means -10%, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage; `+10` = +10% effective Agility at full, `-10` = -10%.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffStatDEX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Dexterity effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
+- **Description:** Percentage change to effective Dexterity at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: `+10` means +10% effective Dexterity, `-10` means -10%, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage; `+10` = +10% effective Dexterity at full, `-10` = -10%.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffStatSTR`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Strength effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
+- **Description:** Percentage change to effective Strength at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: `+10` means +10% effective Strength, `-10` means -10%, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage; `+10` = +10% effective Strength at full, `-10` = -10%.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffStatWIS`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Wisdom effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
+- **Description:** Percentage change to effective Wisdom at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: `+10` means +10% effective Wisdom, `-10` means -10%, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage; `+10` = +10% effective Wisdom at full, `-10` = -10%.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffStatEXP`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Experience effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
+- **Description:** Change to effective experience level at full infection, in levels. The game adds it to the effective-level calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values raise the effective level, negative values lower it, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Effective-level points; positive raises, negative lowers.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffAP`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** AP effect while infected. Numeric semantics: Signed effect: positive values increase the value, negative values reduce it, and `0` is neutral.
+- **Description:** Action-point change at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values add AP, negative values subtract AP, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** AP points; positive adds, negative subtracts.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/usMaxBreath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum breath modifier while infected. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Percentage by which maximum breath is lowered at full infection. The actual reduction is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: higher values reduce breath more; `20` means -20% at full, and negative values are not meaningful.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage `0..100`; `20` means -20% at full infection.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sEffCarryStrength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Carry-strength effect while infected. Numeric semantics: Signed effect: positive values increase the value, negative values reduce it, and `0` is neutral.
+- **Description:** Percentage change to carrying strength at full infection. The game applies it to the carry-strength calculation, scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: `+10` means +10% carrying strength, `-10` means -10%, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage; `+10` = +10% carrying strength at full, `-10` = -10%.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sLifeRegenHundreds`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Life-regeneration modifier, in hundredths. Numeric semantics: Signed life-regeneration value: positive values regenerate life, negative values drain it, and `0` is neutral.
+- **Description:** Hourly life-regeneration change at full infection, in hundredths of a life point. The actual change is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values heal, negative values drain life, and `0` is neutral; `-600` means -6 HP per hour at full.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Hundredths of a life point per hour; negative values drain life.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sNeedToSleep`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sleep-need modifier while infected. Numeric semantics: Signed need modifier: higher values increase the need/effect, negative values reduce it, and `0` is neutral.
+- **Description:** Sleep-need change at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values increase the need for sleep, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Sleep-need points; positive increases, negative reduces.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sDrinkModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drink modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Percentage change to water consumption at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values increase water use, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage change to water consumption.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/sFoodModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Food modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Percentage change to food consumption at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`. Numeric semantics: positive values increase food use, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
+- **Values:** Percentage change to food consumption.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ### `DISEASESLIST/DISEASE/moralemodifier`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Morale modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Morale multiplier at full infection. The game interpolates from `1.0` toward this value as the disease approaches full. Numeric semantics: `1.0` is neutral, `0.8` means 20% lower morale, and `1.2` means 20% higher morale; negative values are not meaningful.
 - **Only used with:** DISEASE.
-- **Values:** Integer disease value; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** disease table data; table metadata.
-- **Confidence:** `inferred`
+- **Values:** Float multiplier; `1.0` is neutral.
+- **Default:** `1.0` when omitted.
+- **Source:** game code (disease loader, hourly disease update and effect application); Disease table data.
+- **Confidence:** `source`
 
 ## Relations
 
@@ -631,11 +634,11 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Sources
 
-- Disease table data.
-- Disease schema comments.
-- Field types: table data and field names; enum values come from the schema comments.
-- Descriptions are conservative where no formula is stated; no observed value ranges are used.
+- Game code: `XML_Disease.cpp` (loader), `Disease.cpp` (hourly update and infection checks), `Soldier Control.cpp` (magnitude and effect application).
+- Disease table data and schema comments.
+- Field types and clamping: disease code and XML loader.
+- Descriptions cover the code path that consumes each field; no row counts or observed data ranges are used.
 
 ## Open questions
 
-The disease-point thresholds and the exact severe-limitation effects are partly defined by the disease code; the table stores the parameters.
+The table stores balance values; it does not define how often a sex encounter or a bad meal occurs. The exact splint and severe-limitation behavior is implemented by the disease code, not by additional XML fields.
