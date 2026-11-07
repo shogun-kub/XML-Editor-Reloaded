@@ -14,7 +14,7 @@ record: AIM
 key: uiIndex
 sources:
   - AIM availability table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

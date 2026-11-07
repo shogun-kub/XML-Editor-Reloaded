@@ -14,7 +14,7 @@ record: MERC
 key: uiIndex
 sources:
   - MERC availability table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

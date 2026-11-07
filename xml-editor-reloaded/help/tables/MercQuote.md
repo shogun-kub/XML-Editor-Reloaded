@@ -14,7 +14,7 @@ record: PROFILE
 key: uiIndex
 sources:
   - Merc quote table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

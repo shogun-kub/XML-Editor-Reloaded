@@ -14,7 +14,7 @@ record: MERC
 key: uiIndex
 sources:
   - Old AIM archive table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

@@ -14,7 +14,7 @@ record: FACE
 key: uiIndex
 sources:
   - RPC small-face table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

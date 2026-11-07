@@ -15,7 +15,7 @@ key: mIndex + mGearKitName
 sources:
   - Merc starting gear table data
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

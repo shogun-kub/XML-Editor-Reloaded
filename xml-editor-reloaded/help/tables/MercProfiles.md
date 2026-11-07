@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Merc profile table data
   - MercProfiles schema comments
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

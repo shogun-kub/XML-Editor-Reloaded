@@ -14,7 +14,7 @@ record: ITEM
 key: uiIndex
 sources:
   - Face gear table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

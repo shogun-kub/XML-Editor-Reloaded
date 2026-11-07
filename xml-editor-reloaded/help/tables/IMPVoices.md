@@ -14,7 +14,7 @@ record: VOICE
 key: voiceset
 sources:
   - IMP voice table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

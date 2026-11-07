@@ -14,7 +14,7 @@ record: IMP
 key: uiIndex
 sources:
   - IMP portrait table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

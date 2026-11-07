@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3 approved, B4/B5 draft 2026-11-07; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3/B4 approved, B5 draft 2026-11-08; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -51,11 +51,11 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 114 путей. `help-check -Write` проходит (656/2985). NIV/food/disease-поля помечены
 `Only used with`; capacity/random slots сгенерированы. Одобрены пользователем 2026-11-07, переведены в `reviewed`.
 
-**B4 (2026-11-07, draft).** 11 документов: `MercProfiles` (106), `MercStartingGear` (67),
+**B4 (2026-11-07, reviewed).** 11 документов: `MercProfiles` (106), `MercStartingGear` (67),
 `MercOpinions` (3), `MercQuote` (9), `MercAvailability` (10), `AIMAvailability` (4),
 `FaceGear` (3), `RPCFacesSmall` (7), `IMPPortraits` (12), `IMPVoices` (3), `OldAIMArchive`
 (5) — 229 путей. `help-check -Write` проходит (885/2985); `GEARKIT` и `l*` NIV-слоты
-описаны. Ждут ревью.
+описаны. Одобрены пользователем 2026-11-08, переведены в `reviewed`.
 
 **B5 (2026-11-07, draft).** 5 документов: `Backgrounds` (95), `DifficultySettings` (71),
 `Disease` (47), `RandomStats` (16), `MilitiaIndividual` (15) — 244 пути. `help-check -Write`

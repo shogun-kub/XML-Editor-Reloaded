@@ -14,7 +14,7 @@ record: OPINION
 key: uiIndex
 sources:
   - Merc opinion table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 
