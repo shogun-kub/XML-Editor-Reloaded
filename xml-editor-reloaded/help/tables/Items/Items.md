@@ -16,7 +16,7 @@ sources:
   - Item table data
   - Item property and flag metadata
   - Item lookup tables
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

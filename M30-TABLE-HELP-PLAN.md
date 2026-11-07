@@ -505,7 +505,9 @@ B0 оставил `Lookup.md` одним документом; остальны�
 значений из lookup. Добавлен раздел `Game options`: NCTH/OCTH, OIV/NIV, SciFi,
 Tons of Guns, disease; `ubPerPocket` — ёмкость OIV (в NIV не управляет ёмкостью, но
 читается для признака "small"); `ItemSize` = `OLD_INVENTORY_ITEM_NUMBER` — OIV-only маркер;
-NCTH-поля сгруппированы. Ждёт ревью пользователем.
+NCTH-поля сгруппированы. Одобрен пользователем 2026-11-07, документ переведён в
+`reviewed`. Следующий шаг — B1b (`Weapons`, `AmmoTypes`, `AmmoStrings`, `Explosives`,
+`ExplosionData`).
 
 ### B2. Items: вложения и состав
 
