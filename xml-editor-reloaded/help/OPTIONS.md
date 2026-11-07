@@ -41,7 +41,6 @@ The game has two inventory models:
 - **OIV** - old inventory, the original JA2 slot/pocket model.
 - **NIV** - new inventory, the 1.13 LBE/pocket model.
 
-`NIS` is another name for the new inventory system; the help normally calls it `NIV`.
 
 The inventory model is selected when a new campaign is started; the choice is stored in the
 save. The supplied 1.13 data set is NIV, but OIV remains supported. `OLD_INVENTORY_ITEM_NUMBER`

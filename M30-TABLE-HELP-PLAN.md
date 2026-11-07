@@ -506,7 +506,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 Tons of Guns, disease; `ubPerPocket` — ёмкость OIV (в NIV не управляет ёмкостью, но
 читается для признака "small"); `ItemSize` = `OLD_INVENTORY_ITEM_NUMBER` — OIV-only маркер;
 NCTH-поля сгруппированы. Одобрен пользователем 2026-11-07, документ переведён в
-`reviewed`; описания опциональных полей дополнены `Only used with: ...` (NCTH/NIS/Sci-Fi/
+`reviewed`; у опциональных полей есть отдельная строка `Only used with: ...` (NCTH/NIV/Sci-Fi/
 Tons of Guns/disease).
 
 Статус B1b (2026-11-07): созданы `Items/Weapons.md`, `Items/AmmoTypes.md`,
