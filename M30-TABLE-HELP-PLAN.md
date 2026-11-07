@@ -502,7 +502,9 @@ B0 оставил `Lookup.md` одним документом; остальны�
 структурных контейнера `STAND_MODIFIERS`/`CROUCH_MODIFIERS`/`PRONE_MODIFIERS`;
 `help-check -Write` проходит (257/257 путей). В документе нет row counts и
 наблюдаемых диапазонов; `Values` содержит только ограничения кода/типа или списки
-значений из lookup. Ждёт ревью пользователем.
+значений из lookup. Добавлен раздел `Game options`: NCTH/OCTH, OIV/NIV, SciFi,
+Tons of Guns, disease; `ubPerPocket` помечен как OIV-совместимое поле, NCTH-поля
+сгруппированы. Ждёт ревью пользователем.
 
 ### B2. Items: вложения и состав
 

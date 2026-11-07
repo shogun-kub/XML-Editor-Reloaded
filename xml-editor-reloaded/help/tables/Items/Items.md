@@ -28,6 +28,7 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
   - [Item classes and `ubClassIndex`](#item-classes-and-ubclassindex)
+- [Game options](#game-options)
 - [Field map](#field-map)
 - [Fields](#fields)
   - [`ITEMLIST/ITEM/uiIndex`](#itemlistitemuiindex)
@@ -343,6 +344,21 @@ not separate tables. They override the five text fields by `uiIndex`; see
 Do not read `ubClassIndex` without `usItemClass`: the same number means a
 different row in a different class table.
 
+## Game options
+
+This table is shared by several optional systems. The option names below are
+the ones that change how a field is read; a field without a note is used by
+both variants of the relevant system. The general option map is
+[OPTIONS.md](../../OPTIONS.md).
+
+| Option | Values | Effect on this table |
+|---|---|---|
+| New Chance to Hit (NCTH) / old Chance to Hit (OCTH) | `NCTH = TRUE` or `FALSE` in the game option file. `TRUE` selects NCTH; `FALSE` selects OCTH. | NCTH reads `ScopeMagFactor`, `ProjectionFactor`, `RecoilModifierX`, `RecoilModifierY`, `PercentRecoilModifier`, `PercentAccuracyModifier` and the three stance groups. OCTH ignores those fields. |
+| New inventory (NIV) / old inventory (OIV) | The 1.13 data set is NIV. `OLD_INVENTORY_ITEM_NUMBER` in the option file maps items that do not appear in NIV; legacy OIV data remains supported. | `ubPerPocket` is an OIV field. `NewInv` marks an item as NIV-only. NIV pocket capacity comes from the `Pockets` and `LoadBearingEquipment` tables, not from `ubPerPocket`. |
+| Sci-Fi mode | `SciFi = TRUE` or `FALSE`. | `SciFi` marks the item as part of the Sci-Fi item set. |
+| Tons of Guns | `BigGunList = TRUE` or `FALSE`. | `BigGunList` includes the item in the expanded gun list. |
+| Disease system | disease system enabled or disabled. | `DiseaseSystemExclusive` marks an item that belongs to the disease system. |
+
 ## Field map
 
 | Group | Fields | Covers |
@@ -549,7 +565,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubPerPocket`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** How many identical items fit into one inventory pocket. Zero means the item does not stack in a pocket.
+- **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. New inventory (NIV) uses the Pockets and LoadBearingEquipment tables instead; this field is kept for OIV compatibility.
 - **Values:** `0..8`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -706,7 +722,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ScopeMagFactor`
 
 - **Type:** `Decimal`
-- **Description:** Scope magnification factor used by aiming and vision calculations.
+- **Description:** NCTH scope magnification factor. Used only when the New Chance to Hit (NCTH) option is enabled; old Chance to Hit (OCTH) does not read it.
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -715,7 +731,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ProjectionFactor`
 
 - **Type:** `Decimal`
-- **Description:** Laser projection factor; controls how far the laser dot remains useful.
+- **Description:** NCTH laser projection factor. Used only when the New Chance to Hit (NCTH) option is enabled; OCTH does not read it.
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -742,7 +758,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentRecoilModifier`
 
 - **Type:** `Integer`
-- **Description:** Percentage recoil modifier; negative values reduce recoil.
+- **Description:** NCTH percentage recoil modifier. Used only when the New Chance to Hit option is enabled; OCTH does not read it.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -751,7 +767,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentAccuracyModifier`
 
 - **Type:** `Integer`
-- **Description:** Percentage accuracy modifier applied by the attachment.
+- **Description:** NCTH percentage accuracy modifier. Used only when the New Chance to Hit option is enabled; OCTH does not read it.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -2273,7 +2289,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/NewInv`
 
 - **Type:** `Boolean`
-- **Description:** The item is available only with the new inventory.
+- **Description:** Marks the item as New Inventory (NIV) only. Old inventory (OIV) does not expose it.
 - **Values:** `0` (no) or `1` (yes).
 - **Default:** `0` when omitted.
 - **Source:** item table data; item flag metadata.
@@ -2408,13 +2424,13 @@ contains the same eleven fields listed after the group blocks.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `source`
 
-**Stance modifier fields.** Each stance group has the same eleven fields.
+**Stance modifier fields (NCTH).** Each stance group has the same eleven fields; they are read by the New Chance to Hit system.
 Empty means neutral; positive and negative percentages are allowed.
 
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** Flat base modifier while standing.
+- **Description:** NCTH flat base modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2423,7 +2439,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** Percent base modifier while standing.
+- **Description:** NCTH percent base modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2432,7 +2448,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** Flat aim modifier while standing.
+- **Description:** NCTH flat aim modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2441,7 +2457,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** Percent aim modifier while standing.
+- **Description:** NCTH percent aim modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2450,7 +2466,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** Aim-cap modifier while standing.
+- **Description:** NCTH aim-cap modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2459,7 +2475,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** Handling modifier while standing.
+- **Description:** NCTH handling modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2468,7 +2484,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** Target-tracking speed modifier while standing.
+- **Description:** NCTH target-tracking speed modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2477,7 +2493,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** Drop-compensation modifier while standing.
+- **Description:** NCTH drop-compensation modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2486,7 +2502,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** Maximum counter-force modifier while standing.
+- **Description:** NCTH maximum counter-force modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2495,7 +2511,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** Counter-force accuracy modifier while standing.
+- **Description:** NCTH counter-force accuracy modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2504,7 +2520,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** Number of aim levels added or removed while standing.
+- **Description:** NCTH aim-level modifier while standing.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2513,7 +2529,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** Flat base modifier while crouching.
+- **Description:** NCTH flat base modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2522,7 +2538,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** Percent base modifier while crouching.
+- **Description:** NCTH percent base modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2531,7 +2547,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** Flat aim modifier while crouching.
+- **Description:** NCTH flat aim modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2540,7 +2556,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** Percent aim modifier while crouching.
+- **Description:** NCTH percent aim modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2549,7 +2565,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** Aim-cap modifier while crouching.
+- **Description:** NCTH aim-cap modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2558,7 +2574,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** Handling modifier while crouching.
+- **Description:** NCTH handling modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2567,7 +2583,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** Target-tracking speed modifier while crouching.
+- **Description:** NCTH target-tracking speed modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2576,7 +2592,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** Drop-compensation modifier while crouching.
+- **Description:** NCTH drop-compensation modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2585,7 +2601,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** Maximum counter-force modifier while crouching.
+- **Description:** NCTH maximum counter-force modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2594,7 +2610,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** Counter-force accuracy modifier while crouching.
+- **Description:** NCTH counter-force accuracy modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2603,7 +2619,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** Number of aim levels added or removed while crouching.
+- **Description:** NCTH aim-level modifier while crouching.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2612,7 +2628,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** Flat base modifier while prone.
+- **Description:** NCTH flat base modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2621,7 +2637,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** Percent base modifier while prone.
+- **Description:** NCTH percent base modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2630,7 +2646,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** Flat aim modifier while prone.
+- **Description:** NCTH flat aim modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2639,7 +2655,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** Percent aim modifier while prone.
+- **Description:** NCTH percent aim modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2648,7 +2664,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** Aim-cap modifier while prone.
+- **Description:** NCTH aim-cap modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2657,7 +2673,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** Handling modifier while prone.
+- **Description:** NCTH handling modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2666,7 +2682,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** Target-tracking speed modifier while prone.
+- **Description:** NCTH target-tracking speed modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2675,7 +2691,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** Drop-compensation modifier while prone.
+- **Description:** NCTH drop-compensation modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2684,7 +2700,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** Maximum counter-force modifier while prone.
+- **Description:** NCTH maximum counter-force modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2693,7 +2709,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** Counter-force accuracy modifier while prone.
+- **Description:** NCTH counter-force accuracy modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2702,7 +2718,7 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** Number of aim levels added or removed while prone.
+- **Description:** NCTH aim-level modifier while prone.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.

@@ -45,6 +45,7 @@ help/
 ├── SOURCES.md         source types and evidence rules
 ├── Localization.md    overlays and translatable fields
 ├── FORMULAS.md        multi-stage combat formulas (armour, ammo and damage)
+├── OPTIONS.md         game options that change field meaning
 ├── tables/            table documents
 │   ├── Lookup.md
 │   ├── Items/
