@@ -16,7 +16,7 @@ sources:
   - Merge table data
   - MergeType lookup table
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

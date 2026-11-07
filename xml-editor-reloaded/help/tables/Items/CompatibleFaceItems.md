@@ -15,7 +15,7 @@ key: compatiblefaceitemIndex + itemIndex
 sources:
   - Compatible face-item table data
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

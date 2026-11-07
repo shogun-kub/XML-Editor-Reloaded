@@ -16,7 +16,7 @@ sources:
   - Attachment slot table data
   - NAS lookup tables
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

@@ -15,7 +15,7 @@ key: none
 sources:
   - Structure move table data
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

@@ -16,7 +16,7 @@ sources:
   - Attachment info table data
   - Item and skill lookup tables
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

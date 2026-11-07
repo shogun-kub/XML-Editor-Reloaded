@@ -16,7 +16,7 @@ sources:
   - Attachment table data
   - Item metadata
   - Attachment-system field names
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

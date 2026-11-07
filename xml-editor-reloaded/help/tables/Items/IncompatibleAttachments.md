@@ -15,7 +15,7 @@ key: itemIndex + incompatibleattachmentIndex
 sources:
   - Incompatible attachment table data
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

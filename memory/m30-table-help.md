@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b approved, B2/B3/B4/B5 draft 2026-11-07; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2 approved, B3/B4/B5 draft 2026-11-07; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -39,12 +39,12 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 `Explosives.ubAnimationID` → `ExplosionData`, `ubFragType` → `AmmoTypes`; у OCTH/NCTH-полей
 стоит отдельная строка `Only used with: ...`. Одобрены 2026-11-07, `reviewed`.
 
-**B2 (2026-11-07, draft).** 12 документов: `Attachments` (4), `AttachmentSlots` (9),
+**B2 (2026-11-07, reviewed).** 12 документов: `Attachments` (4), `AttachmentSlots` (9),
 `AttachmentInfo` (5), `AttachmentComboMerges` (23), `IncompatibleAttachments` (2),
 `CompatibleFaceItems` (2), `Merges` (6), `Item_Transformations` (15),
 `StructureConstruct` (10), `StructureDeconstruct` (7), `StructureMove` (3), `Clothes` (4) —
 90 путей. `help-check -Write` проходит (542/2985); row counts не добавлены. У NAS-полей
-`Only used with: NAS`; повторяющиеся `allowedtile`/`*facingtile` описаны. Ждут ревью.
+`Only used with: NAS`; повторяющиеся `allowedtile`/`*facingtile` описаны. Одобрены пользователем 2026-11-07, переведены в `reviewed`.
 
 **B3 (2026-11-07, draft).** 7 документов: `Pockets` (41), `PocketPopups` (8),
 `LoadBearingEquipment` (18), `Food` (6), `FoodOpinion` (3), `Drugs` (16), `RandomItem` (22) —
