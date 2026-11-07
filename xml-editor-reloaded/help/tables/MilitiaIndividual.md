@@ -15,7 +15,7 @@ key: none
 sources:
   - Militia individual table data
   - MilitiaIndividual schema comment
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

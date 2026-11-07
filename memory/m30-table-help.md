@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3/B4 approved, B5 draft 2026-11-08; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -57,11 +57,11 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 (5) — 229 путей. `help-check -Write` проходит (885/2985); `GEARKIT` и `l*` NIV-слоты
 описаны. Одобрены пользователем 2026-11-08, переведены в `reviewed`.
 
-**B5 (2026-11-07, draft).** 5 документов: `Backgrounds` (95), `DifficultySettings` (71),
+**B5 (2026-11-08, reviewed).** 5 документов: `Backgrounds` (95), `DifficultySettings` (71),
 `Disease` (47), `RandomStats` (16), `MilitiaIndividual` (15) — 244 пути. `help-check -Write`
 проходит (1129/2985). Disease-поля помечены `DISEASE` (special-флаги — ещё
 `DISEASE_SEVERE_LIMITATIONS`), RandomStats — `MERCS_RANDOM_STATS`, Militia —
-`INDIVIDUAL_MILITIA`, NCTH-константы — `NCTH`; `Backgrounds` — `ENABLE_BACKGROUNDS`. Ждут ревью.
+`INDIVIDUAL_MILITIA`, NCTH-константы — `NCTH`; `Backgrounds` — `ENABLE_BACKGROUNDS`. Одобрены пользователем 2026-11-08, переведены в `reviewed`.
 
 **Дальше.** B6 — `FacilityTypes` (54), `SectorNames` (21), `SectorLoadscreens` (9),
 `MovementCosts` (7), `HeliSites` (7), `SamSites` (8), `DeliveryMethods` (5), `Minerals` (3),

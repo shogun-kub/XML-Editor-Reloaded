@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Random stats table data
   - RandomStats schema comments
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

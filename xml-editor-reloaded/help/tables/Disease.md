@@ -16,7 +16,7 @@ sources:
   - Game code (disease loader and hourly update)
   - Disease table data
   - Disease schema comments
-status: draft
+status: reviewed
 updated: 2026-11-08
 ---
 
