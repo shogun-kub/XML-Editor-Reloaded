@@ -52,7 +52,7 @@ xml-editor-reloaded/
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts
 ├── packaging/start-portable.cmd      # Shared portable launcher using XER_APP_DATA
-├── help/                             # TableData field help: English docs, index, coverage, glossary
+├── help/                             # TableData field help: docs, formulas, index, coverage, glossary
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/

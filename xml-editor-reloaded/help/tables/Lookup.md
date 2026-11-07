@@ -161,7 +161,7 @@ Flag lookup with 5 values (0..4). Ammo property bits used by `Items.AmmoTypes.am
 ### Lookup.ArmourClass
 
 Sequence lookup with 6 values (0..5). Matches `ARMOURCLASS_*`; used by
-`Items.Armours.ubArmourClass`.
+[Items.Armours](Items/Armours.md).
 
 ### Lookup.AttachmentClass
 
@@ -208,7 +208,7 @@ Sequence lookup with 5 values (0..4). Load-bearing equipment class.
 ### Lookup.MagazineType
 
 Sequence lookup with 4 values: magazine, bullet(s), box, crate. Matches `AMMO_MAGAZINE`,
-`AMMO_BULLET`, `AMMO_BOX`, `AMMO_CRATE`; used by `Items.Magazines.ubMagType`.
+`AMMO_BULLET`, `AMMO_BOX`, `AMMO_CRATE`; used by [Items.Magazines](Items/Magazines.md).
 
 ### Lookup.MergeType
 

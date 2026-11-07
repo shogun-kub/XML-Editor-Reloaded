@@ -225,6 +225,7 @@ xml-editor-reloaded/help/
 ├── GLOSSARY.md        # English canon + approved Russian, forbidden variants
 ├── SOURCES.md         # иерархия источников и формат ссылок
 ├── Localization.md    # оверлеи: ключи, переводимые поля, ограничения
+├── FORMULAS.md        # формулы: броня, боеприпасы и урон
 ├── COVERAGE.md        # отчёт покрытия (генерируется)
 ├── tables/
 │   ├── Lookup.md
@@ -484,8 +485,9 @@ B0 оставил `Lookup.md` одним документом; остальны�
 
 Статус B0 (2026-11-07): документы и скрипты созданы; `help-check -Write` проходит,
 все 239 файлов v5 парсятся; 28 таблиц / 78 полей; `Lookup.md` оставлен одним документом
-(23 справочника, 8 flag, 15 sequence); `F1` закреплён за справкой, About — в меню без клавиши. Ждёт ревью
-пользователем.
+(23 справочника, 8 flag, 15 sequence); добавлен `FORMULAS.md` с главами «Armour protection»
+и «Ammo and weapon damage dealt»; `F1` закреплён за справкой, About — в меню без клавиши.
+Ждёт ревью пользователем.
 
 ### B1. Items: ядро
 

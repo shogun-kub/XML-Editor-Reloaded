@@ -25,23 +25,23 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`CITY_INFO/COUNTRY/countryName`](#cityinfocountrycountryname)
-  - [`CITY_INFO/COUNTRY/countryNoun`](#cityinfocountrycountrynoun)
-  - [`CITY_INFO/CITYLIST/CITY/uiIndex`](#cityinfocitylistcityuiindex)
-  - [`CITY_INFO/CITYLIST/CITY/townName`](#cityinfocitylistcitytownname)
-  - [`CITY_INFO/CITYLIST/CITY/townUsesLoyalty`](#cityinfocitylistcitytownusesloyalty)
-  - [`CITY_INFO/CITYLIST/CITY/townRebelSentiment`](#cityinfocitylistcitytownrebelsentiment)
-  - [`CITY_INFO/CITYLIST/CITY/townMilitiaAllowed`](#cityinfocitylistcitytownmilitiaallowed)
-  - [`CITY_INFO/CITYLIST/CITY/hiddenTown`](#cityinfocitylistcityhiddentown)
-  - [`CITY_INFO/CITYLIST/CITY/townIcon`](#cityinfocitylistcitytownicon)
-  - [`CITY_INFO/CITYLIST/CITY/szIconFile`](#cityinfocitylistcitysziconfile)
-  - [`CITY_INFO/CITYLIST/CITY/iconPosition/x`](#cityinfocitylistcityiconpositionx)
-  - [`CITY_INFO/CITYLIST/CITY/iconPosition/y`](#cityinfocitylistcityiconpositiony)
-  - [`CITY_INFO/CITYLIST/CITY/baseSector/x`](#cityinfocitylistcitybasesectorx)
-  - [`CITY_INFO/CITYLIST/CITY/baseSector/y`](#cityinfocitylistcitybasesectory)
-  - [`CITY_INFO/CITYLIST/CITY/townPoint/x`](#cityinfocitylistcitytownpointx)
-  - [`CITY_INFO/CITYLIST/CITY/townPoint/y`](#cityinfocitylistcitytownpointy)
-  - [`CITY_INFO/CITY_TABLE/CITY_TABLE_ROW`](#cityinfocitytablecitytablerow)
+  - [`CITY_INFO/COUNTRY/countryName`](#city_infocountrycountryname)
+  - [`CITY_INFO/COUNTRY/countryNoun`](#city_infocountrycountrynoun)
+  - [`CITY_INFO/CITYLIST/CITY/uiIndex`](#city_infocitylistcityuiindex)
+  - [`CITY_INFO/CITYLIST/CITY/townName`](#city_infocitylistcitytownname)
+  - [`CITY_INFO/CITYLIST/CITY/townUsesLoyalty`](#city_infocitylistcitytownusesloyalty)
+  - [`CITY_INFO/CITYLIST/CITY/townRebelSentiment`](#city_infocitylistcitytownrebelsentiment)
+  - [`CITY_INFO/CITYLIST/CITY/townMilitiaAllowed`](#city_infocitylistcitytownmilitiaallowed)
+  - [`CITY_INFO/CITYLIST/CITY/hiddenTown`](#city_infocitylistcityhiddentown)
+  - [`CITY_INFO/CITYLIST/CITY/townIcon`](#city_infocitylistcitytownicon)
+  - [`CITY_INFO/CITYLIST/CITY/szIconFile`](#city_infocitylistcitysziconfile)
+  - [`CITY_INFO/CITYLIST/CITY/iconPosition/x`](#city_infocitylistcityiconpositionx)
+  - [`CITY_INFO/CITYLIST/CITY/iconPosition/y`](#city_infocitylistcityiconpositiony)
+  - [`CITY_INFO/CITYLIST/CITY/baseSector/x`](#city_infocitylistcitybasesectorx)
+  - [`CITY_INFO/CITYLIST/CITY/baseSector/y`](#city_infocitylistcitybasesectory)
+  - [`CITY_INFO/CITYLIST/CITY/townPoint/x`](#city_infocitylistcitytownpointx)
+  - [`CITY_INFO/CITYLIST/CITY/townPoint/y`](#city_infocitylistcitytownpointy)
+  - [`CITY_INFO/CITY_TABLE/CITY_TABLE_ROW`](#city_infocity_tablecity_table_row)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -266,7 +266,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 ## Relations
 
 - `CITY_INFO/CITY_TABLE/CITY_TABLE_ROW` cells -> `CITY_INFO/CITYLIST/CITY/uiIndex`.
-- `Map.Facilities` places facilities in sectors; facility names come from
+- [Map.Facilities](Facilities.md) places facilities in sectors; facility names come from
   `Map.FacilityTypes` (future docs).
 - `townName`, `countryName` and `countryNoun` are the only translatable fields; see
   `../../Localization.md`.

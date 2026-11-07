@@ -198,7 +198,7 @@ function ConvertTo-HelpAnchor {
 
     $value = $Text.ToLowerInvariant()
     $value = $value -replace '`', ''
-    $value = $value -replace '[^\p{L}\p{Nd}\s-]', ''
+    $value = $value -replace '[^\p{L}\p{Nd}\s_-]', ''
     $value = $value -replace '\s+', '-'
     $value = $value -replace '-+', '-'
     return $value.Trim('-')

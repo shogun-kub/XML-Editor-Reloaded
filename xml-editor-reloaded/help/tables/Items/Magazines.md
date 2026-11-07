@@ -33,6 +33,7 @@ updated: 2026-11-07
   - [`MAGAZINELIST/MAGAZINE/ubAmmoType`](#magazinelistmagazineubammotype)
   - [`MAGAZINELIST/MAGAZINE/ubMagType`](#magazinelistmagazineubmagtype)
 - [Relations](#relations)
+- [Related formulas](#related-formulas)
 - [Localization](#localization)
 - [Versions](#versions)
 - [Sources](#sources)
@@ -135,6 +136,18 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - `Items.Magazines.ubMagType` -> `Lookup.MagazineType`
   (`../Lookup.md#lookupmagazinetype`).
 - `Items.Weapons` uses the same caliber/capacity/ammo type triple to find a magazine.
+
+## Related formulas
+
+The ammo values feed a multi-stage damage pipeline documented in
+[Related formulas](../../FORMULAS.md):
+
+- [Armour protection](../../FORMULAS.md#armour-protection) - how `ubAmmoType` changes the
+  protection value and armour wear.
+- [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt) - where
+  `ubAmmoType` and the projectile count from the ammo type enter the damage result.
+
+The field entries above define the inputs; they do not repeat the formulas.
 
 ## Localization
 

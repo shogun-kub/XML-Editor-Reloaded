@@ -15,6 +15,7 @@ by `GLOSSARY.md`.
 - Every leaf field, including nested paths and repeating containers.
 - Lookup tables, including the repaired `AttachmentPoint` file in v5.
 - Cross-version differences and localization overlays.
+- Multi-stage formulas kept in their own chapters: `FORMULAS.md`.
 - Explicit unknowns; no invented meanings.
 
 Language overlays (`Russian.*.xml`) are not separate tables. They are described in
@@ -43,6 +44,7 @@ help/
 ├── GLOSSARY.md        English canon and approved Russian terms
 ├── SOURCES.md         source hierarchy and citation rules
 ├── Localization.md    overlays and translatable fields
+├── FORMULAS.md        multi-stage combat formulas (armour, ammo and damage)
 ├── tables/            table documents
 │   ├── Lookup.md
 │   ├── Items/

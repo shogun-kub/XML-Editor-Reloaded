@@ -33,6 +33,7 @@ updated: 2026-11-07
   - [`ARMOURLIST/ARMOUR/ubCoverage`](#armourlistarmourubcoverage)
   - [`ARMOURLIST/ARMOUR/ubDegradePercent`](#armourlistarmourubdegradepercent)
 - [Relations](#relations)
+- [Related formulas](#related-formulas)
 - [Localization](#localization)
 - [Versions](#versions)
 - [Sources](#sources)
@@ -133,6 +134,17 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - `Items.Armours.ubArmourClass` -> `Lookup.ArmourClass` (`../Lookup.md#lookuparmourclass`).
 - The item's `usItemClass` and `ubClassIndex` live in `Items.Items`; see the future
   `Items/Items.md`.
+
+## Related formulas
+
+The multi-stage damage model has its own chapters in [Related formulas](../../FORMULAS.md):
+
+- [Armour protection](../../FORMULAS.md#armour-protection) - coverage, condition, ammo
+  penetration and wear.
+- [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt) - how the
+  armour result becomes final damage.
+
+The field entries above define the inputs; they do not repeat the formulas.
 
 ## Localization
 

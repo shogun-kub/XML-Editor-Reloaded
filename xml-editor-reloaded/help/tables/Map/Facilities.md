@@ -106,7 +106,7 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 
 - `Map.Facilities.FacilityType` -> `Map.FacilityTypes.ubIndex` (future `Map/FacilityTypes.md`).
 - The sector code determines which town/region the facility belongs to; town data is in
-  `Map.Cities` (`Cities.md`).
+  [Map.Cities](Cities.md).
 - Facility names, tooltips and assignment text live in `Map.FacilityTypes` and its
   `Russian.*` overlay, not in this table.
 
