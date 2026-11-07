@@ -116,6 +116,18 @@ and documents that fact in `## Structure`; it has no key field to move.
 `help-check` compares the tree's field leaves with the `## Fields` order and rejects a missing,
 duplicated or reordered field, as well as a key that is not first.
 
+### Numeric fields
+
+Every `Integer`, `Decimal`, `Float`, `UINT8` or `Flags` field describes its numeric meaning in
+the `Description`, prefixed with `Numeric semantics:`. The sentence must say what a larger value
+means relative to a smaller one, and what negative values mean. For a boolean-like switch, say
+that `0` is off and `1` is on. For an identifier or enum, say that larger numbers are not a
+magnitude and that negative values are invalid.
+
+If the direction or negative-value meaning cannot be verified, write `Numeric semantics: not
+confirmed; see Open questions.` and add the field to `## Open questions`. Booleans and strings
+are exempt.
+
 A field is a level-3 heading with its full path from the document root, followed by a list:
 
 ```markdown

@@ -99,7 +99,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here.
+- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file. `Items.ubClassIndex` of an explosive item points here.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -108,7 +108,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment.
+- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from `Lookup.ExplosionType`: `0` Normal, `1` Stun, `2` Tear Gas, `3` Mustard Gas, `4` Flare, `5` Noise, `6` Smoke, `7` Creature Gas, `8` Fire, `9` Flashbang, `10` Signal Shell, `11` Roof Collapse, `12` White Smoke.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -117,7 +117,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubDamage`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Direct damage applied by the explosion.
+- **Description:** Direct damage applied by the explosion. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -126,7 +126,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Stun damage applied by the explosion.
+- **Description:** Stun damage applied by the explosion. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -135,7 +135,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubRadius`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Potential radius of the explosion. The actual effect can grow toward this radius from `ubStartRadius`.
+- **Description:** Potential radius of the explosion. The actual effect can grow toward this radius from `ubStartRadius`. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -144,7 +144,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVolume`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Volume of the explosion sound/report. It is a presentation value, not damage.
+- **Description:** Volume of the explosion sound/report. It is a presentation value, not damage. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -153,7 +153,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVolatility`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Volatility rating of the explosive. It expresses how sensitive the explosive is in the explosion model.
+- **Description:** Volatility rating of the explosive. It expresses how sensitive the explosive is in the explosion model. Numeric semantics: Higher values mean a larger volatility/angle, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -162,7 +162,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Index of the blast animation and sound row in `ExplosionData`.
+- **Description:** Index of the blast animation and sound row in `ExplosionData`. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Index of a row in [ExplosionData](ExplosionData.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -171,7 +171,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubDuration`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Duration of a lingering effect such as smoke, gas or fire. Zero means no lingering effect.
+- **Description:** Duration of a lingering effect such as smoke, gas or fire. Zero means no lingering effect. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -180,7 +180,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubStartRadius`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Initial radius of the effect at the moment of detonation. The effect expands toward `ubRadius`.
+- **Description:** Initial radius of the effect at the moment of detonation. The effect expands toward `ubRadius`. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -189,7 +189,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubMagSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Magazine capacity used by NAS explosive items. It is not the blast radius.
+- **Description:** Magazine capacity used by NAS explosive items. It is not the blast radius. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** `0..65000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -207,7 +207,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/usNumFragments`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Number of fragments produced by the explosion.
+- **Description:** Number of fragments produced by the explosion. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** `0..10000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -216,7 +216,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour.
+- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Index of a row in [AmmoTypes](AmmoTypes.md); the fragment projectile uses that ammo type.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -225,7 +225,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragDamage`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Damage of each fragment.
+- **Description:** Damage of each fragment. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -234,7 +234,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragRange`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Maximum travel range of fragments.
+- **Description:** Maximum travel range of fragments. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -243,7 +243,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubHorizontalDegree`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Horizontal spread of the fragment cone, in degrees.
+- **Description:** Horizontal spread of the fragment cone, in degrees. Numeric semantics: Angle in degrees; higher values mean a wider angle, and negative values are not meaningful.
 - **Values:** `0..360`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -252,7 +252,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVerticalDegree`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Vertical spread of the fragment cone, in degrees.
+- **Description:** Vertical spread of the fragment cone, in degrees. Numeric semantics: Angle in degrees; higher values mean a wider angle, and negative values are not meaningful.
 - **Values:** `0..360`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -261,7 +261,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Multiplier applied to the explosion when it occurs indoors. `1.0` leaves the blast unchanged. v4 records do not contain this element.
+- **Description:** Multiplier applied to the explosion when it occurs indoors. `1.0` leaves the blast unchanged. v4 records do not contain this element. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1..10`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.

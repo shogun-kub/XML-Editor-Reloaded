@@ -82,7 +82,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/allowedtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index on which moving is allowed. The element may repeat.
+- **Description:** Tile index on which moving is allowed. The element may repeat. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
 - **Values:** Allowed tile index; the element may repeat.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure move table data; field metadata.

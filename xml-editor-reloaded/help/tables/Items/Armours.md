@@ -76,7 +76,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the row in the runtime armour table and the identity of the
-  XML record. `Items.ubClassIndex` of an armour item points here.
+  XML record. `Items.ubClassIndex` of an armour item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** `0..N-1`; non-negative array index. The loader ignores values outside the array.
 - **Default:** none; a missing value leaves the table slot at zero.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -86,7 +86,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT8`), enum `ARMOURCLASS_*`
 - **Description:** Body slot/class of the armour. It is not the protection value; it tells
-  the UI and equipment checks whether this is a helmet, vest, leggings or plate.
+  the UI and equipment checks whether this is a helmet, vest, leggings or plate. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` helmet, `1` vest, `2` leggings, `3` plate, `4` monster, `5` vehicle.
 - **Default:** `0` (helmet) when the element is missing, because the record is zeroed first.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -97,7 +97,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 - **Type:** `Integer` (`UINT16` in the struct, cast to `UINT8` by the loader)
 - **Description:** Raw protection value of the armour; higher values absorb more damage.
   The loader casts the parsed value to `UINT8`, so values above 255 are truncated even though
-  the struct field is `UINT16`.
+  the struct field is `UINT16`. Numeric semantics: Higher values mean more protection/coverage, and negative values are not meaningful.
 - **Values:** `0..255` effectively; the loader truncates to `UINT8`.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -107,7 +107,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT8`), percent
 - **Description:** Percentage of the body slot covered by the armour. It is used as a
-  multiplier in protection calculations and in the item comparison panel.
+  multiplier in protection calculations and in the item comparison panel. Numeric semantics: Higher values mean more protection/coverage, and negative values are not meaningful.
 - **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `100` when `ENABLE_ARMOR_COVERAGE` is false. The option defaults to `FALSE`,
   so a default game forces every row to 100 and ignores the XML value. When coverage is
@@ -119,7 +119,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT8`), percent
 - **Description:** Percentage of the applied protection subtracted from the armour's status
-  when it absorbs a hit. Higher values wear out faster.
+  when it absorbs a hit. Higher values wear out faster. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).

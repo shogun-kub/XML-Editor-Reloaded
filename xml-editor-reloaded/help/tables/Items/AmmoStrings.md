@@ -69,7 +69,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `AMMOLIST/AMMO/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Calibre index referenced by `Weapons.ubCalibre` and magazine rows.
+- **Description:** Calibre index referenced by `Weapons.ubCalibre` and magazine rows. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file. `Weapons.ubCalibre` points here.
 - **Default:** empty string when omitted.
 - **Source:** ammo string table data; field metadata.

@@ -101,7 +101,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the combo-merge row and identity of the XML record.
+- **Description:** Index of the combo-merge row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -110,7 +110,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the base item on which the attachments are combined.
+- **Description:** Item ID of the base item on which the attachments are combined. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Item ID of the base item.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -119,7 +119,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 1. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 1. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -128,7 +128,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 2. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 2. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -137,7 +137,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 3. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 3. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -146,7 +146,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 4. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 4. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -155,7 +155,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 5. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 5. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -164,7 +164,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 6. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 6. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -173,7 +173,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 7. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 7. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -182,7 +182,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 8. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 8. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -191,7 +191,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 9. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 9. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -200,7 +200,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 10. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 10. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -209,7 +209,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment11`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 11. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 11. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -218,7 +218,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment12`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 12. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 12. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -227,7 +227,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment13`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 13. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 13. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -236,7 +236,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment14`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 14. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 14. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -245,7 +245,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment15`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 15. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 15. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -254,7 +254,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment16`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 16. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 16. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -263,7 +263,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment17`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 17. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 17. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -272,7 +272,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment18`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 18. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 18. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -281,7 +281,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment19`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 19. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 19. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -290,7 +290,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment20`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 20. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Description:** Item ID of attachment slot 20. Zero means the slot is not used. The row requires all non-zero slots to be present. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -299,7 +299,7 @@ ATTACHMENTCOMBOMERGELIST
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usResult`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced when all listed attachments are present on the base item.
+- **Description:** Item ID produced when all listed attachments are present on the base item. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Item ID of the combined result.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.

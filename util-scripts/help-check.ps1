@@ -156,6 +156,14 @@ foreach ($file in $docFiles) {
                 $errors.Add("${relative}: field '$($field.Path)' is missing '$key'")
             }
         }
+        $fieldType = [string]$field.Values['Type']
+        $fieldType = $fieldType.Trim('`').Trim()
+        if ($fieldType -in @('Integer', 'Decimal', 'Float', 'UINT8', 'Flags')) {
+            if (-not $field.Values.ContainsKey('Description') -or
+                [string]$field.Values['Description'] -notmatch 'Numeric semantics:') {
+                $errors.Add("${relative}: numeric field '$($field.Path)' is missing 'Numeric semantics:' in Description")
+            }
+        }
         if ($field.Values.ContainsKey('Confidence')) {
             $confidence = [string]$field.Values['Confidence']
             $confidence = $confidence.Trim('`').Trim()

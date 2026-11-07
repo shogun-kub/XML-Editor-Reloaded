@@ -92,7 +92,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the drug row and identity of the XML record.
+- **Description:** Index of the drug row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the schema comment allows up to 100 drugs.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -119,7 +119,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/effect`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Stat or resource changed by this effect.
+- **Description:** Stat or resource changed by this effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from the drug-effect list: `0` HP, `1` BP, `2` AP, `3` Morale, `4` Physical resistance, `5` Strength, `6` Agility, `7` Dexterity, `8` Wisdom.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -128,7 +128,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/duration`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the effect in turns.
+- **Description:** Duration of the effect in turns. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Duration in turns.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -137,7 +137,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/size`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Strength of the effect. Positive and negative values are allowed.
+- **Description:** Strength of the effect. Positive and negative values are allowed. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Effect strength; positive and negative values are allowed.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -146,7 +146,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this effect is applied when the drug is consumed. If omitted, the effect is applied without a chance roll.
+- **Description:** Chance that this effect is applied when the drug is consumed. If omitted, the effect is applied without a chance roll. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Percentage chance that this effect is applied when the drug is consumed; the loader default applies when omitted.
 - **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
@@ -155,7 +155,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/disease`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Disease row affected by this drug.
+- **Description:** Disease row affected by this drug. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Only used with:** Disease system.
 - **Values:** Disease row index in `Disease.xml`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -165,7 +165,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/size`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Disease points added; positive increases the disease, negative cures it.
+- **Description:** Disease points added; positive increases the disease, negative cures it. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** Disease system.
 - **Values:** Disease points added; positive increases the disease, negative cures it.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -175,7 +175,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disease effect is applied. If omitted, the effect is applied without a chance roll.
+- **Description:** Chance that this disease effect is applied. If omitted, the effect is applied without a chance roll. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** Disease system.
 - **Values:** Percentage chance that this disease effect is applied.
 - **Default:** absent: the effect applies without a chance roll.
@@ -185,7 +185,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Disability added for the duration of the effect.
+- **Description:** Disability added for the duration of the effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Disability ID: `1` Heat intolerant, `2` Nervous, `3` Claustrophobic, `4` Nonswimmer, `5` Fear of insects, `6` Forgetful, `7` Psycho, `8` Deaf, `9` Shortsighted, `10` Hemophiliac, `11` Afraid of heights, `12` Self-harm.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -194,7 +194,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/duration`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the disability in turns.
+- **Description:** Duration of the disability in turns. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Duration of the disability in turns.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -203,7 +203,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disability is applied. If omitted, the effect is applied without a chance roll.
+- **Description:** Chance that this disability is applied. If omitted, the effect is applied without a chance roll. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Percentage chance that this disability is applied.
 - **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
@@ -212,7 +212,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/personality`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Personality trait added for the duration of the effect.
+- **Description:** Personality trait added for the duration of the effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Personality trait ID: `1` Sociable, `2` Loner, `3` Optimist, `4` Assertive, `5` Intellectual, `6` Primitive, `7` Aggressive, `8` Phlegmatic, `9` Dauntless, `10` Pacifist, `11` Malicious, `12` Show-off.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -221,7 +221,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/duration`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the personality effect in turns.
+- **Description:** Duration of the personality effect in turns. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Duration of the personality effect in turns.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -230,7 +230,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this personality effect is applied. If omitted, the effect is applied without a chance roll.
+- **Description:** Chance that this personality effect is applied. If omitted, the effect is applied without a chance roll. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Percentage chance that this personality effect is applied.
 - **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.

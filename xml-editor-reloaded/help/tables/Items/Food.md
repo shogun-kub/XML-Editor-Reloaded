@@ -67,7 +67,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the food row and identity of the XML record.
+- **Description:** Index of the food row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Only used with:** Food system.
 - **Values:** Non-negative index; unique within the file. It is referenced by the item row through the food type.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -87,7 +87,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/bFoodPoints`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Food points supplied when the item is consumed.
+- **Description:** Food points supplied when the item is consumed. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** Food system.
 - **Values:** Food points supplied by the item; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -97,7 +97,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/bDrinkPoints`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Drink points supplied when the item is consumed.
+- **Description:** Drink points supplied when the item is consumed. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** Food system.
 - **Values:** Drink points supplied by the item; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -107,7 +107,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/usDecayRate`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Decay rate of the food item; the unit is defined by the food system.
+- **Description:** Decay rate of the food item; the unit is defined by the food system. Numeric semantics: Higher values mean faster decay, and negative values are not meaningful.
 - **Only used with:** Food system.
 - **Values:** Decimal decay rate; the unit is defined by the food system.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -117,7 +117,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/bMoraleMod`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Morale change applied when the item is consumed.
+- **Description:** Morale change applied when the item is consumed. Numeric semantics: Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
 - **Only used with:** Food system.
 - **Values:** Morale change applied when the food is consumed.
 - **Default:** `0` when omitted; an empty element follows the game default.

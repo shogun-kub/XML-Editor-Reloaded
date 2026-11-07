@@ -99,7 +99,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the random-item category and identity of the XML record.
+- **Description:** Index of the random-item category and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative index; unique within the file. It is referenced by `randomitem*` slots in this table and by random-item selection.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -117,7 +117,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 1. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 1. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-item category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -126,7 +126,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 2. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 2. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -135,7 +135,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 3. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 3. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -144,7 +144,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 4. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 4. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -153,7 +153,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 5. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 5. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -162,7 +162,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 6. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 6. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -171,7 +171,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 7. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 7. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -180,7 +180,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 8. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 8. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -189,7 +189,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 9. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 9. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -198,7 +198,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/randomitem10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 10. Zero leaves the slot empty.
+- **Description:** Nested random-item category in slot 10. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -207,7 +207,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 1. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 1. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID from [Items](Items.md); `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -216,7 +216,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 2. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 2. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -225,7 +225,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 3. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 3. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -234,7 +234,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 4. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 4. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -243,7 +243,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 5. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 5. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -252,7 +252,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 6. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 6. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -261,7 +261,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 7. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 7. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -270,7 +270,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 8. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 8. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -279,7 +279,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 9. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 9. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
@@ -288,7 +288,7 @@ RANDOMITEMLIST
 ### `RANDOMITEMLIST/RANDOMITEM/item10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 10. Zero leaves the slot empty.
+- **Description:** Direct item ID in slot 10. Zero leaves the slot empty. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.

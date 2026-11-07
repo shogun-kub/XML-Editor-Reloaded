@@ -66,7 +66,7 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the attachment-information row and identity of the XML record.
+- **Description:** Index of the attachment-information row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
@@ -75,7 +75,7 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment described by this row.
+- **Description:** Item ID of the attachment described by this row. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Item ID in [Items](Items.md); the item must be an attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
@@ -84,7 +84,7 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask.
+- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bitmask of `Lookup.ItemClass` IDs. The attachment can be mounted on items whose class intersects this mask.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
@@ -93,7 +93,7 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheck`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Skill check used when attaching the item. `None` disables the check.
+- **Description:** Skill check used when attaching the item. `None` disables the check. Numeric semantics: Numeric code that selects one skill check; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from `Lookup.SkillCheckType`: `0` None, `1` Lockpick, `2` Elec. Lockpick, `3` Attach Timed Detonator, `4` Attach Remote Detonator, `5` Plant Timed Bomb, `6` Plant Remote Bomb, `7` Open With Crowbar, `8` Smash Door, `9` Disarm Trap, `10` Unjam Gun, `11` Notice Dart, `12` Lie to Queen, `13` Attach Special Item, `14` Attach Special Elec. Item, `15` Disarm Elec. Trap.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
@@ -102,7 +102,7 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheckMod`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Modifier added to the selected attachment skill check. Positive values make the check easier or harder according to the check definition; it is not a separate skill value.
+- **Description:** Modifier added to the selected attachment skill check. Positive values make the check easier or harder according to the check definition; it is not a separate skill value. Numeric semantics: Signed modifier added to the skill check: positive values make the check easier, negative values make it harder.
 - **Values:** Integer modifier added to the selected skill check.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.

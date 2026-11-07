@@ -72,7 +72,7 @@ QARRAY
 ### `QARRAY/PROFILE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity for this quote row.
+- **Description:** Profile identity for this quote row. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -90,7 +90,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpHeadShotOnly`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for a head-shot-only situation.
+- **Description:** Quote event index for a head-shot-only situation. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -99,7 +99,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpTeamSpecific`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for team-specific dialogue.
+- **Description:** Quote event index for team-specific dialogue. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -108,7 +108,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpGenderCode`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Gender code used when selecting the quote.
+- **Description:** Gender code used when selecting the quote. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -117,7 +117,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpGotGunOrUsedGun`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for getting or using a gun.
+- **Description:** Quote event index for getting or using a gun. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -126,7 +126,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpPassingDislike`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for passing a disliked character.
+- **Description:** Quote event index for passing a disliked character. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -135,7 +135,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpWitnessQueenBugDeath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for witnessing the queen bug’s death.
+- **Description:** Quote event index for witnessing the queen bug’s death. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -144,7 +144,7 @@ QARRAY
 ### `QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for witnessing Deidranna’s death.
+- **Description:** Quote event index for witnessing Deidranna’s death. Numeric semantics: Quote event index; it selects a dialogue event rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.

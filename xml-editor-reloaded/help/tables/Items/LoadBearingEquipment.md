@@ -92,7 +92,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Index of the LBE row and identity of the XML record.
+- **Description:** Index of the LBE row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative index; unique within the file. It is referenced by `Items.ubClassIndex` for LBE items.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -102,7 +102,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeClass`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** LBE class used to decide which body slot the equipment occupies.
+- **Description:** LBE class used to decide which body slot the equipment occupies. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Only used with:** NIV.
 - **Values:** IDs from `Lookup.LBEClass`: `0` Nothing, `1` Thigh Pack, `2` Vest, `3` Combat Pack, `4` Backpack.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -112,7 +112,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeCombo`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Combination/merge index for LBE pieces that can be combined.
+- **Description:** Combination/merge index for LBE pieces that can be combined. Numeric semantics: Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -122,7 +122,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeFilledSize`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pre-filled size of the LBE, used when the item starts with contents.
+- **Description:** Pre-filled size of the LBE, used when the item starts with contents. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -132,7 +132,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Total volume available in the LBE.
+- **Description:** Total volume available in the LBE. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -142,7 +142,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Bitmask of pocket slots that are available on the LBE.
+- **Description:** Bitmask of pocket slots that are available on the LBE. Numeric semantics: Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
 - **Only used with:** NIV.
 - **Values:** Bitmask of available pocket slots; bit `n` corresponds to slot `n`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -152,7 +152,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 1. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 1. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Pocket row index in [Pockets](Pockets.md); `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -162,7 +162,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 2. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 2. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -172,7 +172,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 3. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 3. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -182,7 +182,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 4. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 4. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -192,7 +192,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 5. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 5. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -202,7 +202,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 6. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 6. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -212,7 +212,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 7. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 7. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -222,7 +222,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 8. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 8. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -232,7 +232,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 9. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 9. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -242,7 +242,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 10. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 10. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -252,7 +252,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex11`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 11. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 11. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -262,7 +262,7 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex12`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 12. `0` leaves the slot empty.
+- **Description:** Pocket row assigned to slot 12. `0` leaves the slot empty. Numeric semantics: Pocket index; it selects a pocket row, so larger values are not a magnitude, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

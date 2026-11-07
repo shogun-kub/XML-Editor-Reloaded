@@ -128,7 +128,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGMALE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the regular-male body type.
+- **Description:** Chance that a new militia gets the regular-male body type. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -138,7 +138,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the big-male body type; body-type chances should sum to 100.
+- **Description:** Chance that a new militia gets the big-male body type; body-type chances should sum to 100. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -148,7 +148,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_STOCKYMALE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the stocky-male body type.
+- **Description:** Chance that a new militia gets the stocky-male body type. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -158,7 +158,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the regular-female body type.
+- **Description:** Chance that a new militia gets the regular-female body type. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -168,7 +168,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_PINKSKIN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets pink skin.
+- **Description:** Chance that a new militia gets pink skin. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -178,7 +178,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_TANSKIN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets tan skin.
+- **Description:** Chance that a new militia gets tan skin. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -188,7 +188,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets dark skin.
+- **Description:** Chance that a new militia gets dark skin. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -198,7 +198,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets black skin; skin chances should sum to 100.
+- **Description:** Chance that a new militia gets black skin; skin chances should sum to 100. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -208,7 +208,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_green`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Daily wage of a green militia.
+- **Description:** Daily wage of a green militia. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Integer daily wage.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -218,7 +218,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_regular`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Daily wage of a regular militia.
+- **Description:** Daily wage of a regular militia. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Integer daily wage.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -228,7 +228,7 @@ document order; `key: none` records that fact.
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Daily wage of an elite militia.
+- **Description:** Daily wage of an elite militia. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Integer daily wage.
 - **Default:** `0` when omitted; an empty element follows the game default.

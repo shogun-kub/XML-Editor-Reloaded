@@ -158,7 +158,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here.
+- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file. The loader uses the value as the runtime index; no fixed upper bound is declared by the schema.
 - **Default:** none; a missing element leaves the runtime slot at `0`.
 - **Source:** weapon table data; field metadata.
@@ -176,7 +176,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubWeaponClass`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`.
+- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from `Lookup.WeaponClass`: `0` None, `1` Handgun, `2` Submachinegun, `3` Rifle, `4` Machinegun, `5` Shotgun, `6` Knife, `7` Monster.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -185,7 +185,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubWeaponType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling.
+- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from `Lookup.WeaponType`: `0` None, `1` Pistol, `2` Machine Pistol, `3` Submachinegun, `4` Rifle, `5` Sniper Rifle, `6` Assault Rifle, `7` Light Machinegun, `8` Shotgun.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -194,7 +194,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubCalibre`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Calibre index. It selects the matching row in `AmmoStrings` for display and connects the weapon to its ammunition family.
+- **Description:** Calibre index. It selects the matching row in `AmmoStrings` for display and connects the weapon to its ammunition family. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Index of a row in [AmmoStrings](AmmoStrings.md); `AmmoCaliber` is the display string.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -203,7 +203,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubReadyTime`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** AP cost to ready the weapon before firing. It is separate from the AP cost of the shot itself.
+- **Description:** AP cost to ready the weapon before firing. It is separate from the AP cost of the shot itself. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -212,7 +212,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubShotsPer4Turns`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Rate-of-fire value expressed as shots per four turns. The game derives the actual AP cost from this value and the weapon’s AP settings; it is not a direct “shots per turn” counter.
+- **Description:** Rate-of-fire value expressed as shots per four turns. The game derives the actual AP cost from this value and the weapon’s AP settings; it is not a direct “shots per turn” counter. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -221,7 +221,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubShotsPerBurst`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Number of projectiles fired by one burst.
+- **Description:** Number of projectiles fired by one burst. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -230,7 +230,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubBurstPenalty`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Accuracy penalty applied to burst fire.
+- **Description:** Accuracy penalty applied to burst fire. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -239,7 +239,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubBulletSpeed`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Projectile speed used by the bullet-flight and hit calculations. It is not the same as damage.
+- **Description:** Projectile speed used by the bullet-flight and hit calculations. It is not the same as damage. Numeric semantics: Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -248,7 +248,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubImpact`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Base damage of the weapon before ammunition modifiers and armour reduction.
+- **Description:** Base damage of the weapon before ammunition modifiers and armour reduction. Numeric semantics: Higher values mean a stronger effect, and negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -257,7 +257,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubDeadliness`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Deadliness rating used by mercenary weapon-affinity and AI evaluation. It is not a direct damage value.
+- **Description:** Deadliness rating used by mercenary weapon-affinity and AI evaluation. It is not a direct damage value. Numeric semantics: Higher values mean a stronger effect, and negative values are not meaningful.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -266,7 +266,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bAccuracy`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart.
+- **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** OCTH.
 - **Values:** `-100..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -276,7 +276,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubMagSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Magazine capacity used when the weapon is loaded. It describes the weapon’s magazine, not the magazine item row.
+- **Description:** Magazine capacity used when the weapon is loaded. It describes the weapon’s magazine, not the magazine item row. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** `0..65000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -285,7 +285,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/usRange`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Effective range in tiles used by the hit and AI range calculations.
+- **Description:** Effective range in tiles used by the hit and AI range calculations. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** `0..5000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -294,7 +294,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/usReloadDelay`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Delay of the reload animation. It is a presentation/timing value, not the AP cost of reloading.
+- **Description:** Delay of the reload animation. It is a presentation/timing value, not the AP cost of reloading. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** `0..500`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -303,7 +303,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/BurstAniDelay`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Delay between shots in a burst animation.
+- **Description:** Delay between shots in a burst animation. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** `0..500`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -312,7 +312,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubAttackVolume`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Noise volume produced by firing the weapon. It feeds sound propagation and AI hearing checks.
+- **Description:** Noise volume produced by firing the weapon. It feeds sound propagation and AI hearing checks. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -321,7 +321,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubHitVolume`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Hit-volume value used when resolving whether a shot connects.
+- **Description:** Hit-volume value used when resolving whether a shot connects. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -330,7 +330,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a normal shot.
+- **Description:** Sound ID played for a normal shot. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -339,7 +339,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sBurstSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst.
+- **Description:** Sound ID played for a burst. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -348,7 +348,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sSilencedBurstSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst from a silenced weapon.
+- **Description:** Sound ID played for a burst from a silenced weapon. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -357,7 +357,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sReloadSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played while reloading.
+- **Description:** Sound ID played while reloading. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -366,7 +366,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sLocknLoadSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played when a round is chambered or the weapon is readied.
+- **Description:** Sound ID played when a round is chambered or the weapon is readied. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -375,7 +375,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/SilencedSound`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound.
+- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Sound ID from the sound table; `0` means no separate silenced sound.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -384,7 +384,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bBurstAP`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** AP cost of a burst.
+- **Description:** AP cost of a burst. Numeric semantics: Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -393,7 +393,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Number of autofire shots per five AP. It is a rate value, not a magazine capacity.
+- **Description:** Number of autofire shots per five AP. It is a rate value, not a magazine capacity. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -402,7 +402,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/APsToReload`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of a normal reload.
+- **Description:** AP cost of a normal reload. Numeric semantics: Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -420,7 +420,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/MaxDistForMessyDeath`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Distance limit for the messy-death gore effect. Beyond this distance the ordinary death animation is used.
+- **Description:** Distance limit for the messy-death gore effect. Beyond this distance the ordinary death animation is used. Numeric semantics: Higher values mean a longer distance, and negative values are not meaningful.
 - **Values:** `0..500`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -429,7 +429,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/AutoPenalty`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Accuracy penalty applied to autofire.
+- **Description:** Accuracy penalty applied to autofire. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -456,7 +456,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/APsToReloadManually`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of a manual reload, used when the weapon is reloaded one round at a time.
+- **Description:** AP cost of a manual reload, used when the weapon is reloaded one round at a time. Numeric semantics: Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -465,7 +465,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ManualReloadSound`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played during a manual reload.
+- **Description:** Sound ID played during a manual reload. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -474,7 +474,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/nAccuracy`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart.
+- **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** NCTH.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -484,7 +484,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bRecoilX`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Horizontal recoil value used by NCTH.
+- **Description:** Horizontal recoil value used by NCTH. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** NCTH.
 - **Values:** `-20..20`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -494,7 +494,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bRecoilY`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Vertical recoil value used by NCTH.
+- **Description:** Vertical recoil value used by NCTH. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** NCTH.
 - **Values:** `-20..20`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -504,7 +504,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubAimLevels`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Number of aim levels available to the weapon in NCTH.
+- **Description:** Number of aim levels available to the weapon in NCTH. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** NCTH.
 - **Values:** `0..8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -514,7 +514,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubRecoilDelay`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Delay before recoil recovery begins.
+- **Description:** Delay before recoil recovery begins. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Only used with:** NCTH.
 - **Values:** `0..5`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -524,7 +524,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/Handling`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control.
+- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Only used with:** NCTH.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -534,7 +534,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/usOverheatingJamThreshold`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Heat threshold at which the weapon starts to jam in the overheating model.
+- **Description:** Heat threshold at which the weapon starts to jam in the overheating model. Numeric semantics: Higher values mean a higher overheating threshold/temperature, and negative values are not meaningful.
 - **Values:** `0..60000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -543,7 +543,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/usOverheatingDamageThreshold`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Heat threshold at which the weapon starts to take damage in the overheating model.
+- **Description:** Heat threshold at which the weapon starts to take damage in the overheating model. Numeric semantics: Higher values mean a higher overheating threshold/temperature, and negative values are not meaningful.
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -552,7 +552,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/usOverheatingSingleShotTemperature`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Temperature contribution of a single shot in the overheating model.
+- **Description:** Temperature contribution of a single shot in the overheating model. Numeric semantics: Higher values mean a higher overheating threshold/temperature, and negative values are not meaningful.
 - **Values:** `0..60000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -579,7 +579,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/BarrelConfiguration`
 
 - **Type:** `UINT8` (`UINT16`)
-- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed.
+- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed. Numeric semantics: Numeric code that selects a barrel configuration; larger numbers have no inherent ordering, and negative values are invalid.
 - **Values:** Positive barrel count; one element per barrel configuration. Absent means one barrel. The element may repeat.
 - **Default:** absent means one barrel; repeated elements add barrel configurations.
 - **Source:** weapon table data; field metadata.

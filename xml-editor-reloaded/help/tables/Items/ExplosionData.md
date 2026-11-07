@@ -77,7 +77,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here.
+- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file. `Explosives.ubAnimationID` points here.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -95,7 +95,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/TransKeyFrame`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the transparency key is applied.
+- **Description:** Animation frame at which the transparency key is applied. Numeric semantics: Frame index; it selects an animation frame rather than measuring an amount, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -104,7 +104,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/DamageKeyFrame`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the blast begins to apply damage.
+- **Description:** Animation frame at which the blast begins to apply damage. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -113,7 +113,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/ExplosionSoundID`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Primary sound ID played for the explosion.
+- **Description:** Primary sound ID played for the explosion. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -122,7 +122,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/AltExplosionSoundID`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Alternate sound ID used when the explosion needs a variant.
+- **Description:** Alternate sound ID used when the explosion needs a variant. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -140,7 +140,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/BlastSpeed`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Playback speed of the blast animation.
+- **Description:** Playback speed of the blast animation. Numeric semantics: Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.

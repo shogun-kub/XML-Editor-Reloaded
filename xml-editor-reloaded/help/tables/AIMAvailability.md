@@ -62,7 +62,7 @@ AIM_AVAILABLES
 ### `AIM_AVAILABLES/AIM/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** AIM availability row identity.
+- **Description:** AIM availability row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
@@ -80,7 +80,7 @@ AIM_AVAILABLES
 ### `AIM_AVAILABLES/AIM/ProfilId`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile ID of the AIM mercenary.
+- **Description:** Profile ID of the AIM mercenary. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
@@ -89,7 +89,7 @@ AIM_AVAILABLES
 ### `AIM_AVAILABLES/AIM/AimBioID`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Biography ID for the AIM site.
+- **Description:** Biography ID for the AIM site. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.

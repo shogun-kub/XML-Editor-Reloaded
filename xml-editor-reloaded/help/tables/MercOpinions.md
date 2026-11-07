@@ -60,7 +60,7 @@ MERCOPINIONS
 ### `MERCOPINIONS/OPINION/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity for this opinion row.
+- **Description:** Profile identity for this opinion row. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc opinion table data; item/profile metadata.

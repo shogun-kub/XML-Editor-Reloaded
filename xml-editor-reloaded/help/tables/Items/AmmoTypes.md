@@ -140,7 +140,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the ammunition behaviour row. Magazines reference it through `ubAmmoType`; explosives can reference it as their fragment type.
+- **Description:** Index of the ammunition behaviour row. Magazines reference it through `ubAmmoType`; explosives can reference it as their fragment type. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Non-negative integer; unique within the file. Referenced by `Magazines.ubAmmoType` and `Explosives.ubFragType`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -158,7 +158,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/red`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Red component of the ammunition-count colour, `0..255`.
+- **Description:** Red component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -167,7 +167,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/green`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Green component of the ammunition-count colour, `0..255`.
+- **Description:** Green component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -176,7 +176,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/blue`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Blue component of the ammunition-count colour, `0..255`.
+- **Description:** Blue component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -185,7 +185,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/structureImpactReductionMultiplier`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Multiplier in the structure-damage reduction fraction. Together with the divisor it controls how much bullet damage is lost when hitting a structure.
+- **Description:** Multiplier in the structure-damage reduction fraction. Together with the divisor it controls how much bullet damage is lost when hitting a structure. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -194,7 +194,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/structureImpactReductionDivisor`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Divisor paired with `structureImpactReductionMultiplier` for structure damage reduction.
+- **Description:** Divisor paired with `structureImpactReductionMultiplier` for structure damage reduction. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -203,7 +203,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/armourImpactReductionMultiplier`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Multiplier applied to the protection value of body armour that the bullet hits.
+- **Description:** Multiplier applied to the protection value of body armour that the bullet hits. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -212,7 +212,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/armourImpactReductionDivisor`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Divisor paired with `armourImpactReductionMultiplier` for armour protection.
+- **Description:** Divisor paired with `armourImpactReductionMultiplier` for armour protection. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -221,7 +221,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/beforeArmourDamageMultiplier`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Multiplier for damage applied before armour is hit. It is used only when `highExplosive` is greater than zero.
+- **Description:** Multiplier for damage applied before armour is hit. It is used only when `highExplosive` is greater than zero. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -230,7 +230,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/beforeArmourDamageDivisor`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Divisor paired with `beforeArmourDamageMultiplier` for pre-armour damage.
+- **Description:** Divisor paired with `beforeArmourDamageMultiplier` for pre-armour damage. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -239,7 +239,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/afterArmourDamageMultiplier`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Multiplier for damage applied after armour is hit. It is not used against armed vehicles.
+- **Description:** Multiplier for damage applied after armour is hit. It is not used against armed vehicles. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -248,7 +248,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/afterArmourDamageDivisor`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Divisor paired with `afterArmourDamageMultiplier` for post-armour damage.
+- **Description:** Divisor paired with `afterArmourDamageMultiplier` for post-armour damage. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -266,7 +266,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/usPiercePersonChanceModifier`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Extra chance for the bullet to continue flying after hitting a person, provided the weapon is not a rocket launcher or cannon and the bullet is still powerful enough.
+- **Description:** Extra chance for the bullet to continue flying after hitting a person, provided the weapon is not a rocket launcher or cannon and the bullet is still powerful enough. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -284,7 +284,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/numberOfBullets`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Number of projectiles fired per shot. Values above one represent buckshot or a multi-projectile load.
+- **Description:** Number of projectiles fired per shot. Values above one represent buckshot or a multi-projectile load. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Projectile count per shot; `1` is a single bullet, values above `1` are buckshot or a multi-projectile load.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -293,7 +293,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/multipleBulletDamageMultiplier`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Multiplier applied immediately after firing when more than one projectile is fired. Together with the divisor it scales multi-projectile damage.
+- **Description:** Multiplier applied immediately after firing when more than one projectile is fired. Together with the divisor it scales multi-projectile damage. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -302,7 +302,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/multipleBulletDamageDivisor`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Divisor paired with `multipleBulletDamageMultiplier` for multi-projectile damage.
+- **Description:** Divisor paired with `multipleBulletDamageMultiplier` for multi-projectile damage. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -311,7 +311,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/highExplosive`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Number of explosive items used when this ammunition explodes. Zero means the round does not use the explosive path.
+- **Description:** Number of explosive items used when this ammunition explodes. Zero means the round does not use the explosive path. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -320,7 +320,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/explosionSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Explosion size class used by the ammunition’s explosive effect.
+- **Description:** Explosion size class used by the ammunition’s explosive effect. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** IDs from `Lookup.ExplosionSize`: `0` None, `1` Standard, `2` HighExplosive, `3` Big Bada Boom, `4` Flame / Flame retardant.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -374,7 +374,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/lockBustingPower`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Extra damage dealt to locks.
+- **Description:** Extra damage dealt to locks. Numeric semantics: Higher values mean a stronger effect, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -401,7 +401,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/temperatureModificator`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additive modifier for temperature generation. `1.0` means +100%.
+- **Description:** Additive modifier for temperature generation. `1.0` means +100%. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -410,7 +410,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dirtModificator`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additive modifier for dirt generation. `1.0` means +100%.
+- **Description:** Additive modifier for dirt generation. `1.0` means +100%. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -419,7 +419,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/ammoflag`
 
 - **Type:** `Flags` (`UINT16`)
-- **Description:** Bitmask of special ammunition properties: cryo, blind, anti-materiel, white-smoke trail and fire trail.
+- **Description:** Bitmask of special ammunition properties: cryo, blind, anti-materiel, white-smoke trail and fire trail. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
 - **Values:** Bitmask: `1` cryo, `2` blind, `4` anti-materiel, `8` white-smoke trail, `16` fire trail. Combine bits with bitwise OR. The `AmmoFlag` lookup labels bit positions; it is not the raw mask value.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -428,7 +428,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierLife`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Multiplier for damage dealt to health.
+- **Description:** Multiplier for damage dealt to health. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -437,7 +437,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierBreath`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Multiplier for damage dealt to breath.
+- **Description:** Multiplier for damage dealt to breath. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -446,7 +446,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierTank`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additional multiplier for health damage when the target is a tank.
+- **Description:** Additional multiplier for health damage when the target is a tank. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -455,7 +455,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierArmouredVehicle`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additional multiplier for health damage when the target is an armed vehicle or robot but not a tank.
+- **Description:** Additional multiplier for health damage when the target is an armed vehicle or robot but not a tank. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -464,7 +464,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierCivilianVehicle`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additional multiplier for health damage when the target is an unarmed vehicle.
+- **Description:** Additional multiplier for health damage when the target is an unarmed vehicle. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -473,7 +473,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/dDamageModifierZombie`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Additional multiplier for health damage when the target is a zombie.
+- **Description:** Additional multiplier for health damage when the target is a zombie. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.

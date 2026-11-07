@@ -138,7 +138,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Index of the pocket row and identity of the XML record.
+- **Description:** Index of the pocket row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative index; unique within the file. It is referenced by `LoadBearingEquipment.lbePocketIndex*`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -158,7 +158,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pSilhouette`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Silhouette/icon used to draw the pocket in the inventory interface.
+- **Description:** Silhouette/icon used to draw the pocket in the inventory interface. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Only used with:** NIV.
 - **Values:** IDs from `Lookup.Silhouette`; the lookup names the pocket icon/silhouette.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -168,7 +168,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pType`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket size class used by the inventory UI and by item-fitting checks.
+- **Description:** Pocket size class used by the inventory UI and by item-fitting checks. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Only used with:** NIV.
 - **Values:** IDs from `Lookup.PocketSize`: `0` None, `1` Small, `2` Medium, `3` Large.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -178,7 +178,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pRestriction`
 
 - **Type:** `Flags` (`UINT32`)
-- **Description:** Bitmask of item classes the pocket accepts. Zero means the pocket has no class restriction.
+- **Description:** Bitmask of item classes the pocket accepts. Zero means the pocket has no class restriction. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Only used with:** NIV.
 - **Values:** Bitmask of `Lookup.ItemClass` IDs. `0` means no restriction; non-zero requires the item class to intersect the mask.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -188,7 +188,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pVolume`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Volume of the pocket. It is used by the LBE volume checks.
+- **Description:** Volume of the pocket. It is used by the LBE volume checks. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** NIV.
 - **Values:** Pocket volume; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -198,7 +198,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize0`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 0 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 0 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -208,7 +208,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 1 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 1 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -218,7 +218,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 2 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 2 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -228,7 +228,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 3 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 3 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -238,7 +238,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 4 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 4 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -248,7 +248,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 5 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 5 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -258,7 +258,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 6 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 6 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -268,7 +268,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 7 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 7 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -278,7 +278,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 8 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 8 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -288,7 +288,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 9 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 9 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -298,7 +298,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 10 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 10 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -308,7 +308,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize11`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 11 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 11 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -318,7 +318,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize12`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 12 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 12 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -328,7 +328,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize13`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 13 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 13 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -338,7 +338,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize14`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 14 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 14 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -348,7 +348,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize15`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 15 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 15 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -358,7 +358,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize16`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 16 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 16 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -368,7 +368,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize17`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 17 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 17 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -378,7 +378,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize18`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 18 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 18 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -388,7 +388,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize19`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 19 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 19 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -398,7 +398,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize20`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 20 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 20 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -408,7 +408,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize21`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 21 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 21 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -418,7 +418,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize22`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 22 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 22 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -428,7 +428,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize23`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 23 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 23 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -438,7 +438,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize24`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 24 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 24 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -448,7 +448,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize25`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 25 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 25 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -458,7 +458,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize26`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 26 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 26 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -468,7 +468,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize27`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 27 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 27 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -478,7 +478,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize28`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 28 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 28 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -488,7 +488,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize29`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 29 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 29 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -498,7 +498,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize30`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 30 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 30 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -508,7 +508,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize31`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 31 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 31 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -518,7 +518,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize32`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 32 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 32 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -528,7 +528,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize33`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 33 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 33 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -538,7 +538,7 @@ POCKETLIST
 ### `POCKETLIST/POCKET/ItemCapacityPerSize34`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 34 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Description:** Maximum number of items of item-size 34 that fit in the pocket. Zero means the pocket cannot hold that size. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

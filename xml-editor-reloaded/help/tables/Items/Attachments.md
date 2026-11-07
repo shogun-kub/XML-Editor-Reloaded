@@ -64,7 +64,7 @@ ATTACHMENTLIST
 ### `ATTACHMENTLIST/ATTACHMENT/attachmentIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment. The item must be an attachment item; this column identifies which attachment is being mapped.
+- **Description:** Item ID of the attachment. The item must be an attachment item; this column identifies which attachment is being mapped. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID in [Items](Items.md); the item must be an attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment table data; field metadata.
@@ -73,7 +73,7 @@ ATTACHMENTLIST
 ### `ATTACHMENTLIST/ATTACHMENT/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the host item (weapon, armour or other attachable item) that accepts the attachment.
+- **Description:** Item ID of the host item (weapon, armour or other attachable item) that accepts the attachment. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID in [Items](Items.md); the host item must accept the attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment table data; field metadata.
@@ -82,7 +82,7 @@ ATTACHMENTLIST
 ### `ATTACHMENTLIST/ATTACHMENT/APCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item.
+- **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment table data; field metadata.

@@ -68,7 +68,7 @@ MERGELIST
 ### `MERGELIST/MERGE/firstItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the first input item in the merge.
+- **Description:** Item ID of the first input item in the merge. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID of the first input.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
@@ -77,7 +77,7 @@ MERGELIST
 ### `MERGELIST/MERGE/secondItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the second input item in the merge.
+- **Description:** Item ID of the second input item in the merge. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID of the second input.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
@@ -86,7 +86,7 @@ MERGELIST
 ### `MERGELIST/MERGE/firstResultingItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in the first result slot.
+- **Description:** Item ID produced in the first result slot. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID of the first result.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
@@ -95,7 +95,7 @@ MERGELIST
 ### `MERGELIST/MERGE/secondResultingItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in the second result slot; `0` means no second result.
+- **Description:** Item ID produced in the second result slot; `0` means no second result. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Item ID of the second result; `0` means the merge produces only one item.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
@@ -104,7 +104,7 @@ MERGELIST
 ### `MERGELIST/MERGE/mergeType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Merge/use type that selects the action, skill check and result handling.
+- **Description:** Merge/use type that selects the action, skill check and result handling. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** IDs from `Lookup.MergeType`: `0` Destruction, `1` Combine, `2` Treat Armour, `3` Explosive (Hard), `4` Easy, `5` Electronic, `6` Use Item, `7` Use Item (Hard), `8` Swap Barrel, `9` Explosive (Easy), `10` Mechanical (Easy), `11` Mechanical (Hard), `12` Tripwire Roll, `13` Use (Drain Status), `14` Cannibalize, `15` Lose 10 percent.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
@@ -113,7 +113,7 @@ MERGELIST
 ### `MERGELIST/MERGE/APCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of the merge.
+- **Description:** AP cost of the merge. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.

@@ -44,7 +44,7 @@
 | Тема | Файл | О чём |
 |---|---|---|
 | Статус и roadmap | [memory/ja2-editor-status.md](memory/ja2-editor-status.md) | M0–M28 готовы, автогейты M23b–M27c пройдены, B1–B2 закрыты, 726 тестов, полный UI-smoke 99/99, ручной smoke принят; M28 portable release; roadmap M18–M28 закрыт |
-| TableData help | [memory/m30-table-help.md](memory/m30-table-help.md) | M30: B0 + B1a + B1b + B2 + B3 approved; B4/B5 draft 2026-11-07; 47 документов, 69 таблиц, 1129 путей; clean names, `table_ids`, code/type limits, options |
+| TableData help | [memory/m30-table-help.md](memory/m30-table-help.md) | M30: B0 + B1a + B1b + B2 + B3 approved; B4/B5 draft 2026-11-07; 47 документов, 69 таблиц, 1129 путей; clean names, `table_ids`, code/type limits, options, numeric semantics |
 | Упаковка и релиз | [memory/m28-packaging.md](memory/m28-packaging.md) | M28: версия 1.0.0, иконка, self-contained + framework-dependent win-x64, два portable ZIP/SHA-256, GLWTPL, release-скрипт, CI/release workflow |
 | Ветки и релизы | [memory/release-branching.md](memory/release-branching.md) | `main` только релизы, `dev` разработка, `release/<version>` стабилизация, manual pre-release, финальный merge + тег |
 | Архитектура и сборка | [memory/ja2-editor-architecture.md](memory/ja2-editor-architecture.md) | Решение, пакеты, DI, corpus/perf-гейты, гигиена репозитория |

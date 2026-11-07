@@ -78,7 +78,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/usCreationItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID consumed to build the structure.
+- **Description:** Item ID consumed to build the structure. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Item ID consumed to build the structure.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -87,7 +87,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/usItemStatusLoss`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item status lost by the creation item when the structure is built.
+- **Description:** Item status lost by the creation item when the structure is built. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
 - **Values:** Status lost by the creation item; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -114,7 +114,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Creation cost of the structure. The unit is defined by the construction system; it is a decimal value.
+- **Description:** Creation cost of the structure. The unit is defined by the construction system; it is a decimal value. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** Decimal creation cost.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -123,7 +123,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/fFortifyAdjacentAdjustment`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Fortification adjustment applied to adjacent tiles when the structure is built.
+- **Description:** Fortification adjustment applied to adjacent tiles when the structure is built. Numeric semantics: Boolean switch: `0` is off and `1` is on; larger or negative values are not meaningful.
 - **Values:** Decimal fortification adjustment applied to adjacent tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -132,7 +132,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/northfacingtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index used for the north-facing variant. The element may repeat for several tiles.
+- **Description:** Tile index used for the north-facing variant. The element may repeat for several tiles. Numeric semantics: Tile index; it selects a tile-set entry, so larger values are not a magnitude, and negative values are invalid.
 - **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -141,7 +141,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/southfacingtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index used for the south-facing variant. The element may repeat for several tiles.
+- **Description:** Tile index used for the south-facing variant. The element may repeat for several tiles. Numeric semantics: Tile index; it selects a tile-set entry, so larger values are not a magnitude, and negative values are invalid.
 - **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -150,7 +150,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/eastfacingtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index used for the east-facing variant. The element may repeat for several tiles.
+- **Description:** Tile index used for the east-facing variant. The element may repeat for several tiles. Numeric semantics: Tile index; it selects a tile-set entry, so larger values are not a magnitude, and negative values are invalid.
 - **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -159,7 +159,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/westfacingtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index used for the west-facing variant. The element may repeat for several tiles.
+- **Description:** Tile index used for the west-facing variant. The element may repeat for several tiles. Numeric semantics: Tile index; it selects a tile-set entry, so larger values are not a magnitude, and negative values are invalid.
 - **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.

@@ -60,7 +60,7 @@ IMPVOICELIST
 ### `IMPVOICELIST/VOICE/voiceset`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Voice-set ID used by the IMP voice selection.
+- **Description:** Voice-set ID used by the IMP voice selection. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp voice table data; item/profile metadata.
@@ -78,7 +78,7 @@ IMPVOICELIST
 ### `IMPVOICELIST/VOICE/bSex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sex for which the voice set is intended.
+- **Description:** Sex for which the voice set is intended. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp voice table data; item/profile metadata.

@@ -74,7 +74,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Availability row identity.
+- **Description:** Availability row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -101,7 +101,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/uiAlternateIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Alternate availability index; `-1` means none.
+- **Description:** Alternate availability index; `-1` means none. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -128,7 +128,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/MercBioID`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Biography ID for the MERC site.
+- **Description:** Biography ID for the MERC site. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -137,7 +137,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/ProfilId`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile ID of the MERC mercenary.
+- **Description:** Profile ID of the MERC mercenary. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -146,7 +146,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/usMoneyPaid`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Money paid value associated with the availability row.
+- **Description:** Money paid value associated with the availability row. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -155,7 +155,7 @@ MERC_AVAILABLES
 ### `MERC_AVAILABLES/MERC/usDay`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Day on which the availability changes.
+- **Description:** Day on which the availability changes. Numeric semantics: Day number; higher values mean a later day, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.

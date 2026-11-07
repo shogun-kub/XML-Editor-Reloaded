@@ -149,7 +149,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease row identity.
+- **Description:** Disease row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -189,7 +189,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sInfectionPtsInitial`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Initial infection points.
+- **Description:** Initial infection points. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -199,7 +199,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sInfectionPtsOutbreak`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points at which the disease breaks out.
+- **Description:** Infection points at which the disease breaks out. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -209,7 +209,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sInfectionPtsFull`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points at which the disease is fully developed.
+- **Description:** Infection points at which the disease is fully developed. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -219,7 +219,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sInfectionPtsGainPerHour`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection points gained per hour.
+- **Description:** Infection points gained per hour. Numeric semantics: Infection points; higher values mean more infection or a faster infection gain, and negative values are not meaningful.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -229,7 +229,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_SWAMP`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Infection chance from swamp.
+- **Description:** Infection chance from swamp. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -239,7 +239,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_TROPICS`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Infection chance from tropics.
+- **Description:** Infection chance from tropics. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -249,7 +249,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_SEX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from sex.
+- **Description:** Infection chance from sex. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -259,7 +259,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_CONTACT_HUMAN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from contact human.
+- **Description:** Infection chance from contact human. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -269,7 +269,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_CONTACT_CORPSE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from contact corpse.
+- **Description:** Infection chance from contact corpse. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -279,7 +279,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_ANIMAL`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound animal.
+- **Description:** Infection chance from wound animal. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -289,7 +289,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_OPEN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound open.
+- **Description:** Infection chance from wound open. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -299,7 +299,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_GUNSHOT`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound gunshot.
+- **Description:** Infection chance from wound gunshot. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -309,7 +309,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_FIRE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound fire.
+- **Description:** Infection chance from wound fire. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -319,7 +319,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_GAS`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound gas.
+- **Description:** Infection chance from wound gas. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -329,7 +329,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_AGI`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound agi.
+- **Description:** Infection chance from wound agi. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -339,7 +339,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_DEX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound dex.
+- **Description:** Infection chance from wound dex. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -349,7 +349,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_STR`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound str.
+- **Description:** Infection chance from wound str. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -359,7 +359,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_WIS`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound wis.
+- **Description:** Infection chance from wound wis. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -369,7 +369,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_WOUND_TRAUMATIC`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from wound traumatic.
+- **Description:** Infection chance from wound traumatic. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -379,7 +379,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_BADFOOD`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from badfood.
+- **Description:** Infection chance from badfood. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -389,7 +389,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/InfectionChance_BADWATER`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Infection chance from badwater.
+- **Description:** Infection chance from badwater. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Only used with:** DISEASE.
 - **Values:** Decimal infection chance.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -489,7 +489,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffStatAGI`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Agility effect while infected.
+- **Description:** Agility effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -499,7 +499,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffStatDEX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Dexterity effect while infected.
+- **Description:** Dexterity effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -509,7 +509,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffStatSTR`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Strength effect while infected.
+- **Description:** Strength effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -519,7 +519,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffStatWIS`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Wisdom effect while infected.
+- **Description:** Wisdom effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -529,7 +529,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffStatEXP`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Experience effect while infected.
+- **Description:** Experience effect while infected. Numeric semantics: Signed stat effect: positive values increase the stat, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -539,7 +539,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffAP`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** AP effect while infected.
+- **Description:** AP effect while infected. Numeric semantics: Signed effect: positive values increase the value, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -549,7 +549,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/usMaxBreath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum breath modifier while infected.
+- **Description:** Maximum breath modifier while infected. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -559,7 +559,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sEffCarryStrength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Carry-strength effect while infected.
+- **Description:** Carry-strength effect while infected. Numeric semantics: Signed effect: positive values increase the value, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -569,7 +569,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sLifeRegenHundreds`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Life-regeneration modifier, in hundredths.
+- **Description:** Life-regeneration modifier, in hundredths. Numeric semantics: Signed life-regeneration value: positive values regenerate life, negative values drain it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -579,7 +579,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sNeedToSleep`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sleep-need modifier while infected.
+- **Description:** Sleep-need modifier while infected. Numeric semantics: Signed need modifier: higher values increase the need/effect, negative values reduce it, and `0` is neutral.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -589,7 +589,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sDrinkModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drink modifier while infected.
+- **Description:** Drink modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -599,7 +599,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/sFoodModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Food modifier while infected.
+- **Description:** Food modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -609,7 +609,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/moralemodifier`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Morale modifier while infected.
+- **Description:** Morale modifier while infected. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

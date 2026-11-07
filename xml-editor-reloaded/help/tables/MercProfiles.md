@@ -267,7 +267,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity and index in the profile array.
+- **Description:** Profile identity and index in the profile array. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -276,7 +276,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/Type`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile kind: AIM, MERC, RPC, NPC, vehicle or IMP.
+- **Description:** Profile kind: AIM, MERC, RPC, NPC, vehicle or IMP. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` None, `1` AIM, `2` MERC, `3` RPC, `4` NPC, `5` Vehicle, `6` IMP.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -303,7 +303,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/ubFaceIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Face index used by the portrait system.
+- **Description:** Face index used by the portrait system. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Face index from the face tables.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -312,7 +312,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usVoiceIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Voice-set index from [IMPVoices](IMPVoices.md).
+- **Description:** Voice-set index from [IMPVoices](IMPVoices.md). Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Voice-set index from [IMPVoices](IMPVoices.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -321,7 +321,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usEyesX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the eyes on the portrait.
+- **Description:** X coordinate of the eyes on the portrait. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -330,7 +330,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usEyesY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the eyes on the portrait.
+- **Description:** Y coordinate of the eyes on the portrait. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -339,7 +339,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usMouthX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the mouth on the portrait.
+- **Description:** X coordinate of the mouth on the portrait. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -348,7 +348,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usMouthY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the mouth on the portrait.
+- **Description:** Y coordinate of the mouth on the portrait. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -357,7 +357,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiEyeDelay`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Eye animation delay.
+- **Description:** Eye animation delay. Numeric semantics: Higher values mean a longer animation delay (slower); negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -366,7 +366,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiMouthDelay`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Mouth animation delay.
+- **Description:** Mouth animation delay. Numeric semantics: Higher values mean a longer animation delay (slower); negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -375,7 +375,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiBlinkFrequency`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Blink frequency used by the portrait animation.
+- **Description:** Blink frequency used by the portrait animation. Numeric semantics: Higher values mean a more frequent animation; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -384,7 +384,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiExpressionFrequency`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Expression frequency used by the portrait animation.
+- **Description:** Expression frequency used by the portrait animation. Numeric semantics: Higher values mean a more frequent animation; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -429,7 +429,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bSex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sex of the profile.
+- **Description:** Sex of the profile. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` male, `1` female.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -438,7 +438,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/ubBodyType`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Body type used by the soldier animation and portrait system.
+- **Description:** Body type used by the soldier animation and portrait system. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -447,7 +447,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiBodyTypeSubFlags`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sub-flags for the selected body type.
+- **Description:** Sub-flags for the selected body type. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -456,7 +456,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bAttitude`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Original attitude used by dialogue and AI.
+- **Description:** Original attitude used by dialogue and AI. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` Normal, `1` Friendly, `2` Loner, `3` Optimist, `4` Pessimist, `5` Aggressive, `6` Arrogant, `7` Big Shot, `8` Asshole, `9` Coward.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -465,7 +465,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bCharacterTrait`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP character trait.
+- **Description:** STOMP character trait. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** STOMP character trait: `0` Neutral, `1` Sociable, `2` Loner, `3` Optimist, `4` Assertive, `5` Intellectual, `6` Primitive, `7` Aggressive, `8` Phlegmatic, `9` Dauntless, `10` Pacifist, `11` Malicious, `12` Show-off, `13` Coward.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -474,7 +474,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bDisability`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP disability, or none.
+- **Description:** STOMP disability, or none. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Disability: `0` None, `1` Heat Intolerant, `2` Nervous, `3` Claustrophobic, `4` Non Swimmer, `5` Fear of Insects, `6` Forgetful, `7` Psycho, `8` Deaf, `9` Shortsighted, `10` Hemophiliac, `11` Fear of Heights, `12` Self-Harming.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -483,7 +483,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/ubNeedForSleep`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sleep need used by the fatigue system.
+- **Description:** Sleep need used by the fatigue system. Numeric semantics: Higher values mean a greater sleep need (the character tires sooner); lower values mean less need. Negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -492,7 +492,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bReputationTolerance`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Tolerance for the player’s reputation.
+- **Description:** Tolerance for the player’s reputation. Numeric semantics: Higher values mean greater tolerance for a worse reputation; negative values are outside the normal range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -501,7 +501,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bDeathRate`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Death-rate value used by the profile’s aging/death checks.
+- **Description:** Death-rate value used by the profile’s aging/death checks. Numeric semantics: Higher values mean a higher death chance; negative values are outside the normal range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -510,7 +510,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLifeMax`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum life value for the profile.
+- **Description:** Maximum life value for the profile. Numeric semantics: Higher values mean more hit points; negative values are outside the normal life range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -519,7 +519,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLife`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Current/base life value at profile creation.
+- **Description:** Current/base life value at profile creation. Numeric semantics: Higher values mean more hit points; negative values are outside the normal life range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -528,7 +528,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bStrength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Strength stat at profile creation.
+- **Description:** Base Strength stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -537,7 +537,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bAgility`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Agility stat at profile creation.
+- **Description:** Base Agility stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -546,7 +546,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bDexterity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Dexterity stat at profile creation.
+- **Description:** Base Dexterity stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -555,7 +555,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bWisdom`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Wisdom stat at profile creation.
+- **Description:** Base Wisdom stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -564,7 +564,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bMarksmanship`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Marksmanship stat at profile creation.
+- **Description:** Base Marksmanship stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -573,7 +573,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bExplosive`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Explosives stat at profile creation.
+- **Description:** Base Explosives stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -582,7 +582,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLeadership`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Leadership stat at profile creation.
+- **Description:** Base Leadership stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -591,7 +591,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bMedical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Medical stat at profile creation.
+- **Description:** Base Medical stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -600,7 +600,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bMechanical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base Mechanical stat at profile creation.
+- **Description:** Base Mechanical stat at profile creation. Numeric semantics: Higher values mean a better stat; negative values are outside the normal stat range and have no defined meaning.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -609,7 +609,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bExpLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting experience level.
+- **Description:** Starting experience level. Numeric semantics: Higher values mean a more experienced profile; negative values are outside the normal level range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -627,7 +627,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bOldSkillTrait`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** First original skill trait.
+- **Description:** First original skill trait. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Original skill ID: `0` None, `1` Lock Picking, `2` Hand-to-Hand, `3` Electronics, `4` Night Ops, `5` Throwing, `6` Teaching, `7` Heavy Weapons, `8` Auto Weapons, `9` Stealthy, `10` Ambidexterous, `11` Thiefing, `12` Martial Arts, `13` Knifing, `14` Rooftop Sniping, `15` Camouflaged.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -636,7 +636,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bOldSkillTrait2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Second original skill trait.
+- **Description:** Second original skill trait. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Second original skill ID; the same value list as `bOldSkillTrait`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -645,7 +645,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bNewSkillTrait1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP skill or trait in slot 1.
+- **Description:** STOMP skill or trait in slot 1. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** STOMP skill/trait ID. Major: `1` Auto Weapons, `2` Heavy Weapons, `3` Marksman, `4` Hunter, `5` Gunslinger, `6` Hand-to-Hand, `7` Deputy, `8` Technician, `9` Paramedic, `20` Covert Ops. Minor: `10` Ambidexterous, `11` Melee, `12` Throwing, `13` Night Ops, `14` Stealthy, `15` Athletics, `16` Bodybuilding, `17` Demolitions, `18` Teaching, `19` Scouting, `21` Radio Operator, `22` Snitch, `23` Survival.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -654,7 +654,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bNewSkillTrait2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP skill or trait in slot 2.
+- **Description:** STOMP skill or trait in slot 2. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** STOMP skill/trait ID; the same value list as `bNewSkillTrait1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -663,7 +663,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bNewSkillTrait3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP skill or trait in slot 3.
+- **Description:** STOMP skill or trait in slot 3. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** STOMP skill/trait ID; the same value list as `bNewSkillTrait1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -672,7 +672,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bNewSkillTrait4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** STOMP skill or trait in slot 4.
+- **Description:** STOMP skill or trait in slot 4. Numeric semantics: Skill/trait ID; it selects a listed skill, so larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** STOMP skill/trait ID; the same value list as `bNewSkillTrait1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -681,7 +681,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bBuddy1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Buddy profile ID in slot 1; `255` means the slot is empty.
+- **Description:** Buddy profile ID in slot 1; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -690,7 +690,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bBuddy2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Buddy profile ID in slot 2; `255` means the slot is empty.
+- **Description:** Buddy profile ID in slot 2; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -699,7 +699,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bBuddy3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Buddy profile ID in slot 3; `255` means the slot is empty.
+- **Description:** Buddy profile ID in slot 3; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -708,7 +708,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bBuddy4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Buddy profile ID in slot 4; `255` means the slot is empty.
+- **Description:** Buddy profile ID in slot 4; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -717,7 +717,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bBuddy5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Buddy profile ID in slot 5; `255` means the slot is empty.
+- **Description:** Buddy profile ID in slot 5; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -726,7 +726,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLearnToLike`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile ID that the character learns to like.
+- **Description:** Profile ID that the character learns to like. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -735,7 +735,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLearnToLikeTime`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value for learning to like.
+- **Description:** Time value for learning to like. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Integer time value; the unit is defined by the relationship system.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -744,7 +744,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHated1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hated profile ID in slot 1; `255` means the slot is empty.
+- **Description:** Hated profile ID in slot 1; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -753,7 +753,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedTime1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value associated with hate slot 1.
+- **Description:** Time value associated with hate slot 1. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -762,7 +762,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHated2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hated profile ID in slot 2; `255` means the slot is empty.
+- **Description:** Hated profile ID in slot 2; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -771,7 +771,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedTime2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value associated with hate slot 2.
+- **Description:** Time value associated with hate slot 2. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -780,7 +780,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHated3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hated profile ID in slot 3; `255` means the slot is empty.
+- **Description:** Hated profile ID in slot 3; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -789,7 +789,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedTime3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value associated with hate slot 3.
+- **Description:** Time value associated with hate slot 3. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -798,7 +798,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHated4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hated profile ID in slot 4; `255` means the slot is empty.
+- **Description:** Hated profile ID in slot 4; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -807,7 +807,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedTime4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value associated with hate slot 4.
+- **Description:** Time value associated with hate slot 4. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -816,7 +816,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHated5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hated profile ID in slot 5; `255` means the slot is empty.
+- **Description:** Hated profile ID in slot 5; `255` means the slot is empty. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -825,7 +825,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedTime5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value associated with hate slot 5.
+- **Description:** Time value associated with hate slot 5. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -834,7 +834,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLearnToHate`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile ID that the character learns to hate.
+- **Description:** Profile ID that the character learns to hate. Numeric semantics: Profile ID; `255` means the slot is empty, and other negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -843,7 +843,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bLearnToHateTime`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time value for learning to hate.
+- **Description:** Time value for learning to hate. Numeric semantics: Time value for the relationship; higher values mean a longer delay, and negative values are not meaningful.
 - **Values:** Integer time value; the unit is defined by the relationship system.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -852,7 +852,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bRace`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Race category used by racism checks.
+- **Description:** Race category used by racism checks. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` White, `1` Black, `2` Asian, `3` Eskimo, `4` Hispanic.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -861,7 +861,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bNationality`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Nationality ID used by nationality checks.
+- **Description:** Nationality ID used by nationality checks. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** Nationality ID from the list documented in the table schema comment; `-1` is only meaningful for `bHatedNationality`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -870,7 +870,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bAppearance`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Appearance category used by the profile and dialogue.
+- **Description:** Appearance category used by the profile and dialogue. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` Average, `1` Ugly, `2` Homely, `3` Attractive, `4` Babe.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -879,7 +879,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bAppearanceCareLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** How much the profile cares about appearance: `0` None, `1` Some, `2` Extreme.
+- **Description:** How much the profile cares about appearance: `0` None, `1` Some, `2` Extreme. Numeric semantics: Numeric code that selects one listed care level; larger numbers are not a magnitude, and negative values are outside the listed choices.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -888,7 +888,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bRefinement`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Refinement category: average, slob or snob.
+- **Description:** Refinement category: average, slob or snob. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` Average, `1` Slob, `2` Snob.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -897,7 +897,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bRefinementCareLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** How much the profile cares about refinement: `0` None, `1` Some, `2` Extreme.
+- **Description:** How much the profile cares about refinement: `0` None, `1` Some, `2` Extreme. Numeric semantics: Numeric code that selects one listed care level; larger numbers are not a magnitude, and negative values are outside the listed choices.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -906,7 +906,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedNationality`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Nationality hated by the profile, or `-1`.
+- **Description:** Nationality hated by the profile, or `-1`. Numeric semantics: Nationality ID; `-1` means no hated nation, and other negative values are invalid.
 - **Values:** Hated nationality ID; `-1` means no hated nation.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -915,7 +915,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bHatedNationalityCareLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** How strongly the profile cares about the hated nationality: `0` None, `1` Some, `2` Extreme.
+- **Description:** How strongly the profile cares about the hated nationality: `0` None, `1` Some, `2` Extreme. Numeric semantics: Numeric code that selects one listed care level; larger numbers are not a magnitude, and negative values are outside the listed choices.
 - **Values:** Profile ID; `255` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -924,7 +924,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bRacist`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Racism level.
+- **Description:** Racism level. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` None, `1` Some, `2` Very.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -933,7 +933,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bSexist`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sexism level.
+- **Description:** Sexism level. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
 - **Values:** `0` Not, `1` Somewhat, `2` Very, `3` Gentleman.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -942,7 +942,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/sSalary`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Legacy salary value.
+- **Description:** Legacy salary value. Numeric semantics: Amount of money; higher values mean a larger salary/cost, and negative values are not meaningful amounts.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -951,7 +951,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiWeeklySalary`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Weekly salary.
+- **Description:** Weekly salary. Numeric semantics: Amount of money; higher values mean a larger salary/cost, and negative values are not meaningful amounts.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -960,7 +960,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/uiBiWeeklySalary`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Bi-weekly salary.
+- **Description:** Bi-weekly salary. Numeric semantics: Amount of money; higher values mean a larger salary/cost, and negative values are not meaningful amounts.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -969,7 +969,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bMedicalDeposit`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Medical-deposit setting for the profile.
+- **Description:** Medical-deposit setting for the profile. Numeric semantics: Switch value: `0` means no medical deposit and `1` means a deposit; larger numbers are not a magnitude, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -978,7 +978,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/sMedicalDepositAmount`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Medical-deposit amount.
+- **Description:** Medical-deposit amount. Numeric semantics: Amount of money; higher values mean a larger salary/cost, and negative values are not meaningful amounts.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -987,7 +987,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usOptionalGearCost`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Cost of the optional starting gear.
+- **Description:** Cost of the optional starting gear. Numeric semantics: Amount of money; higher values mean a larger salary/cost, and negative values are not meaningful amounts.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -996,7 +996,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bArmourAttractiveness`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** How attractive armour is to the profile when it chooses equipment.
+- **Description:** How attractive armour is to the profile when it chooses equipment. Numeric semantics: Higher values make the profile more likely to choose that equipment; lower values make it less likely, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1005,7 +1005,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bMainGunAttractiveness`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** How attractive the main gun is to the profile when it chooses equipment.
+- **Description:** How attractive the main gun is to the profile when it chooses equipment. Numeric semantics: Higher values make the profile more likely to choose that equipment; lower values make it less likely, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1023,7 +1023,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usApproachFactorFriendly`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Approach factor used for friendly dialogue and recruitment checks.
+- **Description:** Approach factor used for friendly dialogue and recruitment checks. Numeric semantics: Percentage-style factor: `100` is the neutral baseline, higher values improve the approach and lower/negative values penalize it.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1032,7 +1032,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usApproachFactorDirect`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Approach factor used for direct dialogue and recruitment checks.
+- **Description:** Approach factor used for direct dialogue and recruitment checks. Numeric semantics: Percentage-style factor: `100` is the neutral baseline, higher values improve the approach and lower/negative values penalize it.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1041,7 +1041,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usApproachFactorThreaten`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Approach factor used for threatening dialogue.
+- **Description:** Approach factor used for threatening dialogue. Numeric semantics: Percentage-style factor: `100` is the neutral baseline, higher values improve the approach and lower/negative values penalize it.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1050,7 +1050,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usApproachFactorRecruit`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Approach factor used for recruitment dialogue.
+- **Description:** Approach factor used for recruitment dialogue. Numeric semantics: Percentage-style factor: `100` is the neutral baseline, higher values improve the approach and lower/negative values penalize it.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1059,7 +1059,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/sSectorX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting sector X coordinate.
+- **Description:** Starting sector X coordinate. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1068,7 +1068,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/sSectorY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting sector Y coordinate.
+- **Description:** Starting sector Y coordinate. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1077,7 +1077,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/sSectorZ`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting sector Z coordinate.
+- **Description:** Starting sector Z coordinate. Numeric semantics: Higher values mean a deeper underground level; negative values are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1086,7 +1086,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/ubCivilianGroup`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Civilian group ID used by civilian AI.
+- **Description:** Civilian group ID used by civilian AI. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1095,7 +1095,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bTown`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Town associated with the profile.
+- **Description:** Town associated with the profile. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Town ID used by the profile.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1104,7 +1104,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/bTownAttachment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Attachment value for the profile’s associated town.
+- **Description:** Attachment value for the profile’s associated town. Numeric semantics: Signed attachment value: higher values mean a stronger bond to the town, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1113,7 +1113,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/usBackground`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Background row ID that selects the character background.
+- **Description:** Background row ID that selects the character background. Numeric semantics: Row ID; `255` means no background, and negative values are invalid.
 - **Values:** Background row ID.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1122,7 +1122,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierLife`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Life during character progression.
+- **Description:** Growth modifier for Life during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1131,7 +1131,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierStrength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Strength during character progression.
+- **Description:** Growth modifier for Strength during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1140,7 +1140,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierAgility`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Agility during character progression.
+- **Description:** Growth modifier for Agility during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1149,7 +1149,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierDexterity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Dexterity during character progression.
+- **Description:** Growth modifier for Dexterity during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1158,7 +1158,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierWisdom`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Wisdom during character progression.
+- **Description:** Growth modifier for Wisdom during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1167,7 +1167,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierMarksmanship`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Marksmanship during character progression.
+- **Description:** Growth modifier for Marksmanship during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1176,7 +1176,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierExplosive`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Explosive during character progression.
+- **Description:** Growth modifier for Explosive during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1185,7 +1185,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierLeadership`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Leadership during character progression.
+- **Description:** Growth modifier for Leadership during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1194,7 +1194,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierMedical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Medical during character progression.
+- **Description:** Growth modifier for Medical during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1203,7 +1203,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierMechanical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for Mechanical during character progression.
+- **Description:** Growth modifier for Mechanical during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.
@@ -1212,7 +1212,7 @@ MERCPROFILES
 ### `MERCPROFILES/PROFILE/GrowthModifierExpLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Growth modifier for ExpLevel during character progression.
+- **Description:** Growth modifier for ExpLevel during character progression. Numeric semantics: Negative values make growth faster, `0` is neutral and positive values make growth slower; no other negative meaning is defined.
 - **Values:** Integer growth modifier.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc profile table data; item/profile metadata.

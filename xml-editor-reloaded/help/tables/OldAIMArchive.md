@@ -64,7 +64,7 @@ OLD_MERC
 ### `OLD_MERC/MERC/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Archive row identity.
+- **Description:** Archive row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** old aim archive table data; item/profile metadata.
@@ -100,7 +100,7 @@ OLD_MERC
 ### `OLD_MERC/MERC/FaceID`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Face index for the archived mercenary.
+- **Description:** Face index for the archived mercenary. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** old aim archive table data; item/profile metadata.
