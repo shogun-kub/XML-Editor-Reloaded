@@ -19,6 +19,7 @@ JA2_1.13 Tools/
 ├── M14.5-METADATA-REPORT.md         # Metadata verification report
 ├── M22C-COMPOSITE-KEYS-PLAN.md      # Compound record keys plan
 ├── M23A-PARITY-AUDIT-PLAN.md        # Parity audit plan, substeps and agent protocol
+├── M30-TABLE-HELP-PLAN.md           # TableData field-help plan (M30–M32)
 ├── MANUAL-SMOKE-FIX-PLAN.md         # Fix plan for the S01–S14 manual smoke findings
 ├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
 ├── M23A-PARITY/                     # Parity audit sections, inventories and the manual smoke checklist
@@ -26,7 +27,7 @@ JA2_1.13 Tools/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
 ├── .github/workflows/               # CI build/test; manual pre-release and tag final release
-├── util-scripts/                    # Build+test, release packaging and `.tmp` cleanup
+├── util-scripts/                    # Build+test, release packaging, table-help checks and `.tmp` cleanup
 ├── References/                      # Read-only reference projects and game data (not in git)
 ├── out/                             # Build output, publish and release ZIPs (not in git)
 └── xml-editor-reloaded/             # Solution root — project code and release documents
@@ -51,6 +52,7 @@ xml-editor-reloaded/
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts
 ├── packaging/start-portable.cmd      # Shared portable launcher using XER_APP_DATA
+├── help/                             # TableData field help: English docs, index, coverage, glossary
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/
@@ -163,6 +165,24 @@ Fixtures and `report.md` go to `.tmp/ui-smoke/<run>/`, and settings are isolated
 the workspace starts at low integrity and cannot write `%APPDATA%` (`SQLite error 14`).
 
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
+
+## Table help tooling
+
+`xml-editor-reloaded/help/` is the English source of truth for TableData field
+documentation; the Russian edition will live in `help/ru/` after M32. The generator and
+validator are repository scripts, not part of the solution:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-inventory.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Write
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Release
+```
+
+`help-inventory.ps1` reads v5 with a v4 fallback and writes `.tmp/help/inventory.json|csv`.
+`help-check.ps1` validates front matter, field blocks and links, reports undocumented tables
+as pending, and rewrites per-document `## Contents`, `INDEX.md` and `COVERAGE.md` with
+`-Write`; `-Release` fails on pending tables or draft documents. The game data under
+`References/` is never modified.
 
 ## Branches and releases
 

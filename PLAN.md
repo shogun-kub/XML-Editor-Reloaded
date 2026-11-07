@@ -211,3 +211,15 @@ B1–B2 реализованы. `TableColumnViewModel.AllowedValues` отдаё�
 `BulkEdit_ProvidesAllowedValuesForLookupColumns`, `AllowedValues_FollowSelectedColumn`; UI-smoke S08 и
 S09 дополнены выбором lookup-имени из списка; S08 проверяет показ имён в закрытом поле.
 
+
+## M30 — Table help (B0, 2026-11-07)
+
+Начата отдельная линия справки по полям TableData. План — `M30-TABLE-HELP-PLAN.md`:
+M30 — английские документы по блокам B0–B8, M31 — окно справки, тултипы и `F1` в приложении,
+M32 — русская версия с глоссарием. B0 подготовлен: созданы `help/README.md`,
+`SOURCES.md`, `GLOSSARY.md`, `Localization.md` и шесть документов (`Lookup.md`,
+`Items/Armours.md`, `Items/Magazines.md`, `Items/Launchables.md`, `Map/Cities.md`,
+`Map/Facilities.md`) — 28 таблиц, 78 полей. `util-scripts/help-inventory.ps1` и
+`help-check.ps1` проверяют инвентарь, front matter, покрытие полей и ссылки; `-Write`
+обновляет `Contents`, `INDEX.md` и `COVERAGE.md`, `-Release` требует все 239 таблиц.
+B0 ждёт ревью пользователем, после чего начинается B1.
