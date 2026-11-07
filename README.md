@@ -132,7 +132,8 @@ mention this explicitly in the issue. Feature requests are also welcome in the i
 
 ## Documentation
 
-- [User guide](xml-editor-reloaded/USER-GUIDE.md) — detailed end-user instructions (Russian).
+- [User guide](xml-editor-reloaded/USER-GUIDE.md) — detailed end-user instructions.
+- [User guide in Russian](xml-editor-reloaded/USER-GUIDE-RU.md) — Russian translation.
 - [Changelog](xml-editor-reloaded/CHANGELOG.md) — release history.
 - [Project structure](PROJECT-STRUCTURE.md) — architecture, projects, and repository layout.
 - [Third-party notices](xml-editor-reloaded/THIRD-PARTY-NOTICES.md) — dependencies and licenses.

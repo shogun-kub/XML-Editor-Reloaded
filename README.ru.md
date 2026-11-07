@@ -130,7 +130,8 @@ Windows может показать предупреждение SmartScreen: с
 
 ## Документация
 
-- [Руководство пользователя](xml-editor-reloaded/USER-GUIDE.md) — подробная инструкция.
+- [Руководство пользователя](xml-editor-reloaded/USER-GUIDE-RU.md) — подробная инструкция.
+- [User guide in English](xml-editor-reloaded/USER-GUIDE.md) — английская версия.
 - [Changelog](xml-editor-reloaded/CHANGELOG.md) — история релизов.
 - [Структура проекта](PROJECT-STRUCTURE.md) — архитектура, проекты и структура репозитория.
 - [Third-party notices](xml-editor-reloaded/THIRD-PARTY-NOTICES.md) — зависимости и лицензии.
