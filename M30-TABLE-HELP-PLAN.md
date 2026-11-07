@@ -491,7 +491,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2/B3/B4 подготовлены, следующий шаг — B5.
+B2/B3/B4/B5 подготовлены, следующий шаг — B6.
 
 ### B1. Items: ядро
 
@@ -564,6 +564,13 @@ Row counts и наблюдаемые диапазоны не добавлены;
 `Backgrounds` (95), `DifficultySettings` (71), `Disease` (47), `RandomStats` (16),
 `MilitiaIndividual` (15). Здесь особенно много готовых XML-комментариев — их надо
 сверить с `Ja2/XML_DifficultySettings.cpp` и `XML_Background.cpp`.
+
+Статус B5 (2026-11-07, draft): созданы 5 документов; 244 пути. `Backgrounds` описывает
+все модификаторы и eligibility-поля; `DifficultySettings` — 71 параметр сложности и NCTH-константы;
+`Disease` — 47 полей с `Only used with: DISEASE` (три special-флага дополнительно требуют
+`DISEASE_SEVERE_LIMITATIONS`); `RandomStats` — `MERCS_RANDOM_STATS 2 or 3` (а `BaseAttribute` — только
+режим 3); `Backgrounds` — `ENABLE_BACKGROUNDS`; `MilitiaIndividual` — `INDIVIDUAL_MILITIA`. Row counts не добавлены.
+`help-check -Write` проходит (1129/2985 путей), документы ждут ревью.
 
 ### B6. Карта и стратегия
 
