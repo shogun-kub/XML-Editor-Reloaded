@@ -46,13 +46,11 @@ whose `usItemClass` is `IC_AMMO` points to a row through `ubClassIndex`; the row
 the runtime `Magazine[]` array. The row decides which weapon can load the item (`ubCalibre`,
 `ubMagSize`, `ubAmmoType`) and how the item behaves in bulk (`ubMagType`).
 
-The v5 file has 613 records.
-
 ## Tables
 
-| Table | File | Records | Notes |
-|---|---|---:|---|
-| `Magazines` | `Items/Magazines.xml` | 613 | v4 and v5 have the same schema; values may differ |
+| Table | File | Notes |
+|---|---|---|
+| `Magazines` | `Items/Magazines.xml` | v4 and v5 have the same schema; values may differ |
 
 ## Structure
 
@@ -77,7 +75,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - **Type:** `Integer` (`UINT32`)
 - **Description:** XML identity and the index in the runtime `Magazine[]` array. `Items`
   uses `ubClassIndex` to point at this row for ammo items.
-- **Values:** `0..MAXITEMS-1`; shipped data is contiguous.
+- **Values:** `0..MAXITEMS-1`; non-negative array index.
 - **Default:** none; a missing value leaves the array slot at zero.
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
@@ -89,8 +87,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
   `ubAmmoType` to find a matching magazine for a weapon and to name the caliber in the UI.
   It indexes the `AmmoStrings` list, which is filled in file order by the caliber loader
   (the `uiIndex` element is not read by that loader).
-- **Values:** `1..50` in the shipped data; the `AmmoStrings` file has a row for each used
-  caliber.
+- **Values:** `UINT8` index; the `AmmoStrings` file supplies the name for each used caliber.
 - **Default:** `0` (no caliber).
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
@@ -99,9 +96,8 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Capacity of the magazine in rounds. Loose bullets use 1; boxes and crates
-  use a large capacity (the shipped data reaches 5000). The loader casts the value to
-  `UINT16`.
-- **Values:** `1..65535`; shipped data uses 1..5000.
+  use a large capacity. The loader casts the value to `UINT16`.
+- **Values:** `0..65535`; the loader casts the value to `UINT16`.
 - **Default:** `0`.
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
@@ -111,7 +107,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Ammo type index into `AmmoTypes`. It selects the damage, armour
   interaction, tracer and other projectile properties.
-- **Values:** `0..34` in the shipped data; the valid range is the `AmmoTypes` row count.
+- **Values:** `UINT8` index; valid IDs are the `AmmoTypes` rows.
 - **Default:** `0` (regular ammo).
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`

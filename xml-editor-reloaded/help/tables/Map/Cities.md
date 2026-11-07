@@ -57,13 +57,13 @@ game reads it at the start of a new campaign; the values drive town loyalty, reb
 militia permission, strategic-map icons and the town name shown for a sector.
 
 The file is not a single flat list: it contains one `COUNTRY` singleton, a `CITYLIST` of
-12 towns, and a `CITY_TABLE` matrix of 18 rows by 18 columns.
+towns, and a `CITY_TABLE` sector-to-town matrix.
 
 ## Tables
 
-| Table | File | Records | Notes |
-|---|---|---:|---|
-| `Cities` | `Map/Cities.xml` | 12 `CITY` records | plus `COUNTRY` and `CITY_TABLE` |
+| Table | File | Notes |
+|---|---|---|
+| `Cities` | `Map/Cities.xml` | plus `COUNTRY` and `CITY_TABLE` |
 
 The editor treats `CITYLIST/CITY` as the record collection (key `uiIndex`) and `COUNTRY` as a
 root singleton. `CITY_TABLE` is a special matrix, not a record collection.
@@ -89,12 +89,12 @@ CITY_INFO
 │       ├── baseSector { x, y }
 │       └── townPoint { x, y }
 └── CITY_TABLE
-    └── CITY_TABLE_ROW    row="00".."17", 18 town IDs per row
+    └── CITY_TABLE_ROW    row="00".."17", town IDs per sector column
 ```
 
 `uiIndex` is the town array index. The loader ignores `0` (reserved for "no town") and values
 outside the array; the highest valid index + 1 becomes `NUM_TOWNS`. Duplicate indexes would
-overwrite earlier rows; the shipped data has no duplicates.
+overwrite earlier rows.
 
 ## Fields
 
@@ -121,7 +121,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Town identity and array index. `0` is reserved (no town); the loader
   skips it. The highest index sets `NUM_TOWNS`.
-- **Values:** `1..MAX_TOWNS-1`; shipped data uses 1..12.
+- **Values:** `1..MAX_TOWNS-1`; the loader skips `0` and indexes outside the array.
 - **Default:** none; a missing value is treated as invalid and the town is skipped.
 - **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
@@ -152,7 +152,6 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** How strongly the town hates the Queen's rule. It scales the rate of
   loyalty change: the same event changes loyalty more in a town with a high value.
 - **Values:** `1..100`. The loader clamps values above 100 to 100 and values below 1 to 1.
-  Shipped data uses 10..90.
 - **Default:** `1` after clamping.
 - **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
@@ -240,7 +239,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Type:** `Integer` (32-bit map coordinate)
 - **Description:** X position of the town name label on the strategic map, in tenths of a
   sector (the XML comment describes it as `10 * (X, Y)`). Fractions are possible.
-- **Values:** map coordinates; shipped data uses values such as 90, 125.
+- **Values:** map coordinates in tenths of a sector.
 - **Default:** `0`.
 - **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
@@ -257,10 +256,10 @@ overwrite earlier rows; the shipped data has no duplicates.
 ### `CITY_INFO/CITY_TABLE/CITY_TABLE_ROW`
 
 - **Type:** `Matrix row` (text)
-- **Description:** One row of the 18x18 sector-to-town matrix. The `row` attribute is the
-  zero-based map Y; the text contains 18 whitespace-separated town `uiIndex` values (0 = no
+- **Description:** One row of the sector-to-town matrix. The `row` attribute is the
+  zero-based map Y; the text contains whitespace-separated town `uiIndex` values (0 = no
   town). The loader writes each value into `StrategicMap[x + 18*y].bNameId`.
-- **Values:** 18 integers per row; `row` is `00`..`17`.
+- **Values:** integer town IDs per row; `row` is `00`..`17`.
 - **Default:** none; a missing or short row leaves the remaining cells unchanged.
 - **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
@@ -297,5 +296,5 @@ v4 and v5 have the same fields and structure. v4 ships the Russian overlay; v5 h
   parsed integer, and the exact scaling to screen pixels is in the map UI, not in this table.
 - `hiddenTown` is correct per the XML comment, but the internal flag is inverted. Do not use
   the internal flag name as the meaning of the XML field.
-- The matrix is 18x18 for the shipped world. A total-conversion mod with a different world
-  size would need a code change, not only XML edits.
+- The matrix dimensions are fixed by the code. A total-conversion mod with a different
+  world size would need a code change, not only XML edits.

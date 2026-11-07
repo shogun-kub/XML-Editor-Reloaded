@@ -302,14 +302,13 @@ combat modifiers, flags and links to class-specific tables. Other tables use
 the item `uiIndex` as a foreign key, so this table is the hub of most item
 relationships.
 
-The table is flat: one `ITEM` record per item, keyed by `uiIndex`. The v5 file
-contains 1775 records; the v4 file contains 1776.
+The table is flat: one `ITEM` record per item, keyed by `uiIndex`.
 
 ## Tables
 
-| File | Root / record | Records | Notes |
-|---|---|---:|---|
-| `Items/Items.xml` | `ITEMLIST` / `ITEM` | 1775 (v5), 1776 (v4) | Base item table. |
+| File | Root / record | Notes |
+|---|---|---|
+| `Items/Items.xml` | `ITEMLIST` / `ITEM` | Base item table. |
 
 The localized overlays (`Russian.Items.xml` and the other language files) are
 not separate tables. They override the five text fields by `uiIndex`; see
@@ -363,18 +362,20 @@ different row in a different class table.
 
 ## Fields
 
-Confidence `inferred` means the field exists in the shipped data and its role
-is reconstructed from its name, the legacy item-editor caption, and the
-project metadata; it was not checked against a dedicated code review in this
-block. Fields marked `source` are directly observed in data or lookup tables.
+`Type` names the editor field type. `Values` lists a code, metadata-validation or
+field-type limit when one is known; otherwise the document does not assert a range.
+Confidence `inferred` means the field exists in the table and its role is
+reconstructed from its name, the legacy item-editor caption, and the project
+metadata; it was not checked against a dedicated code review in this block.
+Fields marked `source` are verified against the table and lookup data.
 
 **Identity and descriptions.** IDs, names and player-facing text.
 
 ### `ITEMLIST/ITEM/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Primary item ID. Cross-table references and localization overlays use this value; it is unique inside one file.
-- **Values:** `0..1774` in v5; non-negative and unique inside the file.
+- **Values:** Non-negative integer; stored as `UINT32`; unique inside the file.
 - **Default:** None; required and unique inside the file.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `source`
@@ -428,16 +429,16 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/usItemClass`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Bit mask of item-class flags (`IC_*`). It selects the class-specific subtable reached through `ubClassIndex` and controls which item behaviours apply. See `ItemClass`.
-- **Values:** Bit mask; `0` = none. Common observed values: `1`, `2`, `1024`, `268435456`. See [ItemClass](../Lookup.md#itemclass).
+- **Values:** Bit mask; `0` = none. Bits are defined by [ItemClass](../Lookup.md#itemclass).
 - **Default:** None; every item declares a class.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/AttachmentClass`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Built-in attachment-class bit mask used by the legacy attachment system. Bits are defined by the [AttachmentClass](../Lookup.md#attachmentclass) lookup.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentClass](../Lookup.md#attachmentclass).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -446,7 +447,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/nasAttachmentClass`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Custom NAS attachment-class bit mask used with [AttachmentSystem](../Lookup.md#attachmentsystem) and NAS attachment points.
 - **Values:** Bit mask; `0` = none; bits are defined by `NasAttachmentClass`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -455,7 +456,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/nasLayoutClass`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** NAS layout-class bit mask. It tells the NAS layout which attachment slots the item exposes; bits are defined by [NasLayoutClass](../Lookup.md#naslayoutclass).
 - **Values:** Bit mask; `0` = none; bits are defined by `NasLayoutClass`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -464,7 +465,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/AvailableAttachmentPoint`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Bit mask of attachment points the item can accept. Used for receivers and mounts; bits are defined by the [AttachmentPoint](../Lookup.md#attachmentpoint) lookup.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentPoint](../Lookup.md#attachmentpoint).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -473,7 +474,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/AttachmentPoint`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Attachment point occupied by this item when installed. Zero means the item is not installed at a point.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentPoint](../Lookup.md#attachmentpoint).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -484,23 +485,23 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** AP cost to attach or detach the item at its attachment point.
-- **Values:** Observed `0..15`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ubClassIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the class-specific record selected by `usItemClass`: an armour row, magazine row, weapon row, explosive row, and so on.
-- **Values:** Observed `0..1762`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ubCursor`
 
-- **Type:** `Lookup` (integer ID)
+- **Type:** `Lookup` (integer ID, `UINT8`)
 - **Description:** Cursor lookup ID shown when the item is selected in the inventory. See [Cursor](../Lookup.md#cursor).
 - **Values:** Lookup ID; see [Cursor](../Lookup.md#cursor).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -509,9 +510,9 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/bSoundType`
 
-- **Type:** `Integer`
-- **Description:** Sound family used when the item is handled or fired. Only `0` appears in the shipped v5 file.
-- **Values:** `0` = default sound family; only `0` is used in v5.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Sound family used when the item is handled or fired.
+- **Values:** `0` = default sound family; the full enum is the source constant set.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -520,7 +521,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/ubGraphicType`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Graphic family for the inventory picture: `0` none, `1` big item, `2` interface, `3` alternate interface.
 - **Values:** `0` none, `1` big item, `2` interface, `3` alternate interface.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -529,34 +530,34 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/ubGraphicNum`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Graphic index inside the family selected by `ubGraphicType`.
-- **Values:** Observed `0..927`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ubWeight`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Item weight in the game's weight units; used by carry strength and backpack capacity.
-- **Values:** Observed `0..10000`; integer.
+- **Values:** `0..32000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ubPerPocket`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** How many identical items fit into one inventory pocket. Zero means the item does not stack in a pocket.
-- **Values:** Observed `0..8`; integer.
+- **Values:** `0..8`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ItemSize`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits.
 - **Values:** `0..99`; `99` means the item does not fit a normal pocket.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -567,50 +568,50 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Adjustment added to the item's effective size when pocket capacity is checked.
-- **Values:** Observed `-1..1`; integer.
+- **Values:** `-34..34`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usPrice`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Base purchase price. Bobby Ray prices and some trade calculations derive from it.
-- **Values:** Observed `0..70000`; integer.
+- **Values:** `0..1000000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/ubCoolness`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Coolness/progress level at which the item becomes available in the campaign.
-- **Values:** Observed `0..10`; integer.
+- **Values:** `0..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/bReliability`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
 - **Description:** Reliability modifier: higher values make the item less likely to jam or fail.
-- **Values:** Observed `-6..5`; integer.
+- **Values:** `-10..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/bRepairEase`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
 - **Description:** Repair-difficulty modifier: higher values make repair easier.
-- **Values:** Observed `-8..5`; integer.
+- **Values:** `-10..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/Inseparable`
 
-- **Type:** `Lookup` (integer ID)
+- **Type:** `Lookup` (integer ID, `UINT8`)
 - **Description:** Separability lookup ID that controls whether the item can be split, merged, or removed from a kit. See [Separability](../Lookup.md#separability).
 - **Values:** `0` separable, `1` inseparable, `2` replaceable. See [Separability](../Lookup.md#separability).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -621,7 +622,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bobby Ray's new-inventory stock level or quantity for this item.
-- **Values:** Observed `0..40`; integer.
+- **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -630,7 +631,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bobby Ray's used-inventory stock level or quantity.
-- **Values:** Observed `0..25`; integer.
+- **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -639,7 +640,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bobby Ray's rate-of-fire/restock value for this item.
-- **Values:** Observed `0..2500`; integer.
+- **Values:** `0..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -648,9 +649,9 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/DrugType`
 
-- **Type:** `Flags` (bit mask)
-- **Description:** Drug/effect class. Editor metadata marks it as a flag mask, but the shipped values look like a sequence; see [DrugType](../Lookup.md#drugtype) and Open questions.
-- **Values:** `0` = none; values are lookup IDs in [DrugType](../Lookup.md#drugtype); shipped values run from `0` to `18`.
+- **Type:** `Flags` (bit mask, `UINT32`)
+- **Description:** Drug/effect class. Editor metadata marks it as a flag mask, while the lookup is also presented as a sequence; see [DrugType](../Lookup.md#drugtype) and Open questions.
+- **Values:** `0` = none; values are lookup IDs in [DrugType](../Lookup.md#drugtype).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `source`
@@ -666,9 +667,9 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/usActionItemFlag`
 
-- **Type:** `Flags` (bit mask)
+- **Type:** `Flags` (bit mask, `UINT32`)
 - **Description:** Bit mask of action-item flags. It controls special use actions such as NET, radio, or remote detonator.
-- **Values:** Bit mask; observed `0..32768`; `0` = none.
+- **Values:** Bit mask; `0` = none. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -695,7 +696,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Alcohol strength/effect value for drinks; feeds the drunk state and related penalties.
-- **Values:** Observed `0..192`; decimal.
+- **Values:** Decimal value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -706,7 +707,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Scope magnification factor used by aiming and vision calculations.
-- **Values:** Observed `0..10`; decimal.
+- **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -715,7 +716,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Laser projection factor; controls how far the laser dot remains useful.
-- **Values:** Observed `0..3.5`; decimal.
+- **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -724,7 +725,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Horizontal recoil modifier added to the weapon's base recoil.
-- **Values:** Observed `0..0`; decimal.
+- **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -733,7 +734,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Vertical recoil modifier added to the weapon's base recoil.
-- **Values:** Observed `0..0`; decimal.
+- **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -742,7 +743,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage recoil modifier; negative values reduce recoil.
-- **Values:** Observed `-40..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -751,7 +752,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage accuracy modifier applied by the attachment.
-- **Values:** Observed `-10..10`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -769,7 +770,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Adjustment to the weapon's overheat temperature threshold.
-- **Values:** Observed `0..0`; decimal.
+- **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -778,7 +779,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Adjustment to the overheat cooldown rate.
-- **Values:** Observed `-0.2..0`; decimal.
+- **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -787,7 +788,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Adjustment to the heat level at which the weapon starts jamming.
-- **Values:** Observed `0..0`; decimal.
+- **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -796,7 +797,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** Adjustment to the heat level at which the weapon takes damage.
-- **Values:** Observed `0..0`; decimal.
+- **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -805,7 +806,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Decimal`
 - **Description:** How quickly the item accumulates dirt; higher values increase dirt gain.
-- **Values:** Observed `0..120`; decimal.
+- **Values:** Decimal value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -825,7 +826,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Item ID left behind after a disposable launcher is fired.
-- **Values:** Observed `0..919`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -834,7 +835,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Random-item table ID used when this item is generated as random loot.
-- **Values:** Observed `0..16`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -843,25 +844,25 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Item ID of the buddy/companion item linked to this item.
-- **Values:** Observed `0..1724`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usRiotShieldStrength`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Riot-shield protection strength.
-- **Values:** Observed `0..52`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usRiotShieldGraphic`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Graphic index for the riot-shield overlay.
-- **Values:** Observed `0..2`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -870,7 +871,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage reduction of the noise produced by the item.
-- **Values:** Observed `0..90`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -881,7 +882,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bipod bonus value; adds stability when the weapon is deployed.
-- **Values:** Observed `0..10`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -890,7 +891,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flat bonus to hit probability.
-- **Values:** Observed `-8..25`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -899,7 +900,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Range at which the laser sight gives its best accuracy bonus.
-- **Values:** Observed `0..400`; integer.
+- **Values:** `0..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -908,7 +909,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flat range bonus in tiles.
-- **Values:** Observed `-80..120`; integer.
+- **Values:** `-100..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -917,7 +918,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage range bonus.
-- **Values:** Observed `0..0`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -926,7 +927,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flat aim bonus.
-- **Values:** Observed `-11..20`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -935,7 +936,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Minimum range at which `AimBonus` applies.
-- **Values:** Observed `0..70`; integer.
+- **Values:** `0..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -944,7 +945,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage reduction of AP costs for actions with this item.
-- **Values:** Observed `-9..20`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -953,7 +954,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage reduction of status/condition drain.
-- **Values:** Observed `-300..0`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -962,7 +963,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Item ID of the bloodied variant produced when this item is bloodied.
-- **Values:** Observed `0..597`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -971,7 +972,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to hearing range.
-- **Values:** Observed `0..5`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -980,7 +981,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to general vision range.
-- **Values:** Observed `0..50`; integer.
+- **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -989,7 +990,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to night vision range.
-- **Values:** Observed `-10..45`; integer.
+- **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -998,7 +999,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to day vision range.
-- **Values:** Observed `-20..100`; integer.
+- **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1007,7 +1008,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to cave vision range.
-- **Values:** Observed `-20..30`; integer.
+- **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1016,7 +1017,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus to vision range in bright light.
-- **Values:** Observed `-40..90`; integer.
+- **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1025,7 +1026,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flat damage bonus.
-- **Values:** Observed `-1..3`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1034,7 +1035,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flat melee damage bonus.
-- **Values:** Observed `0..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1043,7 +1044,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Magazine-size bonus.
-- **Values:** Observed `0..70`; integer.
+- **Values:** `-250..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1052,7 +1053,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage AP reduction for burst fire.
-- **Values:** Observed `0..80`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1061,7 +1062,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage AP reduction for autofire.
-- **Values:** Observed `0..50`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1070,7 +1071,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage AP reduction for readying the item.
-- **Values:** Observed `0..33`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1079,7 +1080,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage AP reduction for reloading.
-- **Values:** Observed `-30..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1088,7 +1089,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** To-hit bonus applied to autofire.
-- **Values:** Observed `0..6`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1097,7 +1098,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus action points while the item is equipped.
-- **Values:** Observed `-11..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1106,7 +1107,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Rate-of-fire bonus.
-- **Values:** Observed `0..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1115,7 +1116,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Extra shots in a burst.
-- **Values:** Observed `0..3`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1124,7 +1125,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** To-hit bonus applied to burst fire.
-- **Values:** Observed `0..5`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1133,7 +1134,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bullet-speed bonus.
-- **Values:** Observed `-10..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1144,7 +1145,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** General camouflage bonus.
-- **Values:** Observed `-20..100`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1153,7 +1154,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Additional camouflage bonus in urban sectors.
-- **Values:** Observed `-20..100`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1162,7 +1163,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Additional camouflage bonus in desert sectors.
-- **Values:** Observed `-20..100`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1171,7 +1172,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Additional camouflage bonus in snow sectors.
-- **Values:** Observed `-20..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1180,16 +1181,16 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Stealth bonus; improves the chance to avoid detection.
-- **Values:** Observed `-33..25`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usSpotting`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Spotting modifier; positive values improve detection of hidden targets.
-- **Values:** Observed `0..70`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1198,7 +1199,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Carry-strength modifier applied when the item is in the backpack.
-- **Values:** Observed `-1..0`; integer.
+- **Values:** `-10000..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1207,7 +1208,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Fire-resistance modifier.
-- **Values:** Observed `0..25`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1216,7 +1217,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Percentage of tunnel vision imposed by the item.
-- **Values:** Observed `0..90`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1225,7 +1226,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 ### `ITEMLIST/ITEM/AttachmentSystem`
 
-- **Type:** `Lookup` (integer ID)
+- **Type:** `Lookup` (integer ID, `UINT8`)
 - **Description:** Attachment system selector: `0` legacy, `1` NAS, `2` NAS with layout classes. See [AttachmentSystem](../Lookup.md#attachmentsystem).
 - **Values:** `0` legacy, `1` NAS, `2` NAS with layout classes. See [AttachmentSystem](../Lookup.md#attachmentsystem).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1236,7 +1237,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus applied when the item is used as a crowbar.
-- **Values:** Observed `0..0`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1245,7 +1246,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Bonus applied when disarming traps or bombs.
-- **Values:** Observed `0..15`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1254,25 +1255,25 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Repair-kit effectiveness modifier.
-- **Values:** Observed `0..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usHackingModifier`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Hacking bonus.
-- **Values:** Observed `0..50`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usBurialModifier`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Burial modifier.
-- **Values:** Observed `0..50`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1281,7 +1282,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Chance that the item takes dirt or damage when used.
-- **Values:** Observed `0..40`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1290,7 +1291,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Flashlight range in tiles.
-- **Values:** Observed `0..18`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1299,7 +1300,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Time setting used when the item is selected in an item-choice list.
-- **Values:** Observed `0..2`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1308,25 +1309,25 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Sleep modifier for food, drink, or resting items.
-- **Values:** Observed `0..20`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usPortionSize`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Portion size for food or drink items.
-- **Values:** Observed `0..100`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/usAdministrationModifier`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Administration modifier for strategic actions.
-- **Values:** Observed `0..20`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1335,7 +1336,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Lockpicking bonus.
-- **Values:** Observed `-10..0`; integer.
+- **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1344,7 +1345,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Coolness adjustment applied when this item is chosen as random loot.
-- **Values:** Observed `-1..1`; integer.
+- **Values:** `-20..20`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1353,7 +1354,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Robot strength bonus.
-- **Values:** Observed `0..10`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1362,7 +1363,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Robot agility bonus.
-- **Values:** Observed `0..10`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1371,7 +1372,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Robot dexterity bonus.
-- **Values:** Observed `0..10`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1380,7 +1381,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Targeting skill granted by the robot chassis or module.
-- **Values:** Observed `0..0`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1389,7 +1390,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Utility skill granted by the robot chassis or module.
-- **Values:** Observed `0..21`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1398,7 +1399,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Chassis skill granted by the robot item.
-- **Values:** Observed `0..0`; integer.
+- **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1407,7 +1408,7 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Minimum transport progress at which this item or group can appear.
-- **Values:** `0..100` percent.
+- **Values:** Integer progress value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -1416,14 +1417,14 @@ block. Fields marked `source` are directly observed in data or lookup tables.
 
 - **Type:** `Integer`
 - **Description:** Maximum transport progress at which this item or group can appear.
-- **Values:** `0..100` percent.
+- **Values:** Integer progress value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
 
 ### `ITEMLIST/ITEM/DefaultAttachment`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Repeated element listing an item ID installed by default. Up to ten occurrences per item; empty means no default attachment.
 - **Values:** Item ID; repeated up to ten times; empty = none.
 - **Default:** Empty; no default attachment.
@@ -2414,7 +2415,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat base modifier while standing.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2423,7 +2424,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent base modifier while standing.
-- **Values:** Observed `-46..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2432,7 +2433,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat aim modifier while standing.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2441,7 +2442,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent aim modifier while standing.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2450,7 +2451,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Aim-cap modifier while standing.
-- **Values:** Observed `-17..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2459,7 +2460,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Handling modifier while standing.
-- **Values:** Observed `-10..20`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2468,7 +2469,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Target-tracking speed modifier while standing.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2477,7 +2478,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Drop-compensation modifier while standing.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2486,7 +2487,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Maximum counter-force modifier while standing.
-- **Values:** Observed `-30..70`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2495,7 +2496,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Counter-force accuracy modifier while standing.
-- **Values:** Observed `-46..30`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2504,7 +2505,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Number of aim levels added or removed while standing.
-- **Values:** Observed `-1..3`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2513,7 +2514,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat base modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2522,7 +2523,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent base modifier while crouching.
-- **Values:** Observed `-88..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2531,7 +2532,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat aim modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2540,7 +2541,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent aim modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2549,7 +2550,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Aim-cap modifier while crouching.
-- **Values:** Observed `-33..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2558,7 +2559,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Handling modifier while crouching.
-- **Values:** Observed `-5..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2567,7 +2568,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Target-tracking speed modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2576,7 +2577,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Drop-compensation modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2585,7 +2586,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Maximum counter-force modifier while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2594,7 +2595,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Counter-force accuracy modifier while crouching.
-- **Values:** Observed `-88..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2603,7 +2604,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Number of aim levels added or removed while crouching.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2612,7 +2613,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat base modifier while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2621,7 +2622,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent base modifier while prone.
-- **Values:** Observed `-56..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2630,7 +2631,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Flat aim modifier while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2639,7 +2640,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Percent aim modifier while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2648,7 +2649,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Aim-cap modifier while prone.
-- **Values:** Observed `-17..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2657,7 +2658,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Handling modifier while prone.
-- **Values:** Observed `-75..0`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2666,7 +2667,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Target-tracking speed modifier while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2675,7 +2676,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Drop-compensation modifier while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2684,7 +2685,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Maximum counter-force modifier while prone.
-- **Values:** Observed `-5..100`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2693,7 +2694,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Counter-force accuracy modifier while prone.
-- **Values:** Observed `-56..35`; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2702,7 +2703,7 @@ Empty means neutral; positive and negative percentages are allowed.
 
 - **Type:** `Integer`
 - **Description:** Number of aim levels added or removed while prone.
-- **Values:** `-100..100` percent or flat modifier; empty means neutral.
+- **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
@@ -2749,13 +2750,11 @@ Field names, item IDs, class bits and numbers are never translated.
 
 ## Versions
 
-- v5: 1775 records, 233 top-level elements including three stance
-  groups; 257 unique leaf paths (254 scalar fields plus the three group
-  containers). This is the primary source for the document.
-- v4: 1776 records. The set of unique leaf paths is identical;
-  text and a few values differ because of localization and content edits.
-- No record or field was removed from the documentation to make the counts
-  match; `DefaultAttachment` is one documented path with repeated elements.
+- v5 is the primary source for the document.
+- v4 uses the same set of leaf paths; text and a few values differ because
+  of localization and content edits.
+- `DefaultAttachment` is one documented path with repeated elements; the
+  repetition is a structural property, not a separate field.
 
 ## Sources
 
@@ -2766,22 +2765,21 @@ Field names, item IDs, class bits and numbers are never translated.
 - Localization overlays for the five text fields.
 
 No C++ source review was performed for this block. Statements that depend on
-the meaning rather than the observed value are marked `inferred`; the
+the meaning rather than the value are marked `inferred`; the
 remaining uncertainties are listed below.
 
 ## Open questions
 
-- `DrugType`: the editor metadata types it as a flag mask, while the shipped
-  values look like a sequence. Both readings are documented; the lookup
-  remains the authority for named values.
-- `FoodType`: the target food table is not present in the v5 TableData set, so
-  the description stays at the level of a food-class index.
-- `bSoundType`: only `0` occurs in v5; the full enum is not reconstructed.
+- `DrugType`: the editor metadata types it as a flag mask, while the field is
+  also described as a sequence in the lookup. Both readings are documented;
+  the lookup remains the authority for named values.
+- `FoodType`: the target food table is not present in the supplied TableData
+  set, so the description stays at the level of a food-class index.
+- `bSoundType`: the full sound-family enum is not reconstructed.
 - `RobotTargetingSkillGrant`, `RobotUtilitySkillGrant` and
   `RobotChassisSkillGrant`: the unit (skill points or skill level) is not
   verified.
-- `TransportGroupMinProgress` and `TransportGroupMaxProgress`: percent is
-  inferred from the value range and the transport context, not from a named
-  schema.
+- `TransportGroupMinProgress` and `TransportGroupMaxProgress`: the unit and scale
+  are not confirmed; the document treats them as transport progress values.
 - `AttachmentClass`, `nasAttachmentClass` and `nasLayoutClass` are documented
   as bit masks; individual bit names live in the corresponding lookup pages.

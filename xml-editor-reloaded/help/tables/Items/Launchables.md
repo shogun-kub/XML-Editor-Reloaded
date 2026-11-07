@@ -42,13 +42,11 @@ item and the launchable ammo/projectile item. The game stores the pairs in
 `Launchable[MAXITEMS+1][2]` and uses them when a grenade launcher, rocket launcher or similar
 weapon selects ammunition.
 
-The v5 file has 159 records and no duplicate pairs.
-
 ## Tables
 
-| Table | File | Records | Notes |
-|---|---|---:|---|
-| `Launchables` | `Items/Launchables.xml` | 159 | v4 and v5 have the same two fields |
+| Table | File | Notes |
+|---|---|---|
+| `Launchables` | `Items/Launchables.xml` | v4 and v5 have the same two fields |
 
 ## Structure
 
@@ -71,8 +69,7 @@ meaningful until a caller proves otherwise.
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item index of the launcher in `Items.uiIndex`. It identifies the
   weapon that can fire the item on the other side of the pair.
-- **Values:** valid `Items.uiIndex` values; shipped data uses 140, 147, and other
-  launcher items.
+- **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
 - **Default:** `0`; the pair is still stored, so a zero value is a data error, not "none".
 - **Source:** game code (launcher loader); item table data.
 - **Confidence:** `source`
@@ -82,7 +79,7 @@ meaningful until a caller proves otherwise.
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item index of the launchable ammo/projectile in `Items.uiIndex`.
   It is the item the launcher fires.
-- **Values:** valid `Items.uiIndex` values.
+- **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
 - **Default:** `0`; a zero value is a data error.
 - **Source:** game code (launcher loader); item table data.
 - **Confidence:** `source`
@@ -110,7 +107,7 @@ may differ; compare the files when a specific pair matters.
 
 ## Open questions
 
-- The loader appends in file order and does not deduplicate. The shipped file has no duplicate
+- The loader appends in file order and does not deduplicate. The file has no duplicate
   pairs, but the runtime consequence of a duplicate is not documented.
 - Which launcher classes use the table at runtime is decided in the item and weapon code;
   this page documents the data contract, not every call site.

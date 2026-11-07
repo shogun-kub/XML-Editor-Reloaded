@@ -93,7 +93,7 @@ The body has these sections, in this order:
 1. `# Title`
 2. `## Contents` (generated)
 3. `## Purpose`
-4. `## Tables` (file variants, records, notes)
+4. `## Tables` (file variants and notes)
 5. `## Structure` (root, record, key, nesting, special syntax)
 6. `## Fields`
 7. `## Relations`
@@ -109,7 +109,7 @@ A field is a level-3 heading with its full path from the document root, followed
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Item coolness: how early the item appears in enemy loadouts and shops.
-- **Values:** 0-255; game data uses small values.
+- **Values:** `0..255`; the code stores this field as `UINT8`.
 - **Default:** `0`
 - **Source:** game code (item loader); item table data.
 - **Confidence:** `source`
@@ -117,6 +117,11 @@ A field is a level-3 heading with its full path from the document root, followed
 
 Required keys: `Type`, `Description`, `Source`, `Confidence`. Optional: `Values`, `Default`,
 `Translatable`, `Repeatable`, `Sparse`.
+
+Do not document row counts or ranges observed in the shipped data. `Values` records only
+limits enforced by code or by the field type, including metadata validation limits that mirror
+code, or a list of values taken from a lookup/source definition. A range seen in one data set
+is not a contract and must not be presented as one.
 
 A family document may set `path_mode: relative` in the front matter. Then field headings are
 leaf names (`id`, `name`) and each must match the ending of a real path in every listed table.
@@ -148,13 +153,12 @@ against the GitHub-style slug.
 
 ## Lookup and trader decisions
 
-- **Lookups are one document.** All 23 files have the same schema (`id`, `name`); eight are
-  flag/bitmask dictionaries and fifteen are sequential value lists. One `Lookup.md` with
-  per-lookup sections keeps the shared rules in one place. B0 analysis found no reason to
-  split it; the decision is recorded here and in `COVERAGE.md`.
-- **All traders are one document.** `Merchants` and the 80 dealer inventory
-  files are covered by `tables/Traders.md`; the document has two structure sections and one
-  file-to-dealer table.
+- **Lookups are one document.** All lookup files have the same schema (`id`, `name`); they are
+  either flag/bitmask dictionaries or sequential value lists. One `Lookup.md` with per-lookup
+  sections keeps the shared rules in one place. B0 analysis found no reason to split it; the
+  decision is recorded here and in `COVERAGE.md`.
+- **All traders are one document.** `Merchants` and the dealer inventory files are covered by
+  `tables/Traders.md`; the document has two structure sections and one file-to-dealer table.
 
 ## Adding a document
 
@@ -188,7 +192,7 @@ partial block (such as B0) reviewable without pretending that the whole dataset 
 ## Rules
 
 - Do not modify anything under `References/`; the tools only read it.
-- Do not copy record-level comments (for example the 6,000 comments in `Attachments.xml`)
+- Do not copy record-level comments (for example the comment blocks in `Attachments.xml`)
   into field descriptions; use them only as evidence for the field meaning.
 - Do not document a field from its name alone when a loader exists.
 - Keep field identifiers, table names and XML element names in their original case.

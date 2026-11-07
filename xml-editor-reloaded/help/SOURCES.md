@@ -13,7 +13,7 @@ answer is.
 | XML comments and readmes | author intent, units and enumerations |
 | Editor metadata | types, lookup names, limits and table relations |
 | Legacy editors and DTOs | naming and grouping only; not semantics |
-| Table data | observed values, ranges and sparse fields |
+| Table data | examples and sparse-field detection; not a source of authoritative ranges |
 
 `References/` is read-only. The help tooling reads v4, v5, the game source and the legacy
 editors, but never writes to them.
@@ -22,8 +22,8 @@ editors, but never writes to them.
 
 | Root | Contents | Use |
 |---|---|---|
-| `References/JA 2 1.13 v5/Data-1.13/TableData` | English base data, 239 tables | primary data set |
-| `References/JA 2 1.13 v4/Data-1.13/TableData` | Russian-styled data, 238 tables + 25 `Russian.*` overlays | cross-check and fallback |
+| `References/JA 2 1.13 v5/Data-1.13/TableData` | English base data | primary data set |
+| `References/JA 2 1.13 v4/Data-1.13/TableData` | Russian-styled data and `Russian.*` overlays | cross-check and fallback |
 | `References/Ja 2 1.13 source` | C++ game source | behaviour and field semantics |
 | `References/xml-editor` | legacy VB editor | historical names and grouping |
 | `References/JA_2_1.13_TableData_Editor` | legacy C# DTO editor | structure hints only |
@@ -49,9 +49,9 @@ not used in the help.
 1. **Game code** - authoritative for parsing, defaults, clamping and effective type.
 2. **XML comments and readme files** - author intent; verify against code behaviour.
 3. **Verified editor metadata** - types, lookup names, limits and relations. It is curated but
-   incomplete: 66 tables have no metadata row.
+   incomplete: some tables have no metadata row.
 4. **Legacy editors and DTOs** - naming and grouping only; do not copy semantics.
-5. **Data statistics** - useful to detect outliers and sparse fields, never proof of meaning.
+5. **Data statistics** - useful to detect outliers and sparse fields; never used as a documented range or as proof of meaning.
 
 ## What a field entry says
 
@@ -59,7 +59,7 @@ Each field entry answers:
 
 - What is stored (unit, scale, index or bit mask)?
 - Who reads it (loader, AI, UI, another table)?
-- What are the valid values and the default?
+- What limits does the code or field type impose, and what is the default?
 - What happens for a missing, empty or out-of-range value?
 - Which version(s) does the answer apply to?
 - How confident is the answer, and why?

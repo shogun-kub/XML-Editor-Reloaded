@@ -43,16 +43,14 @@ facility type is present in a sector and how it is revealed in the sector popup.
 type itself (name, assignment, effects) is defined in `FacilityTypes`; this table only
 binds a type to a sector.
 
-The v5 file has 71 records. There are no duplicate sector/type pairs in the shipped data.
-
 ## Tables
 
-| Table | File | Records | Notes |
-|---|---|---:|---|
-| `Facilities` | `Map/Facilities.xml` | 71 | no metadata key; the logical key is sector + type |
+| Table | File | Notes |
+|---|---|---|
+| `Facilities` | `Map/Facilities.xml` | no metadata key; the logical key is sector + type |
 
-`Facilities` has no row in the editor metadata (it is one of the 66 tables without a
-metadata entry), so the editor shows it as a document-driven table.
+`Facilities` has no row in the editor metadata, so the editor shows it as a
+document-driven table.
 
 ## Structure
 
@@ -66,7 +64,7 @@ SECTORFACILITIES
 
 The loader stores the record in `gFacilityLocations[sector][facilityType]`. The logical key is
 the pair `SectorGrid + FacilityType`; the file itself has no key element. A duplicate pair
-would overwrite the previous flags (last record wins); the shipped data has no duplicates.
+would overwrite the previous flags (last record wins).
 
 ## Fields
 
@@ -87,8 +85,8 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the facility type in `FacilityTypes.ubIndex`. It selects the
   facility's name, assignment, staff limits and effects.
-- **Values:** valid `FacilityTypes.ubIndex`; shipped data uses 1..25 (17 is not used).
-  `0` means "no facility" and the loader skips the record.
+- **Values:** `0` means "no facility" and the loader skips the record; non-zero values are
+  valid `FacilityTypes.ubIndex` IDs.
 - **Default:** `0` (skipped).
 - **Source:** game code (facility placement loader); facility type data.
 - **Confidence:** `source`

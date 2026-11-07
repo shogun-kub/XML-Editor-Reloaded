@@ -133,40 +133,40 @@ the editor and for modders. They are **editor-side data**: the game code does no
 files, it uses the numeric constants that the values mirror. The editor uses them for combo
 boxes, bit editors and the "where used" views.
 
-There are 23 lookups with one shared structure. Eight are flag/bitmask dictionaries
-(`IsFlagLookup = 1`); the other fifteen are sequential value lists. All 23 files parse in
-both v4 and v5; `Lookup/AttachmentPoint.xml` was repaired on 2026-11-07.
+The lookups share one structure. Each is either a flag/bitmask dictionary
+(`IsFlagLookup = 1`) or a sequential value list. The files parse in both v4 and v5;
+`Lookup/AttachmentPoint.xml` was repaired on 2026-11-07.
 
 ## Tables
 
-All 23 files use `JA2Data` as the document root and the lookup name as the record element
-(`AmmoChoices`, `ItemClass`, ...). The record count is the number of values.
+All lookup files use `JA2Data` as the document root and the lookup name as the record
+element (`AmmoChoices`, `ItemClass`, ...).
 
-| Lookup | File | Values | Kind | ID range | Notes |
-|---|---|---:|---|---|---|
-| `AmmoChoices` | `Lookup/AmmoChoices.xml` | 7 | sequence | 19..79 | sparse IDs for enemy/militia ammo choices |
-| `AmmoFlag` | `Lookup/AmmoFlag.xml` | 5 | flags | 0..4 | ammo property bits |
-| `ArmourClass` | `Lookup/ArmourClass.xml` | 6 | sequence | 0..5 | matches `ARMOURCLASS_*` |
-| `AttachmentClass` | `Lookup/AttachmentClass.xml` | 36 | flags | 0..33554432 | OAS attachment classes |
-| `AttachmentPoint` | `Lookup/AttachmentPoint.xml` | 8 | flags | 0..16 | v5 repaired; same eight values as v4 |
-| `AttachmentSystem` | `Lookup/AttachmentSystem.xml` | 3 | sequence | 0..2 | Any / OAS / NAS |
-| `Cursor` | `Lookup/Cursor.xml` | 23 | sequence | 0..23 | cursor IDs |
-| `DrugType` | `Lookup/DrugType.xml` | 26 | flags | 0..1081324 | drug effect bits |
-| `ExplosionSize` | `Lookup/ExplosionSize.xml` | 5 | sequence | 0..4 | explosion size |
-| `ExplosionType` | `Lookup/ExplosionType.xml` | 13 | sequence | 0..12 | explosion kind |
-| `ItemClass` | `Lookup/ItemClass.xml` | 23 | flags | 1..1073741824 | `IC_*` bit flags |
-| `ItemFlag` | `Lookup/ItemFlag.xml` | 36 | flags | 0..8589934592 | item flags, 64-bit |
-| `LBEClass` | `Lookup/LBEClass.xml` | 5 | sequence | 0..4 | load-bearing equipment class |
-| `MagazineType` | `Lookup/MagazineType.xml` | 4 | sequence | 0..3 | magazine / bullet / box / crate |
-| `MergeType` | `Lookup/MergeType.xml` | 16 | sequence | 0..15 | merge transformation kind |
-| `NasAttachmentClass` | `Lookup/NasAttachmentClass.xml` | 16 | flags | 0..16384 | NAS attachment classes |
-| `NasLayoutClass` | `Lookup/NasLayoutClass.xml` | 7 | flags | 0..32 | NAS layout classes |
-| `PocketSize` | `Lookup/PocketSize.xml` | 4 | sequence | 0..3 | pocket size |
-| `Separability` | `Lookup/Separability.xml` | 3 | sequence | 0..2 | removable / inseparable / replaceable |
-| `Silhouette` | `Lookup/Silhouette.xml` | 56 | sequence | 0..55 | item silhouette |
-| `SkillCheckType` | `Lookup/SkillCheckType.xml` | 16 | sequence | 0..15 | skill check kind |
-| `WeaponClass` | `Lookup/WeaponClass.xml` | 8 | sequence | 0..7 | `WEAPONCLASS_*` |
-| `WeaponType` | `Lookup/WeaponType.xml` | 9 | sequence | 0..8 | `WEAPONTYPE_*` |
+| Lookup | File | Kind | Notes |
+|---|---|---|---|
+| `AmmoChoices` | `Lookup/AmmoChoices.xml` | sequence | sparse IDs for enemy/militia ammo choices |
+| `AmmoFlag` | `Lookup/AmmoFlag.xml` | flags | ammo property bits |
+| `ArmourClass` | `Lookup/ArmourClass.xml` | sequence | matches `ARMOURCLASS_*` |
+| `AttachmentClass` | `Lookup/AttachmentClass.xml` | flags | OAS attachment classes |
+| `AttachmentPoint` | `Lookup/AttachmentPoint.xml` | flags | v5 repaired file |
+| `AttachmentSystem` | `Lookup/AttachmentSystem.xml` | sequence | Any / OAS / NAS |
+| `Cursor` | `Lookup/Cursor.xml` | sequence | cursor IDs |
+| `DrugType` | `Lookup/DrugType.xml` | flags | drug effect bits |
+| `ExplosionSize` | `Lookup/ExplosionSize.xml` | sequence | explosion size |
+| `ExplosionType` | `Lookup/ExplosionType.xml` | sequence | explosion kind |
+| `ItemClass` | `Lookup/ItemClass.xml` | flags | `IC_*` bit flags |
+| `ItemFlag` | `Lookup/ItemFlag.xml` | flags | item flags, 64-bit |
+| `LBEClass` | `Lookup/LBEClass.xml` | sequence | load-bearing equipment class |
+| `MagazineType` | `Lookup/MagazineType.xml` | sequence | magazine / bullet / box / crate |
+| `MergeType` | `Lookup/MergeType.xml` | sequence | merge transformation kind |
+| `NasAttachmentClass` | `Lookup/NasAttachmentClass.xml` | flags | NAS attachment classes |
+| `NasLayoutClass` | `Lookup/NasLayoutClass.xml` | flags | NAS layout classes |
+| `PocketSize` | `Lookup/PocketSize.xml` | sequence | pocket size |
+| `Separability` | `Lookup/Separability.xml` | sequence | removable / inseparable / replaceable |
+| `Silhouette` | `Lookup/Silhouette.xml` | sequence | item silhouette |
+| `SkillCheckType` | `Lookup/SkillCheckType.xml` | sequence | skill check kind |
+| `WeaponClass` | `Lookup/WeaponClass.xml` | sequence | `WEAPONCLASS_*` |
+| `WeaponType` | `Lookup/WeaponType.xml` | sequence | `WEAPONTYPE_*` |
 
 ## Lookup details
 
@@ -175,100 +175,99 @@ XML files; the editor and the future help window read them from there.
 
 ### AmmoChoices
 
-Sequence lookup with 7 sparse IDs (19, 29, ... 79). Used by enemy/militia ammo choice tables,
+Sequence lookup with sparse IDs. Used by enemy/militia ammo choice tables,
 not by the item data directly.
 
 ### AmmoFlag
 
-Flag lookup with 5 values (0..4). Ammo property bits used by `AmmoTypes.ammoflag`.
+Flag lookup. Ammo property bits used by `AmmoTypes.ammoflag`.
 
 ### ArmourClass
 
-Sequence lookup with 6 values (0..5). Matches `ARMOURCLASS_*`; used by
+Sequence lookup. Matches `ARMOURCLASS_*`; used by
 [Armours](Items/Armours.md).
 
 ### AttachmentClass
 
-Flag lookup with 36 values. OAS attachment class bits; the largest value is `0x02000000`.
+Flag lookup. OAS attachment class bits.
 
 ### AttachmentPoint
 
-Flag lookup with 8 values (0..16). Same values in v4 and v5. Used by the attachment slot
+Flag lookup. Used by the attachment slot
 and NAS fields.
 
 ### AttachmentSystem
 
-Sequence lookup with 3 values: Any, OAS only, NAS only.
+Sequence lookup: Any, OAS only, NAS only.
 
 ### Cursor
 
-Sequence lookup with 23 values (0..23). Cursor IDs used by the UI.
+Sequence lookup. Cursor IDs used by the UI.
 
 ### DrugType
 
-Flag lookup with 26 values. Drug effect bits used by `Drugs`.
+Flag lookup. Drug effect bits used by `Drugs`.
 
 ### ExplosionSize
 
-Sequence lookup with 5 values (0..4), from none to large.
+Sequence lookup, from none to large.
 
 ### ExplosionType
 
-Sequence lookup with 13 values (0..12), such as normal, stun and tear gas.
+Sequence lookup, such as normal, stun and tear gas.
 
 ### ItemClass
 
-Flag lookup with 23 values. `IC_*` item class bits; the largest value is `0x40000000`.
+Flag lookup. `IC_*` item class bits.
 
 ### ItemFlag
 
-Flag lookup with 36 values. Item flags, including 64-bit values; the largest is
-`0x200000000`.
+Flag lookup. Item flags, including 64-bit values.
 
 ### LBEClass
 
-Sequence lookup with 5 values (0..4). Load-bearing equipment class.
+Sequence lookup. Load-bearing equipment class.
 
 ### MagazineType
 
-Sequence lookup with 4 values: magazine, bullet(s), box, crate. Matches `AMMO_MAGAZINE`,
+Sequence lookup: magazine, bullet(s), box, crate. Matches `AMMO_MAGAZINE`,
 `AMMO_BULLET`, `AMMO_BOX`, `AMMO_CRATE`; used by [Magazines](Items/Magazines.md).
 
 ### MergeType
 
-Sequence lookup with 16 values (0..15). Merge/transformation kind.
+Sequence lookup. Merge/transformation kind.
 
 ### NasAttachmentClass
 
-Flag lookup with 16 values. NAS attachment class bits.
+Flag lookup. NAS attachment class bits.
 
 ### NasLayoutClass
 
-Flag lookup with 7 values. NAS layout class bits.
+Flag lookup. NAS layout class bits.
 
 ### PocketSize
 
-Sequence lookup with 4 values: none, small, medium, large.
+Sequence lookup: none, small, medium, large.
 
 ### Separability
 
-Sequence lookup with 3 values: removable, inseparable, replaceable.
+Sequence lookup: removable, inseparable, replaceable.
 
 ### Silhouette
 
-Sequence lookup with 56 values (0..55). Item silhouette used by the inventory display.
+Sequence lookup. Item silhouette used by the inventory display.
 
 ### SkillCheckType
 
-Sequence lookup with 16 values (0..15). Skill check kind.
+Sequence lookup. Skill check kind.
 
 ### WeaponClass
 
-Sequence lookup with 8 values (0..7). `WEAPONCLASS_*` used by `Weapons.ubWeaponClass`.
+Sequence lookup. `WEAPONCLASS_*` used by `Weapons.ubWeaponClass`.
 
 ### WeaponType
 
-Sequence lookup with 9 values (0..8). `WEAPONTYPE_*` used by `Weapons.ubWeaponType`.
+Sequence lookup. `WEAPONTYPE_*` used by `Weapons.ubWeaponType`.
 
 ## Structure
 
@@ -329,9 +328,9 @@ the label shown around a lookup, but the `name` values in these files stay Engli
 
 ## Versions
 
-- v4 and v5 have the same 23 lookup files and the same `id`/`name` schema.
+- v4 and v5 have the same lookup files and the same `id`/`name` schema.
 - `Lookup/AttachmentPoint.xml` in v5 was repaired on 2026-11-07; it now parses and contains
-  the same eight values as v4:
+  the attachment-point values:
 
 | id | name |
 |---:|---|
@@ -357,7 +356,7 @@ a future v5 file fails to parse; the fallback is not used by the current v5 tree
 
 ## Open questions
 
-- Do all 23 lookup ID sets exactly match the current code constants? The B0 pass verified
+- Do all lookup ID sets exactly match the current code constants? The B0 pass verified
   counts, kinds and ranges, but not every constant against its header.
 - Should combined flag rows be listed as separate values or kept only in the lookup file?
   The editor shows them as values; the documents do not duplicate the full value list.

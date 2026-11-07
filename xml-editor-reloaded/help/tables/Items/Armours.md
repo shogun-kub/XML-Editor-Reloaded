@@ -47,13 +47,12 @@ The values drive damage reduction, armour wear, Bobby Ray's filters and the item
 panel.
 
 `Armours` is a flat table: one `ARMOUR` record per armour type, keyed by `uiIndex`.
-The v5 file has 201 records.
 
 ## Tables
 
-| Table | File | Records | Notes |
-|---|---|---:|---|
-| `Armours` | `Items/Armours.xml` | 201 | v4 and v5 have the same schema; values may differ |
+| Table | File | Notes |
+|---|---|---|
+| `Armours` | `Items/Armours.xml` | v4 and v5 have the same schema; values may differ |
 
 ## Structure
 
@@ -68,7 +67,7 @@ ARMOURLIST
 ```
 
 The loader writes each record to `Armour[uiIndex]` when the `ARMOUR` element closes. A
-duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Records with an
+duplicate `uiIndex` overwrites the earlier row. Records with an
 `uiIndex` outside the array are ignored.
 
 ## Fields
@@ -78,7 +77,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the row in the runtime armour table and the identity of the
   XML record. `Items.ubClassIndex` of an armour item points here.
-- **Values:** `0..N-1`; the shipped data uses 0..200.
+- **Values:** `0..N-1`; non-negative array index. The loader ignores values outside the array.
 - **Default:** none; a missing value leaves the table slot at zero.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
@@ -89,7 +88,6 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Description:** Body slot/class of the armour. It is not the protection value; it tells
   the UI and equipment checks whether this is a helmet, vest, leggings or plate.
 - **Values:** `0` helmet, `1` vest, `2` leggings, `3` plate, `4` monster, `5` vehicle.
-  Shipped data uses 0..4.
 - **Default:** `0` (helmet) when the element is missing, because the record is zeroed first.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
@@ -100,7 +98,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Description:** Raw protection value of the armour; higher values absorb more damage.
   The loader casts the parsed value to `UINT8`, so values above 255 are truncated even though
   the struct field is `UINT16`.
-- **Values:** `0..255` effectively; shipped data uses 1..54.
+- **Values:** `0..255` effectively; the loader truncates to `UINT8`.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
@@ -110,7 +108,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Type:** `Integer` (`UINT8`), percent
 - **Description:** Percentage of the body slot covered by the armour. It is used as a
   multiplier in protection calculations and in the item comparison panel.
-- **Values:** `0..100`; shipped data uses 25..100.
+- **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `100` when `ENABLE_ARMOR_COVERAGE` is false. The option defaults to `FALSE`,
   so a default game forces every row to 100 and ignores the XML value. When coverage is
   enabled and the element is missing, the zeroed record yields `0`.
@@ -122,7 +120,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Type:** `Integer` (`UINT8`), percent
 - **Description:** Percentage of the applied protection subtracted from the armour's status
   when it absorbs a hit. Higher values wear out faster.
-- **Values:** `0..100`; shipped data uses 5..50.
+- **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
@@ -153,9 +151,9 @@ translated there.
 
 ## Versions
 
-v4 and v5 use the same five fields and the same `ARMOURLIST/ARMOUR` structure. The shipped
-values differ (for example v5 has 201 records; compare the two files when a specific value
-matters). No overlay covers `Items/Armours.xml`.
+v4 and v5 use the same five fields and the same `ARMOURLIST/ARMOUR` structure. Values
+may differ; compare the two files when a specific value matters. No overlay covers
+`Items/Armours.xml`.
 
 ## Sources
 
@@ -170,5 +168,5 @@ matters). No overlay covers `Items/Armours.xml`.
 - The exact damage formula and how `ubProtection`, `ubCoverage` and ammo type combine are
   described in [Related formulas](../../FORMULAS.md); a full balance discussion is outside
   this table page.
-- Duplicate `uiIndex` handling is "last record wins" in the loader; the shipped data has no
-  duplicates, so this is not exercised.
+- Duplicate `uiIndex` handling is "last record wins" in the loader; the consequence of a
+  duplicate is the same as for any later row overwriting an earlier one.
