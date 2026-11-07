@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2 approved, B3/B4/B5 draft 2026-11-07; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3 approved, B4/B5 draft 2026-11-07; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -46,10 +46,10 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 90 путей. `help-check -Write` проходит (542/2985); row counts не добавлены. У NAS-полей
 `Only used with: NAS`; повторяющиеся `allowedtile`/`*facingtile` описаны. Одобрены пользователем 2026-11-07, переведены в `reviewed`.
 
-**B3 (2026-11-07, draft).** 7 документов: `Pockets` (41), `PocketPopups` (8),
+**B3 (2026-11-07, reviewed).** 7 документов: `Pockets` (41), `PocketPopups` (8),
 `LoadBearingEquipment` (18), `Food` (6), `FoodOpinion` (3), `Drugs` (16), `RandomItem` (22) —
 114 путей. `help-check -Write` проходит (656/2985). NIV/food/disease-поля помечены
-`Only used with`; capacity/random slots сгенерированы. Ждут ревью.
+`Only used with`; capacity/random slots сгенерированы. Одобрены пользователем 2026-11-07, переведены в `reviewed`.
 
 **B4 (2026-11-07, draft).** 11 документов: `MercProfiles` (106), `MercStartingGear` (67),
 `MercOpinions` (3), `MercQuote` (9), `MercAvailability` (10), `AIMAvailability` (4),

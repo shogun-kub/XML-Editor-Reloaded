@@ -16,7 +16,7 @@ sources:
   - Drug table data
   - Drug schema comment
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

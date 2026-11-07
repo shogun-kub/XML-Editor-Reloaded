@@ -16,7 +16,7 @@ sources:
   - LBE table data
   - LBEClass lookup table
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

@@ -504,7 +504,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2 одобрен; B3/B4/B5 подготовлены, следующий шаг — B6.
+B2 и B3 одобрены; B4/B5 подготовлены, следующий шаг — B6.
 
 ### B1. Items: ядро
 
@@ -552,13 +552,13 @@ lookup-списки и явные ограничения. У NAS-полей (`NA
 `Pockets` (41), `PocketPopups` (8), `LoadBearingEquipment` (18), `Food` (6),
 `FoodOpinion` (3), `Drugs` (16), `RandomItem` (22).
 
-Статус B3 (2026-11-07, draft): созданы 7 документов — `Pockets`, `PocketPopups`,
+Статус B3 (2026-11-07, reviewed): созданы 7 документов — `Pockets`, `PocketPopups`,
 `LoadBearingEquipment`, `Food`, `FoodOpinion`, `Drugs`, `RandomItem`; 114 путей.
 Row counts и наблюдаемые диапазоны не добавлены; `Values` — типы, lookup-списки и
 enum-значения. У полей NIV стоит `Only used with: NIV`, у food-таблиц — `Food system`,
 у disease-эффектов — `Disease system`. `ItemCapacityPerSize0..34`, `randomitem1..10` и
-`item1..10` сгенерированы как отдельные пути. `help-check -Write` проходит (656/2985 путей),
-документы ждут ревью.
+`item1..10` сгенерированы как отдельные пути. `help-check -Write` проходит (656/2985 путей).
+Одобрены пользователем 2026-11-07, документы переведены в `reviewed`.
 
 ### B4. Наёмники и профили
 

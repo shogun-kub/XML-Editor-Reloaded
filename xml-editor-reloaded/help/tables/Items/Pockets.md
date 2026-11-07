@@ -16,7 +16,7 @@ sources:
   - Pocket table data
   - Pocket lookup tables
   - Item metadata
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 
