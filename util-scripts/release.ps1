@@ -131,6 +131,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $documents = @(
     @{ Source = (Join-Path $root 'README.md'); Target = 'README.md' },
     @{ Source = (Join-Path $root 'USER-GUIDE.md'); Target = 'USER-GUIDE.md' },
+    @{ Source = (Join-Path $root 'USER-GUIDE-RU.md'); Target = 'USER-GUIDE-RU.md' },
     @{ Source = (Join-Path $root 'CHANGELOG.md'); Target = 'CHANGELOG.md' },
     @{ Source = (Join-Path $root 'LICENSE'); Target = 'LICENSE' },
     @{ Source = (Join-Path $root 'THIRD-PARTY-NOTICES.md'); Target = 'THIRD-PARTY-NOTICES.md' },

@@ -44,7 +44,8 @@ xml-editor-reloaded/
 ├── Directory.Build.props            # Nullable, implicit usings, code-style enforcement, version
 ├── .editorconfig
 ├── README.md                         # Download, build, release and data-safety overview
-├── USER-GUIDE.md                     # Russian end-user guide
+├── USER-GUIDE.md                     # English end-user guide
+├── USER-GUIDE-RU.md                  # Russian end-user guide
 ├── CHANGELOG.md                      # Release history
 ├── LICENSE                           # GLWTPL
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses

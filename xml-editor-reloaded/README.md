@@ -41,7 +41,8 @@ Framework-dependent сборка меньше, но запускается то�
 лог будут лежать в подпапке `data` рядом с программой. Обычный запуск хранит их в
 `%AppData%\XmlEditorReloaded`.
 
-Подробная инструкция: [USER-GUIDE.md](USER-GUIDE.md).
+Подробная инструкция: [USER-GUIDE-RU.md](USER-GUIDE-RU.md) (русский) или
+[USER-GUIDE.md](USER-GUIDE.md) (English).
 
 ## Безопасность данных
 
@@ -80,7 +81,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 ```
 
 Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained и
-framework-dependent `win-x64`, складывает `README`, `USER-GUIDE`, `CHANGELOG`, лицензию и
+framework-dependent `win-x64`, складывает `README`, `USER-GUIDE`, `USER-GUIDE-RU`, `CHANGELOG`,
+лицензию и
 third-party notices в каждый ZIP и пишет отдельный SHA-256. Результат: `out/release/`.
 
 ## Структура

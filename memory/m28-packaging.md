@@ -31,7 +31,8 @@ S01 + обязательный S50 — 2/2 для self-contained и framework-de
 framework-dependent пакета создал `data` и `metadata.sqlite` с путём рядом с приложением
 (`XER_APP_DATA`), запись в `References/` не было.
 
-**Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
+**Документы.** `README.md`, `USER-GUIDE.md` (English), `USER-GUIDE-RU.md` (Russian),
+`CHANGELOG.md`, `LICENSE` (GLWTPL),
 `THIRD-PARTY-NOTICES.md`, `licenses/MIT.txt`, `licenses/Apache-2.0.txt`. `start-portable.cmd`
 задаёт `XER_APP_DATA=%~dp0data`, чтобы настройки/метабаза/лог оставались рядом с программой.
 

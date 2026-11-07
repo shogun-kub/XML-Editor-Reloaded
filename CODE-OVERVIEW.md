@@ -667,8 +667,8 @@ value. Остальные code-behind — тонкие обработчики к
   `upload-artifact@v6`.
 - `packaging/start-portable.cmd` — `XER_APP_DATA=%~dp0data`, запуск exe рядом.
 - `README.md`/`README.ru.md` — GitHub-обзор; `RELEASING.md` — branch/release процесс;
-  `USER-GUIDE.md` — подробная инструкция (русский); `CHANGELOG.md`, `LICENSE`,
-  `THIRD-PARTY-NOTICES.md`.
+  `USER-GUIDE.md` — английская инструкция, `USER-GUIDE-RU.md` — русская; `CHANGELOG.md`,
+  `LICENSE`, `THIRD-PARTY-NOTICES.md`.
 
 ## 10. Сквозные сценарии взаимодействия
 
@@ -934,8 +934,8 @@ WpfItemImageService.GetImageAsync
     оставить nightly/self-hosted.
 21. **Подпись и обновление.** Сборка не подписана, SmartScreen предупреждает; нет installer/
     auto-update. Для публичного продукта — code signing, portable updater или MSIX.
-22. **Английское руководство.** `USER-GUIDE.md` только на русском, хотя UI и README двуязычны;
-    стоит добавить `USER-GUIDE.en.md` и ссылки из обоих README.
+22. **Синхронизация двуязычных руководств.** `USER-GUIDE.md` и `USER-GUIDE-RU.md` нужно
+    обновлять вместе; добавить проверку ссылок/скриншотов и явный чек-лист в release-процесс.
 23. **SBOM и проверка зависимостей.** `THIRD-PARTY-NOTICES` есть, но нет SBOM/cyclic dependency
     audit в release; можно генерировать `dotnet sbom`/CycloneDX.
 24. **Документация API.** Публичные backend-типы имеют XML-doc, но часть internal-классов
