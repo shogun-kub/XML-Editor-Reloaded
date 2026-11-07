@@ -113,7 +113,7 @@ foreach ($file in $docFiles) {
         $errors.Add("${relative}: no field blocks (### `path`) found")
     }
     $fieldPaths = @($fields | ForEach-Object { $_.Path })
-    if (($fieldPaths | Select-Object -Unique).Count -ne $fieldPaths.Count) {
+    if ((@($fieldPaths | Select-Object -Unique)).Count -ne $fieldPaths.Count) {
         $errors.Add("${relative}: duplicate field path in one document")
     }
 

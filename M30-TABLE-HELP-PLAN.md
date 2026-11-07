@@ -479,7 +479,7 @@ updated: 2026-11-07
 | B3. Items: снаряжение и расходники | 7 | 114 | 7 | `XML_LBEPocket.cpp`, `XML_LBEPocketPopup.cpp`, `XML_LoadBearingEquipment.cpp`, `XML_Food.cpp`, `XML_FoodOpinions.cpp`, `XML_Drugs.cpp`, `XML_RandomItem.cpp` |
 | B4. Наёмники и профили | 11 | 229 | 11 | `XML_Profiles.cpp`, `XML_MercStartingGear.cpp`, `XML_Opinions.cpp`, `XML_Qarray.cpp`, `Laptop/XML_IMPPortraits.cpp`, `XML_IMPVoices.cpp`, `XML_OldAIMArchive.cpp` |
 | B5. Backgrounds, сложность, болезни | 5 | 244 | 5 | `XML_Background.cpp`, `Ja2/XML_DifficultySettings.cpp`, `XML_Disease.cpp`, `XML_RandomStats.cpp`, `XML_MilitiaIndividual.cpp` |
-| B6. Карта и стратегия | 15 | 179 | 34 | `XML_FacilityTypes.cpp`, `XML_SectorNames.cpp`, `XML_SectorLoadscreens.cpp`, `XML_Minerals.cpp`, `XML_DeliveryMethods.cpp`, `XML_InteractiveTiles.cpp`, `XML_Bloodcats.cpp`, `XML_Creatures.cpp`, `XML_ExtraItems.cpp` |
+| B6. Карта и стратегия | 15 | 180 | 34 | `XML_FacilityTypes.cpp`, `XML_SectorNames.cpp`, `XML_SectorLoadscreens.cpp`, `XML_Minerals.cpp`, `XML_DeliveryMethods.cpp`, `XML_InteractiveTiles.cpp`, `XML_Bloodcats.cpp`, `XML_Creatures.cpp`, `XML_ExtraItems.cpp` |
 | B7. Армия, ИИ и инвентари | 14 | 238 | 117 | `XML_Army.cpp`, `XML_SoldierProfiles.cpp`, `XML_Enemy*Drops.cpp`, `XML_Enemy*Choice.cpp`, `XML_IMPItemChoices.cpp`, `XML_Merchants.cpp`, `Arms Dealer Init.cpp`, `XML_TonyInventory.cpp` |
 | B8. Laptop, UI и прочее | 18 | 112 | 19 | `Laptop/XML_Email*.cpp`, `XML_BriefingRoom.cpp`, `XML_History.cpp`, `XML_CampaignStatsEvents.cpp`, `XML_LoadScreenHints.cpp`, `XML_Layout_MainMenu.cpp`, `Editor/XML_ActionItems.cpp`, `MPXmlTeams.cpp`, `XML_Sounds.cpp`, `XML_BurstSounds.cpp`, `XML_EnemyRank.cpp`, `XML_EnemyNames.cpp`, `XML_Vehicles.cpp` |
 | **Итого** | **94** | **1655** | **239** | |
@@ -517,7 +517,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2–B5 одобрены; следующий шаг — B6.
+B2–B5 одобрены; B6 подготовлен (draft) и ждёт ревью.
 
 ### B1. Items: ядро
 
@@ -601,11 +601,19 @@ Row counts и наблюдаемые диапазоны не добавлены;
 
 ### B6. Карта и стратегия
 
-`FacilityTypes` (54), `SectorNames` (21), `SectorLoadscreens` (9), `MovementCosts` (7),
+`FacilityTypes` (55, включая пустой `ASSIGNMENT/CONDITIONS`), `SectorNames` (21), `SectorLoadscreens` (9), `MovementCosts` (7),
 `HeliSites` (7), `SamSites` (8), `DeliveryMethods` (5), `Minerals` (3),
 `ShippingDestinations` (6), `InteractiveActions` (9), `BloodcatPlacements` (22),
 `CreaturePlacements` (21), `AltSectors` (матрица), `CoolnessBySector` (матрица),
 `ExtraItems` (20 файлов, 5 полей). `Cities`/`Facilities` уже в B0.
+
+Статус B6 (2026-11-08, draft): созданы 15 документов, 34 таблицы, 180 уникальных путей
+(179 содержательных полей + пустой маркер `ASSIGNMENT/CONDITIONS`; 20 файлов `ExtraItems`
+дают 100 табличных путей). `FacilityTypes` описывает 55 путей, включая вложенные
+`ASSIGNMENT`, `CONDITIONS` и `PRODUCTIONLINE`; `SectorNames` — 21, `BloodcatPlacements` — 22,
+`CreaturePlacements` — 21. `help-check -Write` проходит (1404/2985 путей). Документы в `draft`;
+нужно ревью пользователя. Неясные масштабы (facility chances 0–1000, enum-коды, matrix IDs)
+вынесены в `Open questions`.
 
 ### B7. Армия, ИИ и инвентари
 

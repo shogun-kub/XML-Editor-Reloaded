@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08; forty-seven documents, 69 tables, 1129 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08, B6 draft; sixty-two documents, 103 tables, 1404 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -63,7 +63,13 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 `DISEASE_SEVERE_LIMITATIONS`), RandomStats — `MERCS_RANDOM_STATS`, Militia —
 `INDIVIDUAL_MILITIA`, NCTH-константы — `NCTH`; `Backgrounds` — `ENABLE_BACKGROUNDS`. Одобрены пользователем 2026-11-08, переведены в `reviewed`.
 
-**Дальше.** B6 — `FacilityTypes` (54), `SectorNames` (21), `SectorLoadscreens` (9),
-`MovementCosts` (7), `HeliSites` (7), `SamSites` (8), `DeliveryMethods` (5), `Minerals` (3),
-`ShippingDestinations` (6), `InteractiveActions` (9), `BloodcatPlacements` (22),
-`CreaturePlacements` (21), `AltSectors`, `CoolnessBySector`, `ExtraItems`.
+**B6 (2026-11-08, draft).** 15 документов, 34 таблицы, 180 уникальных путей:
+`FacilityTypes` (55, включая пустой `ASSIGNMENT/CONDITIONS`), `SectorNames` (21),
+`SectorLoadscreens` (9), `MovementCosts` (7), `HeliSites` (7), `SamSites` (8),
+`DeliveryMethods` (5), `Minerals` (3), `ShippingDestinations` (6), `InteractiveActions` (9),
+`BloodcatPlacements` (22), `CreaturePlacements` (21), `AltSectors` (1 matrix field),
+`CoolnessBySector` (1 matrix field), `ExtraItems` (20 файлов, 5 полей). `help-check -Write`
+проходит (1404/2985); 20 файлов ExtraItems дают 100 табличных путей. Facility chances
+интерпретированы как шкала 0–1000 (`500` = 50%) и это вынесено в Open questions.
+
+**Дальше.** Ревью B6, затем B7 — `ArmyComposition` и остальные таблицы армии, ИИ и инвентарей.
