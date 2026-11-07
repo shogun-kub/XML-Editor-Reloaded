@@ -354,7 +354,7 @@ both variants of the relevant system. The general option map is
 | Option | Values | Effect on this table |
 |---|---|---|
 | New Chance to Hit (NCTH) / old Chance to Hit (OCTH) | `NCTH = TRUE` or `FALSE` in the game option file. `TRUE` selects NCTH; `FALSE` selects OCTH. | NCTH reads `ScopeMagFactor`, `ProjectionFactor`, `RecoilModifierX`, `RecoilModifierY`, `PercentRecoilModifier`, `PercentAccuracyModifier` and the three stance groups. OCTH ignores those fields. |
-| New inventory (NIV) / old inventory (OIV) | The 1.13 data set is NIV. `OLD_INVENTORY_ITEM_NUMBER` in the option file maps items that do not appear in NIV; legacy OIV data remains supported. | `ubPerPocket` is an OIV field. `NewInv` marks an item as NIV-only. NIV pocket capacity comes from the `Pockets` and `LoadBearingEquipment` tables, not from `ubPerPocket`. |
+| New inventory (NIV) / old inventory (OIV) | Selected when a new campaign starts; the choice is stored in the save. The 1.13 data set is NIV, and legacy OIV data remains supported. `OLD_INVENTORY_ITEM_NUMBER` (default `99`) marks the OIV-only item size. | `ubPerPocket` controls OIV pocket capacity only; in NIV the `Pockets` and `LoadBearingEquipment` tables and `ItemSize` control capacity. `NewInv` marks an item as NIV-only. In NIV, an item with `ItemSize` equal to `OLD_INVENTORY_ITEM_NUMBER` is excluded. |
 | Sci-Fi mode | `SciFi = TRUE` or `FALSE`. | `SciFi` marks the item as part of the Sci-Fi item set. |
 | Tons of Guns | `BigGunList = TRUE` or `FALSE`. | `BigGunList` includes the item in the expanded gun list. |
 | Disease system | disease system enabled or disabled. | `DiseaseSystemExclusive` marks an item that belongs to the disease system. |
@@ -565,8 +565,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubPerPocket`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. New inventory (NIV) uses the Pockets and LoadBearingEquipment tables instead; this field is kept for OIV compatibility.
-- **Values:** `0..8`; code validation limit (integer).
+- **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. In NIV the field does not control pocket capacity (LBE/Pockets and ItemSize do), but the item-description code still reads it for the "small" property: under NIV every item otherwise reports as fitting a small pocket.
+- **Values:** `0..8`; metadata validation limit; stored as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -574,7 +574,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ItemSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits.
+- **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits. In NIV, an item whose size equals `OLD_INVENTORY_ITEM_NUMBER` (default `99`) is treated as an OIV-only item and is not available.
 - **Values:** `0..99`; `99` means the item does not fit a normal pocket.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.

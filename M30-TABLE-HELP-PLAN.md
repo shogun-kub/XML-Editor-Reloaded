@@ -503,8 +503,9 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит (257/257 путей). В документе нет row counts и
 наблюдаемых диапазонов; `Values` содержит только ограничения кода/типа или списки
 значений из lookup. Добавлен раздел `Game options`: NCTH/OCTH, OIV/NIV, SciFi,
-Tons of Guns, disease; `ubPerPocket` помечен как OIV-совместимое поле, NCTH-поля
-сгруппированы. Ждёт ревью пользователем.
+Tons of Guns, disease; `ubPerPocket` — ёмкость OIV (в NIV не управляет ёмкостью, но
+читается для признака "small"); `ItemSize` = `OLD_INVENTORY_ITEM_NUMBER` — OIV-only маркер;
+NCTH-поля сгруппированы. Ждёт ревью пользователем.
 
 ### B2. Items: вложения и состав
 

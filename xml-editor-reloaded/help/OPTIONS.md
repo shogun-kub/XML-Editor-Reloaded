@@ -40,19 +40,22 @@ The game has two inventory models:
 - **OIV** - old inventory, the original JA2 slot/pocket model.
 - **NIV** - new inventory, the 1.13 LBE/pocket model.
 
-The supplied 1.13 data set is NIV. The `OLD_INVENTORY_ITEM_NUMBER` option maps items that do
-not appear in NIV; it is a compatibility aid, not a replacement for the item table. Legacy
-OIV data remains readable.
+The inventory model is selected when a new campaign is started; the choice is stored in the
+save. The supplied 1.13 data set is NIV, but OIV remains supported. `OLD_INVENTORY_ITEM_NUMBER`
+(default `99`) is the item-size marker for items that do not appear in NIV; it is a
+compatibility aid, not a replacement for the item table.
 
 Fields affected in `Items`:
 
-- `ubPerPocket` - OIV pocket capacity. NIV derives pocket capacity from the `Pockets` and
-  `LoadBearingEquipment` tables, so treat `ubPerPocket` as an OIV compatibility field.
-  The OIV-only reading is inferred from the new-inventory tables and the legacy item-editor
-  grouping; the field entry in `Items.md` is marked `inferred` for the same reason.
+- `ubPerPocket` - OIV pocket capacity. In OIV it sets the number of identical items in a
+  pocket; NIV derives capacity from the `Pockets`/`LoadBearingEquipment` tables and `ItemSize`.
+  It is **not strictly OIV-only**: the NIV item-description code still reads it for the
+  "small" property, because `FitsInSmallPocket` returns true for every item under NIV. The
+  field entry in `Items.md` is marked `inferred` for the option-specific part.
 - `NewInv` - marks an item as NIV-only; OIV does not expose it.
 - `ItemSize` - the item's size class. It is part of the item definition in both models, but
-  the pocket checks that consume it differ between OIV and NIV.
+  the pocket checks differ. In NIV, an item with `ItemSize == OLD_INVENTORY_ITEM_NUMBER`
+  (default `99`) is treated as OIV-only and is not available.
 
 Other OIV/NIV details live in the `Pockets`, `PocketPopups` and `LoadBearingEquipment`
 documents (B3).
@@ -80,5 +83,6 @@ global game options. The OAS/NAS distinction is documented with the attachment f
 - Item table data and the legacy item-editor option grouping.
 - The inventory and attachment tables that receive the values.
 
-No code file or line reference is used here; the option names and field effects are the
-stable anchors.
+The inventory switch and the `ubPerPocket`/`ItemSize` behaviour were verified against the
+shipped C++ source. No code file or line reference is used here; the option names and field
+effects are the stable anchors.
