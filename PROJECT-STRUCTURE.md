@@ -11,6 +11,7 @@ JA2_1.13 Tools/
 ├── AGENTS.md                        # Rules for AI assistants
 ├── README.md                        # GitHub repository overview (English, default)
 ├── README.ru.md                     # GitHub repository overview (Russian)
+├── CODE-OVERVIEW.md                 # Code architecture, class/method map and improvement backlog
 ├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
