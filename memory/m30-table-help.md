@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b approved and B2 draft 2026-11-07; twenty-four documents, 46 tables, 542 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b approved, B2/B3 draft 2026-11-07; thirty-one documents, 53 tables, 656 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -46,5 +46,11 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 90 путей. `help-check -Write` проходит (542/2985); row counts не добавлены. У NAS-полей
 `Only used with: NAS`; повторяющиеся `allowedtile`/`*facingtile` описаны. Ждут ревью.
 
-**Дальше.** B3 — `Pockets`, `PocketPopups`, `LoadBearingEquipment`, `Food`, `FoodOpinion`,
-`Drugs`, `RandomItem`.
+**B3 (2026-11-07, draft).** 7 документов: `Pockets` (41), `PocketPopups` (8),
+`LoadBearingEquipment` (18), `Food` (6), `FoodOpinion` (3), `Drugs` (16), `RandomItem` (22) —
+114 путей. `help-check -Write` проходит (656/2985). NIV/food/disease-поля помечены
+`Only used with`; capacity/random slots сгенерированы. Ждут ревью.
+
+**Дальше.** B4 — `MercProfiles`, `MercStartingGear`, `MercOpinions`, `MercQuote`,
+`MercAvailability`, `AIMAvailability`, `FaceGear`, `RPCFacesSmall`, `IMPPortraits`,
+`IMPVoices`, `OldAIMArchive`.
