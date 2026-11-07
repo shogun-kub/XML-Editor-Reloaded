@@ -13,7 +13,7 @@ by `GLOSSARY.md`.
 
 - Base tables from `References/JA 2 1.13 v4` and `v5` (the union of both versions).
 - Every leaf field, including nested paths and repeating containers.
-- Lookup tables, including the one damaged file in v5.
+- Lookup tables, including the repaired `AttachmentPoint` file in v5.
 - Cross-version differences and localization overlays.
 - Explicit unknowns; no invented meanings.
 

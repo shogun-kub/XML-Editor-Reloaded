@@ -110,8 +110,8 @@ files, it uses the numeric constants that the values mirror. The editor uses the
 boxes, bit editors and the "where used" views.
 
 There are 23 lookups with one shared structure. Eight are flag/bitmask dictionaries
-(`IsFlagLookup = 1`); the other fifteen are sequential value lists. One file,
-`Lookup/AttachmentPoint.xml`, is damaged in v5.
+(`IsFlagLookup = 1`); the other fifteen are sequential value lists. All 23 files parse in
+both v4 and v5; `Lookup/AttachmentPoint.xml` was repaired on 2026-11-07.
 
 ## Tables
 
@@ -124,7 +124,7 @@ All 23 files use `JA2Data` as the document root and the lookup name as the recor
 | `Lookup.AmmoFlag` | 5 | flags | 0..4 | ammo property bits |
 | `Lookup.ArmourClass` | 6 | sequence | 0..5 | matches `ARMOURCLASS_*` |
 | `Lookup.AttachmentClass` | 36 | flags | 0..33554432 | OAS attachment classes |
-| `Lookup.AttachmentPoint` | 8 | flags | 0..16 | v5 damaged; values below are from v4 |
+| `Lookup.AttachmentPoint` | 8 | flags | 0..16 | v5 repaired; same eight values as v4 |
 | `Lookup.AttachmentSystem` | 3 | sequence | 0..2 | Any / OAS / NAS |
 | `Lookup.Cursor` | 23 | sequence | 0..23 | cursor IDs |
 | `Lookup.DrugType` | 26 | flags | 0..1081324 | drug effect bits |
@@ -169,8 +169,8 @@ Flag lookup with 36 values. OAS attachment class bits; the largest value is `0x0
 
 ### Lookup.AttachmentPoint
 
-Flag lookup with 8 values in v4 (0..16). The v5 file is damaged; see `## Versions`. Used by
-the attachment slot and NAS fields.
+Flag lookup with 8 values (0..16). Same values in v4 and v5. Used by the attachment slot
+and NAS fields.
 
 ### Lookup.AttachmentSystem
 
@@ -306,8 +306,8 @@ the label shown around a lookup, but the `name` values in these files stay Engli
 ## Versions
 
 - v4 and v5 have the same 23 lookup files and the same `id`/`name` schema.
-- `Lookup/AttachmentPoint.xml` in v5 has a stray `</AttachmentPoint>` at line 31 and does not
-  parse. The v4 file is valid and contains eight values:
+- `Lookup/AttachmentPoint.xml` in v5 was repaired on 2026-11-07; it now parses and contains
+  the same eight values as v4:
 
 | id | name |
 |---:|---|
@@ -320,8 +320,8 @@ the label shown around a lookup, but the `name` values in these files stay Engli
 | 8 | Surgical Mask and Gloves |
 | 16 | Batteries |
 
-Do not repair the v5 file; report the defect and use the v4 values when a lookup list is
-needed.
+The repair is a data fix, not a code change. `help-inventory.ps1` still falls back to v4 if
+a future v5 file fails to parse; the fallback is not used by the current v5 tree.
 
 ## Sources
 
