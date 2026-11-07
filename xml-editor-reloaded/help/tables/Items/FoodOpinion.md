@@ -27,9 +27,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`FOODOPINIONSLIST/FOODOPINION/uProfile`](#foodopinionslistfoodopinionuprofile)
   - [`FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`](#foodopinionslistfoodopinionprofile_opinionfoodnumber)
   - [`FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/MoraleMod`](#foodopinionslistfoodopinionprofile_opinionmoralemod)
-  - [`FOODOPINIONSLIST/FOODOPINION/uProfile`](#foodopinionslistfoodopinionuprofile)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -50,14 +50,24 @@ updated: 2026-11-07
 
 ```
 FOODOPINIONSLIST
-└── FOODOPINION            one profile
-    ├── uProfile            profile ID
-    └── PROFILE_OPINION     repeated food opinions
-        ├── FoodNumber      food row
-        └── MoraleMod       morale modifier
+└── FOODOPINION
+    ├── uProfile
+    └── PROFILE_OPINION
+        ├── FoodNumber
+        └── MoraleMod
 ```
 
 ## Fields
+
+### `FOODOPINIONSLIST/FOODOPINION/uProfile`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Profile whose food preference is described by this row.
+- **Only used with:** Food system.
+- **Values:** Profile ID; the same profile can have several `PROFILE_OPINION` rows.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** food opinion table data; field metadata.
+- **Confidence:** `inferred`
 
 ### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`
 
@@ -75,16 +85,6 @@ FOODOPINIONSLIST
 - **Description:** Morale modifier applied to this profile when it consumes the food.
 - **Only used with:** Food system.
 - **Values:** Morale modifier for this profile and food.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food opinion table data; field metadata.
-- **Confidence:** `inferred`
-
-### `FOODOPINIONSLIST/FOODOPINION/uProfile`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Profile whose food preference is described by this row.
-- **Only used with:** Food system.
-- **Values:** Profile ID; the same profile can have several `PROFILE_OPINION` rows.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** food opinion table data; field metadata.
 - **Confidence:** `inferred`

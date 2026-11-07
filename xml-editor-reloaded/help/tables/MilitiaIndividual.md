@@ -11,7 +11,7 @@ files:
   - MilitiaIndividual.xml
 root: MILITIAORIGINDATA
 record: ORIGINDATA
-key: origin
+key: none
 sources:
   - Militia individual table data
   - MilitiaIndividual schema comment
@@ -27,21 +27,21 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`](#militiaorigindataorigindatachance_bodytype_bigmale)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`](#militiaorigindataorigindatachance_bodytype_regfemale)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGMALE`](#militiaorigindataorigindatachance_bodytype_regmale)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_STOCKYMALE`](#militiaorigindataorigindatachance_bodytype_stockymale)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`](#militiaorigindataorigindatachance_skin_blackskin)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`](#militiaorigindataorigindatachance_skin_darkskin)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_PINKSKIN`](#militiaorigindataorigindatachance_skin_pinkskin)
-  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_TANSKIN`](#militiaorigindataorigindatachance_skin_tanskin)
-  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`](#militiaorigindataorigindatadailycost_elite)
-  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_green`](#militiaorigindataorigindatadailycost_green)
-  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_regular`](#militiaorigindataorigindatadailycost_regular)
-  - [`MILITIAORIGINDATA/ORIGINDATA/female_forename`](#militiaorigindataorigindatafemale_forename)
-  - [`MILITIAORIGINDATA/ORIGINDATA/female_surname`](#militiaorigindataorigindatafemale_surname)
   - [`MILITIAORIGINDATA/ORIGINDATA/male_forename`](#militiaorigindataorigindatamale_forename)
   - [`MILITIAORIGINDATA/ORIGINDATA/male_surname`](#militiaorigindataorigindatamale_surname)
+  - [`MILITIAORIGINDATA/ORIGINDATA/female_forename`](#militiaorigindataorigindatafemale_forename)
+  - [`MILITIAORIGINDATA/ORIGINDATA/female_surname`](#militiaorigindataorigindatafemale_surname)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGMALE`](#militiaorigindataorigindatachance_bodytype_regmale)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`](#militiaorigindataorigindatachance_bodytype_bigmale)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_STOCKYMALE`](#militiaorigindataorigindatachance_bodytype_stockymale)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`](#militiaorigindataorigindatachance_bodytype_regfemale)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_PINKSKIN`](#militiaorigindataorigindatachance_skin_pinkskin)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_TANSKIN`](#militiaorigindataorigindatachance_skin_tanskin)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`](#militiaorigindataorigindatachance_skin_darkskin)
+  - [`MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`](#militiaorigindataorigindatachance_skin_blackskin)
+  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_green`](#militiaorigindataorigindatadailycost_green)
+  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_regular`](#militiaorigindataorigindatadailycost_regular)
+  - [`MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`](#militiaorigindataorigindatadailycost_elite)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -62,32 +62,66 @@ updated: 2026-11-07
 
 ```
 MILITIAORIGINDATA
-└── ORIGINDATA              one militia origin
-    ├── chance_bodytype_*   body-type chances
-    ├── chance_skin_*       skin chances
-    ├── dailycost_*         daily wages
-    └── male/female_*       name pools
+└── ORIGINDATA
+    ├── male_forename
+    ├── male_surname
+    ├── female_forename
+    ├── female_surname
+    ├── chance_bodytype_REGMALE
+    ├── chance_bodytype_BIGMALE
+    ├── chance_bodytype_STOCKYMALE
+    ├── chance_bodytype_REGFEMALE
+    ├── chance_skin_PINKSKIN
+    ├── chance_skin_TANSKIN
+    ├── chance_skin_DARKSKIN
+    ├── chance_skin_BLACKSKIN
+    ├── dailycost_green
+    ├── dailycost_regular
+    └── dailycost_elite
 ```
+
+`MILITIAORIGINDATA` has no stable per-row key. `ORIGINDATA` rows are selected by origin and
+document order; `key: none` records that fact.
 
 ## Fields
 
-### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`
+### `MILITIAORIGINDATA/ORIGINDATA/male_forename`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the big-male body type; body-type chances should sum to 100.
+- **Type:** `String` (`String`)
+- **Description:** Male forename pool used by the random militia generator.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Free text name.
+- **Default:** empty string when omitted.
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 
-### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`
+### `MILITIAORIGINDATA/ORIGINDATA/male_surname`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets the regular-female body type.
+- **Type:** `String` (`String`)
+- **Description:** Male surname pool.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Free text name.
+- **Default:** empty string when omitted.
+- **Source:** militia individual table data; table metadata.
+- **Confidence:** `inferred`
+
+### `MILITIAORIGINDATA/ORIGINDATA/female_forename`
+
+- **Type:** `String` (`String`)
+- **Description:** Female forename pool.
+- **Only used with:** INDIVIDUAL_MILITIA.
+- **Values:** Free text name.
+- **Default:** empty string when omitted.
+- **Source:** militia individual table data; table metadata.
+- **Confidence:** `inferred`
+
+### `MILITIAORIGINDATA/ORIGINDATA/female_surname`
+
+- **Type:** `String` (`String`)
+- **Description:** Female surname pool.
+- **Only used with:** INDIVIDUAL_MILITIA.
+- **Values:** Free text name.
+- **Default:** empty string when omitted.
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 
@@ -95,6 +129,16 @@ MILITIAORIGINDATA
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Chance that a new militia gets the regular-male body type.
+- **Only used with:** INDIVIDUAL_MILITIA.
+- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** militia individual table data; table metadata.
+- **Confidence:** `inferred`
+
+### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Chance that a new militia gets the big-male body type; body-type chances should sum to 100.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -111,20 +155,10 @@ MILITIAORIGINDATA
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 
-### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`
+### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets black skin; skin chances should sum to 100.
-- **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
-
-### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Chance that a new militia gets dark skin.
+- **Description:** Chance that a new militia gets the regular-female body type.
 - **Only used with:** INDIVIDUAL_MILITIA.
 - **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -151,12 +185,22 @@ MILITIAORIGINDATA
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 
-### `MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`
+### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Daily wage of an elite militia.
+- **Description:** Chance that a new militia gets dark skin.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Integer daily wage.
+- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** militia individual table data; table metadata.
+- **Confidence:** `inferred`
+
+### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Chance that a new militia gets black skin; skin chances should sum to 100.
+- **Only used with:** INDIVIDUAL_MILITIA.
+- **Values:** Percentage chance; body/skin chances should sum to 100.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
@@ -181,43 +225,13 @@ MILITIAORIGINDATA
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 
-### `MILITIAORIGINDATA/ORIGINDATA/female_forename`
+### `MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`
 
-- **Type:** `String` (`String`)
-- **Description:** Female forename pool.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Daily wage of an elite militia.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
-- **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
-
-### `MILITIAORIGINDATA/ORIGINDATA/female_surname`
-
-- **Type:** `String` (`String`)
-- **Description:** Female surname pool.
-- **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
-- **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
-
-### `MILITIAORIGINDATA/ORIGINDATA/male_forename`
-
-- **Type:** `String` (`String`)
-- **Description:** Male forename pool used by the random militia generator.
-- **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
-- **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
-
-### `MILITIAORIGINDATA/ORIGINDATA/male_surname`
-
-- **Type:** `String` (`String`)
-- **Description:** Male surname pool.
-- **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
-- **Default:** empty string when omitted.
+- **Values:** Integer daily wage.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** militia individual table data; table metadata.
 - **Confidence:** `inferred`
 

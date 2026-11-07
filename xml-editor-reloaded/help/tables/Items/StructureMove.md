@@ -27,9 +27,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`STRUCTURESLIST/STRUCTURE/allowedtile`](#structuresliststructureallowedtile)
   - [`STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`](#structuresliststructuresztilesetdisplayname)
   - [`STRUCTURESLIST/STRUCTURE/szTileSetName`](#structuresliststructuresztilesetname)
+  - [`STRUCTURESLIST/STRUCTURE/allowedtile`](#structuresliststructureallowedtile)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -50,21 +50,16 @@ updated: 2026-11-07
 
 ```
 STRUCTURESLIST
-└── STRUCTURE               one movable tileset
-    ├── szTileSetName          STI tileset
-    └── allowedtile            repeated allowed tile indices
+└── STRUCTURE
+    ├── szTileSetDisplayName
+    ├── szTileSetName
+    └── allowedtile
 ```
 
+`STRUCTURESLIST` has no stable per-row key; a structure row is identified by its tile-set
+fields and document order.
+
 ## Fields
-
-### `STRUCTURESLIST/STRUCTURE/allowedtile`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index on which moving is allowed. The element may repeat.
-- **Values:** Allowed tile index; the element may repeat.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure move table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`
 
@@ -81,6 +76,15 @@ STRUCTURESLIST
 - **Description:** STI tileset file used to draw the movable structure.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
+- **Source:** structure move table data; field metadata.
+- **Confidence:** `inferred`
+
+### `STRUCTURESLIST/STRUCTURE/allowedtile`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Tile index on which moving is allowed. The element may repeat.
+- **Values:** Allowed tile index; the element may repeat.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure move table data; field metadata.
 - **Confidence:** `inferred`
 

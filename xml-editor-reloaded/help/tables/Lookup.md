@@ -273,9 +273,8 @@ Sequence lookup. `WEAPONTYPE_*` used by `Weapons.ubWeaponType`.
 
 ```
 JA2Data
-└── <LookupName>
-    ├── id     numeric value or bit mask
-    └── name   display label
+├── id
+└── name
 ```
 
 - `id` may be sparse (`AmmoChoices` uses 19, 29, ... 79).

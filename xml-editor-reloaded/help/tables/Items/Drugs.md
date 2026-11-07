@@ -28,22 +28,22 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`](#drugslistdrugdisability_effectchance)
-  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`](#drugslistdrugdisability_effectdisability)
-  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/duration`](#drugslistdrugdisability_effectduration)
-  - [`DRUGSLIST/DRUG/DISEASE_EFFECT/chance`](#drugslistdrugdisease_effectchance)
+  - [`DRUGSLIST/DRUG/uiIndex`](#drugslistdruguiindex)
+  - [`DRUGSLIST/DRUG/szName`](#drugslistdrugszname)
+  - [`DRUGSLIST/DRUG/opinionevent`](#drugslistdrugopinionevent)
+  - [`DRUGSLIST/DRUG/DRUG_EFFECT/effect`](#drugslistdrugdrug_effecteffect)
+  - [`DRUGSLIST/DRUG/DRUG_EFFECT/duration`](#drugslistdrugdrug_effectduration)
+  - [`DRUGSLIST/DRUG/DRUG_EFFECT/size`](#drugslistdrugdrug_effectsize)
+  - [`DRUGSLIST/DRUG/DRUG_EFFECT/chance`](#drugslistdrugdrug_effectchance)
   - [`DRUGSLIST/DRUG/DISEASE_EFFECT/disease`](#drugslistdrugdisease_effectdisease)
   - [`DRUGSLIST/DRUG/DISEASE_EFFECT/size`](#drugslistdrugdisease_effectsize)
-  - [`DRUGSLIST/DRUG/DRUG_EFFECT/chance`](#drugslistdrugdrug_effectchance)
-  - [`DRUGSLIST/DRUG/DRUG_EFFECT/duration`](#drugslistdrugdrug_effectduration)
-  - [`DRUGSLIST/DRUG/DRUG_EFFECT/effect`](#drugslistdrugdrug_effecteffect)
-  - [`DRUGSLIST/DRUG/DRUG_EFFECT/size`](#drugslistdrugdrug_effectsize)
-  - [`DRUGSLIST/DRUG/opinionevent`](#drugslistdrugopinionevent)
-  - [`DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`](#drugslistdrugpersonality_effectchance)
-  - [`DRUGSLIST/DRUG/PERSONALITY_EFFECT/duration`](#drugslistdrugpersonality_effectduration)
+  - [`DRUGSLIST/DRUG/DISEASE_EFFECT/chance`](#drugslistdrugdisease_effectchance)
+  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`](#drugslistdrugdisability_effectdisability)
+  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/duration`](#drugslistdrugdisability_effectduration)
+  - [`DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`](#drugslistdrugdisability_effectchance)
   - [`DRUGSLIST/DRUG/PERSONALITY_EFFECT/personality`](#drugslistdrugpersonality_effectpersonality)
-  - [`DRUGSLIST/DRUG/szName`](#drugslistdrugszname)
-  - [`DRUGSLIST/DRUG/uiIndex`](#drugslistdruguiindex)
+  - [`DRUGSLIST/DRUG/PERSONALITY_EFFECT/duration`](#drugslistdrugpersonality_effectduration)
+  - [`DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`](#drugslistdrugpersonality_effectchance)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -64,51 +64,90 @@ updated: 2026-11-07
 
 ```
 DRUGSLIST
-└── DRUG                    one drug
-    ├── uiIndex             drug identity
-    ├── szName              display name
-    ├── opinionevent        opinion reaction flag
-    ├── DRUG_EFFECT         repeated stat effect
-    ├── DISEASE_EFFECT      repeated disease effect
-    ├── DISABILITY_EFFECT   repeated disability effect
-    └── PERSONALITY_EFFECT  repeated personality effect
+└── DRUG
+    ├── uiIndex
+    ├── szName
+    ├── opinionevent
+    ├── DRUG_EFFECT
+    │   ├── effect
+    │   ├── duration
+    │   ├── size
+    │   └── chance
+    ├── DISEASE_EFFECT
+    │   ├── disease
+    │   ├── size
+    │   └── chance
+    ├── DISABILITY_EFFECT
+    │   ├── disability
+    │   ├── duration
+    │   └── chance
+    └── PERSONALITY_EFFECT
+        ├── personality
+        ├── duration
+        └── chance
 ```
 
 ## Fields
 
-### `DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`
+### `DRUGSLIST/DRUG/uiIndex`
 
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disability is applied. If omitted, the effect is applied without a chance roll.
-- **Values:** Percentage chance that this disability is applied.
-- **Default:** absent: the effect applies without a chance roll.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the drug row and identity of the XML record.
+- **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the schema comment allows up to 100 drugs.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
-### `DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`
+### `DRUGSLIST/DRUG/szName`
+
+- **Type:** `String` (`String`)
+- **Description:** Display name of the drug.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** drug table data; field metadata.
+- **Confidence:** `inferred`
+
+### `DRUGSLIST/DRUG/opinionevent`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, other mercenaries react negatively to drug use.
+- **Values:** `0` or `1`; when set, other mercenaries complain about the drug use.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** drug table data; field metadata.
+- **Confidence:** `inferred`
+
+### `DRUGSLIST/DRUG/DRUG_EFFECT/effect`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Disability added for the duration of the effect.
-- **Values:** Disability ID: `1` Heat intolerant, `2` Nervous, `3` Claustrophobic, `4` Nonswimmer, `5` Fear of insects, `6` Forgetful, `7` Psycho, `8` Deaf, `9` Shortsighted, `10` Hemophiliac, `11` Afraid of heights, `12` Self-harm.
+- **Description:** Stat or resource changed by this effect.
+- **Values:** IDs from the drug-effect list: `0` HP, `1` BP, `2` AP, `3` Morale, `4` Physical resistance, `5` Strength, `6` Agility, `7` Dexterity, `8` Wisdom.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `source`
 
-### `DRUGSLIST/DRUG/DISABILITY_EFFECT/duration`
+### `DRUGSLIST/DRUG/DRUG_EFFECT/duration`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the disability in turns.
-- **Values:** Duration of the disability in turns.
+- **Description:** Duration of the effect in turns.
+- **Values:** Duration in turns.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
-### `DRUGSLIST/DRUG/DISEASE_EFFECT/chance`
+### `DRUGSLIST/DRUG/DRUG_EFFECT/size`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Strength of the effect. Positive and negative values are allowed.
+- **Values:** Effect strength; positive and negative values are allowed.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** drug table data; field metadata.
+- **Confidence:** `inferred`
+
+### `DRUGSLIST/DRUG/DRUG_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disease effect is applied. If omitted, the effect is applied without a chance roll.
-- **Only used with:** Disease system.
-- **Values:** Percentage chance that this disease effect is applied.
+- **Description:** Chance that this effect is applied when the drug is consumed. If omitted, the effect is applied without a chance roll.
+- **Values:** Percentage chance that this effect is applied when the drug is consumed; the loader default applies when omitted.
 - **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
@@ -133,66 +172,40 @@ DRUGSLIST
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
-### `DRUGSLIST/DRUG/DRUG_EFFECT/chance`
+### `DRUGSLIST/DRUG/DISEASE_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this effect is applied when the drug is consumed. If omitted, the effect is applied without a chance roll.
-- **Values:** Percentage chance that this effect is applied when the drug is consumed; the loader default applies when omitted.
+- **Description:** Chance that this disease effect is applied. If omitted, the effect is applied without a chance roll.
+- **Only used with:** Disease system.
+- **Values:** Percentage chance that this disease effect is applied.
 - **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
-### `DRUGSLIST/DRUG/DRUG_EFFECT/duration`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the effect in turns.
-- **Values:** Duration in turns.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
-
-### `DRUGSLIST/DRUG/DRUG_EFFECT/effect`
+### `DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Stat or resource changed by this effect.
-- **Values:** IDs from the drug-effect list: `0` HP, `1` BP, `2` AP, `3` Morale, `4` Physical resistance, `5` Strength, `6` Agility, `7` Dexterity, `8` Wisdom.
+- **Description:** Disability added for the duration of the effect.
+- **Values:** Disability ID: `1` Heat intolerant, `2` Nervous, `3` Claustrophobic, `4` Nonswimmer, `5` Fear of insects, `6` Forgetful, `7` Psycho, `8` Deaf, `9` Shortsighted, `10` Hemophiliac, `11` Afraid of heights, `12` Self-harm.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `source`
 
-### `DRUGSLIST/DRUG/DRUG_EFFECT/size`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Strength of the effect. Positive and negative values are allowed.
-- **Values:** Effect strength; positive and negative values are allowed.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
-
-### `DRUGSLIST/DRUG/opinionevent`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, other mercenaries react negatively to drug use.
-- **Values:** `0` or `1`; when set, other mercenaries complain about the drug use.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
-
-### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this personality effect is applied. If omitted, the effect is applied without a chance roll.
-- **Values:** Percentage chance that this personality effect is applied.
-- **Default:** absent: the effect applies without a chance roll.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
-
-### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/duration`
+### `DRUGSLIST/DRUG/DISABILITY_EFFECT/duration`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Duration of the personality effect in turns.
-- **Values:** Duration of the personality effect in turns.
+- **Description:** Duration of the disability in turns.
+- **Values:** Duration of the disability in turns.
 - **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** drug table data; field metadata.
+- **Confidence:** `inferred`
+
+### `DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance that this disability is applied. If omitted, the effect is applied without a chance roll.
+- **Values:** Percentage chance that this disability is applied.
+- **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
@@ -205,21 +218,21 @@ DRUGSLIST
 - **Source:** drug table data; field metadata.
 - **Confidence:** `source`
 
-### `DRUGSLIST/DRUG/szName`
+### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/duration`
 
-- **Type:** `String` (`String`)
-- **Description:** Display name of the drug.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Duration of the personality effect in turns.
+- **Values:** Duration of the personality effect in turns.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 
-### `DRUGSLIST/DRUG/uiIndex`
+### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`
 
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the drug row and identity of the XML record.
-- **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the schema comment allows up to 100 drugs.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance that this personality effect is applied. If omitted, the effect is applied without a chance roll.
+- **Values:** Percentage chance that this personality effect is applied.
+- **Default:** absent: the effect applies without a chance roll.
 - **Source:** drug table data; field metadata.
 - **Confidence:** `inferred`
 

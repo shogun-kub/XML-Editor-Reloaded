@@ -28,8 +28,22 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`POCKETLIST/POCKET/pIndex`](#pocketlistpocketpindex)
+  - [`POCKETLIST/POCKET/pName`](#pocketlistpocketpname)
+  - [`POCKETLIST/POCKET/pSilhouette`](#pocketlistpocketpsilhouette)
+  - [`POCKETLIST/POCKET/pType`](#pocketlistpocketptype)
+  - [`POCKETLIST/POCKET/pRestriction`](#pocketlistpocketprestriction)
+  - [`POCKETLIST/POCKET/pVolume`](#pocketlistpocketpvolume)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize0`](#pocketlistpocketitemcapacitypersize0)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize1`](#pocketlistpocketitemcapacitypersize1)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize2`](#pocketlistpocketitemcapacitypersize2)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize3`](#pocketlistpocketitemcapacitypersize3)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize4`](#pocketlistpocketitemcapacitypersize4)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize5`](#pocketlistpocketitemcapacitypersize5)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize6`](#pocketlistpocketitemcapacitypersize6)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize7`](#pocketlistpocketitemcapacitypersize7)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize8`](#pocketlistpocketitemcapacitypersize8)
+  - [`POCKETLIST/POCKET/ItemCapacityPerSize9`](#pocketlistpocketitemcapacitypersize9)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize10`](#pocketlistpocketitemcapacitypersize10)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize11`](#pocketlistpocketitemcapacitypersize11)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize12`](#pocketlistpocketitemcapacitypersize12)
@@ -40,7 +54,6 @@ updated: 2026-11-07
   - [`POCKETLIST/POCKET/ItemCapacityPerSize17`](#pocketlistpocketitemcapacitypersize17)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize18`](#pocketlistpocketitemcapacitypersize18)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize19`](#pocketlistpocketitemcapacitypersize19)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize2`](#pocketlistpocketitemcapacitypersize2)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize20`](#pocketlistpocketitemcapacitypersize20)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize21`](#pocketlistpocketitemcapacitypersize21)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize22`](#pocketlistpocketitemcapacitypersize22)
@@ -51,24 +64,11 @@ updated: 2026-11-07
   - [`POCKETLIST/POCKET/ItemCapacityPerSize27`](#pocketlistpocketitemcapacitypersize27)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize28`](#pocketlistpocketitemcapacitypersize28)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize29`](#pocketlistpocketitemcapacitypersize29)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize3`](#pocketlistpocketitemcapacitypersize3)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize30`](#pocketlistpocketitemcapacitypersize30)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize31`](#pocketlistpocketitemcapacitypersize31)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize32`](#pocketlistpocketitemcapacitypersize32)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize33`](#pocketlistpocketitemcapacitypersize33)
   - [`POCKETLIST/POCKET/ItemCapacityPerSize34`](#pocketlistpocketitemcapacitypersize34)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize4`](#pocketlistpocketitemcapacitypersize4)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize5`](#pocketlistpocketitemcapacitypersize5)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize6`](#pocketlistpocketitemcapacitypersize6)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize7`](#pocketlistpocketitemcapacitypersize7)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize8`](#pocketlistpocketitemcapacitypersize8)
-  - [`POCKETLIST/POCKET/ItemCapacityPerSize9`](#pocketlistpocketitemcapacitypersize9)
-  - [`POCKETLIST/POCKET/pIndex`](#pocketlistpocketpindex)
-  - [`POCKETLIST/POCKET/pName`](#pocketlistpocketpname)
-  - [`POCKETLIST/POCKET/pRestriction`](#pocketlistpocketprestriction)
-  - [`POCKETLIST/POCKET/pSilhouette`](#pocketlistpocketpsilhouette)
-  - [`POCKETLIST/POCKET/pType`](#pocketlistpocketptype)
-  - [`POCKETLIST/POCKET/pVolume`](#pocketlistpocketpvolume)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -89,16 +89,111 @@ updated: 2026-11-07
 
 ```
 POCKETLIST
-└── POCKET                  one pocket type
-    ├── pIndex              pocket identity
-    ├── pName               display name
-    ├── pType               PocketSize lookup
-    ├── pRestriction        item-class bitmask
-    ├── pVolume             pocket volume
-    └── ItemCapacityPerSize0..34  capacity by item size
+└── POCKET
+    ├── pIndex
+    ├── pName
+    ├── pSilhouette
+    ├── pType
+    ├── pRestriction
+    ├── pVolume
+    ├── ItemCapacityPerSize0
+    ├── ItemCapacityPerSize1
+    ├── ItemCapacityPerSize2
+    ├── ItemCapacityPerSize3
+    ├── ItemCapacityPerSize4
+    ├── ItemCapacityPerSize5
+    ├── ItemCapacityPerSize6
+    ├── ItemCapacityPerSize7
+    ├── ItemCapacityPerSize8
+    ├── ItemCapacityPerSize9
+    ├── ItemCapacityPerSize10
+    ├── ItemCapacityPerSize11
+    ├── ItemCapacityPerSize12
+    ├── ItemCapacityPerSize13
+    ├── ItemCapacityPerSize14
+    ├── ItemCapacityPerSize15
+    ├── ItemCapacityPerSize16
+    ├── ItemCapacityPerSize17
+    ├── ItemCapacityPerSize18
+    ├── ItemCapacityPerSize19
+    ├── ItemCapacityPerSize20
+    ├── ItemCapacityPerSize21
+    ├── ItemCapacityPerSize22
+    ├── ItemCapacityPerSize23
+    ├── ItemCapacityPerSize24
+    ├── ItemCapacityPerSize25
+    ├── ItemCapacityPerSize26
+    ├── ItemCapacityPerSize27
+    ├── ItemCapacityPerSize28
+    ├── ItemCapacityPerSize29
+    ├── ItemCapacityPerSize30
+    ├── ItemCapacityPerSize31
+    ├── ItemCapacityPerSize32
+    ├── ItemCapacityPerSize33
+    └── ItemCapacityPerSize34
 ```
 
 ## Fields
+
+### `POCKETLIST/POCKET/pIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Index of the pocket row and identity of the XML record.
+- **Only used with:** NIV.
+- **Values:** Non-negative index; unique within the file. It is referenced by `LoadBearingEquipment.lbePocketIndex*`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/pName`
+
+- **Type:** `String` (`String`)
+- **Description:** Display name of the pocket type.
+- **Only used with:** NIV.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/pSilhouette`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Silhouette/icon used to draw the pocket in the inventory interface.
+- **Only used with:** NIV.
+- **Values:** IDs from `Lookup.Silhouette`; the lookup names the pocket icon/silhouette.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `source`
+
+### `POCKETLIST/POCKET/pType`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Pocket size class used by the inventory UI and by item-fitting checks.
+- **Only used with:** NIV.
+- **Values:** IDs from `Lookup.PocketSize`: `0` None, `1` Small, `2` Medium, `3` Large.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `source`
+
+### `POCKETLIST/POCKET/pRestriction`
+
+- **Type:** `Flags` (`UINT32`)
+- **Description:** Bitmask of item classes the pocket accepts. Zero means the pocket has no class restriction.
+- **Only used with:** NIV.
+- **Values:** Bitmask of `Lookup.ItemClass` IDs. `0` means no restriction; non-zero requires the item class to intersect the mask.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `source`
+
+### `POCKETLIST/POCKET/pVolume`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Volume of the pocket. It is used by the LBE volume checks.
+- **Only used with:** NIV.
+- **Values:** Pocket volume; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
 
 ### `POCKETLIST/POCKET/ItemCapacityPerSize0`
 
@@ -114,6 +209,86 @@ POCKETLIST
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Maximum number of items of item-size 1 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize2`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 2 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize3`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 3 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize4`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 4 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize5`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 5 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize6`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 6 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize7`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 7 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize8`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 8 that fit in the pocket. Zero means the pocket cannot hold that size.
+- **Only used with:** NIV.
+- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** pocket table data; field metadata.
+- **Confidence:** `inferred`
+
+### `POCKETLIST/POCKET/ItemCapacityPerSize9`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Maximum number of items of item-size 9 that fit in the pocket. Zero means the pocket cannot hold that size.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -220,16 +395,6 @@ POCKETLIST
 - **Source:** pocket table data; field metadata.
 - **Confidence:** `inferred`
 
-### `POCKETLIST/POCKET/ItemCapacityPerSize2`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 2 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
 ### `POCKETLIST/POCKET/ItemCapacityPerSize20`
 
 - **Type:** `Integer` (`UINT16`)
@@ -330,16 +495,6 @@ POCKETLIST
 - **Source:** pocket table data; field metadata.
 - **Confidence:** `inferred`
 
-### `POCKETLIST/POCKET/ItemCapacityPerSize3`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 3 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
 ### `POCKETLIST/POCKET/ItemCapacityPerSize30`
 
 - **Type:** `Integer` (`UINT16`)
@@ -386,126 +541,6 @@ POCKETLIST
 - **Description:** Maximum number of items of item-size 34 that fit in the pocket. Zero means the pocket cannot hold that size.
 - **Only used with:** NIV.
 - **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize4`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 4 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize5`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 5 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize6`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 6 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize7`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 7 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize8`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 8 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/ItemCapacityPerSize9`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Maximum number of items of item-size 9 that fit in the pocket. Zero means the pocket cannot hold that size.
-- **Only used with:** NIV.
-- **Values:** Non-negative capacity; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/pIndex`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Index of the pocket row and identity of the XML record.
-- **Only used with:** NIV.
-- **Values:** Non-negative index; unique within the file. It is referenced by `LoadBearingEquipment.lbePocketIndex*`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/pName`
-
-- **Type:** `String` (`String`)
-- **Description:** Display name of the pocket type.
-- **Only used with:** NIV.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `inferred`
-
-### `POCKETLIST/POCKET/pRestriction`
-
-- **Type:** `Flags` (`UINT32`)
-- **Description:** Bitmask of item classes the pocket accepts. Zero means the pocket has no class restriction.
-- **Only used with:** NIV.
-- **Values:** Bitmask of `Lookup.ItemClass` IDs. `0` means no restriction; non-zero requires the item class to intersect the mask.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `source`
-
-### `POCKETLIST/POCKET/pSilhouette`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Silhouette/icon used to draw the pocket in the inventory interface.
-- **Only used with:** NIV.
-- **Values:** IDs from `Lookup.Silhouette`; the lookup names the pocket icon/silhouette.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `source`
-
-### `POCKETLIST/POCKET/pType`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket size class used by the inventory UI and by item-fitting checks.
-- **Only used with:** NIV.
-- **Values:** IDs from `Lookup.PocketSize`: `0` None, `1` Small, `2` Medium, `3` Large.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket table data; field metadata.
-- **Confidence:** `source`
-
-### `POCKETLIST/POCKET/pVolume`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Volume of the pocket. It is used by the LBE volume checks.
-- **Only used with:** NIV.
-- **Values:** Pocket volume; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** pocket table data; field metadata.
 - **Confidence:** `inferred`

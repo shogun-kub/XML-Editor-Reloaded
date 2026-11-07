@@ -26,13 +26,13 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`SMALLFACE/FACE/uiIndex`](#smallfacefaceuiindex)
+  - [`SMALLFACE/FACE/Name`](#smallfacefacename)
+  - [`SMALLFACE/FACE/FaceIndex`](#smallfacefacefaceindex)
   - [`SMALLFACE/FACE/EyesX`](#smallfacefaceeyesx)
   - [`SMALLFACE/FACE/EyesY`](#smallfacefaceeyesy)
-  - [`SMALLFACE/FACE/FaceIndex`](#smallfacefacefaceindex)
   - [`SMALLFACE/FACE/MouthX`](#smallfacefacemouthx)
   - [`SMALLFACE/FACE/MouthY`](#smallfacefacemouthy)
-  - [`SMALLFACE/FACE/Name`](#smallfacefacename)
-  - [`SMALLFACE/FACE/uiIndex`](#smallfacefaceuiindex)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -53,13 +53,44 @@ updated: 2026-11-07
 
 ```
 SMALLFACE
-└── FACE                    one small portrait
-    ├── uiIndex             row identity
-    ├── FaceIndex           portrait index
-    └── Mouth/Eyes X/Y      animation coordinates
+└── FACE
+    ├── uiIndex
+    ├── Name
+    ├── FaceIndex
+    ├── EyesX
+    ├── EyesY
+    ├── MouthX
+    └── MouthY
 ```
 
 ## Fields
+
+### `SMALLFACE/FACE/uiIndex`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Small-face row identity.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** rpc small-face table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `SMALLFACE/FACE/Name`
+
+- **Type:** `String` (`String`)
+- **Description:** RPC name for the small face.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** rpc small-face table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `SMALLFACE/FACE/FaceIndex`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Face index in the portrait tables.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** rpc small-face table data; item/profile metadata.
+- **Confidence:** `inferred`
 
 ### `SMALLFACE/FACE/EyesX`
 
@@ -79,15 +110,6 @@ SMALLFACE
 - **Source:** rpc small-face table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `SMALLFACE/FACE/FaceIndex`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Face index in the portrait tables.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
-
 ### `SMALLFACE/FACE/MouthX`
 
 - **Type:** `Integer` (`INT32`)
@@ -101,24 +123,6 @@ SMALLFACE
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Y coordinate of the mouth on the small face.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `SMALLFACE/FACE/Name`
-
-- **Type:** `String` (`String`)
-- **Description:** RPC name for the small face.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `SMALLFACE/FACE/uiIndex`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Small-face row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** rpc small-face table data; item/profile metadata.

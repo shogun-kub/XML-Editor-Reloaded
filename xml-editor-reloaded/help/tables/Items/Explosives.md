@@ -28,25 +28,25 @@ updated: 2026-11-07
 - [Structure](#structure)
 - [Game options](#game-options)
 - [Fields](#fields)
-  - [`EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`](#explosivelistexplosivebindoormodifier)
-  - [`EXPLOSIVELIST/EXPLOSIVE/fExplodeOnImpact`](#explosivelistexplosivefexplodeonimpact)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`](#explosivelistexplosiveubanimationid)
+  - [`EXPLOSIVELIST/EXPLOSIVE/uiIndex`](#explosivelistexplosiveuiindex)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubType`](#explosivelistexplosiveubtype)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubDamage`](#explosivelistexplosiveubdamage)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`](#explosivelistexplosiveubstundamage)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubRadius`](#explosivelistexplosiveubradius)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubVolume`](#explosivelistexplosiveubvolume)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubVolatility`](#explosivelistexplosiveubvolatility)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`](#explosivelistexplosiveubanimationid)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubDuration`](#explosivelistexplosiveubduration)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubStartRadius`](#explosivelistexplosiveubstartradius)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubMagSize`](#explosivelistexplosiveubmagsize)
+  - [`EXPLOSIVELIST/EXPLOSIVE/fExplodeOnImpact`](#explosivelistexplosivefexplodeonimpact)
+  - [`EXPLOSIVELIST/EXPLOSIVE/usNumFragments`](#explosivelistexplosiveusnumfragments)
+  - [`EXPLOSIVELIST/EXPLOSIVE/ubFragType`](#explosivelistexplosiveubfragtype)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubFragDamage`](#explosivelistexplosiveubfragdamage)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubFragRange`](#explosivelistexplosiveubfragrange)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubFragType`](#explosivelistexplosiveubfragtype)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubHorizontalDegree`](#explosivelistexplosiveubhorizontaldegree)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubMagSize`](#explosivelistexplosiveubmagsize)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubRadius`](#explosivelistexplosiveubradius)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubStartRadius`](#explosivelistexplosiveubstartradius)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`](#explosivelistexplosiveubstundamage)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubType`](#explosivelistexplosiveubtype)
   - [`EXPLOSIVELIST/EXPLOSIVE/ubVerticalDegree`](#explosivelistexplosiveubverticaldegree)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubVolatility`](#explosivelistexplosiveubvolatility)
-  - [`EXPLOSIVELIST/EXPLOSIVE/ubVolume`](#explosivelistexplosiveubvolume)
-  - [`EXPLOSIVELIST/EXPLOSIVE/uiIndex`](#explosivelistexplosiveuiindex)
-  - [`EXPLOSIVELIST/EXPLOSIVE/usNumFragments`](#explosivelistexplosiveusnumfragments)
+  - [`EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`](#explosivelistexplosivebindoormodifier)
 - [Relations](#relations)
 - [Related formulas](#related-formulas)
 - [Localization](#localization)
@@ -68,13 +68,26 @@ updated: 2026-11-07
 
 ```
 EXPLOSIVELIST
-└── EXPLOSIVE               one explosion definition
-    ├── uiIndex             runtime explosion index
-    ├── ubType              ExplosionType lookup
-    ├── ubDamage            direct damage
-    ├── ubRadius            potential radius
-    ├── ...                 stun, fragments, gas and angles
-    └── bIndoorModifier     indoor damage multiplier (v5)
+└── EXPLOSIVE
+    ├── uiIndex
+    ├── ubType
+    ├── ubDamage
+    ├── ubStunDamage
+    ├── ubRadius
+    ├── ubVolume
+    ├── ubVolatility
+    ├── ubAnimationID
+    ├── ubDuration
+    ├── ubStartRadius
+    ├── ubMagSize
+    ├── fExplodeOnImpact
+    ├── usNumFragments
+    ├── ubFragType
+    ├── ubFragDamage
+    ├── ubFragRange
+    ├── ubHorizontalDegree
+    ├── ubVerticalDegree
+    └── bIndoorModifier
 ```
 
 ## Game options
@@ -83,29 +96,20 @@ No table-level global option is documented for this table. Its fields are read i
 
 ## Fields
 
-### `EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`
+### `EXPLOSIVELIST/EXPLOSIVE/uiIndex`
 
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Multiplier applied to the explosion when it occurs indoors. `1.0` leaves the blast unchanged. v4 records do not contain this element.
-- **Values:** `-1..10`.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here.
+- **Values:** Non-negative integer; unique within the file. `Items.ubClassIndex` of an explosive item points here.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Confidence:** `source`
 
-### `EXPLOSIVELIST/EXPLOSIVE/fExplodeOnImpact`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the explosive detonates on impact instead of waiting for a fuse or remote trigger.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`
+### `EXPLOSIVELIST/EXPLOSIVE/ubType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Index of the blast animation and sound row in `ExplosionData`.
-- **Values:** Index of a row in [ExplosionData](ExplosionData.md).
+- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment.
+- **Values:** IDs from `Lookup.ExplosionType`: `0` Normal, `1` Stun, `2` Tear Gas, `3` Mustard Gas, `4` Flare, `5` Noise, `6` Smoke, `7` Creature Gas, `8` Fire, `9` Flashbang, `10` Signal Shell, `11` Roof Collapse, `12` White Smoke.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `source`
@@ -119,6 +123,51 @@ No table-level global option is documented for this table. Its fields are read i
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`
 
+### `EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Stun damage applied by the explosion.
+- **Values:** `0..250`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubRadius`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Potential radius of the explosion. The actual effect can grow toward this radius from `ubStartRadius`.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubVolume`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Volume of the explosion sound/report. It is a presentation value, not damage.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubVolatility`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Volatility rating of the explosive. It expresses how sensitive the explosive is in the explosion model.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Index of the blast animation and sound row in `ExplosionData`.
+- **Values:** Index of a row in [ExplosionData](ExplosionData.md).
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `source`
+
 ### `EXPLOSIVELIST/EXPLOSIVE/ubDuration`
 
 - **Type:** `Integer` (`UINT8`)
@@ -127,6 +176,51 @@ No table-level global option is documented for this table. Its fields are read i
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubStartRadius`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Initial radius of the effect at the moment of detonation. The effect expands toward `ubRadius`.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubMagSize`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Magazine capacity used by NAS explosive items. It is not the blast radius.
+- **Values:** `0..65000`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/fExplodeOnImpact`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, the explosive detonates on impact instead of waiting for a fuse or remote trigger.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/usNumFragments`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Number of fragments produced by the explosion.
+- **Values:** `0..10000`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPLOSIVELIST/EXPLOSIVE/ubFragType`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour.
+- **Values:** Index of a row in [AmmoTypes](AmmoTypes.md); the fragment projectile uses that ammo type.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosive table data; field metadata.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragDamage`
 
@@ -146,15 +240,6 @@ No table-level global option is documented for this table. Its fields are read i
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`
 
-### `EXPLOSIVELIST/EXPLOSIVE/ubFragType`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour.
-- **Values:** Index of a row in [AmmoTypes](AmmoTypes.md); the fragment projectile uses that ammo type.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `source`
-
 ### `EXPLOSIVELIST/EXPLOSIVE/ubHorizontalDegree`
 
 - **Type:** `Integer` (`UINT8`)
@@ -163,51 +248,6 @@ No table-level global option is documented for this table. Its fields are read i
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubMagSize`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Magazine capacity used by NAS explosive items. It is not the blast radius.
-- **Values:** `0..65000`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubRadius`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Potential radius of the explosion. The actual effect can grow toward this radius from `ubStartRadius`.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubStartRadius`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Initial radius of the effect at the moment of detonation. The effect expands toward `ubRadius`.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Stun damage applied by the explosion.
-- **Values:** `0..250`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubType`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment.
-- **Values:** IDs from `Lookup.ExplosionType`: `0` Normal, `1` Stun, `2` Tear Gas, `3` Mustard Gas, `4` Flare, `5` Noise, `6` Smoke, `7` Creature Gas, `8` Fire, `9` Flashbang, `10` Signal Shell, `11` Roof Collapse, `12` White Smoke.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVerticalDegree`
 
@@ -218,38 +258,11 @@ No table-level global option is documented for this table. Its fields are read i
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`
 
-### `EXPLOSIVELIST/EXPLOSIVE/ubVolatility`
+### `EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`
 
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Volatility rating of the explosive. It expresses how sensitive the explosive is in the explosion model.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/ubVolume`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Volume of the explosion sound/report. It is a presentation value, not damage.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPLOSIVELIST/EXPLOSIVE/uiIndex`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here.
-- **Values:** Non-negative integer; unique within the file. `Items.ubClassIndex` of an explosive item points here.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `source`
-
-### `EXPLOSIVELIST/EXPLOSIVE/usNumFragments`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Number of fragments produced by the explosion.
-- **Values:** `0..10000`.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Multiplier applied to the explosion when it occurs indoors. `1.0` leaves the blast unchanged. v4 records do not contain this element.
+- **Values:** `-1..10`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
 - **Confidence:** `inferred`

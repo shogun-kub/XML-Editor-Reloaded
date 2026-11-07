@@ -253,8 +253,6 @@ updated: 2026-11-07
   - [`ITEMLIST/ITEM/ProvidesRobotNightVision`](#itemlistitemprovidesrobotnightvision)
   - [`ITEMLIST/ITEM/ProvidesRobotLaserBonus`](#itemlistitemprovidesrobotlaserbonus)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS`](#itemlistitemstand_modifiers)
-  - [`ITEMLIST/ITEM/CROUCH_MODIFIERS`](#itemlistitemcrouch_modifiers)
-  - [`ITEMLIST/ITEM/PRONE_MODIFIERS`](#itemlistitemprone_modifiers)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/FlatBase`](#itemlistitemstand_modifiersflatbase)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/PercentBase`](#itemlistitemstand_modifierspercentbase)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/FlatAim`](#itemlistitemstand_modifiersflataim)
@@ -266,6 +264,7 @@ updated: 2026-11-07
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/PercentMaxCounterForce`](#itemlistitemstand_modifierspercentmaxcounterforce)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/PercentCounterForceAccuracy`](#itemlistitemstand_modifierspercentcounterforceaccuracy)
   - [`ITEMLIST/ITEM/STAND_MODIFIERS/AimLevels`](#itemlistitemstand_modifiersaimlevels)
+  - [`ITEMLIST/ITEM/CROUCH_MODIFIERS`](#itemlistitemcrouch_modifiers)
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatBase`](#itemlistitemcrouch_modifiersflatbase)
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentBase`](#itemlistitemcrouch_modifierspercentbase)
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatAim`](#itemlistitemcrouch_modifiersflataim)
@@ -277,6 +276,7 @@ updated: 2026-11-07
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentMaxCounterForce`](#itemlistitemcrouch_modifierspercentmaxcounterforce)
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentCounterForceAccuracy`](#itemlistitemcrouch_modifierspercentcounterforceaccuracy)
   - [`ITEMLIST/ITEM/CROUCH_MODIFIERS/AimLevels`](#itemlistitemcrouch_modifiersaimlevels)
+  - [`ITEMLIST/ITEM/PRONE_MODIFIERS`](#itemlistitemprone_modifiers)
   - [`ITEMLIST/ITEM/PRONE_MODIFIERS/FlatBase`](#itemlistitemprone_modifiersflatbase)
   - [`ITEMLIST/ITEM/PRONE_MODIFIERS/PercentBase`](#itemlistitemprone_modifierspercentbase)
   - [`ITEMLIST/ITEM/PRONE_MODIFIERS/FlatAim`](#itemlistitemprone_modifiersflataim)
@@ -316,6 +316,268 @@ not separate tables. They override the five text fields by `uiIndex`; see
 [Localization](../../Localization.md).
 
 ## Structure
+
+```
+ITEMLIST
+└── ITEM
+    ├── uiIndex
+    ├── szItemName
+    ├── szLongItemName
+    ├── szItemDesc
+    ├── szBRName
+    ├── szBRDesc
+    ├── usItemClass
+    ├── AttachmentClass
+    ├── nasAttachmentClass
+    ├── nasLayoutClass
+    ├── AvailableAttachmentPoint
+    ├── AttachmentPoint
+    ├── AttachToPointAPCost
+    ├── ubClassIndex
+    ├── ubCursor
+    ├── bSoundType
+    ├── ubGraphicType
+    ├── ubGraphicNum
+    ├── ubWeight
+    ├── ubPerPocket
+    ├── ItemSize
+    ├── ItemSizeBonus
+    ├── usPrice
+    ├── ubCoolness
+    ├── bReliability
+    ├── bRepairEase
+    ├── Inseparable
+    ├── BR_NewInventory
+    ├── BR_UsedInventory
+    ├── BR_ROF
+    ├── DrugType
+    ├── FoodType
+    ├── usActionItemFlag
+    ├── clothestype
+    ├── spreadPattern
+    ├── Alcohol
+    ├── ScopeMagFactor
+    ├── ProjectionFactor
+    ├── RecoilModifierX
+    ├── RecoilModifierY
+    ├── PercentRecoilModifier
+    ├── PercentAccuracyModifier
+    ├── usOverheatingCooldownFactor
+    ├── overheatTemperatureModificator
+    ├── overheatCooldownModificator
+    ├── overheatJamThresholdModificator
+    ├── overheatDamageThresholdModificator
+    ├── DirtIncreaseFactor
+    ├── RobotDamageReduction
+    ├── DiscardedLauncherItem
+    ├── randomitem
+    ├── buddyitem
+    ├── usRiotShieldStrength
+    ├── usRiotShieldGraphic
+    ├── PercentNoiseReduction
+    ├── Bipod
+    ├── ToHitBonus
+    ├── BestLaserRange
+    ├── RangeBonus
+    ├── PercentRangeBonus
+    ├── AimBonus
+    ├── MinRangeForAimBonus
+    ├── PercentAPReduction
+    ├── PercentStatusDrainReduction
+    ├── BloodiedItem
+    ├── HearingRangeBonus
+    ├── VisionRangeBonus
+    ├── NightVisionRangeBonus
+    ├── DayVisionRangeBonus
+    ├── CaveVisionRangeBonus
+    ├── BrightLightVisionRangeBonus
+    ├── DamageBonus
+    ├── MeleeDamageBonus
+    ├── MagSizeBonus
+    ├── PercentBurstFireAPReduction
+    ├── PercentAutofireAPReduction
+    ├── PercentReadyTimeAPReduction
+    ├── PercentReloadTimeAPReduction
+    ├── AutoFireToHitBonus
+    ├── APBonus
+    ├── RateOfFireBonus
+    ├── BurstSizeBonus
+    ├── BurstToHitBonus
+    ├── BulletSpeedBonus
+    ├── CamoBonus
+    ├── UrbanCamoBonus
+    ├── DesertCamoBonus
+    ├── SnowCamoBonus
+    ├── StealthBonus
+    ├── usSpotting
+    ├── sBackpackWeightModifier
+    ├── sFireResistance
+    ├── PercentTunnelVision
+    ├── AttachmentSystem
+    ├── CrowbarModifier
+    ├── DisarmModifier
+    ├── RepairModifier
+    ├── usHackingModifier
+    ├── usBurialModifier
+    ├── DamageChance
+    ├── FlashLightRange
+    ├── ItemChoiceTimeSetting
+    ├── SleepModifier
+    ├── usPortionSize
+    ├── usAdministrationModifier
+    ├── LockPickModifier
+    ├── randomitemcoolnessmodificator
+    ├── RobotStrBonus
+    ├── RobotAgiBonus
+    ├── RobotDexBonus
+    ├── RobotTargetingSkillGrant
+    ├── RobotUtilitySkillGrant
+    ├── RobotChassisSkillGrant
+    ├── TransportGroupMinProgress
+    ├── TransportGroupMaxProgress
+    ├── DefaultAttachment
+    ├── Bloodbag
+    ├── Manpad
+    ├── Beartrap
+    ├── Camera
+    ├── Waterdrum
+    ├── BloodcatMeat
+    ├── CowMeat
+    ├── Beltfed
+    ├── Ammobelt
+    ├── AmmobeltVest
+    ├── CamoRemoval
+    ├── Cleaningkit
+    ├── AttentionItem
+    ├── Garotte
+    ├── Covert
+    ├── Corpse
+    ├── BloodcatSkin
+    ├── NoMetalDetection
+    ├── JumpGrenade
+    ├── Handcuffs
+    ├── Taser
+    ├── ScubaBottle
+    ├── ScubaMask
+    ├── ScubaFins
+    ├── TripwireRoll
+    ├── Radioset
+    ├── SignalShell
+    ├── Soda
+    ├── RoofcollapseItem
+    ├── DiseaseprotectionFace
+    ├── DiseaseprotectionHand
+    ├── LBEexplosionproof
+    ├── EmptyBloodbag
+    ├── MedicalSplint
+    ├── Damageable
+    ├── Repairable
+    ├── WaterDamages
+    ├── Metal
+    ├── Sinks
+    ├── ShowStatus
+    ├── HiddenAddon
+    ├── TwoHanded
+    ├── NotBuyable
+    ├── Attachment
+    ├── HiddenAttachment
+    ├── BigGunList
+    ├── NotInEditor
+    ├── DefaultUndroppable
+    ├── Unaerodynamic
+    ├── Electronic
+    ├── Cannon
+    ├── RocketRifle
+    ├── FingerPrintID
+    ├── MetalDetector
+    ├── GasMask
+    ├── LockBomb
+    ├── Flare
+    ├── GrenadeLauncher
+    ├── Mortar
+    ├── Duckbill
+    ├── HideMuzzleFlash
+    ├── RocketLauncher
+    ├── SingleShotRocketLauncher
+    ├── BrassKnuckles
+    ├── Crowbar
+    ├── GLGrenade
+    ├── FlakJacket
+    ├── LeatherJacket
+    ├── Batteries
+    ├── NeedsBatteries
+    ├── XRay
+    ├── WireCutters
+    ├── Toolkit
+    ├── FirstAidKit
+    ├── MedicalKit
+    ├── Canteen
+    ├── Jar
+    ├── CanAndString
+    ├── Marbles
+    ├── Walkman
+    ├── RemoteTrigger
+    ├── RobotRemoteControl
+    ├── CamouflageKit
+    ├── LocksmithKit
+    ├── Mine
+    ├── AntitankMine
+    ├── Hardware
+    ├── Medical
+    ├── GasCan
+    ├── ContainsLiquid
+    ├── Rock
+    ├── ThermalOptics
+    ├── SciFi
+    ├── NewInv
+    ├── DiseaseSystemExclusive
+    ├── Barrel
+    ├── TripWireActivation
+    ├── TripWire
+    ├── Directional
+    ├── BlockIronSight
+    ├── AllowClimbing
+    ├── Cigarette
+    ├── ProvidesRobotCamo
+    ├── ProvidesRobotNightVision
+    ├── ProvidesRobotLaserBonus
+    ├── STAND_MODIFIERS
+    │   ├── FlatBase
+    │   ├── PercentBase
+    │   ├── FlatAim
+    │   ├── PercentAim
+    │   ├── PercentCap
+    │   ├── PercentHandling
+    │   ├── PercentTargetTrackingSpeed
+    │   ├── PercentDropCompensation
+    │   ├── PercentMaxCounterForce
+    │   ├── PercentCounterForceAccuracy
+    │   └── AimLevels
+    ├── CROUCH_MODIFIERS
+    │   ├── FlatBase
+    │   ├── PercentBase
+    │   ├── FlatAim
+    │   ├── PercentAim
+    │   ├── PercentCap
+    │   ├── PercentHandling
+    │   ├── PercentTargetTrackingSpeed
+    │   ├── PercentDropCompensation
+    │   ├── PercentMaxCounterForce
+    │   ├── PercentCounterForceAccuracy
+    │   └── AimLevels
+    └── PRONE_MODIFIERS
+        ├── FlatBase
+        ├── PercentBase
+        ├── FlatAim
+        ├── PercentAim
+        ├── PercentCap
+        ├── PercentHandling
+        ├── PercentTargetTrackingSpeed
+        ├── PercentDropCompensation
+        ├── PercentMaxCounterForce
+        ├── PercentCounterForceAccuracy
+        └── AimLevels
+```
 
 - Root: `ITEMLIST`; record: `ITEM`; key: `uiIndex`.
 - Flat fields plus three nested stance groups: `STAND_MODIFIERS`,
@@ -2416,27 +2678,6 @@ contains the same eleven fields listed after the group blocks.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `source`
 
-### `ITEMLIST/ITEM/CROUCH_MODIFIERS`
-
-- **Type:** `Container` (11 integers)
-- **Description:** Structural group for crouching aim and handling modifiers. It has no value of its own; the child fields carry the modifiers.
-- **Values:** One child element per modifier; an absent group means all children are neutral.
-- **Default:** Absent; children default to `0` when omitted.
-- **Source:** item table data; stance modifier metadata.
-- **Confidence:** `source`
-
-### `ITEMLIST/ITEM/PRONE_MODIFIERS`
-
-- **Type:** `Container` (11 integers)
-- **Description:** Structural group for prone aim and handling modifiers. It has no value of its own; the child fields carry the modifiers.
-- **Values:** One child element per modifier; an absent group means all children are neutral.
-- **Default:** Absent; children default to `0` when omitted.
-- **Source:** item table data; stance modifier metadata.
-- **Confidence:** `source`
-
-**Stance modifier fields (NCTH).** Each stance group has the same eleven fields; they are read by the New Chance to Hit system.
-Empty means neutral; positive and negative percentages are allowed.
-
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
@@ -2547,6 +2788,15 @@ Empty means neutral; positive and negative percentages are allowed.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
 
+### `ITEMLIST/ITEM/CROUCH_MODIFIERS`
+
+- **Type:** `Container` (11 integers)
+- **Description:** Structural group for crouching aim and handling modifiers. It has no value of its own; the child fields carry the modifiers.
+- **Values:** One child element per modifier; an absent group means all children are neutral.
+- **Default:** Absent; children default to `0` when omitted.
+- **Source:** item table data; stance modifier metadata.
+- **Confidence:** `source`
+
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
@@ -2656,6 +2906,18 @@ Empty means neutral; positive and negative percentages are allowed.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
 - **Confidence:** `inferred`
+
+### `ITEMLIST/ITEM/PRONE_MODIFIERS`
+
+- **Type:** `Container` (11 integers)
+- **Description:** Structural group for prone aim and handling modifiers. It has no value of its own; the child fields carry the modifiers.
+- **Values:** One child element per modifier; an absent group means all children are neutral.
+- **Default:** Absent; children default to `0` when omitted.
+- **Source:** item table data; stance modifier metadata.
+- **Confidence:** `source`
+
+**Stance modifier fields (NCTH).** Each stance group has the same eleven fields; they are read by the New Chance to Hit system.
+Empty means neutral; positive and negative percentages are allowed.
 
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/FlatBase`
 

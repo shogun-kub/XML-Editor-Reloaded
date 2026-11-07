@@ -26,11 +26,11 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`OLD_MERC/MERC/uiIndex`](#old_mercmercuiindex)
+  - [`OLD_MERC/MERC/NickName`](#old_mercmercnickname)
+  - [`OLD_MERC/MERC/Name`](#old_mercmercname)
   - [`OLD_MERC/MERC/Bio`](#old_mercmercbio)
   - [`OLD_MERC/MERC/FaceID`](#old_mercmercfaceid)
-  - [`OLD_MERC/MERC/Name`](#old_mercmercname)
-  - [`OLD_MERC/MERC/NickName`](#old_mercmercnickname)
-  - [`OLD_MERC/MERC/uiIndex`](#old_mercmercuiindex)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -51,13 +51,42 @@ updated: 2026-11-07
 
 ```
 OLD_MERC
-└── MERC                    one archived mercenary
-    ├── uiIndex             archive identity
-    ├── Name/NickName       names
-    └── Bio/FaceID         biography and face
+└── MERC
+    ├── uiIndex
+    ├── NickName
+    ├── Name
+    ├── Bio
+    └── FaceID
 ```
 
 ## Fields
+
+### `OLD_MERC/MERC/uiIndex`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Archive row identity.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** old aim archive table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `OLD_MERC/MERC/NickName`
+
+- **Type:** `String` (`String`)
+- **Description:** Nickname of the archived mercenary.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** old aim archive table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `OLD_MERC/MERC/Name`
+
+- **Type:** `String` (`String`)
+- **Description:** Full name of the archived mercenary.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** old aim archive table data; item/profile metadata.
+- **Confidence:** `inferred`
 
 ### `OLD_MERC/MERC/Bio`
 
@@ -72,33 +101,6 @@ OLD_MERC
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Face index for the archived mercenary.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** old aim archive table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `OLD_MERC/MERC/Name`
-
-- **Type:** `String` (`String`)
-- **Description:** Full name of the archived mercenary.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** old aim archive table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `OLD_MERC/MERC/NickName`
-
-- **Type:** `String` (`String`)
-- **Description:** Nickname of the archived mercenary.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** old aim archive table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `OLD_MERC/MERC/uiIndex`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Archive row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** old aim archive table data; item/profile metadata.

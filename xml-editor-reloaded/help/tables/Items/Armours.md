@@ -58,12 +58,12 @@ panel.
 
 ```
 ARMOURLIST
-└── ARMOUR            one record per armour row
-    ├── uiIndex       array index and key
-    ├── ubArmourClass body slot / class
-    ├── ubProtection  raw protection value
-    ├── ubCoverage    covered area, percent
-    └── ubDegradePercent wear per hit, percent
+└── ARMOUR
+    ├── uiIndex
+    ├── ubArmourClass
+    ├── ubProtection
+    ├── ubCoverage
+    └── ubDegradePercent
 ```
 
 The loader writes each record to `Armour[uiIndex]` when the `ARMOUR` element closes. A

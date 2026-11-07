@@ -26,9 +26,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`FACE_GEAR/ITEM/szFile`](#face_gearitemszfile)
-  - [`FACE_GEAR/ITEM/Type`](#face_gearitemtype)
   - [`FACE_GEAR/ITEM/uiIndex`](#face_gearitemuiindex)
+  - [`FACE_GEAR/ITEM/Type`](#face_gearitemtype)
+  - [`FACE_GEAR/ITEM/szFile`](#face_gearitemszfile)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -49,20 +49,20 @@ updated: 2026-11-07
 
 ```
 FACE_GEAR
-└── ITEM                    one face-gear asset
-    ├── uiIndex             row identity
-    ├── Type                face-gear type
-    └── szFile              STI overlay file
+└── ITEM
+    ├── uiIndex
+    ├── Type
+    └── szFile
 ```
 
 ## Fields
 
-### `FACE_GEAR/ITEM/szFile`
+### `FACE_GEAR/ITEM/uiIndex`
 
-- **Type:** `String` (`String`)
-- **Description:** STI file for the face-gear overlay.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Face-gear row identity.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** face gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
@@ -75,12 +75,12 @@ FACE_GEAR
 - **Source:** face gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `FACE_GEAR/ITEM/uiIndex`
+### `FACE_GEAR/ITEM/szFile`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Face-gear row identity.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Type:** `String` (`String`)
+- **Description:** STI file for the face-gear overlay.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** face gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 

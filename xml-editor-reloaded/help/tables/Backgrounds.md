@@ -27,101 +27,101 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`BACKGROUNDS/BACKGROUND/administration_assignment`](#backgroundsbackgroundadministration_assignment)
-  - [`BACKGROUNDS/BACKGROUND/agility`](#backgroundsbackgroundagility)
-  - [`BACKGROUNDS/BACKGROUND/alt_impcreation`](#backgroundsbackgroundalt_impcreation)
-  - [`BACKGROUNDS/BACKGROUND/ambush_radius`](#backgroundsbackgroundambush_radius)
-  - [`BACKGROUNDS/BACKGROUND/animal_friend`](#backgroundsbackgroundanimal_friend)
-  - [`BACKGROUNDS/BACKGROUND/ap_airdrop`](#backgroundsbackgroundap_airdrop)
-  - [`BACKGROUNDS/BACKGROUND/ap_artillery`](#backgroundsbackgroundap_artillery)
-  - [`BACKGROUNDS/BACKGROUND/ap_assault`](#backgroundsbackgroundap_assault)
-  - [`BACKGROUNDS/BACKGROUND/ap_coastal`](#backgroundsbackgroundap_coastal)
-  - [`BACKGROUNDS/BACKGROUND/ap_desert`](#backgroundsbackgroundap_desert)
-  - [`BACKGROUNDS/BACKGROUND/ap_forest`](#backgroundsbackgroundap_forest)
-  - [`BACKGROUNDS/BACKGROUND/ap_fortify`](#backgroundsbackgroundap_fortify)
-  - [`BACKGROUNDS/BACKGROUND/ap_height`](#backgroundsbackgroundap_height)
-  - [`BACKGROUNDS/BACKGROUND/ap_inventory`](#backgroundsbackgroundap_inventory)
-  - [`BACKGROUNDS/BACKGROUND/ap_mountain`](#backgroundsbackgroundap_mountain)
-  - [`BACKGROUNDS/BACKGROUND/ap_plains`](#backgroundsbackgroundap_plains)
-  - [`BACKGROUNDS/BACKGROUND/ap_polar`](#backgroundsbackgroundap_polar)
-  - [`BACKGROUNDS/BACKGROUND/ap_river`](#backgroundsbackgroundap_river)
-  - [`BACKGROUNDS/BACKGROUND/ap_swamp`](#backgroundsbackgroundap_swamp)
-  - [`BACKGROUNDS/BACKGROUND/ap_swimming`](#backgroundsbackgroundap_swimming)
-  - [`BACKGROUNDS/BACKGROUND/ap_tropical`](#backgroundsbackgroundap_tropical)
-  - [`BACKGROUNDS/BACKGROUND/ap_urban`](#backgroundsbackgroundap_urban)
-  - [`BACKGROUNDS/BACKGROUND/approach_direct`](#backgroundsbackgroundapproach_direct)
-  - [`BACKGROUNDS/BACKGROUND/approach_friendly`](#backgroundsbackgroundapproach_friendly)
-  - [`BACKGROUNDS/BACKGROUND/approach_recruit`](#backgroundsbackgroundapproach_recruit)
-  - [`BACKGROUNDS/BACKGROUND/approach_threaten`](#backgroundsbackgroundapproach_threaten)
-  - [`BACKGROUNDS/BACKGROUND/betterprices`](#backgroundsbackgroundbetterprices)
-  - [`BACKGROUNDS/BACKGROUND/betterprices_guns`](#backgroundsbackgroundbetterprices_guns)
-  - [`BACKGROUNDS/BACKGROUND/breachingcharge`](#backgroundsbackgroundbreachingcharge)
-  - [`BACKGROUNDS/BACKGROUND/burial_assignment`](#backgroundsbackgroundburial_assignment)
-  - [`BACKGROUNDS/BACKGROUND/camo`](#backgroundsbackgroundcamo)
-  - [`BACKGROUNDS/BACKGROUND/capitulation`](#backgroundsbackgroundcapitulation)
-  - [`BACKGROUNDS/BACKGROUND/carrystrength`](#backgroundsbackgroundcarrystrength)
-  - [`BACKGROUNDS/BACKGROUND/civgroup_loyal`](#backgroundsbackgroundcivgroup_loyal)
-  - [`BACKGROUNDS/BACKGROUND/corruptionspread`](#backgroundsbackgroundcorruptionspread)
-  - [`BACKGROUNDS/BACKGROUND/croucheddefense`](#backgroundsbackgroundcroucheddefense)
-  - [`BACKGROUNDS/BACKGROUND/cth_blades`](#backgroundsbackgroundcth_blades)
-  - [`BACKGROUNDS/BACKGROUND/cth_vs_creatures`](#backgroundsbackgroundcth_vs_creatures)
-  - [`BACKGROUNDS/BACKGROUND/dexterity`](#backgroundsbackgrounddexterity)
-  - [`BACKGROUNDS/BACKGROUND/disarm_trap`](#backgroundsbackgrounddisarm_trap)
-  - [`BACKGROUNDS/BACKGROUND/disease_diagnose`](#backgroundsbackgrounddisease_diagnose)
-  - [`BACKGROUNDS/BACKGROUND/disease_treatment`](#backgroundsbackgrounddisease_treatment)
-  - [`BACKGROUNDS/BACKGROUND/dislikebackground`](#backgroundsbackgrounddislikebackground)
-  - [`BACKGROUNDS/BACKGROUND/drink_energyregen`](#backgroundsbackgrounddrink_energyregen)
-  - [`BACKGROUNDS/BACKGROUND/drugitems/drugitem`](#backgroundsbackgrounddrugitemsdrugitem)
-  - [`BACKGROUNDS/BACKGROUND/drugtypes/drugtype`](#backgroundsbackgrounddrugtypesdrugtype)
-  - [`BACKGROUNDS/BACKGROUND/druguse`](#backgroundsbackgrounddruguse)
-  - [`BACKGROUNDS/BACKGROUND/exploration_assignment`](#backgroundsbackgroundexploration_assignment)
-  - [`BACKGROUNDS/BACKGROUND/explosives`](#backgroundsbackgroundexplosives)
-  - [`BACKGROUNDS/BACKGROUND/food`](#backgroundsbackgroundfood)
-  - [`BACKGROUNDS/BACKGROUND/fortify_assignment`](#backgroundsbackgroundfortify_assignment)
-  - [`BACKGROUNDS/BACKGROUND/hackerskill`](#backgroundsbackgroundhackerskill)
-  - [`BACKGROUNDS/BACKGROUND/hearing_day`](#backgroundsbackgroundhearing_day)
-  - [`BACKGROUNDS/BACKGROUND/hearing_night`](#backgroundsbackgroundhearing_night)
-  - [`BACKGROUNDS/BACKGROUND/increased_maxcth`](#backgroundsbackgroundincreased_maxcth)
-  - [`BACKGROUNDS/BACKGROUND/insurance`](#backgroundsbackgroundinsurance)
-  - [`BACKGROUNDS/BACKGROUND/interrogation`](#backgroundsbackgroundinterrogation)
-  - [`BACKGROUNDS/BACKGROUND/leadership`](#backgroundsbackgroundleadership)
-  - [`BACKGROUNDS/BACKGROUND/level_underground`](#backgroundsbackgroundlevel_underground)
-  - [`BACKGROUNDS/BACKGROUND/loyalitylossondeath`](#backgroundsbackgroundloyalitylossondeath)
-  - [`BACKGROUNDS/BACKGROUND/marksmanship`](#backgroundsbackgroundmarksmanship)
-  - [`BACKGROUNDS/BACKGROUND/mechanical`](#backgroundsbackgroundmechanical)
-  - [`BACKGROUNDS/BACKGROUND/medical`](#backgroundsbackgroundmedical)
-  - [`BACKGROUNDS/BACKGROUND/meleedamage`](#backgroundsbackgroundmeleedamage)
-  - [`BACKGROUNDS/BACKGROUND/no_female`](#backgroundsbackgroundno_female)
-  - [`BACKGROUNDS/BACKGROUND/no_male`](#backgroundsbackgroundno_male)
-  - [`BACKGROUNDS/BACKGROUND/prisonguard`](#backgroundsbackgroundprisonguard)
-  - [`BACKGROUNDS/BACKGROUND/resistance_alcohol`](#backgroundsbackgroundresistance_alcohol)
-  - [`BACKGROUNDS/BACKGROUND/resistance_disease`](#backgroundsbackgroundresistance_disease)
-  - [`BACKGROUNDS/BACKGROUND/resistance_fear`](#backgroundsbackgroundresistance_fear)
-  - [`BACKGROUNDS/BACKGROUND/resistance_physical`](#backgroundsbackgroundresistance_physical)
-  - [`BACKGROUNDS/BACKGROUND/resistance_suppression`](#backgroundsbackgroundresistance_suppression)
-  - [`BACKGROUNDS/BACKGROUND/SAM_cth`](#backgroundsbackgroundsam_cth)
-  - [`BACKGROUNDS/BACKGROUND/scrounging`](#backgroundsbackgroundscrounging)
-  - [`BACKGROUNDS/BACKGROUND/sleep`](#backgroundsbackgroundsleep)
-  - [`BACKGROUNDS/BACKGROUND/smoker`](#backgroundsbackgroundsmoker)
-  - [`BACKGROUNDS/BACKGROUND/snake_defense`](#backgroundsbackgroundsnake_defense)
-  - [`BACKGROUNDS/BACKGROUND/speed_bandaging`](#backgroundsbackgroundspeed_bandaging)
-  - [`BACKGROUNDS/BACKGROUND/speed_run`](#backgroundsbackgroundspeed_run)
-  - [`BACKGROUNDS/BACKGROUND/spotter`](#backgroundsbackgroundspotter)
-  - [`BACKGROUNDS/BACKGROUND/stealth`](#backgroundsbackgroundstealth)
-  - [`BACKGROUNDS/BACKGROUND/strength`](#backgroundsbackgroundstrength)
-  - [`BACKGROUNDS/BACKGROUND/szDescription`](#backgroundsbackgroundszdescription)
+  - [`BACKGROUNDS/BACKGROUND/uiIndex`](#backgroundsbackgrounduiindex)
   - [`BACKGROUNDS/BACKGROUND/szName`](#backgroundsbackgroundszname)
   - [`BACKGROUNDS/BACKGROUND/szShortName`](#backgroundsbackgroundszshortname)
-  - [`BACKGROUNDS/BACKGROUND/tracker_ability`](#backgroundsbackgroundtracker_ability)
-  - [`BACKGROUNDS/BACKGROUND/traplevel`](#backgroundsbackgroundtraplevel)
+  - [`BACKGROUNDS/BACKGROUND/szDescription`](#backgroundsbackgroundszdescription)
+  - [`BACKGROUNDS/BACKGROUND/ap_polar`](#backgroundsbackgroundap_polar)
+  - [`BACKGROUNDS/BACKGROUND/ap_desert`](#backgroundsbackgroundap_desert)
+  - [`BACKGROUNDS/BACKGROUND/ap_swamp`](#backgroundsbackgroundap_swamp)
+  - [`BACKGROUNDS/BACKGROUND/ap_urban`](#backgroundsbackgroundap_urban)
+  - [`BACKGROUNDS/BACKGROUND/ap_forest`](#backgroundsbackgroundap_forest)
+  - [`BACKGROUNDS/BACKGROUND/ap_plains`](#backgroundsbackgroundap_plains)
+  - [`BACKGROUNDS/BACKGROUND/ap_river`](#backgroundsbackgroundap_river)
+  - [`BACKGROUNDS/BACKGROUND/ap_coastal`](#backgroundsbackgroundap_coastal)
+  - [`BACKGROUNDS/BACKGROUND/ap_tropical`](#backgroundsbackgroundap_tropical)
+  - [`BACKGROUNDS/BACKGROUND/ap_mountain`](#backgroundsbackgroundap_mountain)
+  - [`BACKGROUNDS/BACKGROUND/agility`](#backgroundsbackgroundagility)
+  - [`BACKGROUNDS/BACKGROUND/strength`](#backgroundsbackgroundstrength)
+  - [`BACKGROUNDS/BACKGROUND/dexterity`](#backgroundsbackgrounddexterity)
+  - [`BACKGROUNDS/BACKGROUND/mechanical`](#backgroundsbackgroundmechanical)
+  - [`BACKGROUNDS/BACKGROUND/medical`](#backgroundsbackgroundmedical)
+  - [`BACKGROUNDS/BACKGROUND/wisdom`](#backgroundsbackgroundwisdom)
+  - [`BACKGROUNDS/BACKGROUND/explosives`](#backgroundsbackgroundexplosives)
+  - [`BACKGROUNDS/BACKGROUND/leadership`](#backgroundsbackgroundleadership)
+  - [`BACKGROUNDS/BACKGROUND/marksmanship`](#backgroundsbackgroundmarksmanship)
+  - [`BACKGROUNDS/BACKGROUND/ap_height`](#backgroundsbackgroundap_height)
+  - [`BACKGROUNDS/BACKGROUND/ap_swimming`](#backgroundsbackgroundap_swimming)
+  - [`BACKGROUNDS/BACKGROUND/ap_fortify`](#backgroundsbackgroundap_fortify)
+  - [`BACKGROUNDS/BACKGROUND/ap_artillery`](#backgroundsbackgroundap_artillery)
+  - [`BACKGROUNDS/BACKGROUND/ap_inventory`](#backgroundsbackgroundap_inventory)
+  - [`BACKGROUNDS/BACKGROUND/ap_airdrop`](#backgroundsbackgroundap_airdrop)
+  - [`BACKGROUNDS/BACKGROUND/ap_assault`](#backgroundsbackgroundap_assault)
+  - [`BACKGROUNDS/BACKGROUND/travel_foot`](#backgroundsbackgroundtravel_foot)
+  - [`BACKGROUNDS/BACKGROUND/travel_car`](#backgroundsbackgroundtravel_car)
   - [`BACKGROUNDS/BACKGROUND/travel_air`](#backgroundsbackgroundtravel_air)
   - [`BACKGROUNDS/BACKGROUND/travel_boat`](#backgroundsbackgroundtravel_boat)
-  - [`BACKGROUNDS/BACKGROUND/travel_car`](#backgroundsbackgroundtravel_car)
-  - [`BACKGROUNDS/BACKGROUND/travel_foot`](#backgroundsbackgroundtravel_foot)
-  - [`BACKGROUNDS/BACKGROUND/uiIndex`](#backgroundsbackgrounduiindex)
+  - [`BACKGROUNDS/BACKGROUND/resistance_fear`](#backgroundsbackgroundresistance_fear)
+  - [`BACKGROUNDS/BACKGROUND/resistance_suppression`](#backgroundsbackgroundresistance_suppression)
+  - [`BACKGROUNDS/BACKGROUND/resistance_physical`](#backgroundsbackgroundresistance_physical)
+  - [`BACKGROUNDS/BACKGROUND/resistance_alcohol`](#backgroundsbackgroundresistance_alcohol)
+  - [`BACKGROUNDS/BACKGROUND/resistance_disease`](#backgroundsbackgroundresistance_disease)
+  - [`BACKGROUNDS/BACKGROUND/interrogation`](#backgroundsbackgroundinterrogation)
+  - [`BACKGROUNDS/BACKGROUND/prisonguard`](#backgroundsbackgroundprisonguard)
+  - [`BACKGROUNDS/BACKGROUND/betterprices_guns`](#backgroundsbackgroundbetterprices_guns)
+  - [`BACKGROUNDS/BACKGROUND/betterprices`](#backgroundsbackgroundbetterprices)
+  - [`BACKGROUNDS/BACKGROUND/capitulation`](#backgroundsbackgroundcapitulation)
+  - [`BACKGROUNDS/BACKGROUND/speed_run`](#backgroundsbackgroundspeed_run)
+  - [`BACKGROUNDS/BACKGROUND/speed_bandaging`](#backgroundsbackgroundspeed_bandaging)
+  - [`BACKGROUNDS/BACKGROUND/drink_energyregen`](#backgroundsbackgrounddrink_energyregen)
+  - [`BACKGROUNDS/BACKGROUND/carrystrength`](#backgroundsbackgroundcarrystrength)
+  - [`BACKGROUNDS/BACKGROUND/food`](#backgroundsbackgroundfood)
   - [`BACKGROUNDS/BACKGROUND/water`](#backgroundsbackgroundwater)
-  - [`BACKGROUNDS/BACKGROUND/wisdom`](#backgroundsbackgroundwisdom)
+  - [`BACKGROUNDS/BACKGROUND/sleep`](#backgroundsbackgroundsleep)
+  - [`BACKGROUNDS/BACKGROUND/meleedamage`](#backgroundsbackgroundmeleedamage)
+  - [`BACKGROUNDS/BACKGROUND/cth_blades`](#backgroundsbackgroundcth_blades)
+  - [`BACKGROUNDS/BACKGROUND/camo`](#backgroundsbackgroundcamo)
+  - [`BACKGROUNDS/BACKGROUND/stealth`](#backgroundsbackgroundstealth)
+  - [`BACKGROUNDS/BACKGROUND/increased_maxcth`](#backgroundsbackgroundincreased_maxcth)
+  - [`BACKGROUNDS/BACKGROUND/hearing_night`](#backgroundsbackgroundhearing_night)
+  - [`BACKGROUNDS/BACKGROUND/hearing_day`](#backgroundsbackgroundhearing_day)
+  - [`BACKGROUNDS/BACKGROUND/disarm_trap`](#backgroundsbackgrounddisarm_trap)
+  - [`BACKGROUNDS/BACKGROUND/SAM_cth`](#backgroundsbackgroundsam_cth)
+  - [`BACKGROUNDS/BACKGROUND/approach_friendly`](#backgroundsbackgroundapproach_friendly)
+  - [`BACKGROUNDS/BACKGROUND/approach_direct`](#backgroundsbackgroundapproach_direct)
+  - [`BACKGROUNDS/BACKGROUND/approach_threaten`](#backgroundsbackgroundapproach_threaten)
+  - [`BACKGROUNDS/BACKGROUND/approach_recruit`](#backgroundsbackgroundapproach_recruit)
+  - [`BACKGROUNDS/BACKGROUND/breachingcharge`](#backgroundsbackgroundbreachingcharge)
+  - [`BACKGROUNDS/BACKGROUND/cth_vs_creatures`](#backgroundsbackgroundcth_vs_creatures)
+  - [`BACKGROUNDS/BACKGROUND/insurance`](#backgroundsbackgroundinsurance)
+  - [`BACKGROUNDS/BACKGROUND/spotter`](#backgroundsbackgroundspotter)
+  - [`BACKGROUNDS/BACKGROUND/disease_diagnose`](#backgroundsbackgrounddisease_diagnose)
+  - [`BACKGROUNDS/BACKGROUND/disease_treatment`](#backgroundsbackgrounddisease_treatment)
+  - [`BACKGROUNDS/BACKGROUND/tracker_ability`](#backgroundsbackgroundtracker_ability)
+  - [`BACKGROUNDS/BACKGROUND/ambush_radius`](#backgroundsbackgroundambush_radius)
+  - [`BACKGROUNDS/BACKGROUND/smoker`](#backgroundsbackgroundsmoker)
+  - [`BACKGROUNDS/BACKGROUND/croucheddefense`](#backgroundsbackgroundcroucheddefense)
+  - [`BACKGROUNDS/BACKGROUND/fortify_assignment`](#backgroundsbackgroundfortify_assignment)
+  - [`BACKGROUNDS/BACKGROUND/snake_defense`](#backgroundsbackgroundsnake_defense)
+  - [`BACKGROUNDS/BACKGROUND/hackerskill`](#backgroundsbackgroundhackerskill)
+  - [`BACKGROUNDS/BACKGROUND/burial_assignment`](#backgroundsbackgroundburial_assignment)
+  - [`BACKGROUNDS/BACKGROUND/administration_assignment`](#backgroundsbackgroundadministration_assignment)
+  - [`BACKGROUNDS/BACKGROUND/exploration_assignment`](#backgroundsbackgroundexploration_assignment)
+  - [`BACKGROUNDS/BACKGROUND/dislikebackground`](#backgroundsbackgrounddislikebackground)
+  - [`BACKGROUNDS/BACKGROUND/druguse`](#backgroundsbackgrounddruguse)
+  - [`BACKGROUNDS/BACKGROUND/drugtypes/drugtype`](#backgroundsbackgrounddrugtypesdrugtype)
+  - [`BACKGROUNDS/BACKGROUND/drugitems/drugitem`](#backgroundsbackgrounddrugitemsdrugitem)
   - [`BACKGROUNDS/BACKGROUND/xenophobic`](#backgroundsbackgroundxenophobic)
+  - [`BACKGROUNDS/BACKGROUND/level_underground`](#backgroundsbackgroundlevel_underground)
+  - [`BACKGROUNDS/BACKGROUND/scrounging`](#backgroundsbackgroundscrounging)
+  - [`BACKGROUNDS/BACKGROUND/traplevel`](#backgroundsbackgroundtraplevel)
+  - [`BACKGROUNDS/BACKGROUND/corruptionspread`](#backgroundsbackgroundcorruptionspread)
+  - [`BACKGROUNDS/BACKGROUND/no_male`](#backgroundsbackgroundno_male)
+  - [`BACKGROUNDS/BACKGROUND/no_female`](#backgroundsbackgroundno_female)
+  - [`BACKGROUNDS/BACKGROUND/loyalitylossondeath`](#backgroundsbackgroundloyalitylossondeath)
+  - [`BACKGROUNDS/BACKGROUND/animal_friend`](#backgroundsbackgroundanimal_friend)
+  - [`BACKGROUNDS/BACKGROUND/civgroup_loyal`](#backgroundsbackgroundcivgroup_loyal)
+  - [`BACKGROUNDS/BACKGROUND/alt_impcreation`](#backgroundsbackgroundalt_impcreation)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -142,100 +142,152 @@ updated: 2026-11-07
 
 ```
 BACKGROUNDS
-└── BACKGROUND              one background
-    ├── uiIndex             background identity
-    ├── szName/szShortName  names
-    ├── stats/skills        flat modifiers
-    ├── ap_*                AP environment modifiers
-    └── drugitems/drugtypes repeated lists
+└── BACKGROUND
+    ├── uiIndex
+    ├── szName
+    ├── szShortName
+    ├── szDescription
+    ├── ap_polar
+    ├── ap_desert
+    ├── ap_swamp
+    ├── ap_urban
+    ├── ap_forest
+    ├── ap_plains
+    ├── ap_river
+    ├── ap_coastal
+    ├── ap_tropical
+    ├── ap_mountain
+    ├── agility
+    ├── strength
+    ├── dexterity
+    ├── mechanical
+    ├── medical
+    ├── wisdom
+    ├── explosives
+    ├── leadership
+    ├── marksmanship
+    ├── ap_height
+    ├── ap_swimming
+    ├── ap_fortify
+    ├── ap_artillery
+    ├── ap_inventory
+    ├── ap_airdrop
+    ├── ap_assault
+    ├── travel_foot
+    ├── travel_car
+    ├── travel_air
+    ├── travel_boat
+    ├── resistance_fear
+    ├── resistance_suppression
+    ├── resistance_physical
+    ├── resistance_alcohol
+    ├── resistance_disease
+    ├── interrogation
+    ├── prisonguard
+    ├── betterprices_guns
+    ├── betterprices
+    ├── capitulation
+    ├── speed_run
+    ├── speed_bandaging
+    ├── drink_energyregen
+    ├── carrystrength
+    ├── food
+    ├── water
+    ├── sleep
+    ├── meleedamage
+    ├── cth_blades
+    ├── camo
+    ├── stealth
+    ├── increased_maxcth
+    ├── hearing_night
+    ├── hearing_day
+    ├── disarm_trap
+    ├── SAM_cth
+    ├── approach_friendly
+    ├── approach_direct
+    ├── approach_threaten
+    ├── approach_recruit
+    ├── breachingcharge
+    ├── cth_vs_creatures
+    ├── insurance
+    ├── spotter
+    ├── disease_diagnose
+    ├── disease_treatment
+    ├── tracker_ability
+    ├── ambush_radius
+    ├── smoker
+    ├── croucheddefense
+    ├── fortify_assignment
+    ├── snake_defense
+    ├── hackerskill
+    ├── burial_assignment
+    ├── administration_assignment
+    ├── exploration_assignment
+    ├── dislikebackground
+    ├── druguse
+    ├── drugtypes
+    │   └── drugtype
+    ├── drugitems
+    │   └── drugitem
+    ├── xenophobic
+    ├── level_underground
+    ├── scrounging
+    ├── traplevel
+    ├── corruptionspread
+    ├── no_male
+    ├── no_female
+    ├── loyalitylossondeath
+    ├── animal_friend
+    ├── civgroup_loyal
+    └── alt_impcreation
 ```
 
 ## Fields
 
-### `BACKGROUNDS/BACKGROUND/administration_assignment`
+### `BACKGROUNDS/BACKGROUND/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to administration-assignment effectiveness.
+- **Description:** Background row identity.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/agility`
+### `BACKGROUNDS/BACKGROUND/szName`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Agility bonus or penalty.
+- **Type:** `String` (`String`)
+- **Description:** Display name of the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/alt_impcreation`
+### `BACKGROUNDS/BACKGROUND/szShortName`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Alternative IMP-creation flag for the background.
-- **Only used with:** ENABLE_BACKGROUNDS, ALTERNATIVE_IMP_CREATION.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ambush_radius`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to ambush detection radius.
+- **Type:** `String` (`String`)
+- **Description:** Short display name used where space is limited.
 - **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/animal_friend`
+### `BACKGROUNDS/BACKGROUND/szDescription`
 
-- **Type:** `Integer` (`INT32`)
-- **Description:** Animal-friend interaction modifier.
+- **Type:** `String` (`String`)
+- **Description:** Player-facing background description.
 - **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/ap_airdrop`
+### `BACKGROUNDS/BACKGROUND/ap_polar`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the airdrop environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_artillery`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the artillery environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_assault`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the assault environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_coastal`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the coastal environment/action.
+- **Description:** Action-point modifier for the polar environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -252,110 +304,10 @@ BACKGROUNDS
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/ap_forest`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the forest environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_fortify`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the fortify environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_height`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the height environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_inventory`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the inventory environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_mountain`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the mountain environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_plains`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the plains environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_polar`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the polar environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_river`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the river environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
 ### `BACKGROUNDS/BACKGROUND/ap_swamp`
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Action-point modifier for the swamp environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_swimming`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the swimming environment/action.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/ap_tropical`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the tropical environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -372,160 +324,80 @@ BACKGROUNDS
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/approach_direct`
+### `BACKGROUNDS/BACKGROUND/ap_forest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to direct approach dialogue.
+- **Description:** Action-point modifier for the forest environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/approach_friendly`
+### `BACKGROUNDS/BACKGROUND/ap_plains`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to friendly approach dialogue.
+- **Description:** Action-point modifier for the plains environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/approach_recruit`
+### `BACKGROUNDS/BACKGROUND/ap_river`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to recruitment approach dialogue.
+- **Description:** Action-point modifier for the river environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/approach_threaten`
+### `BACKGROUNDS/BACKGROUND/ap_coastal`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to threatening approach dialogue.
+- **Description:** Action-point modifier for the coastal environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/betterprices`
+### `BACKGROUNDS/BACKGROUND/ap_tropical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Shop price modifier.
+- **Description:** Action-point modifier for the tropical environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/betterprices_guns`
+### `BACKGROUNDS/BACKGROUND/ap_mountain`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Gun-shop price modifier.
+- **Description:** Action-point modifier for the mountain environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/breachingcharge`
+### `BACKGROUNDS/BACKGROUND/agility`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Breaching-charge effectiveness modifier.
+- **Description:** Agility bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/burial_assignment`
+### `BACKGROUNDS/BACKGROUND/strength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to burial-assignment effectiveness.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/camo`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Camouflage modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/capitulation`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to enemy capitulation chance.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/carrystrength`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Carry-strength modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/civgroup_loyal`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to civilian-group loyalty.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/corruptionspread`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to corruption spread.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/croucheddefense`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to crouched defense.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/cth_blades`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Chance-to-hit modifier with blade weapons.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/cth_vs_creatures`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Chance-to-hit modifier against creatures.
+- **Description:** Strength bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -536,226 +408,6 @@ BACKGROUNDS
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Dexterity bonus or penalty.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/disarm_trap`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Trap-disarming modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/disease_diagnose`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Disease-diagnosis modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/disease_treatment`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Disease-treatment modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/dislikebackground`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Background ID that this background dislikes.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/drink_energyregen`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Drink energy-regeneration modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/drugitems/drugitem`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Drug item ID associated with the background.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Item ID from [Items](Items/Items.md).
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/drugtypes/drugtype`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Drug type ID associated with the background.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Drug row index from [Drugs](Items/Drugs.md).
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/druguse`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Drug-use modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/exploration_assignment`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to exploration-assignment effectiveness.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/explosives`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Explosives skill bonus or penalty.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/food`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Food-consumption modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/fortify_assignment`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to fortify-assignment effectiveness.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/hackerskill`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Hacking skill bonus.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/hearing_day`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Daytime hearing modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/hearing_night`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Night-time hearing modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/increased_maxcth`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to maximum chance to hit.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/insurance`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Insurance cost or availability modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/interrogation`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Interrogation modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/leadership`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Leadership bonus or penalty.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/level_underground`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Underground-level modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/loyalitylossondeath`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to loyalty loss on death.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/marksmanship`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Marksmanship bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -782,240 +434,130 @@ BACKGROUNDS
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/meleedamage`
+### `BACKGROUNDS/BACKGROUND/wisdom`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Melee damage modifier.
+- **Description:** Wisdom bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/no_female`
+### `BACKGROUNDS/BACKGROUND/explosives`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Excludes female characters from this background.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/no_male`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Excludes male characters from this background.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/prisonguard`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Prison-guard modifier.
+- **Description:** Explosives skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/resistance_alcohol`
+### `BACKGROUNDS/BACKGROUND/leadership`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against alcohol.
+- **Description:** Leadership bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/resistance_disease`
+### `BACKGROUNDS/BACKGROUND/marksmanship`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against disease.
+- **Description:** Marksmanship bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/resistance_fear`
+### `BACKGROUNDS/BACKGROUND/ap_height`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against fear.
+- **Description:** Action-point modifier for the height environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/resistance_physical`
+### `BACKGROUNDS/BACKGROUND/ap_swimming`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against physical.
+- **Description:** Action-point modifier for the swimming environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/resistance_suppression`
+### `BACKGROUNDS/BACKGROUND/ap_fortify`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against suppression.
+- **Description:** Action-point modifier for the fortify environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/SAM_cth`
+### `BACKGROUNDS/BACKGROUND/ap_artillery`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** SAM-site chance-to-hit modifier.
+- **Description:** Action-point modifier for the artillery environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/scrounging`
+### `BACKGROUNDS/BACKGROUND/ap_inventory`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Scrounging modifier.
+- **Description:** Action-point modifier for the inventory environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/sleep`
+### `BACKGROUNDS/BACKGROUND/ap_airdrop`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sleep modifier.
+- **Description:** Action-point modifier for the airdrop environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/smoker`
+### `BACKGROUNDS/BACKGROUND/ap_assault`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Smoker flag or modifier.
+- **Description:** Action-point modifier for the assault environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/snake_defense`
+### `BACKGROUNDS/BACKGROUND/travel_foot`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Snake-defense modifier.
+- **Description:** Travel modifier for foot travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/speed_bandaging`
+### `BACKGROUNDS/BACKGROUND/travel_car`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Bandaging-speed modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/speed_run`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Running-speed modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/spotter`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Spotter modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/stealth`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Stealth modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/strength`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Strength bonus or penalty.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/szDescription`
-
-- **Type:** `String` (`String`)
-- **Description:** Player-facing background description.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/szName`
-
-- **Type:** `String` (`String`)
-- **Description:** Display name of the background.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/szShortName`
-
-- **Type:** `String` (`String`)
-- **Description:** Short display name used where space is limited.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/tracker_ability`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Tracker-ability modifier.
-- **Only used with:** ENABLE_BACKGROUNDS.
-- **Values:** Integer modifier; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
-
-### `BACKGROUNDS/BACKGROUND/traplevel`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Trap-level modifier.
+- **Description:** Travel modifier for car travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1042,30 +584,150 @@ BACKGROUNDS
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/travel_car`
+### `BACKGROUNDS/BACKGROUND/resistance_fear`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for car travel.
+- **Description:** Resistance modifier against fear.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/travel_foot`
+### `BACKGROUNDS/BACKGROUND/resistance_suppression`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for foot travel.
+- **Description:** Resistance modifier against suppression.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/uiIndex`
+### `BACKGROUNDS/BACKGROUND/resistance_physical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Background row identity.
+- **Description:** Resistance modifier against physical.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/resistance_alcohol`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Resistance modifier against alcohol.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/resistance_disease`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Resistance modifier against disease.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/interrogation`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Interrogation modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/prisonguard`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Prison-guard modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/betterprices_guns`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Gun-shop price modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/betterprices`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Shop price modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/capitulation`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to enemy capitulation chance.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/speed_run`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Running-speed modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/speed_bandaging`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Bandaging-speed modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/drink_energyregen`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drink energy-regeneration modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/carrystrength`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Carry-strength modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/food`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Food-consumption modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1082,12 +744,342 @@ BACKGROUNDS
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
 
-### `BACKGROUNDS/BACKGROUND/wisdom`
+### `BACKGROUNDS/BACKGROUND/sleep`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Wisdom bonus or penalty.
+- **Description:** Sleep modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/meleedamage`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Melee damage modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/cth_blades`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Chance-to-hit modifier with blade weapons.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/camo`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Camouflage modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/stealth`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Stealth modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/increased_maxcth`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to maximum chance to hit.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/hearing_night`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Night-time hearing modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/hearing_day`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Daytime hearing modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/disarm_trap`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Trap-disarming modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/SAM_cth`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** SAM-site chance-to-hit modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/approach_friendly`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to friendly approach dialogue.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/approach_direct`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to direct approach dialogue.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/approach_threaten`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to threatening approach dialogue.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/approach_recruit`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to recruitment approach dialogue.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/breachingcharge`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Breaching-charge effectiveness modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/cth_vs_creatures`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Chance-to-hit modifier against creatures.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/insurance`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Insurance cost or availability modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/spotter`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Spotter modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/disease_diagnose`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Disease-diagnosis modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/disease_treatment`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Disease-treatment modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/tracker_ability`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Tracker-ability modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/ambush_radius`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to ambush detection radius.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/smoker`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Smoker flag or modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/croucheddefense`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to crouched defense.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/fortify_assignment`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to fortify-assignment effectiveness.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/snake_defense`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Snake-defense modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/hackerskill`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Hacking skill bonus.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/burial_assignment`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to burial-assignment effectiveness.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/administration_assignment`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to administration-assignment effectiveness.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/exploration_assignment`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to exploration-assignment effectiveness.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/dislikebackground`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Background ID that this background dislikes.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/druguse`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drug-use modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/drugtypes/drugtype`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drug type ID associated with the background.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Drug row index from [Drugs](Items/Drugs.md).
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/drugitems/drugitem`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drug item ID associated with the background.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Item ID from [Items](Items/Items.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`
@@ -1098,6 +1090,106 @@ BACKGROUNDS
 - **Description:** Xenophobia modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/level_underground`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Underground-level modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/scrounging`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Scrounging modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/traplevel`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Trap-level modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/corruptionspread`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to corruption spread.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/no_male`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Excludes male characters from this background.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/no_female`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Excludes female characters from this background.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/loyalitylossondeath`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to loyalty loss on death.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/animal_friend`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Animal-friend interaction modifier.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/civgroup_loyal`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Modifier to civilian-group loyalty.
+- **Only used with:** ENABLE_BACKGROUNDS.
+- **Values:** Integer modifier; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** background table data; table metadata.
+- **Confidence:** `inferred`
+
+### `BACKGROUNDS/BACKGROUND/alt_impcreation`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Alternative IMP-creation flag for the background.
+- **Only used with:** ENABLE_BACKGROUNDS, ALTERNATIVE_IMP_CREATION.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
 - **Confidence:** `inferred`

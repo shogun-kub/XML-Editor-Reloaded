@@ -28,11 +28,11 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`](#attachmentinfolistattachmentinfouiindex)
+  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`](#attachmentinfolistattachmentinfousitem)
+  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`](#attachmentinfolistattachmentinfouiitemclass)
   - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheck`](#attachmentinfolistattachmentinfobattachmentskillcheck)
   - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheckMod`](#attachmentinfolistattachmentinfobattachmentskillcheckmod)
-  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`](#attachmentinfolistattachmentinfouiindex)
-  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`](#attachmentinfolistattachmentinfouiitemclass)
-  - [`ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`](#attachmentinfolistattachmentinfousitem)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -53,14 +53,42 @@ updated: 2026-11-07
 
 ```
 ATTACHMENTINFOLIST
-└── ATTACHMENTINFO          one attachment-info row
-    ├── uiIndex               row identity
-    ├── usItem                attachment item ID
-    ├── uiItemClass           attachable-to class mask
-    └── bAttachmentSkillCheck skill check and modifier
+└── ATTACHMENTINFO
+    ├── uiIndex
+    ├── usItem
+    ├── uiItemClass
+    ├── bAttachmentSkillCheck
+    └── bAttachmentSkillCheckMod
 ```
 
 ## Fields
+
+### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`
+
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the attachment-information row and identity of the XML record.
+- **Values:** Non-negative integer; unique within the file.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment info table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of the attachment described by this row.
+- **Values:** Item ID in [Items](Items.md); the item must be an attachment.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment info table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`
+
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask.
+- **Values:** Bitmask of `Lookup.ItemClass` IDs. The attachment can be mounted on items whose class intersects this mask.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment info table data; field metadata.
+- **Confidence:** `inferred`
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheck`
 
@@ -76,33 +104,6 @@ ATTACHMENTINFOLIST
 - **Type:** `Integer` (`INT16`)
 - **Description:** Modifier added to the selected attachment skill check. Positive values make the check easier or harder according to the check definition; it is not a separate skill value.
 - **Values:** Integer modifier added to the selected skill check.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the attachment-information row and identity of the XML record.
-- **Values:** Non-negative integer; unique within the file.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask.
-- **Values:** Bitmask of `Lookup.ItemClass` IDs. The attachment can be mounted on items whose class intersects this mask.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment described by this row.
-- **Values:** Item ID in [Items](Items.md); the item must be an attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
 - **Confidence:** `inferred`

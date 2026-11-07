@@ -29,54 +29,54 @@ updated: 2026-11-07
 - [Structure](#structure)
 - [Game options](#game-options)
 - [Fields](#fields)
-  - [`WEAPONLIST/WEAPON/APsToReload`](#weaponlistweaponapstoreload)
-  - [`WEAPONLIST/WEAPON/APsToReloadManually`](#weaponlistweaponapstoreloadmanually)
-  - [`WEAPONLIST/WEAPON/AutoPenalty`](#weaponlistweaponautopenalty)
-  - [`WEAPONLIST/WEAPON/bAccuracy`](#weaponlistweaponbaccuracy)
-  - [`WEAPONLIST/WEAPON/BarrelConfiguration`](#weaponlistweaponbarrelconfiguration)
-  - [`WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`](#weaponlistweaponbautofireshotsperfiveap)
-  - [`WEAPONLIST/WEAPON/bBurstAP`](#weaponlistweaponbburstap)
-  - [`WEAPONLIST/WEAPON/bRecoilX`](#weaponlistweaponbrecoilx)
-  - [`WEAPONLIST/WEAPON/bRecoilY`](#weaponlistweaponbrecoily)
-  - [`WEAPONLIST/WEAPON/BurstAniDelay`](#weaponlistweaponburstanidelay)
-  - [`WEAPONLIST/WEAPON/EasyUnjam`](#weaponlistweaponeasyunjam)
-  - [`WEAPONLIST/WEAPON/fBurstOnlyByFanTheHammer`](#weaponlistweaponfburstonlybyfanthehammer)
-  - [`WEAPONLIST/WEAPON/Handling`](#weaponlistweaponhandling)
-  - [`WEAPONLIST/WEAPON/HeavyGun`](#weaponlistweaponheavygun)
-  - [`WEAPONLIST/WEAPON/ManualReloadSound`](#weaponlistweaponmanualreloadsound)
-  - [`WEAPONLIST/WEAPON/MaxDistForMessyDeath`](#weaponlistweaponmaxdistformessydeath)
-  - [`WEAPONLIST/WEAPON/nAccuracy`](#weaponlistweaponnaccuracy)
-  - [`WEAPONLIST/WEAPON/NoSemiAuto`](#weaponlistweaponnosemiauto)
-  - [`WEAPONLIST/WEAPON/sBurstSound`](#weaponlistweaponsburstsound)
-  - [`WEAPONLIST/WEAPON/SilencedSound`](#weaponlistweaponsilencedsound)
-  - [`WEAPONLIST/WEAPON/sLocknLoadSound`](#weaponlistweaponslocknloadsound)
-  - [`WEAPONLIST/WEAPON/sReloadSound`](#weaponlistweaponsreloadsound)
-  - [`WEAPONLIST/WEAPON/sSilencedBurstSound`](#weaponlistweaponssilencedburstsound)
-  - [`WEAPONLIST/WEAPON/sSound`](#weaponlistweaponssound)
-  - [`WEAPONLIST/WEAPON/SwapClips`](#weaponlistweaponswapclips)
-  - [`WEAPONLIST/WEAPON/szNWSSSound`](#weaponlistweaponsznwsssound)
+  - [`WEAPONLIST/WEAPON/uiIndex`](#weaponlistweaponuiindex)
   - [`WEAPONLIST/WEAPON/szWeaponName`](#weaponlistweaponszweaponname)
-  - [`WEAPONLIST/WEAPON/ubAimLevels`](#weaponlistweaponubaimlevels)
-  - [`WEAPONLIST/WEAPON/ubAttackVolume`](#weaponlistweaponubattackvolume)
-  - [`WEAPONLIST/WEAPON/ubBulletSpeed`](#weaponlistweaponubbulletspeed)
-  - [`WEAPONLIST/WEAPON/ubBurstPenalty`](#weaponlistweaponubburstpenalty)
-  - [`WEAPONLIST/WEAPON/ubCalibre`](#weaponlistweaponubcalibre)
-  - [`WEAPONLIST/WEAPON/ubDeadliness`](#weaponlistweaponubdeadliness)
-  - [`WEAPONLIST/WEAPON/ubHitVolume`](#weaponlistweaponubhitvolume)
-  - [`WEAPONLIST/WEAPON/ubImpact`](#weaponlistweaponubimpact)
-  - [`WEAPONLIST/WEAPON/ubMagSize`](#weaponlistweaponubmagsize)
-  - [`WEAPONLIST/WEAPON/ubReadyTime`](#weaponlistweaponubreadytime)
-  - [`WEAPONLIST/WEAPON/ubRecoilDelay`](#weaponlistweaponubrecoildelay)
-  - [`WEAPONLIST/WEAPON/ubShotsPer4Turns`](#weaponlistweaponubshotsper4turns)
-  - [`WEAPONLIST/WEAPON/ubShotsPerBurst`](#weaponlistweaponubshotsperburst)
   - [`WEAPONLIST/WEAPON/ubWeaponClass`](#weaponlistweaponubweaponclass)
   - [`WEAPONLIST/WEAPON/ubWeaponType`](#weaponlistweaponubweapontype)
-  - [`WEAPONLIST/WEAPON/uiIndex`](#weaponlistweaponuiindex)
-  - [`WEAPONLIST/WEAPON/usOverheatingDamageThreshold`](#weaponlistweaponusoverheatingdamagethreshold)
-  - [`WEAPONLIST/WEAPON/usOverheatingJamThreshold`](#weaponlistweaponusoverheatingjamthreshold)
-  - [`WEAPONLIST/WEAPON/usOverheatingSingleShotTemperature`](#weaponlistweaponusoverheatingsingleshottemperature)
+  - [`WEAPONLIST/WEAPON/ubCalibre`](#weaponlistweaponubcalibre)
+  - [`WEAPONLIST/WEAPON/ubReadyTime`](#weaponlistweaponubreadytime)
+  - [`WEAPONLIST/WEAPON/ubShotsPer4Turns`](#weaponlistweaponubshotsper4turns)
+  - [`WEAPONLIST/WEAPON/ubShotsPerBurst`](#weaponlistweaponubshotsperburst)
+  - [`WEAPONLIST/WEAPON/ubBurstPenalty`](#weaponlistweaponubburstpenalty)
+  - [`WEAPONLIST/WEAPON/ubBulletSpeed`](#weaponlistweaponubbulletspeed)
+  - [`WEAPONLIST/WEAPON/ubImpact`](#weaponlistweaponubimpact)
+  - [`WEAPONLIST/WEAPON/ubDeadliness`](#weaponlistweaponubdeadliness)
+  - [`WEAPONLIST/WEAPON/bAccuracy`](#weaponlistweaponbaccuracy)
+  - [`WEAPONLIST/WEAPON/ubMagSize`](#weaponlistweaponubmagsize)
   - [`WEAPONLIST/WEAPON/usRange`](#weaponlistweaponusrange)
   - [`WEAPONLIST/WEAPON/usReloadDelay`](#weaponlistweaponusreloaddelay)
+  - [`WEAPONLIST/WEAPON/BurstAniDelay`](#weaponlistweaponburstanidelay)
+  - [`WEAPONLIST/WEAPON/ubAttackVolume`](#weaponlistweaponubattackvolume)
+  - [`WEAPONLIST/WEAPON/ubHitVolume`](#weaponlistweaponubhitvolume)
+  - [`WEAPONLIST/WEAPON/sSound`](#weaponlistweaponssound)
+  - [`WEAPONLIST/WEAPON/sBurstSound`](#weaponlistweaponsburstsound)
+  - [`WEAPONLIST/WEAPON/sSilencedBurstSound`](#weaponlistweaponssilencedburstsound)
+  - [`WEAPONLIST/WEAPON/sReloadSound`](#weaponlistweaponsreloadsound)
+  - [`WEAPONLIST/WEAPON/sLocknLoadSound`](#weaponlistweaponslocknloadsound)
+  - [`WEAPONLIST/WEAPON/SilencedSound`](#weaponlistweaponsilencedsound)
+  - [`WEAPONLIST/WEAPON/bBurstAP`](#weaponlistweaponbburstap)
+  - [`WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`](#weaponlistweaponbautofireshotsperfiveap)
+  - [`WEAPONLIST/WEAPON/APsToReload`](#weaponlistweaponapstoreload)
+  - [`WEAPONLIST/WEAPON/SwapClips`](#weaponlistweaponswapclips)
+  - [`WEAPONLIST/WEAPON/MaxDistForMessyDeath`](#weaponlistweaponmaxdistformessydeath)
+  - [`WEAPONLIST/WEAPON/AutoPenalty`](#weaponlistweaponautopenalty)
+  - [`WEAPONLIST/WEAPON/NoSemiAuto`](#weaponlistweaponnosemiauto)
+  - [`WEAPONLIST/WEAPON/EasyUnjam`](#weaponlistweaponeasyunjam)
+  - [`WEAPONLIST/WEAPON/APsToReloadManually`](#weaponlistweaponapstoreloadmanually)
+  - [`WEAPONLIST/WEAPON/ManualReloadSound`](#weaponlistweaponmanualreloadsound)
+  - [`WEAPONLIST/WEAPON/nAccuracy`](#weaponlistweaponnaccuracy)
+  - [`WEAPONLIST/WEAPON/bRecoilX`](#weaponlistweaponbrecoilx)
+  - [`WEAPONLIST/WEAPON/bRecoilY`](#weaponlistweaponbrecoily)
+  - [`WEAPONLIST/WEAPON/ubAimLevels`](#weaponlistweaponubaimlevels)
+  - [`WEAPONLIST/WEAPON/ubRecoilDelay`](#weaponlistweaponubrecoildelay)
+  - [`WEAPONLIST/WEAPON/Handling`](#weaponlistweaponhandling)
+  - [`WEAPONLIST/WEAPON/usOverheatingJamThreshold`](#weaponlistweaponusoverheatingjamthreshold)
+  - [`WEAPONLIST/WEAPON/usOverheatingDamageThreshold`](#weaponlistweaponusoverheatingdamagethreshold)
+  - [`WEAPONLIST/WEAPON/usOverheatingSingleShotTemperature`](#weaponlistweaponusoverheatingsingleshottemperature)
+  - [`WEAPONLIST/WEAPON/HeavyGun`](#weaponlistweaponheavygun)
+  - [`WEAPONLIST/WEAPON/fBurstOnlyByFanTheHammer`](#weaponlistweaponfburstonlybyfanthehammer)
+  - [`WEAPONLIST/WEAPON/BarrelConfiguration`](#weaponlistweaponbarrelconfiguration)
+  - [`WEAPONLIST/WEAPON/szNWSSSound`](#weaponlistweaponsznwsssound)
 - [Relations](#relations)
 - [Related formulas](#related-formulas)
 - [Localization](#localization)
@@ -98,14 +98,55 @@ updated: 2026-11-07
 
 ```
 WEAPONLIST
-└── WEAPON                  one weapon row
-    ├── uiIndex             runtime weapon index
-    ├── szWeaponName        name string
-    ├── ubWeaponClass       broad class
-    ├── ubWeaponType        specific type
-    ├── ubCalibre           AmmoStrings index
-    ├── ...                 combat and sound fields
-    └── BarrelConfiguration optional, repeated
+└── WEAPON
+    ├── uiIndex
+    ├── szWeaponName
+    ├── ubWeaponClass
+    ├── ubWeaponType
+    ├── ubCalibre
+    ├── ubReadyTime
+    ├── ubShotsPer4Turns
+    ├── ubShotsPerBurst
+    ├── ubBurstPenalty
+    ├── ubBulletSpeed
+    ├── ubImpact
+    ├── ubDeadliness
+    ├── bAccuracy
+    ├── ubMagSize
+    ├── usRange
+    ├── usReloadDelay
+    ├── BurstAniDelay
+    ├── ubAttackVolume
+    ├── ubHitVolume
+    ├── sSound
+    ├── sBurstSound
+    ├── sSilencedBurstSound
+    ├── sReloadSound
+    ├── sLocknLoadSound
+    ├── SilencedSound
+    ├── bBurstAP
+    ├── bAutofireShotsPerFiveAP
+    ├── APsToReload
+    ├── SwapClips
+    ├── MaxDistForMessyDeath
+    ├── AutoPenalty
+    ├── NoSemiAuto
+    ├── EasyUnjam
+    ├── APsToReloadManually
+    ├── ManualReloadSound
+    ├── nAccuracy
+    ├── bRecoilX
+    ├── bRecoilY
+    ├── ubAimLevels
+    ├── ubRecoilDelay
+    ├── Handling
+    ├── usOverheatingJamThreshold
+    ├── usOverheatingDamageThreshold
+    ├── usOverheatingSingleShotTemperature
+    ├── HeavyGun
+    ├── fBurstOnlyByFanTheHammer
+    ├── BarrelConfiguration
+    └── szNWSSSound
 ```
 
 ## Game options
@@ -114,244 +155,14 @@ WEAPONLIST
 
 ## Fields
 
-### `WEAPONLIST/WEAPON/APsToReload`
+### `WEAPONLIST/WEAPON/uiIndex`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of a normal reload.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/APsToReloadManually`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of a manual reload, used when the weapon is reloaded one round at a time.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/AutoPenalty`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Accuracy penalty applied to autofire.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/bAccuracy`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart.
-- **Only used with:** OCTH.
-- **Values:** `-100..100`.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here.
+- **Values:** Non-negative integer; unique within the file. The loader uses the value as the runtime index; no fixed upper bound is declared by the schema.
+- **Default:** none; a missing element leaves the runtime slot at `0`.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `source`
-
-### `WEAPONLIST/WEAPON/BarrelConfiguration`
-
-- **Type:** `UINT8` (`UINT16`)
-- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed.
-- **Values:** Positive barrel count; one element per barrel configuration. Absent means one barrel. The element may repeat.
-- **Default:** absent means one barrel; repeated elements add barrel configurations.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `source`
-
-### `WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Number of autofire shots per five AP. It is a rate value, not a magazine capacity.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/bBurstAP`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** AP cost of a burst.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/bRecoilX`
-
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Horizontal recoil value used by NCTH.
-- **Only used with:** NCTH.
-- **Values:** `-20..20`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/bRecoilY`
-
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Vertical recoil value used by NCTH.
-- **Only used with:** NCTH.
-- **Values:** `-20..20`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/BurstAniDelay`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Delay between shots in a burst animation.
-- **Values:** `0..500`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/EasyUnjam`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the weapon is easier to unjam.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/fBurstOnlyByFanTheHammer`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, burst mode is available only to a gunslinger using the weapon in hip-fire. The condition is part of the weapon’s fire-mode rules, not a UI preference.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `source`
-
-### `WEAPONLIST/WEAPON/Handling`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control.
-- **Only used with:** NCTH.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/HeavyGun`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Marks the weapon as heavy for strength, bipod and handling checks.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ManualReloadSound`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played during a manual reload.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/MaxDistForMessyDeath`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Distance limit for the messy-death gore effect. Beyond this distance the ordinary death animation is used.
-- **Values:** `0..500`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/nAccuracy`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart.
-- **Only used with:** NCTH.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `source`
-
-### `WEAPONLIST/WEAPON/NoSemiAuto`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the weapon has no semi-automatic fire mode.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/sBurstSound`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/SilencedSound`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound.
-- **Values:** Sound ID from the sound table; `0` means no separate silenced sound.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/sLocknLoadSound`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played when a round is chambered or the weapon is readied.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/sReloadSound`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played while reloading.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/sSilencedBurstSound`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst from a silenced weapon.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/sSound`
-
-- **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a normal shot.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/SwapClips`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** If set, the weapon can reload by swapping magazines instead of using the full reload animation.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/szNWSSSound`
-
-- **Type:** `String` (`String`)
-- **Description:** Sound name used by the NWS sound path. It is a string key, not a numeric sound-table ID.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `WEAPONLIST/WEAPON/szWeaponName`
 
@@ -362,39 +173,20 @@ WEAPONLIST
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/ubAimLevels`
+### `WEAPONLIST/WEAPON/ubWeaponClass`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Number of aim levels available to the weapon in NCTH.
-- **Only used with:** NCTH.
-- **Values:** `0..8`.
+- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`.
+- **Values:** IDs from `Lookup.WeaponClass`: `0` None, `1` Handgun, `2` Submachinegun, `3` Rifle, `4` Machinegun, `5` Shotgun, `6` Knife, `7` Monster.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/ubAttackVolume`
+### `WEAPONLIST/WEAPON/ubWeaponType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Noise volume produced by firing the weapon. It feeds sound propagation and AI hearing checks.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubBulletSpeed`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Projectile speed used by the bullet-flight and hit calculations. It is not the same as damage.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubBurstPenalty`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Accuracy penalty applied to burst fire.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling.
+- **Values:** IDs from `Lookup.WeaponType`: `0` None, `1` Pistol, `2` Machine Pistol, `3` Submachinegun, `4` Rifle, `5` Sniper Rifle, `6` Assault Rifle, `7` Light Machinegun, `8` Shotgun.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -408,57 +200,11 @@ WEAPONLIST
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/ubDeadliness`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Deadliness rating used by mercenary weapon-affinity and AI evaluation. It is not a direct damage value.
-- **Values:** `0..250`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubHitVolume`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Hit-volume value used when resolving whether a shot connects.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubImpact`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Base damage of the weapon before ammunition modifiers and armour reduction.
-- **Values:** `0..250`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubMagSize`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Magazine capacity used when the weapon is loaded. It describes the weapon’s magazine, not the magazine item row.
-- **Values:** `0..65000`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
 ### `WEAPONLIST/WEAPON/ubReadyTime`
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** AP cost to ready the weapon before firing. It is separate from the AP cost of the shot itself.
 - **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/ubRecoilDelay`
-
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Delay before recoil recovery begins.
-- **Only used with:** NCTH.
-- **Values:** `0..5`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -481,56 +227,57 @@ WEAPONLIST
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/ubWeaponClass`
+### `WEAPONLIST/WEAPON/ubBurstPenalty`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`.
-- **Values:** IDs from `Lookup.WeaponClass`: `0` None, `1` Handgun, `2` Submachinegun, `3` Rifle, `4` Machinegun, `5` Shotgun, `6` Knife, `7` Monster.
+- **Description:** Accuracy penalty applied to burst fire.
+- **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/ubWeaponType`
+### `WEAPONLIST/WEAPON/ubBulletSpeed`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling.
-- **Values:** IDs from `Lookup.WeaponType`: `0` None, `1` Pistol, `2` Machine Pistol, `3` Submachinegun, `4` Rifle, `5` Sniper Rifle, `6` Assault Rifle, `7` Light Machinegun, `8` Shotgun.
+- **Description:** Projectile speed used by the bullet-flight and hit calculations. It is not the same as damage.
+- **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
-### `WEAPONLIST/WEAPON/uiIndex`
+### `WEAPONLIST/WEAPON/ubImpact`
 
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here.
-- **Values:** Non-negative integer; unique within the file. The loader uses the value as the runtime index; no fixed upper bound is declared by the schema.
-- **Default:** none; a missing element leaves the runtime slot at `0`.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Base damage of the weapon before ammunition modifiers and armour reduction.
+- **Values:** `0..250`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ubDeadliness`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Deadliness rating used by mercenary weapon-affinity and AI evaluation. It is not a direct damage value.
+- **Values:** `0..250`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/bAccuracy`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart.
+- **Only used with:** OCTH.
+- **Values:** `-100..100`.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `source`
 
-### `WEAPONLIST/WEAPON/usOverheatingDamageThreshold`
+### `WEAPONLIST/WEAPON/ubMagSize`
 
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Heat threshold at which the weapon starts to take damage in the overheating model.
-- **Values:** Decimal number.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/usOverheatingJamThreshold`
-
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Heat threshold at which the weapon starts to jam in the overheating model.
-- **Values:** `0..60000`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
-
-### `WEAPONLIST/WEAPON/usOverheatingSingleShotTemperature`
-
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Temperature contribution of a single shot in the overheating model.
-- **Values:** `0..60000`.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Magazine capacity used when the weapon is loaded. It describes the weapon’s magazine, not the magazine item row.
+- **Values:** `0..65000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -550,6 +297,300 @@ WEAPONLIST
 - **Description:** Delay of the reload animation. It is a presentation/timing value, not the AP cost of reloading.
 - **Values:** `0..500`.
 - **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/BurstAniDelay`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Delay between shots in a burst animation.
+- **Values:** `0..500`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ubAttackVolume`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Noise volume produced by firing the weapon. It feeds sound propagation and AI hearing checks.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ubHitVolume`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Hit-volume value used when resolving whether a shot connects.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/sSound`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Sound ID played for a normal shot.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/sBurstSound`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Sound ID played for a burst.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/sSilencedBurstSound`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Sound ID played for a burst from a silenced weapon.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/sReloadSound`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Sound ID played while reloading.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/sLocknLoadSound`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Sound ID played when a round is chambered or the weapon is readied.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/SilencedSound`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound.
+- **Values:** Sound ID from the sound table; `0` means no separate silenced sound.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/bBurstAP`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** AP cost of a burst.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** Number of autofire shots per five AP. It is a rate value, not a magazine capacity.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/APsToReload`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** AP cost of a normal reload.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/SwapClips`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, the weapon can reload by swapping magazines instead of using the full reload animation.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/MaxDistForMessyDeath`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Distance limit for the messy-death gore effect. Beyond this distance the ordinary death animation is used.
+- **Values:** `0..500`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/AutoPenalty`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Accuracy penalty applied to autofire.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/NoSemiAuto`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, the weapon has no semi-automatic fire mode.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/EasyUnjam`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, the weapon is easier to unjam.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/APsToReloadManually`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** AP cost of a manual reload, used when the weapon is reloaded one round at a time.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ManualReloadSound`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Sound ID played during a manual reload.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/nAccuracy`
+
+- **Type:** `Integer` (`INT16`)
+- **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart.
+- **Only used with:** NCTH.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `source`
+
+### `WEAPONLIST/WEAPON/bRecoilX`
+
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Horizontal recoil value used by NCTH.
+- **Only used with:** NCTH.
+- **Values:** `-20..20`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/bRecoilY`
+
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Vertical recoil value used by NCTH.
+- **Only used with:** NCTH.
+- **Values:** `-20..20`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ubAimLevels`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Number of aim levels available to the weapon in NCTH.
+- **Only used with:** NCTH.
+- **Values:** `0..8`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/ubRecoilDelay`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Delay before recoil recovery begins.
+- **Only used with:** NCTH.
+- **Values:** `0..5`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/Handling`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Weapon-handling value used by NCTH. Higher values represent a weapon that is harder to control.
+- **Only used with:** NCTH.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/usOverheatingJamThreshold`
+
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Heat threshold at which the weapon starts to jam in the overheating model.
+- **Values:** `0..60000`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/usOverheatingDamageThreshold`
+
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Heat threshold at which the weapon starts to take damage in the overheating model.
+- **Values:** Decimal number.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/usOverheatingSingleShotTemperature`
+
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Temperature contribution of a single shot in the overheating model.
+- **Values:** `0..60000`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/HeavyGun`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Marks the weapon as heavy for strength, bipod and handling checks.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `inferred`
+
+### `WEAPONLIST/WEAPON/fBurstOnlyByFanTheHammer`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** If set, burst mode is available only to a gunslinger using the weapon in hip-fire. The condition is part of the weapon’s fire-mode rules, not a UI preference.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `source`
+
+### `WEAPONLIST/WEAPON/BarrelConfiguration`
+
+- **Type:** `UINT8` (`UINT16`)
+- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed.
+- **Values:** Positive barrel count; one element per barrel configuration. Absent means one barrel. The element may repeat.
+- **Default:** absent means one barrel; repeated elements add barrel configurations.
+- **Source:** weapon table data; field metadata.
+- **Confidence:** `source`
+
+### `WEAPONLIST/WEAPON/szNWSSSound`
+
+- **Type:** `String` (`String`)
+- **Description:** Sound name used by the NWS sound path. It is a string key, not a numeric sound-table ID.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 

@@ -28,7 +28,16 @@ updated: 2026-11-07
 - [Structure](#structure)
 - [Fields](#fields)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/uiIndex`](#attachmentcombomergelistattachmentcombomergeuiindex)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usItem`](#attachmentcombomergelistattachmentcombomergeusitem)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment1`](#attachmentcombomergelistattachmentcombomergeusattachment1)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment2`](#attachmentcombomergelistattachmentcombomergeusattachment2)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment3`](#attachmentcombomergelistattachmentcombomergeusattachment3)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment4`](#attachmentcombomergelistattachmentcombomergeusattachment4)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment5`](#attachmentcombomergelistattachmentcombomergeusattachment5)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment6`](#attachmentcombomergelistattachmentcombomergeusattachment6)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment7`](#attachmentcombomergelistattachmentcombomergeusattachment7)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment8`](#attachmentcombomergelistattachmentcombomergeusattachment8)
+  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment9`](#attachmentcombomergelistattachmentcombomergeusattachment9)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment10`](#attachmentcombomergelistattachmentcombomergeusattachment10)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment11`](#attachmentcombomergelistattachmentcombomergeusattachment11)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment12`](#attachmentcombomergelistattachmentcombomergeusattachment12)
@@ -39,16 +48,7 @@ updated: 2026-11-07
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment17`](#attachmentcombomergelistattachmentcombomergeusattachment17)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment18`](#attachmentcombomergelistattachmentcombomergeusattachment18)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment19`](#attachmentcombomergelistattachmentcombomergeusattachment19)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment2`](#attachmentcombomergelistattachmentcombomergeusattachment2)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment20`](#attachmentcombomergelistattachmentcombomergeusattachment20)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment3`](#attachmentcombomergelistattachmentcombomergeusattachment3)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment4`](#attachmentcombomergelistattachmentcombomergeusattachment4)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment5`](#attachmentcombomergelistattachmentcombomergeusattachment5)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment6`](#attachmentcombomergelistattachmentcombomergeusattachment6)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment7`](#attachmentcombomergelistattachmentcombomergeusattachment7)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment8`](#attachmentcombomergelistattachmentcombomergeusattachment8)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment9`](#attachmentcombomergelistattachmentcombomergeusattachment9)
-  - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usItem`](#attachmentcombomergelistattachmentcombomergeusitem)
   - [`ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usResult`](#attachmentcombomergelistattachmentcombomergeusresult)
 - [Relations](#relations)
 - [Localization](#localization)
@@ -70,11 +70,30 @@ updated: 2026-11-07
 
 ```
 ATTACHMENTCOMBOMERGELIST
-└── ATTACHMENTCOMBOMERGE    one combination
-    ├── uiIndex               row identity
-    ├── usItem                base item ID
-    ├── usAttachment1..20     required attachment item IDs
-    └── usResult              result item ID
+└── ATTACHMENTCOMBOMERGE
+    ├── uiIndex
+    ├── usItem
+    ├── usAttachment1
+    ├── usAttachment2
+    ├── usAttachment3
+    ├── usAttachment4
+    ├── usAttachment5
+    ├── usAttachment6
+    ├── usAttachment7
+    ├── usAttachment8
+    ├── usAttachment9
+    ├── usAttachment10
+    ├── usAttachment11
+    ├── usAttachment12
+    ├── usAttachment13
+    ├── usAttachment14
+    ├── usAttachment15
+    ├── usAttachment16
+    ├── usAttachment17
+    ├── usAttachment18
+    ├── usAttachment19
+    ├── usAttachment20
+    └── usResult
 ```
 
 ## Fields
@@ -88,10 +107,91 @@ ATTACHMENTCOMBOMERGELIST
 - **Source:** attachment combo-merge table data; field metadata.
 - **Confidence:** `inferred`
 
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usItem`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of the base item on which the attachments are combined.
+- **Values:** Item ID of the base item.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment1`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of attachment slot 1. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment2`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 2. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment3`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 3. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment4`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 4. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment5`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 5. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment6`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 6. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment7`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 7. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment8`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 8. Zero means the slot is not used. The row requires all non-zero slots to be present.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment combo-merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment9`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of attachment slot 9. Zero means the slot is not used. The row requires all non-zero slots to be present.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
@@ -187,92 +287,11 @@ ATTACHMENTCOMBOMERGELIST
 - **Source:** attachment combo-merge table data; field metadata.
 - **Confidence:** `inferred`
 
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment2`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 2. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
 ### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment20`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of attachment slot 20. Zero means the slot is not used. The row requires all non-zero slots to be present.
 - **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment3`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 3. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment4`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 4. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment5`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 5. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment6`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 6. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment7`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 7. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment8`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 8. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usAttachment9`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of attachment slot 9. Zero means the slot is not used. The row requires all non-zero slots to be present.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment combo-merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `ATTACHMENTCOMBOMERGELIST/ATTACHMENTCOMBOMERGE/usItem`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the base item on which the attachments are combined.
-- **Values:** Item ID of the base item.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment combo-merge table data; field metadata.
 - **Confidence:** `inferred`

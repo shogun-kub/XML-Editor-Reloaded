@@ -11,7 +11,7 @@ files:
   - Items/Merges.xml
 root: MERGELIST
 record: MERGE
-key: firstItemIndex + secondItemIndex + results
+key: firstItemIndex + secondItemIndex
 sources:
   - Merge table data
   - MergeType lookup table
@@ -28,12 +28,12 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`MERGELIST/MERGE/APCost`](#mergelistmergeapcost)
   - [`MERGELIST/MERGE/firstItemIndex`](#mergelistmergefirstitemindex)
-  - [`MERGELIST/MERGE/firstResultingItemIndex`](#mergelistmergefirstresultingitemindex)
-  - [`MERGELIST/MERGE/mergeType`](#mergelistmergemergetype)
   - [`MERGELIST/MERGE/secondItemIndex`](#mergelistmergeseconditemindex)
+  - [`MERGELIST/MERGE/firstResultingItemIndex`](#mergelistmergefirstresultingitemindex)
   - [`MERGELIST/MERGE/secondResultingItemIndex`](#mergelistmergesecondresultingitemindex)
+  - [`MERGELIST/MERGE/mergeType`](#mergelistmergemergetype)
+  - [`MERGELIST/MERGE/APCost`](#mergelistmergeapcost)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -54,30 +54,31 @@ updated: 2026-11-07
 
 ```
 MERGELIST
-└── MERGE                   one merge recipe
-    ├── firstItemIndex       first input item ID
-    ├── secondItemIndex      second input item ID
-    ├── firstResultingItemIndex  first result item ID
-    ├── secondResultingItemIndex second result or 0
-    └── mergeType/APCost    action type and cost
+└── MERGE
+    ├── firstItemIndex
+    ├── secondItemIndex
+    ├── firstResultingItemIndex
+    ├── secondResultingItemIndex
+    ├── mergeType
+    └── APCost
 ```
 
 ## Fields
-
-### `MERGELIST/MERGE/APCost`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of the merge.
-- **Values:** AP cost; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `MERGELIST/MERGE/firstItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of the first input item in the merge.
 - **Values:** Item ID of the first input.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merge table data; field metadata.
+- **Confidence:** `inferred`
+
+### `MERGELIST/MERGE/secondItemIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of the second input item in the merge.
+- **Values:** Item ID of the second input.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
 - **Confidence:** `inferred`
@@ -91,6 +92,15 @@ MERGELIST
 - **Source:** merge table data; field metadata.
 - **Confidence:** `inferred`
 
+### `MERGELIST/MERGE/secondResultingItemIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID produced in the second result slot; `0` means no second result.
+- **Values:** Item ID of the second result; `0` means the merge produces only one item.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merge table data; field metadata.
+- **Confidence:** `inferred`
+
 ### `MERGELIST/MERGE/mergeType`
 
 - **Type:** `Integer` (`UINT8`)
@@ -100,20 +110,11 @@ MERGELIST
 - **Source:** merge table data; field metadata.
 - **Confidence:** `source`
 
-### `MERGELIST/MERGE/secondItemIndex`
+### `MERGELIST/MERGE/APCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the second input item in the merge.
-- **Values:** Item ID of the second input.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
-
-### `MERGELIST/MERGE/secondResultingItemIndex`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in the second result slot; `0` means no second result.
-- **Values:** Item ID of the second result; `0` means the merge produces only one item.
+- **Description:** AP cost of the merge.
+- **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.
 - **Confidence:** `inferred`

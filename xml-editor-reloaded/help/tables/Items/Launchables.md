@@ -52,9 +52,9 @@ weapon selects ammunition.
 
 ```
 LAUNCHABLELIST
-└── LAUNCHABLE        one launcher -> ammo pair
-    ├── launchableIndex  item index of the launcher
-    └── itemIndex        item index of the launchable ammo
+└── LAUNCHABLE
+    ├── launchableIndex
+    └── itemIndex
 ```
 
 The loader does not use a key; it appends records in file order to the runtime pair table and

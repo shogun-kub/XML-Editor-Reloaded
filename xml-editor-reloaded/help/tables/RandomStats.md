@@ -27,22 +27,22 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`RANDOM_STATS/PROFILE/BaseAttribute`](#random_statsprofilebaseattribute)
-  - [`RANDOM_STATS/PROFILE/Enabled`](#random_statsprofileenabled)
+  - [`RANDOM_STATS/PROFILE/uiIndex`](#random_statsprofileuiindex)
   - [`RANDOM_STATS/PROFILE/Name`](#random_statsprofilename)
+  - [`RANDOM_STATS/PROFILE/Enabled`](#random_statsprofileenabled)
+  - [`RANDOM_STATS/PROFILE/BaseAttribute`](#random_statsprofilebaseattribute)
+  - [`RANDOM_STATS/PROFILE/RandomExpLevel`](#random_statsprofilerandomexplevel)
+  - [`RANDOM_STATS/PROFILE/RandomLife`](#random_statsprofilerandomlife)
   - [`RANDOM_STATS/PROFILE/RandomAgility`](#random_statsprofilerandomagility)
   - [`RANDOM_STATS/PROFILE/RandomDexterity`](#random_statsprofilerandomdexterity)
-  - [`RANDOM_STATS/PROFILE/RandomExpLevel`](#random_statsprofilerandomexplevel)
-  - [`RANDOM_STATS/PROFILE/RandomExplosive`](#random_statsprofilerandomexplosive)
+  - [`RANDOM_STATS/PROFILE/RandomStrength`](#random_statsprofilerandomstrength)
   - [`RANDOM_STATS/PROFILE/RandomLeadership`](#random_statsprofilerandomleadership)
-  - [`RANDOM_STATS/PROFILE/RandomLife`](#random_statsprofilerandomlife)
+  - [`RANDOM_STATS/PROFILE/RandomWisdom`](#random_statsprofilerandomwisdom)
   - [`RANDOM_STATS/PROFILE/RandomMarksmanship`](#random_statsprofilerandommarksmanship)
   - [`RANDOM_STATS/PROFILE/RandomMechanical`](#random_statsprofilerandommechanical)
+  - [`RANDOM_STATS/PROFILE/RandomExplosive`](#random_statsprofilerandomexplosive)
   - [`RANDOM_STATS/PROFILE/RandomMedical`](#random_statsprofilerandommedical)
   - [`RANDOM_STATS/PROFILE/RandomScientific`](#random_statsprofilerandomscientific)
-  - [`RANDOM_STATS/PROFILE/RandomStrength`](#random_statsprofilerandomstrength)
-  - [`RANDOM_STATS/PROFILE/RandomWisdom`](#random_statsprofilerandomwisdom)
-  - [`RANDOM_STATS/PROFILE/uiIndex`](#random_statsprofileuiindex)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -63,23 +63,44 @@ updated: 2026-11-07
 
 ```
 RANDOM_STATS
-└── PROFILE                 one profile
-    ├── uiIndex             profile identity
-    ├── Name                profile name
-    ├── Enabled             random-stats flag
-    ├── BaseAttribute       mode-3 base value
-    └── Random*              per-stat flags
+└── PROFILE
+    ├── uiIndex
+    ├── Name
+    ├── Enabled
+    ├── BaseAttribute
+    ├── RandomExpLevel
+    ├── RandomLife
+    ├── RandomAgility
+    ├── RandomDexterity
+    ├── RandomStrength
+    ├── RandomLeadership
+    ├── RandomWisdom
+    ├── RandomMarksmanship
+    ├── RandomMechanical
+    ├── RandomExplosive
+    ├── RandomMedical
+    └── RandomScientific
 ```
 
 ## Fields
 
-### `RANDOM_STATS/PROFILE/BaseAttribute`
+### `RANDOM_STATS/PROFILE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base attribute used to build random stats; only used when `MERCS_RANDOM_STATS` is 3.
-- **Only used with:** MERCS_RANDOM_STATS 3.
+- **Description:** Profile identity.
+- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** Integer base attribute value.
 - **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random stats table data; table metadata.
+- **Confidence:** `inferred`
+
+### `RANDOM_STATS/PROFILE/Name`
+
+- **Type:** `String` (`String`)
+- **Description:** Profile name.
+- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
+- **Values:** Profile name.
+- **Default:** empty string when omitted.
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
@@ -93,13 +114,33 @@ RANDOM_STATS
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
-### `RANDOM_STATS/PROFILE/Name`
+### `RANDOM_STATS/PROFILE/BaseAttribute`
 
-- **Type:** `String` (`String`)
-- **Description:** Profile name.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Base attribute used to build random stats; only used when `MERCS_RANDOM_STATS` is 3.
+- **Only used with:** MERCS_RANDOM_STATS 3.
+- **Values:** Integer base attribute value.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random stats table data; table metadata.
+- **Confidence:** `inferred`
+
+### `RANDOM_STATS/PROFILE/RandomExpLevel`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Randomize experience level.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** Profile name.
-- **Default:** empty string when omitted.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** random stats table data; table metadata.
+- **Confidence:** `inferred`
+
+### `RANDOM_STATS/PROFILE/RandomLife`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Randomize life.
+- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
@@ -123,20 +164,10 @@ RANDOM_STATS
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
-### `RANDOM_STATS/PROFILE/RandomExpLevel`
+### `RANDOM_STATS/PROFILE/RandomStrength`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Randomize experience level.
-- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
-
-### `RANDOM_STATS/PROFILE/RandomExplosive`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Randomize explosives skill.
+- **Description:** Randomize strength.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
@@ -153,10 +184,10 @@ RANDOM_STATS
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
-### `RANDOM_STATS/PROFILE/RandomLife`
+### `RANDOM_STATS/PROFILE/RandomWisdom`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Randomize life.
+- **Description:** Randomize wisdom.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
@@ -183,6 +214,16 @@ RANDOM_STATS
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 
+### `RANDOM_STATS/PROFILE/RandomExplosive`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Randomize explosives skill.
+- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** random stats table data; table metadata.
+- **Confidence:** `inferred`
+
 ### `RANDOM_STATS/PROFILE/RandomMedical`
 
 - **Type:** `Boolean` (`Boolean`)
@@ -200,36 +241,6 @@ RANDOM_STATS
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
-
-### `RANDOM_STATS/PROFILE/RandomStrength`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Randomize strength.
-- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
-
-### `RANDOM_STATS/PROFILE/RandomWisdom`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Randomize wisdom.
-- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
-
-### `RANDOM_STATS/PROFILE/uiIndex`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity.
-- **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** Integer base attribute value.
-- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random stats table data; table metadata.
 - **Confidence:** `inferred`
 

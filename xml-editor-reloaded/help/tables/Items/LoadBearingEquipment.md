@@ -28,15 +28,13 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`](#loadbearingequipmentlistloadbearingequipmentlbeavailablevolume)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeIndex`](#loadbearingequipmentlistloadbearingequipmentlbeindex)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeClass`](#loadbearingequipmentlistloadbearingequipmentlbeclass)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeCombo`](#loadbearingequipmentlistloadbearingequipmentlbecombo)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeFilledSize`](#loadbearingequipmentlistloadbearingequipmentlbefilledsize)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeIndex`](#loadbearingequipmentlistloadbearingequipmentlbeindex)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`](#loadbearingequipmentlistloadbearingequipmentlbeavailablevolume)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`](#loadbearingequipmentlistloadbearingequipmentlbepocketsavailable)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex1`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex1)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex10`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex10)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex11`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex11)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex12`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex12)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex2`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex2)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex3`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex3)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex4`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex4)
@@ -45,7 +43,9 @@ updated: 2026-11-07
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex7`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex7)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex8`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex8)
   - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex9`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex9)
-  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`](#loadbearingequipmentlistloadbearingequipmentlbepocketsavailable)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex10`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex10)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex11`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex11)
+  - [`LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex12`](#loadbearingequipmentlistloadbearingequipmentlbepocketindex12)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -66,22 +66,35 @@ updated: 2026-11-07
 
 ```
 LOADBEARINGEQUIPMENTLIST
-└── LOADBEARINGEQUIPMENT   one LBE layout
-    ├── lbeIndex             LBE identity
-    ├── lbeClass             LBEClass lookup
-    ├── lbeAvailableVolume   total volume
-    ├── lbePocketsAvailable  slot bitmask
-    └── lbePocketIndex1..12  pocket rows per slot
+└── LOADBEARINGEQUIPMENT
+    ├── lbeIndex
+    ├── lbeClass
+    ├── lbeCombo
+    ├── lbeFilledSize
+    ├── lbeAvailableVolume
+    ├── lbePocketsAvailable
+    ├── lbePocketIndex1
+    ├── lbePocketIndex2
+    ├── lbePocketIndex3
+    ├── lbePocketIndex4
+    ├── lbePocketIndex5
+    ├── lbePocketIndex6
+    ├── lbePocketIndex7
+    ├── lbePocketIndex8
+    ├── lbePocketIndex9
+    ├── lbePocketIndex10
+    ├── lbePocketIndex11
+    └── lbePocketIndex12
 ```
 
 ## Fields
 
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Total volume available in the LBE.
+- **Description:** Index of the LBE row and identity of the XML record.
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Non-negative index; unique within the file. It is referenced by `Items.ubClassIndex` for LBE items.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`
@@ -116,12 +129,22 @@ LOADBEARINGEQUIPMENTLIST
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`
 
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeIndex`
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Index of the LBE row and identity of the XML record.
+- **Description:** Total volume available in the LBE.
 - **Only used with:** NIV.
-- **Values:** Non-negative index; unique within the file. It is referenced by `Items.ubClassIndex` for LBE items.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** lbe table data; field metadata.
+- **Confidence:** `inferred`
+
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Bitmask of pocket slots that are available on the LBE.
+- **Only used with:** NIV.
+- **Values:** Bitmask of available pocket slots; bit `n` corresponds to slot `n`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`
@@ -132,36 +155,6 @@ LOADBEARINGEQUIPMENTLIST
 - **Description:** Pocket row assigned to slot 1. `0` leaves the slot empty.
 - **Only used with:** NIV.
 - **Values:** Pocket row index in [Pockets](Pockets.md); `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** lbe table data; field metadata.
-- **Confidence:** `inferred`
-
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex10`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 10. `0` leaves the slot empty.
-- **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** lbe table data; field metadata.
-- **Confidence:** `inferred`
-
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex11`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 11. `0` leaves the slot empty.
-- **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** lbe table data; field metadata.
-- **Confidence:** `inferred`
-
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex12`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket row assigned to slot 12. `0` leaves the slot empty.
-- **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`
@@ -246,12 +239,32 @@ LOADBEARINGEQUIPMENTLIST
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`
 
-### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Bitmask of pocket slots that are available on the LBE.
+- **Description:** Pocket row assigned to slot 10. `0` leaves the slot empty.
 - **Only used with:** NIV.
-- **Values:** Bitmask of available pocket slots; bit `n` corresponds to slot `n`.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** lbe table data; field metadata.
+- **Confidence:** `inferred`
+
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex11`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Pocket row assigned to slot 11. `0` leaves the slot empty.
+- **Only used with:** NIV.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** lbe table data; field metadata.
+- **Confidence:** `inferred`
+
+### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketIndex12`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Pocket row assigned to slot 12. `0` leaves the slot empty.
+- **Only used with:** NIV.
+- **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
 - **Confidence:** `inferred`

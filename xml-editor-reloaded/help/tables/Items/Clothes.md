@@ -27,10 +27,10 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`CLOTHESLIST/CLOTHES/Pants`](#clotheslistclothespants)
-  - [`CLOTHESLIST/CLOTHES/szName`](#clotheslistclothesszname)
   - [`CLOTHESLIST/CLOTHES/uiIndex`](#clotheslistclothesuiindex)
+  - [`CLOTHESLIST/CLOTHES/szName`](#clotheslistclothesszname)
   - [`CLOTHESLIST/CLOTHES/Vest`](#clotheslistclothesvest)
+  - [`CLOTHESLIST/CLOTHES/Pants`](#clotheslistclothespants)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -51,20 +51,21 @@ updated: 2026-11-07
 
 ```
 CLOTHESLIST
-└── CLOTHES                 one clothing variant
-    ├── uiIndex               variant identity
-    ├── szName                display name
-    └── Vest/Pants            palette keys; empty means no override
+└── CLOTHES
+    ├── uiIndex
+    ├── szName
+    ├── Vest
+    └── Pants
 ```
 
 ## Fields
 
-### `CLOTHESLIST/CLOTHES/Pants`
+### `CLOTHESLIST/CLOTHES/uiIndex`
 
-- **Type:** `String` (`String`)
-- **Description:** Pants palette key used by the clothing renderer. An empty element means no pants override.
-- **Values:** Pants palette key, for example `GREENPANTS`. An empty element means no pants override.
-- **Default:** empty element means no override for that clothing layer.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the clothing row and identity of the XML record.
+- **Values:** Non-negative integer; unique within the file.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** clothes table data; field metadata.
 - **Confidence:** `inferred`
 
@@ -77,20 +78,20 @@ CLOTHESLIST
 - **Source:** clothes table data; field metadata.
 - **Confidence:** `inferred`
 
-### `CLOTHESLIST/CLOTHES/uiIndex`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the clothing row and identity of the XML record.
-- **Values:** Non-negative integer; unique within the file.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** clothes table data; field metadata.
-- **Confidence:** `inferred`
-
 ### `CLOTHESLIST/CLOTHES/Vest`
 
 - **Type:** `String` (`String`)
 - **Description:** Vest palette key used by the clothing renderer. An empty element means no vest override.
 - **Values:** Vest palette key, for example `YELLOWVEST`. An empty element means no vest override.
+- **Default:** empty element means no override for that clothing layer.
+- **Source:** clothes table data; field metadata.
+- **Confidence:** `inferred`
+
+### `CLOTHESLIST/CLOTHES/Pants`
+
+- **Type:** `String` (`String`)
+- **Description:** Pants palette key used by the clothing renderer. An empty element means no pants override.
+- **Values:** Pants palette key, for example `GREENPANTS`. An empty element means no pants override.
 - **Default:** empty element means no override for that clothing layer.
 - **Source:** clothes table data; field metadata.
 - **Confidence:** `inferred`

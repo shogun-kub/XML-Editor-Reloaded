@@ -26,10 +26,10 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`AIM_AVAILABLES/AIM/AimBioID`](#aim_availablesaimaimbioid)
+  - [`AIM_AVAILABLES/AIM/uiIndex`](#aim_availablesaimuiindex)
   - [`AIM_AVAILABLES/AIM/description`](#aim_availablesaimdescription)
   - [`AIM_AVAILABLES/AIM/ProfilId`](#aim_availablesaimprofilid)
-  - [`AIM_AVAILABLES/AIM/uiIndex`](#aim_availablesaimuiindex)
+  - [`AIM_AVAILABLES/AIM/AimBioID`](#aim_availablesaimaimbioid)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -50,19 +50,19 @@ updated: 2026-11-07
 
 ```
 AIM_AVAILABLES
-└── AIM                     one AIM availability row
-    ├── uiIndex             row identity
-    ├── ProfilId            profile ID
-    ├── AimBioID            biography ID
-    └── description         display text
+└── AIM
+    ├── uiIndex
+    ├── description
+    ├── ProfilId
+    └── AimBioID
 ```
 
 ## Fields
 
-### `AIM_AVAILABLES/AIM/AimBioID`
+### `AIM_AVAILABLES/AIM/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Biography ID for the AIM site.
+- **Description:** AIM availability row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
@@ -86,10 +86,10 @@ AIM_AVAILABLES
 - **Source:** aim availability table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `AIM_AVAILABLES/AIM/uiIndex`
+### `AIM_AVAILABLES/AIM/AimBioID`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** AIM availability row identity.
+- **Description:** Biography ID for the AIM site.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.

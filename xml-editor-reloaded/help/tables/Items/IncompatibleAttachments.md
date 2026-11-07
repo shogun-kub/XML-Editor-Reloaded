@@ -27,8 +27,8 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`](#incompatibleattachmentlistincompatibleattachmentincompatibleattachmentindex)
   - [`INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/itemIndex`](#incompatibleattachmentlistincompatibleattachmentitemindex)
+  - [`INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`](#incompatibleattachmentlistincompatibleattachmentincompatibleattachmentindex)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -49,27 +49,27 @@ updated: 2026-11-07
 
 ```
 INCOMPATIBLEATTACHMENTLIST
-└── INCOMPATIBLEATTACHMENT  one exclusion pair
-    ├── itemIndex              first attachment item ID
-    └── incompatibleattachmentIndex  excluded attachment item ID
+└── INCOMPATIBLEATTACHMENT
+    ├── itemIndex
+    └── incompatibleattachmentIndex
 ```
 
 ## Fields
-
-### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment that may not be mounted together with `itemIndex`.
-- **Values:** Item ID of the attachment that may not be mounted together with `itemIndex`.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** incompatible attachment table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of the attachment. The row declares that this attachment cannot be mounted together with the incompatible attachment.
 - **Values:** Item ID of the attachment.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** incompatible attachment table data; field metadata.
+- **Confidence:** `inferred`
+
+### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID of the attachment that may not be mounted together with `itemIndex`.
+- **Values:** Item ID of the attachment that may not be mounted together with `itemIndex`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** incompatible attachment table data; field metadata.
 - **Confidence:** `inferred`

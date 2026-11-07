@@ -28,9 +28,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`ATTACHMENTLIST/ATTACHMENT/APCost`](#attachmentlistattachmentapcost)
   - [`ATTACHMENTLIST/ATTACHMENT/attachmentIndex`](#attachmentlistattachmentattachmentindex)
   - [`ATTACHMENTLIST/ATTACHMENT/itemIndex`](#attachmentlistattachmentitemindex)
+  - [`ATTACHMENTLIST/ATTACHMENT/APCost`](#attachmentlistattachmentapcost)
   - [`ATTACHMENTLIST/ATTACHMENT/NASOnly`](#attachmentlistattachmentnasonly)
 - [Relations](#relations)
 - [Localization](#localization)
@@ -52,23 +52,14 @@ updated: 2026-11-07
 
 ```
 ATTACHMENTLIST
-└── ATTACHMENT              one attachment-to-item mapping
-    ├── attachmentIndex      attachment item ID
-    ├── itemIndex           host item ID
-    ├── APCost              attach/detach AP cost
-    └── NASOnly             NAS-only mapping flag
+└── ATTACHMENT
+    ├── attachmentIndex
+    ├── itemIndex
+    ├── APCost
+    └── NASOnly
 ```
 
 ## Fields
-
-### `ATTACHMENTLIST/ATTACHMENT/APCost`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item.
-- **Values:** AP cost; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `ATTACHMENTLIST/ATTACHMENT/attachmentIndex`
 
@@ -84,6 +75,15 @@ ATTACHMENTLIST
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of the host item (weapon, armour or other attachable item) that accepts the attachment.
 - **Values:** Item ID in [Items](Items.md); the host item must accept the attachment.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** attachment table data; field metadata.
+- **Confidence:** `inferred`
+
+### `ATTACHMENTLIST/ATTACHMENT/APCost`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item.
+- **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment table data; field metadata.
 - **Confidence:** `inferred`

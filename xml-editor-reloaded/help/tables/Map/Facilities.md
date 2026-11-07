@@ -56,10 +56,10 @@ document-driven table.
 
 ```
 SECTORFACILITIES
-└── FACILITY          one facility placement
-    ├── SectorGrid    sector such as B13
-    ├── FacilityType  index into FacilityTypes
-    └── ubHidden      0 always, 1 after exploration, 2 never
+└── FACILITY
+    ├── SectorGrid
+    ├── FacilityType
+    └── ubHidden
 ```
 
 The loader stores the record in `gFacilityLocations[sector][facilityType]`. The logical key is

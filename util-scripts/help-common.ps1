@@ -235,6 +235,51 @@ function Get-HelpHeadings {
     return $headings
 }
 
+function Get-HelpStructureLeaves {
+    param(
+        [Parameter(Mandatory)][AllowEmptyCollection()][AllowEmptyString()][string[]]$Lines,
+        [int]$Start = 0
+    )
+
+    $leaves = [System.Collections.Generic.List[string]]::new()
+    $inStructure = $false
+    $inFence = $false
+    for ($i = $Start; $i -lt $Lines.Count; $i++) {
+        $line = $Lines[$i]
+        if ($line -match '^##\s+Structure\s*$') {
+            $inStructure = $true
+            continue
+        }
+        if ($inStructure -and $line -match '^##\s+') {
+            break
+        }
+        if (-not $inStructure) {
+            continue
+        }
+        if ($line -match '^\s*```') {
+            if ($inFence) {
+                break
+            }
+            $inFence = $true
+            continue
+        }
+        if (-not $inFence) {
+            continue
+        }
+
+        $token = $line.Trim()
+        if ($token.Length -eq 0) {
+            continue
+        }
+        $token = $token -replace '^[├└│─\s]+', ''
+        $token = $token -replace '\s{2,}.*$', ''
+        if ($token.Length -gt 0) {
+            $leaves.Add($token)
+        }
+    }
+    return $leaves
+}
+
 function Get-HelpDocFields {
     param(
         [Parameter(Mandatory)][AllowEmptyCollection()][AllowEmptyString()][string[]]$Lines,

@@ -56,12 +56,12 @@ the runtime `Magazine[]` array. The row decides which weapon can load the item (
 
 ```
 MAGAZINELIST
-└── MAGAZINE          one ammo item
-    ├── uiIndex       table key / initial array index
-    ├── ubCalibre     caliber group, indexes AmmoStrings
-    ├── ubMagSize     capacity in rounds
-    ├── ubAmmoType    ammo type, indexes AmmoTypes
-    └── ubMagType     0 magazine, 1 bullets, 2 box, 3 crate
+└── MAGAZINE
+    ├── uiIndex
+    ├── ubCalibre
+    ├── ubMagSize
+    ├── ubAmmoType
+    └── ubMagType
 ```
 
 The loader writes each record to `Magazine[uiIndex]`. Records outside the array are ignored.

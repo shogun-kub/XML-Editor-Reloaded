@@ -26,15 +26,15 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`QARRAY/PROFILE/uiIndex`](#qarrayprofileuiindex)
   - [`QARRAY/PROFILE/Name`](#qarrayprofilename)
+  - [`QARRAY/PROFILE/QuoteExpHeadShotOnly`](#qarrayprofilequoteexpheadshotonly)
+  - [`QARRAY/PROFILE/QuoteExpTeamSpecific`](#qarrayprofilequoteexpteamspecific)
   - [`QARRAY/PROFILE/QuoteExpGenderCode`](#qarrayprofilequoteexpgendercode)
   - [`QARRAY/PROFILE/QuoteExpGotGunOrUsedGun`](#qarrayprofilequoteexpgotgunorusedgun)
-  - [`QARRAY/PROFILE/QuoteExpHeadShotOnly`](#qarrayprofilequoteexpheadshotonly)
   - [`QARRAY/PROFILE/QuoteExpPassingDislike`](#qarrayprofilequoteexppassingdislike)
-  - [`QARRAY/PROFILE/QuoteExpTeamSpecific`](#qarrayprofilequoteexpteamspecific)
-  - [`QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`](#qarrayprofilequoteexpwitnessdeidrannadeath)
   - [`QARRAY/PROFILE/QuoteExpWitnessQueenBugDeath`](#qarrayprofilequoteexpwitnessqueenbugdeath)
-  - [`QARRAY/PROFILE/uiIndex`](#qarrayprofileuiindex)
+  - [`QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`](#qarrayprofilequoteexpwitnessdeidrannadeath)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -55,13 +55,28 @@ updated: 2026-11-07
 
 ```
 QARRAY
-└── PROFILE                one quote set
-    ├── uiIndex             profile identity
-    ├── Name                profile name
-    └── QuoteExp*           quote-event indices
+└── PROFILE
+    ├── uiIndex
+    ├── Name
+    ├── QuoteExpHeadShotOnly
+    ├── QuoteExpTeamSpecific
+    ├── QuoteExpGenderCode
+    ├── QuoteExpGotGunOrUsedGun
+    ├── QuoteExpPassingDislike
+    ├── QuoteExpWitnessQueenBugDeath
+    └── QuoteExpWitnessDeidrannaDeath
 ```
 
 ## Fields
+
+### `QARRAY/PROFILE/uiIndex`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Profile identity for this quote row.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc quote table data; item/profile metadata.
+- **Confidence:** `inferred`
 
 ### `QARRAY/PROFILE/Name`
 
@@ -69,6 +84,24 @@ QARRAY
 - **Description:** Profile name used by the quote table.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
+- **Source:** merc quote table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `QARRAY/PROFILE/QuoteExpHeadShotOnly`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quote event index for a head-shot-only situation.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc quote table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `QARRAY/PROFILE/QuoteExpTeamSpecific`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quote event index for team-specific dialogue.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
 - **Confidence:** `inferred`
 
@@ -90,37 +123,10 @@ QARRAY
 - **Source:** merc quote table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `QARRAY/PROFILE/QuoteExpHeadShotOnly`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for a head-shot-only situation.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
-
 ### `QARRAY/PROFILE/QuoteExpPassingDislike`
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Quote event index for passing a disliked character.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `QARRAY/PROFILE/QuoteExpTeamSpecific`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for team-specific dialogue.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quote event index for witnessing Deidranna’s death.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.
@@ -135,10 +141,10 @@ QARRAY
 - **Source:** merc quote table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `QARRAY/PROFILE/uiIndex`
+### `QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity for this quote row.
+- **Description:** Quote event index for witnessing Deidranna’s death.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc quote table data; item/profile metadata.

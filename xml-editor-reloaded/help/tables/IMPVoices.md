@@ -26,9 +26,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`IMPVOICELIST/VOICE/bSex`](#impvoicelistvoicebsex)
-  - [`IMPVOICELIST/VOICE/szVoiceSetName`](#impvoicelistvoiceszvoicesetname)
   - [`IMPVOICELIST/VOICE/voiceset`](#impvoicelistvoicevoiceset)
+  - [`IMPVOICELIST/VOICE/szVoiceSetName`](#impvoicelistvoiceszvoicesetname)
+  - [`IMPVOICELIST/VOICE/bSex`](#impvoicelistvoicebsex)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -49,18 +49,18 @@ updated: 2026-11-07
 
 ```
 IMPVOICELIST
-└── VOICE                   one voice set
-    ├── bSex                intended sex
-    ├── szVoiceSetName      display name
-    └── voiceset            voice-set ID
+└── VOICE
+    ├── voiceset
+    ├── szVoiceSetName
+    └── bSex
 ```
 
 ## Fields
 
-### `IMPVOICELIST/VOICE/bSex`
+### `IMPVOICELIST/VOICE/voiceset`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sex for which the voice set is intended.
+- **Description:** Voice-set ID used by the IMP voice selection.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp voice table data; item/profile metadata.
@@ -75,10 +75,10 @@ IMPVOICELIST
 - **Source:** imp voice table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `IMPVOICELIST/VOICE/voiceset`
+### `IMPVOICELIST/VOICE/bSex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Voice-set ID used by the IMP voice selection.
+- **Description:** Sex for which the voice set is intended.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp voice table data; item/profile metadata.

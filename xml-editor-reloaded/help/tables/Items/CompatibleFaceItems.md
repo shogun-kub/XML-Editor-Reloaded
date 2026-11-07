@@ -49,9 +49,9 @@ updated: 2026-11-07
 
 ```
 COMPATIBLEFACEITEMLIST
-└── COMPATIBLEFACEITEM      one compatible face-item pair
-    ├── compatiblefaceitemIndex  first face item ID
-    └── itemIndex                second face item ID
+└── COMPATIBLEFACEITEM
+    ├── compatiblefaceitemIndex
+    └── itemIndex
 ```
 
 ## Fields

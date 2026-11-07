@@ -26,18 +26,18 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`IMPPORTRAITSLIST/IMP/bSex`](#impportraitslistimpbsex)
-  - [`IMPPORTRAITSLIST/IMP/DefaultBigBody`](#impportraitslistimpdefaultbigbody)
-  - [`IMPPORTRAITSLIST/IMP/DefaultHair`](#impportraitslistimpdefaulthair)
-  - [`IMPPORTRAITSLIST/IMP/DefaultPants`](#impportraitslistimpdefaultpants)
-  - [`IMPPORTRAITSLIST/IMP/DefaultShirt`](#impportraitslistimpdefaultshirt)
-  - [`IMPPORTRAITSLIST/IMP/DefaultSkin`](#impportraitslistimpdefaultskin)
-  - [`IMPPORTRAITSLIST/IMP/PortraitId`](#impportraitslistimpportraitid)
   - [`IMPPORTRAITSLIST/IMP/uiIndex`](#impportraitslistimpuiindex)
+  - [`IMPPORTRAITSLIST/IMP/PortraitId`](#impportraitslistimpportraitid)
+  - [`IMPPORTRAITSLIST/IMP/bSex`](#impportraitslistimpbsex)
   - [`IMPPORTRAITSLIST/IMP/usEyesX`](#impportraitslistimpuseyesx)
   - [`IMPPORTRAITSLIST/IMP/usEyesY`](#impportraitslistimpuseyesy)
   - [`IMPPORTRAITSLIST/IMP/usMouthX`](#impportraitslistimpusmouthx)
   - [`IMPPORTRAITSLIST/IMP/usMouthY`](#impportraitslistimpusmouthy)
+  - [`IMPPORTRAITSLIST/IMP/DefaultSkin`](#impportraitslistimpdefaultskin)
+  - [`IMPPORTRAITSLIST/IMP/DefaultHair`](#impportraitslistimpdefaulthair)
+  - [`IMPPORTRAITSLIST/IMP/DefaultShirt`](#impportraitslistimpdefaultshirt)
+  - [`IMPPORTRAITSLIST/IMP/DefaultPants`](#impportraitslistimpdefaultpants)
+  - [`IMPPORTRAITSLIST/IMP/DefaultBigBody`](#impportraitslistimpdefaultbigbody)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -58,64 +58,27 @@ updated: 2026-11-07
 
 ```
 IMPPORTRAITSLIST
-└── IMP                     one IMP portrait
-    ├── uiIndex             row identity
-    ├── PortraitId          portrait ID
-    ├── Default*            default palette values
-    └── Eyes/Mouth X/Y      animation coordinates
+└── IMP
+    ├── uiIndex
+    ├── PortraitId
+    ├── bSex
+    ├── usEyesX
+    ├── usEyesY
+    ├── usMouthX
+    ├── usMouthY
+    ├── DefaultSkin
+    ├── DefaultHair
+    ├── DefaultShirt
+    ├── DefaultPants
+    └── DefaultBigBody
 ```
 
 ## Fields
 
-### `IMPPORTRAITSLIST/IMP/bSex`
+### `IMPPORTRAITSLIST/IMP/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sex of the portrait.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `IMPPORTRAITSLIST/IMP/DefaultBigBody`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Default big-body type.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `IMPPORTRAITSLIST/IMP/DefaultHair`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Default hair palette index.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `IMPPORTRAITSLIST/IMP/DefaultPants`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Default pants palette index.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `IMPPORTRAITSLIST/IMP/DefaultShirt`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Default shirt palette index.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `IMPPORTRAITSLIST/IMP/DefaultSkin`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Default skin palette index.
+- **Description:** IMP portrait row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -130,10 +93,10 @@ IMPPORTRAITSLIST
 - **Source:** imp portrait table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `IMPPORTRAITSLIST/IMP/uiIndex`
+### `IMPPORTRAITSLIST/IMP/bSex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** IMP portrait row identity.
+- **Description:** Sex of the portrait.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -170,6 +133,51 @@ IMPPORTRAITSLIST
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Y coordinate of the mouth.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** imp portrait table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `IMPPORTRAITSLIST/IMP/DefaultSkin`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Default skin palette index.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** imp portrait table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `IMPPORTRAITSLIST/IMP/DefaultHair`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Default hair palette index.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** imp portrait table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `IMPPORTRAITSLIST/IMP/DefaultShirt`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Default shirt palette index.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** imp portrait table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `IMPPORTRAITSLIST/IMP/DefaultPants`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Default pants palette index.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** imp portrait table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `IMPPORTRAITSLIST/IMP/DefaultBigBody`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Default big-body type.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.

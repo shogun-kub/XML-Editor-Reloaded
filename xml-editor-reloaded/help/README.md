@@ -103,6 +103,19 @@ The body has these sections, in this order:
 10. `## Sources`
 11. `## Open questions`
 
+### Structure and field order
+
+`## Structure` is the canonical field order for the document. It must contain a fenced
+hierarchy rooted at the table root and record, list every documented field exactly once, and
+use the same depth-first order as the `## Fields` blocks.
+
+The key field is always first in both places. When the key is composite, list its parts in
+front-matter order before every non-key field. A table without a stable key uses `key: none`
+and documents that fact in `## Structure`; it has no key field to move.
+
+`help-check` compares the tree's field leaves with the `## Fields` order and rejects a missing,
+duplicated or reordered field, as well as a key that is not first.
+
 A field is a level-3 heading with its full path from the document root, followed by a list:
 
 ```markdown

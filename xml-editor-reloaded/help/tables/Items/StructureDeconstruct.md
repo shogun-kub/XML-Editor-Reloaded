@@ -27,13 +27,13 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`STRUCTURESLIST/STRUCTURE/allowedtile`](#structuresliststructureallowedtile)
-  - [`STRUCTURESLIST/STRUCTURE/dCreationCost`](#structuresliststructuredcreationcost)
-  - [`STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`](#structuresliststructuresztilesetdisplayname)
-  - [`STRUCTURESLIST/STRUCTURE/szTileSetName`](#structuresliststructuresztilesetname)
-  - [`STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`](#structuresliststructureuscreateditemstatus)
   - [`STRUCTURESLIST/STRUCTURE/usDeconstructItem`](#structuresliststructureusdeconstructitem)
   - [`STRUCTURESLIST/STRUCTURE/usItemToCreate`](#structuresliststructureusitemtocreate)
+  - [`STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`](#structuresliststructureuscreateditemstatus)
+  - [`STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`](#structuresliststructuresztilesetdisplayname)
+  - [`STRUCTURESLIST/STRUCTURE/szTileSetName`](#structuresliststructuresztilesetname)
+  - [`STRUCTURESLIST/STRUCTURE/dCreationCost`](#structuresliststructuredcreationcost)
+  - [`STRUCTURESLIST/STRUCTURE/allowedtile`](#structuresliststructureallowedtile)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -54,29 +54,44 @@ updated: 2026-11-07
 
 ```
 STRUCTURESLIST
-└── STRUCTURE               one deconstructable structure
-    ├── usDeconstructItem      tool/item ID
-    ├── usItemToCreate         created item ID
-    ├── szTileSetName          STI tileset
-    └── allowedtile            repeated allowed tile indices
+└── STRUCTURE
+    ├── usDeconstructItem
+    ├── usItemToCreate
+    ├── usCreatedItemStatus
+    ├── szTileSetDisplayName
+    ├── szTileSetName
+    ├── dCreationCost
+    └── allowedtile
 ```
+
+`STRUCTURESLIST` has no stable per-row key; a structure row is identified by its tile-set
+fields and document order.
 
 ## Fields
 
-### `STRUCTURESLIST/STRUCTURE/allowedtile`
+### `STRUCTURESLIST/STRUCTURE/usDeconstructItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index on which deconstruction is allowed. The element may repeat.
-- **Values:** Allowed tile index; the element may repeat.
+- **Description:** Item ID used to deconstruct the structure.
+- **Values:** Item ID used to deconstruct the structure.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
 - **Confidence:** `inferred`
 
-### `STRUCTURESLIST/STRUCTURE/dCreationCost`
+### `STRUCTURESLIST/STRUCTURE/usItemToCreate`
 
-- **Type:** `Decimal` (`FLOAT`)
-- **Description:** Deconstruction cost. The unit is defined by the construction system; it is a decimal value.
-- **Values:** Decimal deconstruction cost.
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID created when the structure is deconstructed.
+- **Values:** Item ID created by deconstruction.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** structure deconstruction table data; field metadata.
+- **Confidence:** `inferred`
+
+### `STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Status of the created item. It uses the same status units as item condition.
+- **Values:** Status of the created item, in the same status units as item condition.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
 - **Confidence:** `inferred`
@@ -99,29 +114,20 @@ STRUCTURESLIST
 - **Source:** structure deconstruction table data; field metadata.
 - **Confidence:** `inferred`
 
-### `STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`
+### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Status of the created item. It uses the same status units as item condition.
-- **Values:** Status of the created item, in the same status units as item condition.
+- **Type:** `Decimal` (`FLOAT`)
+- **Description:** Deconstruction cost. The unit is defined by the construction system; it is a decimal value.
+- **Values:** Decimal deconstruction cost.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
 - **Confidence:** `inferred`
 
-### `STRUCTURESLIST/STRUCTURE/usDeconstructItem`
+### `STRUCTURESLIST/STRUCTURE/allowedtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID used to deconstruct the structure.
-- **Values:** Item ID used to deconstruct the structure.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
-
-### `STRUCTURESLIST/STRUCTURE/usItemToCreate`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID created when the structure is deconstructed.
-- **Values:** Item ID created by deconstruction.
+- **Description:** Tile index on which deconstruction is allowed. The element may repeat.
+- **Values:** Allowed tile index; the element may repeat.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
 - **Confidence:** `inferred`

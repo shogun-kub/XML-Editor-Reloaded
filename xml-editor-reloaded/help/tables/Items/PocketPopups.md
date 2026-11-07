@@ -27,14 +27,14 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`POCKETPOPUPS/POCKET/generator/id`](#pocketpopupspocketgeneratorid)
   - [`POCKETPOPUPS/POCKET/pIndex`](#pocketpopupspocketpindex)
   - [`POCKETPOPUPS/POCKET/pName`](#pocketpopupspocketpname)
   - [`POCKETPOPUPS/POCKET/popup/generator/id`](#pocketpopupspocketpopupgeneratorid)
-  - [`POCKETPOPUPS/POCKET/popup/subMenu/generator/id`](#pocketpopupspocketpopupsubmenugeneratorid)
   - [`POCKETPOPUPS/POCKET/popup/subMenu/name`](#pocketpopupspocketpopupsubmenuname)
-  - [`POCKETPOPUPS/POCKET/popup/subMenu/subMenu/generator/id`](#pocketpopupspocketpopupsubmenusubmenugeneratorid)
+  - [`POCKETPOPUPS/POCKET/popup/subMenu/generator/id`](#pocketpopupspocketpopupsubmenugeneratorid)
   - [`POCKETPOPUPS/POCKET/popup/subMenu/subMenu/name`](#pocketpopupspocketpopupsubmenusubmenuname)
+  - [`POCKETPOPUPS/POCKET/popup/subMenu/subMenu/generator/id`](#pocketpopupspocketpopupsubmenusubmenugeneratorid)
+  - [`POCKETPOPUPS/POCKET/generator/id`](#pocketpopupspocketgeneratorid)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -55,23 +55,25 @@ updated: 2026-11-07
 
 ```
 POCKETPOPUPS
-└── POCKET                  one pocket popup
-    ├── pIndex              pocket identity
-    ├── pName               display name
-    └── popup/generator     popup and submenu generators
+└── POCKET
+    ├── pIndex
+    ├── pName
+    ├── popup
+    │   ├── generator
+    │   │   └── id
+    │   └── subMenu
+    │       ├── name
+    │       ├── generator
+    │       │   └── id
+    │       └── subMenu
+    │           ├── name
+    │           └── generator
+    │               └── id
+    └── generator
+        └── id
 ```
 
 ## Fields
-
-### `POCKETPOPUPS/POCKET/generator/id`
-
-- **Type:** `String` (`String`)
-- **Description:** Generator used when the pocket has a direct generator instead of a `popup` wrapper.
-- **Only used with:** NIV.
-- **Values:** Generator key used when the popup is attached directly to the pocket without a `popup` wrapper.
-- **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
 
 ### `POCKETPOPUPS/POCKET/pIndex`
 
@@ -103,6 +105,16 @@ POCKETPOPUPS
 - **Source:** pocket popup table data; field metadata.
 - **Confidence:** `inferred`
 
+### `POCKETPOPUPS/POCKET/popup/subMenu/name`
+
+- **Type:** `String` (`String`)
+- **Description:** Label of a submenu in the popup.
+- **Only used with:** NIV.
+- **Values:** Display label of a submenu inside the pocket popup.
+- **Default:** empty string when omitted.
+- **Source:** pocket popup table data; field metadata.
+- **Confidence:** `inferred`
+
 ### `POCKETPOPUPS/POCKET/popup/subMenu/generator/id`
 
 - **Type:** `String` (`String`)
@@ -113,12 +125,12 @@ POCKETPOPUPS
 - **Source:** pocket popup table data; field metadata.
 - **Confidence:** `inferred`
 
-### `POCKETPOPUPS/POCKET/popup/subMenu/name`
+### `POCKETPOPUPS/POCKET/popup/subMenu/subMenu/name`
 
 - **Type:** `String` (`String`)
-- **Description:** Label of a submenu in the popup.
+- **Description:** Label of a nested submenu.
 - **Only used with:** NIV.
-- **Values:** Display label of a submenu inside the pocket popup.
+- **Values:** Display label of a nested submenu.
 - **Default:** empty string when omitted.
 - **Source:** pocket popup table data; field metadata.
 - **Confidence:** `inferred`
@@ -133,12 +145,12 @@ POCKETPOPUPS
 - **Source:** pocket popup table data; field metadata.
 - **Confidence:** `inferred`
 
-### `POCKETPOPUPS/POCKET/popup/subMenu/subMenu/name`
+### `POCKETPOPUPS/POCKET/generator/id`
 
 - **Type:** `String` (`String`)
-- **Description:** Label of a nested submenu.
+- **Description:** Generator used when the pocket has a direct generator instead of a `popup` wrapper.
 - **Only used with:** NIV.
-- **Values:** Display label of a nested submenu.
+- **Values:** Generator key used when the popup is attached directly to the pocket without a `popup` wrapper.
 - **Default:** empty string when omitted.
 - **Source:** pocket popup table data; field metadata.
 - **Confidence:** `inferred`

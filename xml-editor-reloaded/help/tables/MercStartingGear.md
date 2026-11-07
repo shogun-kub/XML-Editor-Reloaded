@@ -27,72 +27,72 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`](#mercgearlistmercgeargearkitlbpack)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lBPackStatus`](#mercgearlistmercgeargearkitlbpackstatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`](#mercgearlistmercgeargearkitlcpack)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lCPackStatus`](#mercgearlistmercgeargearkitlcpackstatus)
+  - [`MERCGEARLIST/MERCGEAR/mIndex`](#mercgearlistmercgearmindex)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`](#mercgearlistmercgeargearkitmgearkitname)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`](#mercgearlistmercgeargearkitmpricemod)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`](#mercgearlistmercgeargearkitmabsoluteprice)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`](#mercgearlistmercgeargearkitmhelmet)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetDrop`](#mercgearlistmercgeargearkitmhelmetdrop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetStatus`](#mercgearlistmercgeargearkitmhelmetstatus)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVest`](#mercgearlistmercgeargearkitmvest)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVestDrop`](#mercgearlistmercgeargearkitmvestdrop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVestStatus`](#mercgearlistmercgeargearkitmveststatus)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`](#mercgearlistmercgeargearkitmleg)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLegDrop`](#mercgearlistmercgeargearkitmlegdrop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLegStatus`](#mercgearlistmercgeargearkitmlegstatus)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`](#mercgearlistmercgeargearkitmweapon)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponDrop`](#mercgearlistmercgeargearkitmweapondrop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponStatus`](#mercgearlistmercgeargearkitmweaponstatus)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`](#mercgearlistmercgeargearkitmbig0)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Status`](#mercgearlistmercgeargearkitmbig0status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Quantity`](#mercgearlistmercgeargearkitmbig0quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Drop`](#mercgearlistmercgeargearkitmbig0drop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`](#mercgearlistmercgeargearkitmbig1)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Status`](#mercgearlistmercgeargearkitmbig1status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Quantity`](#mercgearlistmercgeargearkitmbig1quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Drop`](#mercgearlistmercgeargearkitmbig1drop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`](#mercgearlistmercgeargearkitmbig2)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Status`](#mercgearlistmercgeargearkitmbig2status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Quantity`](#mercgearlistmercgeargearkitmbig2quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Drop`](#mercgearlistmercgeargearkitmbig2drop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`](#mercgearlistmercgeargearkitmbig3)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Status`](#mercgearlistmercgeargearkitmbig3status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Quantity`](#mercgearlistmercgeargearkitmbig3quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Drop`](#mercgearlistmercgeargearkitmbig3drop)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`](#mercgearlistmercgeargearkitmsmall0)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Status`](#mercgearlistmercgeargearkitmsmall0status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Quantity`](#mercgearlistmercgeargearkitmsmall0quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`](#mercgearlistmercgeargearkitmsmall1)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Status`](#mercgearlistmercgeargearkitmsmall1status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Quantity`](#mercgearlistmercgeargearkitmsmall1quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`](#mercgearlistmercgeargearkitmsmall2)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Status`](#mercgearlistmercgeargearkitmsmall2status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Quantity`](#mercgearlistmercgeargearkitmsmall2quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`](#mercgearlistmercgeargearkitmsmall3)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Status`](#mercgearlistmercgeargearkitmsmall3status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Quantity`](#mercgearlistmercgeargearkitmsmall3quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`](#mercgearlistmercgeargearkitmsmall4)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Status`](#mercgearlistmercgeargearkitmsmall4status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Quantity`](#mercgearlistmercgeargearkitmsmall4quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`](#mercgearlistmercgeargearkitmsmall5)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Status`](#mercgearlistmercgeargearkitmsmall5status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Quantity`](#mercgearlistmercgeargearkitmsmall5quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`](#mercgearlistmercgeargearkitmsmall6)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Status`](#mercgearlistmercgeargearkitmsmall6status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Quantity`](#mercgearlistmercgeargearkitmsmall6quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`](#mercgearlistmercgeargearkitmsmall7)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Status`](#mercgearlistmercgeargearkitmsmall7status)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Quantity`](#mercgearlistmercgeargearkitmsmall7quantity)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lVest`](#mercgearlistmercgeargearkitlvest)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lVestStatus`](#mercgearlistmercgeargearkitlveststatus)
   - [`MERCGEARLIST/MERCGEAR/GEARKIT/lLeftThigh`](#mercgearlistmercgeargearkitlleftthigh)
   - [`MERCGEARLIST/MERCGEAR/GEARKIT/lLeftThighStatus`](#mercgearlistmercgeargearkitlleftthighstatus)
   - [`MERCGEARLIST/MERCGEAR/GEARKIT/lRightThigh`](#mercgearlistmercgeargearkitlrightthigh)
   - [`MERCGEARLIST/MERCGEAR/GEARKIT/lRightThighStatus`](#mercgearlistmercgeargearkitlrightthighstatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lVest`](#mercgearlistmercgeargearkitlvest)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lVestStatus`](#mercgearlistmercgeargearkitlveststatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`](#mercgearlistmercgeargearkitmabsoluteprice)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`](#mercgearlistmercgeargearkitmbig0)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Drop`](#mercgearlistmercgeargearkitmbig0drop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Quantity`](#mercgearlistmercgeargearkitmbig0quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Status`](#mercgearlistmercgeargearkitmbig0status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`](#mercgearlistmercgeargearkitmbig1)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Drop`](#mercgearlistmercgeargearkitmbig1drop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Quantity`](#mercgearlistmercgeargearkitmbig1quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Status`](#mercgearlistmercgeargearkitmbig1status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`](#mercgearlistmercgeargearkitmbig2)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Drop`](#mercgearlistmercgeargearkitmbig2drop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Quantity`](#mercgearlistmercgeargearkitmbig2quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Status`](#mercgearlistmercgeargearkitmbig2status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`](#mercgearlistmercgeargearkitmbig3)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Drop`](#mercgearlistmercgeargearkitmbig3drop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Quantity`](#mercgearlistmercgeargearkitmbig3quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Status`](#mercgearlistmercgeargearkitmbig3status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`](#mercgearlistmercgeargearkitmgearkitname)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`](#mercgearlistmercgeargearkitmhelmet)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetDrop`](#mercgearlistmercgeargearkitmhelmetdrop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetStatus`](#mercgearlistmercgeargearkitmhelmetstatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`](#mercgearlistmercgeargearkitmleg)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLegDrop`](#mercgearlistmercgeargearkitmlegdrop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mLegStatus`](#mercgearlistmercgeargearkitmlegstatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`](#mercgearlistmercgeargearkitmpricemod)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`](#mercgearlistmercgeargearkitmsmall0)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Quantity`](#mercgearlistmercgeargearkitmsmall0quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Status`](#mercgearlistmercgeargearkitmsmall0status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`](#mercgearlistmercgeargearkitmsmall1)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Quantity`](#mercgearlistmercgeargearkitmsmall1quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Status`](#mercgearlistmercgeargearkitmsmall1status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`](#mercgearlistmercgeargearkitmsmall2)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Quantity`](#mercgearlistmercgeargearkitmsmall2quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Status`](#mercgearlistmercgeargearkitmsmall2status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`](#mercgearlistmercgeargearkitmsmall3)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Quantity`](#mercgearlistmercgeargearkitmsmall3quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Status`](#mercgearlistmercgeargearkitmsmall3status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`](#mercgearlistmercgeargearkitmsmall4)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Quantity`](#mercgearlistmercgeargearkitmsmall4quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Status`](#mercgearlistmercgeargearkitmsmall4status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`](#mercgearlistmercgeargearkitmsmall5)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Quantity`](#mercgearlistmercgeargearkitmsmall5quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Status`](#mercgearlistmercgeargearkitmsmall5status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`](#mercgearlistmercgeargearkitmsmall6)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Quantity`](#mercgearlistmercgeargearkitmsmall6quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Status`](#mercgearlistmercgeargearkitmsmall6status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`](#mercgearlistmercgeargearkitmsmall7)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Quantity`](#mercgearlistmercgeargearkitmsmall7quantity)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Status`](#mercgearlistmercgeargearkitmsmall7status)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVest`](#mercgearlistmercgeargearkitmvest)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVestDrop`](#mercgearlistmercgeargearkitmvestdrop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mVestStatus`](#mercgearlistmercgeargearkitmveststatus)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`](#mercgearlistmercgeargearkitmweapon)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponDrop`](#mercgearlistmercgeargearkitmweapondrop)
-  - [`MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponStatus`](#mercgearlistmercgeargearkitmweaponstatus)
-  - [`MERCGEARLIST/MERCGEAR/mIndex`](#mercgearlistmercgearmindex)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`](#mercgearlistmercgeargearkitlcpack)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lCPackStatus`](#mercgearlistmercgeargearkitlcpackstatus)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`](#mercgearlistmercgeargearkitlbpack)
+  - [`MERCGEARLIST/MERCGEAR/GEARKIT/lBPackStatus`](#mercgearlistmercgeargearkitlbpackstatus)
   - [`MERCGEARLIST/MERCGEAR/mName`](#mercgearlistmercgearmname)
 - [Relations](#relations)
 - [Localization](#localization)
@@ -114,51 +114,597 @@ updated: 2026-11-07
 
 ```
 MERCGEARLIST
-└── MERCGEAR              one mercenary
-    ├── mIndex              profile ID
-    ├── mName               name
-    └── GEARKIT             repeated starting kits
-        ├── mGearKitName    kit name
-        ├── m*              OIV slots
-        └── l*              NIV LBE slots
+└── MERCGEAR
+    ├── mIndex
+    ├── GEARKIT
+    │   ├── mGearKitName
+    │   ├── mPriceMod
+    │   ├── mAbsolutePrice
+    │   ├── mHelmet
+    │   ├── mHelmetDrop
+    │   ├── mHelmetStatus
+    │   ├── mVest
+    │   ├── mVestDrop
+    │   ├── mVestStatus
+    │   ├── mLeg
+    │   ├── mLegDrop
+    │   ├── mLegStatus
+    │   ├── mWeapon
+    │   ├── mWeaponDrop
+    │   ├── mWeaponStatus
+    │   ├── mBig0
+    │   ├── mBig0Status
+    │   ├── mBig0Quantity
+    │   ├── mBig0Drop
+    │   ├── mBig1
+    │   ├── mBig1Status
+    │   ├── mBig1Quantity
+    │   ├── mBig1Drop
+    │   ├── mBig2
+    │   ├── mBig2Status
+    │   ├── mBig2Quantity
+    │   ├── mBig2Drop
+    │   ├── mBig3
+    │   ├── mBig3Status
+    │   ├── mBig3Quantity
+    │   ├── mBig3Drop
+    │   ├── mSmall0
+    │   ├── mSmall0Status
+    │   ├── mSmall0Quantity
+    │   ├── mSmall1
+    │   ├── mSmall1Status
+    │   ├── mSmall1Quantity
+    │   ├── mSmall2
+    │   ├── mSmall2Status
+    │   ├── mSmall2Quantity
+    │   ├── mSmall3
+    │   ├── mSmall3Status
+    │   ├── mSmall3Quantity
+    │   ├── mSmall4
+    │   ├── mSmall4Status
+    │   ├── mSmall4Quantity
+    │   ├── mSmall5
+    │   ├── mSmall5Status
+    │   ├── mSmall5Quantity
+    │   ├── mSmall6
+    │   ├── mSmall6Status
+    │   ├── mSmall6Quantity
+    │   ├── mSmall7
+    │   ├── mSmall7Status
+    │   ├── mSmall7Quantity
+    │   ├── lVest
+    │   ├── lVestStatus
+    │   ├── lLeftThigh
+    │   ├── lLeftThighStatus
+    │   ├── lRightThigh
+    │   ├── lRightThighStatus
+    │   ├── lCPack
+    │   ├── lCPackStatus
+    │   ├── lBPack
+    │   └── lBPackStatus
+    └── mName
 ```
 
 ## Fields
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`
+### `MERCGEARLIST/MERCGEAR/mIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV backpack slot.
+- **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md).
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`
+
+- **Type:** `String` (`String`)
+- **Description:** Name of the starting-gear kit.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Price modifier applied to the kit.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Absolute kit price; `-1` leaves the price unset.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID of the starting helmet.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetDrop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop flag for the helmet.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetStatus`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Condition/status of the helmet.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mVest`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID of the starting vest.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestDrop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop flag for the vest.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestStatus`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Condition/status of the vest.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID of the starting leggings.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegDrop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop flag for the leggings.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegStatus`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Condition/status of the leggings.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID of the starting weapon.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponDrop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop flag for the weapon.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponStatus`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Condition/status of the weapon.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV big slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV big slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV big slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Drop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop value for OIV big slot 0.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV big slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV big slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV big slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Drop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop value for OIV big slot 1.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV big slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV big slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV big slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Drop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop value for OIV big slot 2.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV big slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV big slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV big slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Drop`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Drop value for OIV big slot 3.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 0.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 1.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 2.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 3.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 4.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 4.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 4.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 5.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 5.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 5.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 6.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 6.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 6.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID in OIV small slot 7.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Status`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Status value for OIV small slot 7.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Quantity`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Quantity value for OIV small slot 7.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc starting gear table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lVest`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Item ID of the NIV vest slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPackStatus`
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lVestStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV backpack item.
-- **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV combat-pack slot.
-- **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPackStatus`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV combat-pack item.
+- **Description:** Condition/status of the NIV vest slot item.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -205,525 +751,41 @@ MERCGEARLIST
 - **Source:** merc starting gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lVest`
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV vest slot.
+- **Description:** Item ID of the NIV combat-pack slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/lVestStatus`
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPackStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV vest slot item.
+- **Description:** Condition/status of the NIV combat-pack item.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Absolute kit price; `-1` leaves the price unset.
+- **Description:** Item ID of the NIV backpack slot.
+- **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`
+### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPackStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Drop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 0.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Drop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 1.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Drop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 2.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Drop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 3.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`
-
-- **Type:** `String` (`String`)
-- **Description:** Name of the starting-gear kit.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting helmet.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetDrop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the helmet.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetStatus`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the helmet.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting leggings.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegDrop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the leggings.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegStatus`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the leggings.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Price modifier applied to the kit.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 4.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 4.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 4.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 5.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 5.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 5.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 6.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 6.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 6.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 7.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Quantity`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 7.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Status`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 7.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mVest`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting vest.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestDrop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the vest.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestStatus`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the vest.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting weapon.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponDrop`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the weapon.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponStatus`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the weapon.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERCGEARLIST/MERCGEAR/mIndex`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md).
+- **Description:** Condition/status of the NIV backpack item.
+- **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.

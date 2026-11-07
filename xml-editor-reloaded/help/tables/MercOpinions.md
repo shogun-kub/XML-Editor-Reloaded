@@ -26,9 +26,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`MERCOPINIONS/OPINION/AnOpinion`](#mercopinionsopinionanopinion)
   - [`MERCOPINIONS/OPINION/uiIndex`](#mercopinionsopinionuiindex)
   - [`MERCOPINIONS/OPINION/zNickname`](#mercopinionsopinionznickname)
+  - [`MERCOPINIONS/OPINION/AnOpinion`](#mercopinionsopinionanopinion)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -49,22 +49,13 @@ updated: 2026-11-07
 
 ```
 MERCOPINIONS
-└── OPINION                one opinion row
-    ├── uiIndex             profile identity
-    ├── zNickname           nickname
-    └── AnOpinion           opinion text
+└── OPINION
+    ├── uiIndex
+    ├── zNickname
+    └── AnOpinion
 ```
 
 ## Fields
-
-### `MERCOPINIONS/OPINION/AnOpinion`
-
-- **Type:** `String` (`String`)
-- **Description:** Opinion text for the profile. It may contain several lines.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** merc opinion table data; item/profile metadata.
-- **Confidence:** `inferred`
 
 ### `MERCOPINIONS/OPINION/uiIndex`
 
@@ -79,6 +70,15 @@ MERCOPINIONS
 
 - **Type:** `String` (`String`)
 - **Description:** Nickname of the profile.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** merc opinion table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERCOPINIONS/OPINION/AnOpinion`
+
+- **Type:** `String` (`String`)
+- **Description:** Opinion text for the profile. It may contain several lines.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
 - **Source:** merc opinion table data; item/profile metadata.

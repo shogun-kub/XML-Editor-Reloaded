@@ -1,5 +1,5 @@
 # Validates help documents against the XML table inventory.
-# Reports coverage, checks front matter and field blocks, validates links,
+# Reports coverage, checks front matter, field blocks and structure order, validates links,
 # and (with -Write) rebuilds per-document Contents, INDEX.md and COVERAGE.md.
 # Read-only with respect to game data; only help/** is written.
 
@@ -115,6 +115,39 @@ foreach ($file in $docFiles) {
     $fieldPaths = @($fields | ForEach-Object { $_.Path })
     if (($fieldPaths | Select-Object -Unique).Count -ne $fieldPaths.Count) {
         $errors.Add("${relative}: duplicate field path in one document")
+    }
+
+    $fieldLeaves = @($fieldPaths | ForEach-Object { ($_ -split '/')[-1] })
+    $keyText = if ($data.ContainsKey('key')) { [string]$data['key'] } else { '' }
+    $keyNames = @()
+    if ($keyText -and $keyText -notin @('none', 'unknown')) {
+        $keyNames = @($keyText -split '\s*\+\s*' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    }
+    if ($keyNames.Count -gt 0) {
+        for ($i = 0; $i -lt $keyNames.Count; $i++) {
+            if ($i -ge $fieldLeaves.Count -or $fieldLeaves[$i] -ne $keyNames[$i]) {
+                $errors.Add("${relative}: key field '$($keyNames[$i])' must be first in ## Fields (found '$($fieldLeaves[$i])')")
+                break
+            }
+        }
+    }
+
+    $structureLeaves = Get-HelpStructureLeaves -Lines $frontMatter.Lines -Start $frontMatter.BodyStart
+    $fieldLeafSet = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    foreach ($leaf in $fieldLeaves) {
+        [void]$fieldLeafSet.Add($leaf)
+    }
+    $structureFields = @($structureLeaves | Where-Object { $fieldLeafSet.Contains($_) })
+    if ($structureFields.Count -ne $fieldLeaves.Count) {
+        $errors.Add("${relative}: ## Structure must list every documented field exactly once (found $($structureFields.Count), expected $($fieldLeaves.Count))")
+    }
+    else {
+        for ($i = 0; $i -lt $fieldLeaves.Count; $i++) {
+            if ($structureFields[$i] -ne $fieldLeaves[$i]) {
+                $errors.Add("${relative}: ## Structure field '$($structureFields[$i])' does not match ## Fields order at '$($fieldLeaves[$i])'")
+                break
+            }
+        }
     }
 
     foreach ($field in $fields) {

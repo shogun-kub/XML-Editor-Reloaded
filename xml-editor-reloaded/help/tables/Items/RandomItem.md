@@ -27,18 +27,9 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`RANDOMITEMLIST/RANDOMITEM/item1`](#randomitemlistrandomitemitem1)
-  - [`RANDOMITEMLIST/RANDOMITEM/item10`](#randomitemlistrandomitemitem10)
-  - [`RANDOMITEMLIST/RANDOMITEM/item2`](#randomitemlistrandomitemitem2)
-  - [`RANDOMITEMLIST/RANDOMITEM/item3`](#randomitemlistrandomitemitem3)
-  - [`RANDOMITEMLIST/RANDOMITEM/item4`](#randomitemlistrandomitemitem4)
-  - [`RANDOMITEMLIST/RANDOMITEM/item5`](#randomitemlistrandomitemitem5)
-  - [`RANDOMITEMLIST/RANDOMITEM/item6`](#randomitemlistrandomitemitem6)
-  - [`RANDOMITEMLIST/RANDOMITEM/item7`](#randomitemlistrandomitemitem7)
-  - [`RANDOMITEMLIST/RANDOMITEM/item8`](#randomitemlistrandomitemitem8)
-  - [`RANDOMITEMLIST/RANDOMITEM/item9`](#randomitemlistrandomitemitem9)
+  - [`RANDOMITEMLIST/RANDOMITEM/uiIndex`](#randomitemlistrandomitemuiindex)
+  - [`RANDOMITEMLIST/RANDOMITEM/szName`](#randomitemlistrandomitemszname)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem1`](#randomitemlistrandomitemrandomitem1)
-  - [`RANDOMITEMLIST/RANDOMITEM/randomitem10`](#randomitemlistrandomitemrandomitem10)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem2`](#randomitemlistrandomitemrandomitem2)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem3`](#randomitemlistrandomitemrandomitem3)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem4`](#randomitemlistrandomitemrandomitem4)
@@ -47,8 +38,17 @@ updated: 2026-11-07
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem7`](#randomitemlistrandomitemrandomitem7)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem8`](#randomitemlistrandomitemrandomitem8)
   - [`RANDOMITEMLIST/RANDOMITEM/randomitem9`](#randomitemlistrandomitemrandomitem9)
-  - [`RANDOMITEMLIST/RANDOMITEM/szName`](#randomitemlistrandomitemszname)
-  - [`RANDOMITEMLIST/RANDOMITEM/uiIndex`](#randomitemlistrandomitemuiindex)
+  - [`RANDOMITEMLIST/RANDOMITEM/randomitem10`](#randomitemlistrandomitemrandomitem10)
+  - [`RANDOMITEMLIST/RANDOMITEM/item1`](#randomitemlistrandomitemitem1)
+  - [`RANDOMITEMLIST/RANDOMITEM/item2`](#randomitemlistrandomitemitem2)
+  - [`RANDOMITEMLIST/RANDOMITEM/item3`](#randomitemlistrandomitemitem3)
+  - [`RANDOMITEMLIST/RANDOMITEM/item4`](#randomitemlistrandomitemitem4)
+  - [`RANDOMITEMLIST/RANDOMITEM/item5`](#randomitemlistrandomitemitem5)
+  - [`RANDOMITEMLIST/RANDOMITEM/item6`](#randomitemlistrandomitemitem6)
+  - [`RANDOMITEMLIST/RANDOMITEM/item7`](#randomitemlistrandomitemitem7)
+  - [`RANDOMITEMLIST/RANDOMITEM/item8`](#randomitemlistrandomitemitem8)
+  - [`RANDOMITEMLIST/RANDOMITEM/item9`](#randomitemlistrandomitemitem9)
+  - [`RANDOMITEMLIST/RANDOMITEM/item10`](#randomitemlistrandomitemitem10)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -69,102 +69,48 @@ updated: 2026-11-07
 
 ```
 RANDOMITEMLIST
-└── RANDOMITEM              one random category
-    ├── uiIndex             category identity
-    ├── szName              display name
-    ├── randomitem1..10      nested category indices
-    └── item1..10            direct item IDs
+└── RANDOMITEM
+    ├── uiIndex
+    ├── szName
+    ├── randomitem1
+    ├── randomitem2
+    ├── randomitem3
+    ├── randomitem4
+    ├── randomitem5
+    ├── randomitem6
+    ├── randomitem7
+    ├── randomitem8
+    ├── randomitem9
+    ├── randomitem10
+    ├── item1
+    ├── item2
+    ├── item3
+    ├── item4
+    ├── item5
+    ├── item6
+    ├── item7
+    ├── item8
+    ├── item9
+    └── item10
 ```
 
 ## Fields
 
-### `RANDOMITEMLIST/RANDOMITEM/item1`
+### `RANDOMITEMLIST/RANDOMITEM/uiIndex`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 1. Zero leaves the slot empty.
-- **Values:** Direct item ID from [Items](Items.md); `0` means the slot is empty.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the random-item category and identity of the XML record.
+- **Values:** Non-negative index; unique within the file. It is referenced by `randomitem*` slots in this table and by random-item selection.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`
 
-### `RANDOMITEMLIST/RANDOMITEM/item10`
+### `RANDOMITEMLIST/RANDOMITEM/szName`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 10. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item2`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 2. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item3`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 3. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item4`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 4. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item5`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 5. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item6`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 6. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item7`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 7. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item8`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 8. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/item9`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Direct item ID in slot 9. Zero leaves the slot empty.
-- **Values:** Direct item ID; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Type:** `String` (`String`)
+- **Description:** Display name of the random category.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`
 
@@ -173,15 +119,6 @@ RANDOMITEMLIST
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Nested random-item category in slot 1. Zero leaves the slot empty.
 - **Values:** Nested random-item category index; `0` means the slot is empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random item table data; field metadata.
-- **Confidence:** `inferred`
-
-### `RANDOMITEMLIST/RANDOMITEM/randomitem10`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Nested random-item category in slot 10. Zero leaves the slot empty.
-- **Values:** Nested random-category index; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`
@@ -258,20 +195,101 @@ RANDOMITEMLIST
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`
 
-### `RANDOMITEMLIST/RANDOMITEM/szName`
+### `RANDOMITEMLIST/RANDOMITEM/randomitem10`
 
-- **Type:** `String` (`String`)
-- **Description:** Display name of the random category.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Nested random-item category in slot 10. Zero leaves the slot empty.
+- **Values:** Nested random-category index; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`
 
-### `RANDOMITEMLIST/RANDOMITEM/uiIndex`
+### `RANDOMITEMLIST/RANDOMITEM/item1`
 
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the random-item category and identity of the XML record.
-- **Values:** Non-negative index; unique within the file. It is referenced by `randomitem*` slots in this table and by random-item selection.
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 1. Zero leaves the slot empty.
+- **Values:** Direct item ID from [Items](Items.md); `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item2`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 2. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item3`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 3. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item4`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 4. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item5`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 5. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item6`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 6. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item7`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 7. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item8`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 8. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item9`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 9. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** random item table data; field metadata.
+- **Confidence:** `inferred`
+
+### `RANDOMITEMLIST/RANDOMITEM/item10`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Direct item ID in slot 10. Zero leaves the slot empty.
+- **Values:** Direct item ID; `0` means the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random item table data; field metadata.
 - **Confidence:** `inferred`

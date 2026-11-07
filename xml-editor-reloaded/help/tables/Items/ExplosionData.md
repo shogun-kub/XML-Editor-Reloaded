@@ -28,14 +28,14 @@ updated: 2026-11-07
 - [Structure](#structure)
 - [Game options](#game-options)
 - [Fields](#fields)
+  - [`EXPDATALIST/EXPDATA/uiIndex`](#expdatalistexpdatauiindex)
+  - [`EXPDATALIST/EXPDATA/name`](#expdatalistexpdataname)
+  - [`EXPDATALIST/EXPDATA/TransKeyFrame`](#expdatalistexpdatatranskeyframe)
+  - [`EXPDATALIST/EXPDATA/DamageKeyFrame`](#expdatalistexpdatadamagekeyframe)
+  - [`EXPDATALIST/EXPDATA/ExplosionSoundID`](#expdatalistexpdataexplosionsoundid)
   - [`EXPDATALIST/EXPDATA/AltExplosionSoundID`](#expdatalistexpdataaltexplosionsoundid)
   - [`EXPDATALIST/EXPDATA/BlastFilename`](#expdatalistexpdatablastfilename)
   - [`EXPDATALIST/EXPDATA/BlastSpeed`](#expdatalistexpdatablastspeed)
-  - [`EXPDATALIST/EXPDATA/DamageKeyFrame`](#expdatalistexpdatadamagekeyframe)
-  - [`EXPDATALIST/EXPDATA/ExplosionSoundID`](#expdatalistexpdataexplosionsoundid)
-  - [`EXPDATALIST/EXPDATA/name`](#expdatalistexpdataname)
-  - [`EXPDATALIST/EXPDATA/TransKeyFrame`](#expdatalistexpdatatranskeyframe)
-  - [`EXPDATALIST/EXPDATA/uiIndex`](#expdatalistexpdatauiindex)
 - [Relations](#relations)
 - [Related formulas](#related-formulas)
 - [Localization](#localization)
@@ -57,13 +57,15 @@ updated: 2026-11-07
 
 ```
 EXPDATALIST
-└── EXPDATA                 one blast presentation row
-    ├── uiIndex             blast animation index
-    ├── name                internal label
-    ├── BlastFilename       STI animation path
-    ├── TransKeyFrame       transparency key frame
-    ├── DamageKeyFrame      damage key frame
-    └── ExplosionSoundID    primary and alternate sound IDs
+└── EXPDATA
+    ├── uiIndex
+    ├── name
+    ├── TransKeyFrame
+    ├── DamageKeyFrame
+    ├── ExplosionSoundID
+    ├── AltExplosionSoundID
+    ├── BlastFilename
+    └── BlastSpeed
 ```
 
 ## Game options
@@ -71,6 +73,51 @@ EXPDATALIST
 No table-level global option is documented for this table. Its fields are read in both inventory models and in multiplayer; the only version gate is the field set described under [Versions](#versions).
 
 ## Fields
+
+### `EXPDATALIST/EXPDATA/uiIndex`
+
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here.
+- **Values:** Non-negative integer; unique within the file. `Explosives.ubAnimationID` points here.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosion data table; field metadata.
+- **Confidence:** `source`
+
+### `EXPDATALIST/EXPDATA/name`
+
+- **Type:** `String` (`String`)
+- **Description:** Internal label for the blast animation, used by editors and debugging; it is not a localized UI string.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** explosion data table; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPDATALIST/EXPDATA/TransKeyFrame`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Animation frame at which the transparency key is applied.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosion data table; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPDATALIST/EXPDATA/DamageKeyFrame`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Animation frame at which the blast begins to apply damage.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosion data table; field metadata.
+- **Confidence:** `inferred`
+
+### `EXPDATALIST/EXPDATA/ExplosionSoundID`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Primary sound ID played for the explosion.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** explosion data table; field metadata.
+- **Confidence:** `inferred`
 
 ### `EXPDATALIST/EXPDATA/AltExplosionSoundID`
 
@@ -98,51 +145,6 @@ No table-level global option is documented for this table. Its fields are read i
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
 - **Confidence:** `inferred`
-
-### `EXPDATALIST/EXPDATA/DamageKeyFrame`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the blast begins to apply damage.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPDATALIST/EXPDATA/ExplosionSoundID`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Primary sound ID played for the explosion.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPDATALIST/EXPDATA/name`
-
-- **Type:** `String` (`String`)
-- **Description:** Internal label for the blast animation, used by editors and debugging; it is not a localized UI string.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPDATALIST/EXPDATA/TransKeyFrame`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the transparency key is applied.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
-
-### `EXPDATALIST/EXPDATA/uiIndex`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here.
-- **Values:** Non-negative integer; unique within the file. `Explosives.ubAnimationID` points here.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `source`
 
 ## Relations
 

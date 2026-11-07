@@ -27,8 +27,6 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`CITY_INFO/COUNTRY/countryName`](#city_infocountrycountryname)
-  - [`CITY_INFO/COUNTRY/countryNoun`](#city_infocountrycountrynoun)
   - [`CITY_INFO/CITYLIST/CITY/uiIndex`](#city_infocitylistcityuiindex)
   - [`CITY_INFO/CITYLIST/CITY/townName`](#city_infocitylistcitytownname)
   - [`CITY_INFO/CITYLIST/CITY/townUsesLoyalty`](#city_infocitylistcitytownusesloyalty)
@@ -43,6 +41,8 @@ updated: 2026-11-07
   - [`CITY_INFO/CITYLIST/CITY/baseSector/y`](#city_infocitylistcitybasesectory)
   - [`CITY_INFO/CITYLIST/CITY/townPoint/x`](#city_infocitylistcitytownpointx)
   - [`CITY_INFO/CITYLIST/CITY/townPoint/y`](#city_infocitylistcitytownpointy)
+  - [`CITY_INFO/COUNTRY/countryName`](#city_infocountrycountryname)
+  - [`CITY_INFO/COUNTRY/countryNoun`](#city_infocountrycountrynoun)
   - [`CITY_INFO/CITY_TABLE/CITY_TABLE_ROW`](#city_infocity_tablecity_table_row)
 - [Relations](#relations)
 - [Localization](#localization)
@@ -72,11 +72,8 @@ root singleton. `CITY_TABLE` is a special matrix, not a record collection.
 
 ```
 CITY_INFO
-├── COUNTRY
-│   ├── countryName
-│   └── countryNoun
 ├── CITYLIST
-│   └── CITY              one town, keyed by uiIndex
+│   └── CITY
 │       ├── uiIndex
 │       ├── townName
 │       ├── townUsesLoyalty
@@ -85,11 +82,20 @@ CITY_INFO
 │       ├── hiddenTown
 │       ├── townIcon
 │       ├── szIconFile
-│       ├── iconPosition { x, y }
-│       ├── baseSector { x, y }
-│       └── townPoint { x, y }
+│       ├── iconPosition
+│       │   ├── x
+│       │   └── y
+│       ├── baseSector
+│       │   ├── x
+│       │   └── y
+│       └── townPoint
+│           ├── x
+│           └── y
+├── COUNTRY
+│   ├── countryName
+│   └── countryNoun
 └── CITY_TABLE
-    └── CITY_TABLE_ROW    row="00".."17", town IDs per sector column
+    └── CITY_TABLE_ROW
 ```
 
 `uiIndex` is the town array index. The loader ignores `0` (reserved for "no town") and values
@@ -97,24 +103,6 @@ outside the array; the highest valid index + 1 becomes `NUM_TOWNS`. Duplicate in
 overwrite earlier rows.
 
 ## Fields
-
-### `CITY_INFO/COUNTRY/countryName`
-
-- **Type:** `String`
-- **Description:** Name of the country shown in the strategic UI and in some dialogues.
-- **Values:** free text; a Russian overlay provides a translated value in v4.
-- **Default:** empty.
-- **Source:** game code (strategic-map loader and map UI); city table data.
-- **Confidence:** `source`
-
-### `CITY_INFO/COUNTRY/countryNoun`
-
-- **Type:** `String`
-- **Description:** Noun for a person from the country (demonym), used in dialogue text.
-- **Values:** free text; localized in v4.
-- **Default:** empty.
-- **Source:** game code (strategic-map loader and map UI); city table data.
-- **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/uiIndex`
 
@@ -250,6 +238,24 @@ overwrite earlier rows.
 - **Description:** Y position of the town name label, in tenths of a sector.
 - **Values:** map coordinates.
 - **Default:** `0`.
+- **Source:** game code (strategic-map loader and map UI); city table data.
+- **Confidence:** `source`
+
+### `CITY_INFO/COUNTRY/countryName`
+
+- **Type:** `String`
+- **Description:** Name of the country shown in the strategic UI and in some dialogues.
+- **Values:** free text; a Russian overlay provides a translated value in v4.
+- **Default:** empty.
+- **Source:** game code (strategic-map loader and map UI); city table data.
+- **Confidence:** `source`
+
+### `CITY_INFO/COUNTRY/countryNoun`
+
+- **Type:** `String`
+- **Description:** Noun for a person from the country (demonym), used in dialogue text.
+- **Values:** free text; localized in v4.
+- **Default:** empty.
 - **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 

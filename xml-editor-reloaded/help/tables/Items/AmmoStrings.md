@@ -28,10 +28,10 @@ updated: 2026-11-07
 - [Structure](#structure)
 - [Game options](#game-options)
 - [Fields](#fields)
+  - [`AMMOLIST/AMMO/uiIndex`](#ammolistammouiindex)
   - [`AMMOLIST/AMMO/AmmoCaliber`](#ammolistammoammocaliber)
   - [`AMMOLIST/AMMO/BRCaliber`](#ammolistammobrcaliber)
   - [`AMMOLIST/AMMO/NWSSCaliber`](#ammolistammonwsscaliber)
-  - [`AMMOLIST/AMMO/uiIndex`](#ammolistammouiindex)
 - [Relations](#relations)
 - [Related formulas](#related-formulas)
 - [Localization](#localization)
@@ -53,11 +53,11 @@ updated: 2026-11-07
 
 ```
 AMMOLIST
-└── AMMO                    one calibre label row
-    ├── uiIndex             calibre index
-    ├── AmmoCaliber         main label
-    ├── BRCaliber           Bobby Ray label
-    └── NWSSCaliber         alternate NWS label (v5)
+└── AMMO
+    ├── uiIndex
+    ├── AmmoCaliber
+    ├── BRCaliber
+    └── NWSSCaliber
 ```
 
 ## Game options
@@ -65,6 +65,15 @@ AMMOLIST
 No table-level global option is documented for this table. Its fields are read in both inventory models and in multiplayer; the only version gate is the field set described under [Versions](#versions).
 
 ## Fields
+
+### `AMMOLIST/AMMO/uiIndex`
+
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Calibre index referenced by `Weapons.ubCalibre` and magazine rows.
+- **Values:** Non-negative integer; unique within the file. `Weapons.ubCalibre` points here.
+- **Default:** empty string when omitted.
+- **Source:** ammo string table data; field metadata.
+- **Confidence:** `source`
 
 ### `AMMOLIST/AMMO/AmmoCaliber`
 
@@ -92,15 +101,6 @@ No table-level global option is documented for this table. Its fields are read i
 - **Default:** empty string when omitted.
 - **Source:** ammo string table data; field metadata.
 - **Confidence:** `inferred`
-
-### `AMMOLIST/AMMO/uiIndex`
-
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Calibre index referenced by `Weapons.ubCalibre` and magazine rows.
-- **Values:** Non-negative integer; unique within the file. `Weapons.ubCalibre` points here.
-- **Default:** empty string when omitted.
-- **Source:** ammo string table data; field metadata.
-- **Confidence:** `source`
 
 ## Relations
 

@@ -26,16 +26,16 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
-  - [`MERC_AVAILABLES/MERC/Drunk`](#merc_availablesmercdrunk)
-  - [`MERC_AVAILABLES/MERC/MercBioID`](#merc_availablesmercmercbioid)
-  - [`MERC_AVAILABLES/MERC/Name`](#merc_availablesmercname)
-  - [`MERC_AVAILABLES/MERC/NewMercsAvailable`](#merc_availablesmercnewmercsavailable)
-  - [`MERC_AVAILABLES/MERC/ProfilId`](#merc_availablesmercprofilid)
-  - [`MERC_AVAILABLES/MERC/StartMercsAvailable`](#merc_availablesmercstartmercsavailable)
-  - [`MERC_AVAILABLES/MERC/uiAlternateIndex`](#merc_availablesmercuialternateindex)
   - [`MERC_AVAILABLES/MERC/uiIndex`](#merc_availablesmercuiindex)
-  - [`MERC_AVAILABLES/MERC/usDay`](#merc_availablesmercusday)
+  - [`MERC_AVAILABLES/MERC/Name`](#merc_availablesmercname)
+  - [`MERC_AVAILABLES/MERC/Drunk`](#merc_availablesmercdrunk)
+  - [`MERC_AVAILABLES/MERC/uiAlternateIndex`](#merc_availablesmercuialternateindex)
+  - [`MERC_AVAILABLES/MERC/StartMercsAvailable`](#merc_availablesmercstartmercsavailable)
+  - [`MERC_AVAILABLES/MERC/NewMercsAvailable`](#merc_availablesmercnewmercsavailable)
+  - [`MERC_AVAILABLES/MERC/MercBioID`](#merc_availablesmercmercbioid)
+  - [`MERC_AVAILABLES/MERC/ProfilId`](#merc_availablesmercprofilid)
   - [`MERC_AVAILABLES/MERC/usMoneyPaid`](#merc_availablesmercusmoneypaid)
+  - [`MERC_AVAILABLES/MERC/usDay`](#merc_availablesmercusday)
 - [Relations](#relations)
 - [Localization](#localization)
 - [Versions](#versions)
@@ -56,28 +56,25 @@ updated: 2026-11-07
 
 ```
 MERC_AVAILABLES
-└── MERC                    one availability row
-    ├── uiIndex             row identity
-    ├── ProfilId            profile ID
-    ├── Name                display name
-    └── usDay/availability  schedule and flags
+└── MERC
+    ├── uiIndex
+    ├── Name
+    ├── Drunk
+    ├── uiAlternateIndex
+    ├── StartMercsAvailable
+    ├── NewMercsAvailable
+    ├── MercBioID
+    ├── ProfilId
+    ├── usMoneyPaid
+    └── usDay
 ```
 
 ## Fields
 
-### `MERC_AVAILABLES/MERC/Drunk`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Marks the MERC as drunk for its availability/dialogue state.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERC_AVAILABLES/MERC/MercBioID`
+### `MERC_AVAILABLES/MERC/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Biography ID for the MERC site.
+- **Description:** Availability row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -92,28 +89,10 @@ MERC_AVAILABLES
 - **Source:** merc availability table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERC_AVAILABLES/MERC/NewMercsAvailable`
+### `MERC_AVAILABLES/MERC/Drunk`
 
 - **Type:** `Boolean` (`Boolean`)
-- **Description:** Whether the mercenary becomes available later.
-- **Values:** `0` or `1`.
-- **Default:** `0` when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERC_AVAILABLES/MERC/ProfilId`
-
-- **Type:** `Integer` (`INT32`)
-- **Description:** Profile ID of the MERC mercenary.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
-
-### `MERC_AVAILABLES/MERC/StartMercsAvailable`
-
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Whether the mercenary is available at the start.
+- **Description:** Marks the MERC as drunk for its availability/dialogue state.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
 - **Source:** merc availability table data; item/profile metadata.
@@ -128,19 +107,37 @@ MERC_AVAILABLES
 - **Source:** merc availability table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERC_AVAILABLES/MERC/uiIndex`
+### `MERC_AVAILABLES/MERC/StartMercsAvailable`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Whether the mercenary is available at the start.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc availability table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERC_AVAILABLES/MERC/NewMercsAvailable`
+
+- **Type:** `Boolean` (`Boolean`)
+- **Description:** Whether the mercenary becomes available later.
+- **Values:** `0` or `1`.
+- **Default:** `0` when omitted.
+- **Source:** merc availability table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERC_AVAILABLES/MERC/MercBioID`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Availability row identity.
+- **Description:** Biography ID for the MERC site.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
 - **Confidence:** `inferred`
 
-### `MERC_AVAILABLES/MERC/usDay`
+### `MERC_AVAILABLES/MERC/ProfilId`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Day on which the availability changes.
+- **Description:** Profile ID of the MERC mercenary.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.
@@ -150,6 +147,15 @@ MERC_AVAILABLES
 
 - **Type:** `Integer` (`INT32`)
 - **Description:** Money paid value associated with the availability row.
+- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** merc availability table data; item/profile metadata.
+- **Confidence:** `inferred`
+
+### `MERC_AVAILABLES/MERC/usDay`
+
+- **Type:** `Integer` (`INT32`)
+- **Description:** Day on which the availability changes.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc availability table data; item/profile metadata.

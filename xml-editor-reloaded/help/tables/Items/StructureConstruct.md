@@ -27,15 +27,15 @@ updated: 2026-11-07
 - [Tables](#tables)
 - [Structure](#structure)
 - [Fields](#fields)
+  - [`STRUCTURESLIST/STRUCTURE/usCreationItem`](#structuresliststructureuscreationitem)
+  - [`STRUCTURESLIST/STRUCTURE/usItemStatusLoss`](#structuresliststructureusitemstatusloss)
+  - [`STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`](#structuresliststructuresztilesetdisplayname)
+  - [`STRUCTURESLIST/STRUCTURE/szTileSetName`](#structuresliststructuresztilesetname)
   - [`STRUCTURESLIST/STRUCTURE/dCreationCost`](#structuresliststructuredcreationcost)
-  - [`STRUCTURESLIST/STRUCTURE/eastfacingtile`](#structuresliststructureeastfacingtile)
   - [`STRUCTURESLIST/STRUCTURE/fFortifyAdjacentAdjustment`](#structuresliststructureffortifyadjacentadjustment)
   - [`STRUCTURESLIST/STRUCTURE/northfacingtile`](#structuresliststructurenorthfacingtile)
   - [`STRUCTURESLIST/STRUCTURE/southfacingtile`](#structuresliststructuresouthfacingtile)
-  - [`STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`](#structuresliststructuresztilesetdisplayname)
-  - [`STRUCTURESLIST/STRUCTURE/szTileSetName`](#structuresliststructuresztilesetname)
-  - [`STRUCTURESLIST/STRUCTURE/usCreationItem`](#structuresliststructureuscreationitem)
-  - [`STRUCTURESLIST/STRUCTURE/usItemStatusLoss`](#structuresliststructureusitemstatusloss)
+  - [`STRUCTURESLIST/STRUCTURE/eastfacingtile`](#structuresliststructureeastfacingtile)
   - [`STRUCTURESLIST/STRUCTURE/westfacingtile`](#structuresliststructurewestfacingtile)
 - [Relations](#relations)
 - [Localization](#localization)
@@ -57,29 +57,65 @@ updated: 2026-11-07
 
 ```
 STRUCTURESLIST
-└── STRUCTURE               one buildable structure
-    ├── usCreationItem        consumed item ID
-    ├── szTileSetName         STI tileset
-    ├── dCreationCost         build cost
-    └── *facingtile           repeated facing tile indices
+└── STRUCTURE
+    ├── usCreationItem
+    ├── usItemStatusLoss
+    ├── szTileSetDisplayName
+    ├── szTileSetName
+    ├── dCreationCost
+    ├── fFortifyAdjacentAdjustment
+    ├── northfacingtile
+    ├── southfacingtile
+    ├── eastfacingtile
+    └── westfacingtile
 ```
 
+`STRUCTURESLIST` has no stable per-row key; a structure row is identified by its tile-set
+fields and document order.
+
 ## Fields
+
+### `STRUCTURESLIST/STRUCTURE/usCreationItem`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID consumed to build the structure.
+- **Values:** Item ID consumed to build the structure.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** structure construction table data; field metadata.
+- **Confidence:** `inferred`
+
+### `STRUCTURESLIST/STRUCTURE/usItemStatusLoss`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item status lost by the creation item when the structure is built.
+- **Values:** Status lost by the creation item; no narrower range is declared by the field metadata.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** structure construction table data; field metadata.
+- **Confidence:** `inferred`
+
+### `STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`
+
+- **Type:** `String` (`String`)
+- **Description:** Display name of the structure tileset.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** structure construction table data; field metadata.
+- **Confidence:** `inferred`
+
+### `STRUCTURESLIST/STRUCTURE/szTileSetName`
+
+- **Type:** `String` (`String`)
+- **Description:** STI tileset file used to draw the structure.
+- **Values:** Free text.
+- **Default:** empty string when omitted.
+- **Source:** structure construction table data; field metadata.
+- **Confidence:** `inferred`
 
 ### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
 - **Type:** `Decimal` (`FLOAT`)
 - **Description:** Creation cost of the structure. The unit is defined by the construction system; it is a decimal value.
 - **Values:** Decimal creation cost.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure construction table data; field metadata.
-- **Confidence:** `inferred`
-
-### `STRUCTURESLIST/STRUCTURE/eastfacingtile`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index used for the east-facing variant. The element may repeat for several tiles.
-- **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
 - **Confidence:** `inferred`
@@ -111,38 +147,11 @@ STRUCTURESLIST
 - **Source:** structure construction table data; field metadata.
 - **Confidence:** `inferred`
 
-### `STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`
-
-- **Type:** `String` (`String`)
-- **Description:** Display name of the structure tileset.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** structure construction table data; field metadata.
-- **Confidence:** `inferred`
-
-### `STRUCTURESLIST/STRUCTURE/szTileSetName`
-
-- **Type:** `String` (`String`)
-- **Description:** STI tileset file used to draw the structure.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** structure construction table data; field metadata.
-- **Confidence:** `inferred`
-
-### `STRUCTURESLIST/STRUCTURE/usCreationItem`
+### `STRUCTURESLIST/STRUCTURE/eastfacingtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID consumed to build the structure.
-- **Values:** Item ID consumed to build the structure.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure construction table data; field metadata.
-- **Confidence:** `inferred`
-
-### `STRUCTURESLIST/STRUCTURE/usItemStatusLoss`
-
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Item status lost by the creation item when the structure is built.
-- **Values:** Status lost by the creation item; no narrower range is declared by the field metadata.
+- **Description:** Tile index used for the east-facing variant. The element may repeat for several tiles.
+- **Values:** Tile index in the tileset; the element may repeat for several tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
 - **Confidence:** `inferred`
