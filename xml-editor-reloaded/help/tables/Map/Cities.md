@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Game code (strategic-map loader and map UI)
   - City table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

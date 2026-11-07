@@ -15,7 +15,7 @@ key: launchableIndex + itemIndex
 sources:
   - Game code (launcher loader)
   - Item table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

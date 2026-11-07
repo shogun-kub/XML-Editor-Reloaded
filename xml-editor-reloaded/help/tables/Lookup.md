@@ -82,7 +82,7 @@ path_mode: relative
 sources:
   - Lookup XML data
   - Editor metadata for flag/sequence kind
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

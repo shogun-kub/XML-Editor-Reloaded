@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Game code (magazine loader and ammo lookups)
   - Ammo type and caliber data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

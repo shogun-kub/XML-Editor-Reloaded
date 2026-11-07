@@ -15,7 +15,7 @@ key: SectorGrid + FacilityType
 sources:
   - Game code (facility placement loader)
   - Facility type data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 

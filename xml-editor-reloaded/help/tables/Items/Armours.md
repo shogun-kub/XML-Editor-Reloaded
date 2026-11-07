@@ -15,7 +15,7 @@ key: uiIndex
 sources:
   - Game code (armour loader and protection)
   - Armour table data
-status: draft
+status: reviewed
 updated: 2026-11-07
 ---
 
