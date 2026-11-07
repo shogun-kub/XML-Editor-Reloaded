@@ -11,8 +11,8 @@ root: SECTORFACILITIES
 record: FACILITY
 key: SectorGrid + FacilityType
 sources:
-  - Strategic/XML_Facilities.cpp
-  - Strategic/XML_FacilityTypes.cpp
+  - Game code (facility placement loader)
+  - Facility type data
 status: draft
 updated: 2026-11-07
 ---
@@ -77,7 +77,7 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 - **Values:** `A1`..`P16`; the loader accepts only rows/columns 1..16 and ignores an invalid
   sector.
 - **Default:** none; an invalid value leaves the record unplaced.
-- **Source:** `Strategic/XML_Facilities.cpp:115-128`
+- **Source:** game code (facility placement loader); facility type data.
 - **Confidence:** `source`
 
 ### `SECTORFACILITIES/FACILITY/FacilityType`
@@ -88,18 +88,18 @@ would overwrite the previous flags (last record wins); the shipped data has no d
 - **Values:** valid `Map.FacilityTypes.ubIndex`; shipped data uses 1..25 (17 is not used).
   `0` means "no facility" and the loader skips the record.
 - **Default:** `0` (skipped).
-- **Source:** `Strategic/XML_Facilities.cpp:134`, `:113-114`
+- **Source:** game code (facility placement loader); facility type data.
 - **Confidence:** `source`
 
 ### `SECTORFACILITIES/FACILITY/ubHidden`
 
-- **Type:** `Integer` (`UINT8`, declared as `BOOLEAN` in the parser struct)
+- **Type:** `Integer` (`0..2`)
 - **Description:** When the facility appears in the sector info popup: always, after the
-  sector has been explored, or never. The value `2` is stored even though the field is typed
-  `BOOLEAN`, so do not treat it as a plain 0/1 flag.
+  sector has been explored, or never. `2` is a valid value, so do not treat this as a plain
+  0/1 flag.
 - **Values:** `0` always show, `1` after exploration, `2` never.
 - **Default:** `0` (always show).
-- **Source:** `Strategic/XML_Facilities.cpp:140`, `:30-31`
+- **Source:** game code (facility placement loader); facility type data.
 - **Confidence:** `source`
 
 ## Relations
@@ -122,14 +122,13 @@ placed facilities may differ; compare the files when a specific sector matters.
 
 ## Sources
 
-- `Strategic/XML_Facilities.cpp` - parser, sector decode, `gFacilityLocations` write.
-- `Map/Facilities.xml` - shipped placements; the header comment documents the three fields.
-- `Strategic/XML_FacilityTypes.cpp` - the type table referenced by `FacilityType`.
+- Game code: the facility placement loader and the facility type loader.
+- Table data: `Map/Facilities.xml`; its header comment documents the three fields.
 
 ## Open questions
 
 - There is no metadata key row for `Map.Facilities`; the composite key is a logical contract
   used by the editor, not a declared `TableKeys` entry. Adding a key would be a metadata task,
   not a data edit.
-- The loader uses `BOOLEAN` for `ubHidden`; the value 2 survives because `BOOLEAN` is a byte
-  typedef in this codebase, but the type name is misleading.
+- The parser stores `ubHidden` in a byte-like flag; the value 2 survives, but the internal
+  type name is misleading.

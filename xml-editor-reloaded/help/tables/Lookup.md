@@ -56,8 +56,8 @@ record: "<lookup element>"
 key: id
 path_mode: relative
 sources:
-  - TableData/Lookup/*.xml
-  - metadata: Tables.IsFlagLookup
+  - Lookup XML data
+  - Editor metadata for flag/sequence kind
 status: draft
 updated: 2026-11-07
 ---
@@ -271,7 +271,7 @@ JA2Data
   combination of bits; for sequence lookups it is an ordinal or an explicit ID.
 - **Values:** `0..max`; sparse IDs are allowed (`AmmoChoices`).
 - **Default:** none; the value must exist in the file.
-- **Source:** `TableData/Lookup/*.xml`; kind from `metadata: Tables.IsFlagLookup`.
+- **Source:** lookup XML data; editor metadata for flag/sequence kind.
 - **Confidence:** `source`
 
 ### `name`
@@ -281,7 +281,7 @@ JA2Data
   For a combined flag value it describes the group of bits.
 - **Values:** free text; unique within one lookup in practice.
 - **Default:** none.
-- **Source:** `TableData/Lookup/*.xml`.
+- **Source:** lookup XML data; editor metadata for flag/sequence kind.
 - **Confidence:** `source`
 
 ## Relations
@@ -327,8 +327,8 @@ a future v5 file fails to parse; the fallback is not used by the current v5 tree
 
 - `TableData/Lookup/*.xml` (v4 and v5) - the values and names.
 - `metadata: Tables.IsFlagLookup` - flag vs sequence classification.
-- Game code constants that the values mirror: `Item Types.h` (`IC_*`, item flags),
-  `Weapons.h` (`ARMOURCLASS_*`, `WEAPONCLASS_*`, `AMMO_*`), `SkillCheck.h`.
+- Game constants that the values mirror: item classes and flags, armour classes, weapon
+  classes and types, ammo flags, and skill-check kinds.
 - No game loader reads `TableData/Lookup/*.xml`; they are editor/modding data.
 
 ## Open questions

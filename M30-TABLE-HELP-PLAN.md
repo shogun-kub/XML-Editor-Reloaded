@@ -251,9 +251,10 @@ xml-editor-reloaded/help/
 Папки повторяют `TableData`, но имена файлов — по семейству, а не по каждому XML.
 Точки-имена таблиц с пробелами (`Inventory.Backup original Gun Choices.…`) в front
 matter и `INDEX.md` сохраняются дословно; имена файлов справки — короткие slug'и.
-Ссылки между документами — относительные, от `tables/`. Пути к исходникам игры — не
-ссылки, а текст вида `Tactical/Weapons.cpp:390` (корень описан в `SOURCES.md`), чтобы
-документы не ломались при публикации репозитория без `References/`.
+Ссылки между документами — относительные, от `tables/`. Исходники игры не цитируются
+файлами и строками: `Source` — общая категория (`game code`, `table data`, `metadata`),
+чтобы документы не ломались при публикации без `References/` и не устаревали от
+перемещения строк.
 
 ### D6. Клоны, backup-папки и повреждённые файлы
 
@@ -332,8 +333,8 @@ root: WEAPONLIST
 record: WEAPON
 key: uiIndex
 sources:
-  - Tactical/Weapons.cpp
-  - Tactical/Weapons.h
+  - Game code (item loader)
+  - Item table data
 status: draft          # draft | reviewed | verified
 updated: 2026-11-07
 ---
@@ -354,7 +355,7 @@ updated: 2026-11-07
 7. `## Relations` — ссылки на lookup/таблицы с смыслом связи.
 8. `## Localization` — переводимые поля, оверлей, ограничения длины.
 9. `## Versions` — отличия v4/v5 (если есть).
-10. `## Sources` — файлы и строки, комментарии, метаданные.
+10. `## Sources` — общие категории источников: game code, table data, metadata.
 11. `## Open questions` — что не удалось подтвердить; пустой раздел допустим.
 
 ### 6.3. Запись поля
@@ -370,7 +371,7 @@ updated: 2026-11-07
   influences AI equipment selection.
 - **Values:** integer 0–255; game data uses small values, 0 = earliest/cheapest.
 - **Default:** `0`
-- **Source:** `Utils/XML_Items.cpp:577-580`
+- **Source:** game code (item loader); item table data.
 - **Confidence:** `source`
 ```
 
@@ -383,7 +384,7 @@ updated: 2026-11-07
 
 - Внутри справки: `[Lookup.WeaponType](../Lookup.md#lookup-weapontype)`.
 - На поле: `[…](#itemlistitemubcoolness)` (якорь — путь без спецсимволов).
-- На исходник: только текст `Utils/XML_Items.cpp:577`, без ссылки на `References/`.
+- На исходник: только общее описание (`game code (loader)`), без файлов и строк.
 - На таблицу, у которой нет отдельного документа: ссылка на раздел семейства.
 
 ### 6.5. Оглавление
@@ -621,7 +622,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
           "description": "...",
           "values": "...",
           "default": "0",
-          "source": "Tactical/Weapons.cpp:390",
+          "source": "game code (weapon loader); weapon table data",
           "confidence": "source"
         }
       },

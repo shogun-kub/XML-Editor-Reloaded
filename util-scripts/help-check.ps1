@@ -291,6 +291,15 @@ if ($Write) {
 # Build anchors for every Markdown file in the help tree.
 $anchorMap = @{}
 $allMarkdown = @(Get-ChildItem -LiteralPath $HelpRoot -Recurse -File -Filter *.md)
+$codeFilePattern = '(?i)(?:Tactical|Strategic|Ja2|Utils|Laptop|Editor)/[^\s`)]+\.(?:cpp|h|hpp)\b'
+$codeLinePattern = '(?i)\.(?:cpp|h|hpp):\d+'
+foreach ($file in $allMarkdown) {
+    $text = [System.IO.File]::ReadAllText($file.FullName)
+    $relative = [System.IO.Path]::GetRelativePath($HelpRoot, $file.FullName).Replace('\', '/')
+    if ($text -match $codeFilePattern -or $text -match $codeLinePattern) {
+        $errors.Add("${relative}: contains a source file/line reference; use a general Source description")
+    }
+}
 foreach ($file in $allMarkdown) {
     $frontMatter = Read-HelpFrontMatter -Path $file.FullName
     $lines = [System.IO.File]::ReadAllLines($file.FullName)

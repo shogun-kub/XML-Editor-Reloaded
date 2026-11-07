@@ -11,8 +11,8 @@ root: LAUNCHABLELIST
 record: LAUNCHABLE
 key: launchableIndex + itemIndex
 sources:
-  - Tactical/XML_Launchable.cpp
-  - Item Types.h
+  - Game code (launcher loader)
+  - Item table data
 status: draft
 updated: 2026-11-07
 ---
@@ -57,10 +57,10 @@ LAUNCHABLELIST
     └── itemIndex        item index of the launchable ammo
 ```
 
-The loader does not use a key; it appends records in file order to `Launchable[][]` and sets
-`gMAXLAUNCHABLES_READ` to the count. The editor uses the pair (`launchableIndex`,
-`itemIndex`) as a compound key. Reordering records changes the runtime array order, so treat
-the file order as meaningful until a caller proves otherwise.
+The loader does not use a key; it appends records in file order to the runtime pair table and
+records the number of pairs. The editor uses the pair (`launchableIndex`, `itemIndex`) as a
+compound key. Reordering records changes the runtime order, so treat the file order as
+meaningful until a caller proves otherwise.
 
 ## Fields
 
@@ -72,7 +72,7 @@ the file order as meaningful until a caller proves otherwise.
 - **Values:** valid `Items.Items.uiIndex` values; shipped data uses 140, 147, and other
   launcher items.
 - **Default:** `0`; the pair is still stored, so a zero value is a data error, not "none".
-- **Source:** `Tactical/XML_Launchable.cpp:102`, `Item Types.h:1873`
+- **Source:** game code (launcher loader); item table data.
 - **Confidence:** `source`
 
 ### `LAUNCHABLELIST/LAUNCHABLE/itemIndex`
@@ -82,7 +82,7 @@ the file order as meaningful until a caller proves otherwise.
   It is the item the launcher fires.
 - **Values:** valid `Items.Items.uiIndex` values.
 - **Default:** `0`; a zero value is a data error.
-- **Source:** `Tactical/XML_Launchable.cpp:107`, `Item Types.h:1873`
+- **Source:** game code (launcher loader); item table data.
 - **Confidence:** `source`
 
 ## Relations
@@ -103,13 +103,12 @@ may differ; compare the files when a specific pair matters.
 
 ## Sources
 
-- `Tactical/XML_Launchable.cpp` - parser, append, `gMAXLAUNCHABLES_READ`.
-- `Item Types.h:1873` - `extern UINT16 Launchable[MAXITEMS+1][2]`.
-- `TableData/Items/Launchables.xml` - shipped pairs.
+- Game code: the launcher/ammo pair loader.
+- Table data: `Items/Launchables.xml`.
 
 ## Open questions
 
 - The loader appends in file order and does not deduplicate. The shipped file has no duplicate
   pairs, but the runtime consequence of a duplicate is not documented.
-- Which launcher classes use the table at runtime is decided in `Items.cpp`/`Weapons.cpp`;
+- Which launcher classes use the table at runtime is decided in the item and weapon code;
   this page documents the data contract, not every call site.

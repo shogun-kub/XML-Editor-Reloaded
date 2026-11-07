@@ -11,8 +11,8 @@ root: CITY_INFO
 record: CITY
 key: uiIndex
 sources:
-  - Strategic/strategicmap.cpp
-  - Map Screen Interface Map.cpp
+  - Game code (strategic-map loader and map UI)
+  - City table data
 status: draft
 updated: 2026-11-07
 ---
@@ -102,7 +102,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Name of the country shown in the strategic UI and in some dialogues.
 - **Values:** free text; a Russian overlay provides a translated value in v4.
 - **Default:** empty.
-- **Source:** `Strategic/strategicmap.cpp:1317-1322`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/COUNTRY/countryNoun`
@@ -111,7 +111,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Noun for a person from the country (demonym), used in dialogue text.
 - **Values:** free text; localized in v4.
 - **Default:** empty.
-- **Source:** `Strategic/strategicmap.cpp:1324-1329`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/uiIndex`
@@ -121,7 +121,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   skips it. The highest index sets `NUM_TOWNS`.
 - **Values:** `1..MAX_TOWNS-1`; shipped data uses 1..12.
 - **Default:** none; a missing value is treated as invalid and the town is skipped.
-- **Source:** `Strategic/strategicmap.cpp:1182-1186`, `:1126`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townName`
@@ -131,7 +131,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   translated by the Russian overlay in v4.
 - **Values:** free text, limited by `MAX_TOWN_NAME_LENGHT`.
 - **Default:** empty.
-- **Source:** `Strategic/strategicmap.cpp:1189-1199`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townUsesLoyalty`
@@ -141,7 +141,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   events do not change the town's value.
 - **Values:** `0` no loyalty, `1` use loyalty.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1200`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townRebelSentiment`
@@ -152,7 +152,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Values:** `1..100`. The loader clamps values above 100 to 100 and values below 1 to 1.
   Shipped data uses 10..90.
 - **Default:** `1` after clamping.
-- **Source:** `Strategic/strategicmap.cpp:1206-1212`, `:1137`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townMilitiaAllowed`
@@ -161,19 +161,19 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Whether the player can train militia in the town.
 - **Values:** `0` no militia, `1` militia allowed.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1218`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/hiddenTown`
 
 - **Type:** `Boolean` (`0`/`1`)
 - **Description:** Whether the town starts hidden on the strategic map. `0` means visible,
-  `1` means hidden. The loader stores the inverse in `gfHiddenTown`, whose own comment says
-  "Visible town are TRUE, hidden towns are FALSE" (`Strategic/strategicmap.cpp:812`), so the
-  internal flag name is misleading; trust the XML value and the comment, not the flag name.
+  `1` means hidden. The loader stores the inverse in an internal visibility flag, and that
+  flag's own comment uses the opposite naming, so the internal name is misleading; trust the
+  XML value and the XML comment, not the internal flag name.
 - **Values:** `0` visible, `1` hidden.
 - **Default:** `0` (visible).
-- **Source:** `Strategic/strategicmap.cpp:1154-1163`, `:812`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townIcon`
@@ -182,7 +182,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Whether the town shows its custom icon on the strategic map.
 - **Values:** `0` off, `1` on.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1167-1168`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/szIconFile`
@@ -193,7 +193,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   `MAX_ICON_CHARS`.
 - **Values:** a path relative to the game data; empty means no custom icon.
 - **Default:** empty.
-- **Source:** `Strategic/strategicmap.cpp:1232-1240`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/iconPosition/x`
@@ -202,7 +202,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** X position of the custom town icon on the strategic map.
 - **Values:** `0..255`; screen coordinates.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1252-1262`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/iconPosition/y`
@@ -211,7 +211,7 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Y position of the custom town icon on the strategic map.
 - **Values:** `0..255`; screen coordinates.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1264-1270`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/baseSector/x`
@@ -221,7 +221,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   `Interface/MilitiaMaps.sti`. `1..16`; the loader ignores values outside that range.
 - **Values:** `1..16`.
 - **Default:** `0` (invalid; the row is not placed).
-- **Source:** `Strategic/strategicmap.cpp:1269-1279`, `:1134`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/baseSector/y`
@@ -230,26 +230,26 @@ overwrite earlier rows; the shipped data has no duplicates.
 - **Description:** Y coordinate of the top-left sector of the town militia cutout.
 - **Values:** `1..16`.
 - **Default:** `0` (invalid).
-- **Source:** `Strategic/strategicmap.cpp:1281-1289`, `:1134`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townPoint/x`
 
-- **Type:** `Integer` (`INT32` via `atol`, stored in `POINT`)
+- **Type:** `Integer` (32-bit map coordinate)
 - **Description:** X position of the town name label on the strategic map, in tenths of a
   sector (the XML comment describes it as `10 * (X, Y)`). Fractions are possible.
 - **Values:** map coordinates; shipped data uses values such as 90, 125.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1285-1295`, `:1135`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITYLIST/CITY/townPoint/y`
 
-- **Type:** `Integer` (`INT32` via `atol`, stored in `POINT`)
+- **Type:** `Integer` (32-bit map coordinate)
 - **Description:** Y position of the town name label, in tenths of a sector.
 - **Values:** map coordinates.
 - **Default:** `0`.
-- **Source:** `Strategic/strategicmap.cpp:1297-1303`, `:1135`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ### `CITY_INFO/CITY_TABLE/CITY_TABLE_ROW`
@@ -260,7 +260,7 @@ overwrite earlier rows; the shipped data has no duplicates.
   town). The loader writes each value into `StrategicMap[x + 18*y].bNameId`.
 - **Values:** 18 integers per row; `row` is `00`..`17`.
 - **Default:** none; a missing or short row leaves the remaining cells unchanged.
-- **Source:** `Strategic/strategicmap.cpp:907-920`, `:1110-1125`
+- **Source:** game code (strategic-map loader and map UI); city table data.
 - **Confidence:** `source`
 
 ## Relations
@@ -284,18 +284,17 @@ v4 and v5 have the same fields and structure. v4 ships the Russian overlay; v5 h
 
 ## Sources
 
-- `Strategic/strategicmap.cpp` - parser, validation, array writes and save function.
-- `Strategic/strategicmap.cpp:812` - comment on the `gfHiddenTown` flag meaning.
-- `Map Screen Interface Map.cpp` - town display and hidden-town drawing.
-- `TableData/Map/Cities.xml`, `Map/Russian.Cities.xml` - shipped data and overlay.
+- Game code: the strategic-map loader, validation and map UI.
+- Table data: `Map/Cities.xml` and `Map/Russian.Cities.xml`.
+- `hiddenTown` is a known naming trap: the XML value is correct, but the internal visibility
+  flag is inverted. This is described in the field entry above.
 
 ## Open questions
 
-- `townPoint` is described by the XML comment as tenths of a sector; the code stores raw
-  `atol` values in a `POINT`. The exact scaling to screen pixels is in the map UI, not in this
-  table.
-- `hiddenTown` is correct per the XML comment, but the internal flag name is inverted. Anyone
-  reading `gfHiddenTown` directly must remember that `TRUE` means visible.
+- `townPoint` is described by the XML comment as tenths of a sector; the loader stores the
+  parsed integer, and the exact scaling to screen pixels is in the map UI, not in this table.
+- `hiddenTown` is correct per the XML comment, but the internal flag is inverted. Do not use
+  the internal flag name as the meaning of the XML field.
 - The matrix is 18x18 for the shipped world. A total-conversion mod with a different world
   size would need a code change, not only XML edits.
 

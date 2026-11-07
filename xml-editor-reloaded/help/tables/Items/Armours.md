@@ -11,10 +11,8 @@ root: ARMOURLIST
 record: ARMOUR
 key: uiIndex
 sources:
-  - Tactical/XML_Armour.cpp
-  - Tactical/Weapons.h
-  - Tactical/Weapons.cpp
-  - Ja2/GameSettings.cpp
+  - Game code (armour loader and protection)
+  - Armour table data
 status: draft
 updated: 2026-11-07
 ---
@@ -42,9 +40,9 @@ updated: 2026-11-07
 ## Purpose
 
 `Armours.xml` defines the protective values of body armour. An armour item in `Items.Items`
-points to one row through its `ubClassIndex`; the row is stored in the runtime `Armour[]`
-array. The values drive damage reduction, armour wear, Bobby Ray's filters and the item
-description panel.
+points to one row through its `ubClassIndex`; the row is stored in the runtime armour table.
+The values drive damage reduction, armour wear, Bobby Ray's filters and the item description
+panel.
 
 `Items.Armours` is a flat table: one `ARMOUR` record per armour type, keyed by `uiIndex`.
 The v5 file has 201 records.
@@ -76,11 +74,11 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 ### `ARMOURLIST/ARMOUR/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the row in the runtime `Armour[]` array and the identity of the
+- **Description:** Index of the row in the runtime armour table and the identity of the
   XML record. `Items.Items.ubClassIndex` of an armour item points here.
-- **Values:** `0..MAXITEMS-1`; the shipped data uses 0..200.
-- **Default:** none; a missing value leaves the array slot at zero.
-- **Source:** `Tactical/XML_Armour.cpp:100`, `:93-95`
+- **Values:** `0..N-1`; the shipped data uses 0..200.
+- **Default:** none; a missing value leaves the table slot at zero.
+- **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
 
 ### `ARMOURLIST/ARMOUR/ubArmourClass`
@@ -88,10 +86,10 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Type:** `Integer` (`UINT8`), enum `ARMOURCLASS_*`
 - **Description:** Body slot/class of the armour. It is not the protection value; it tells
   the UI and equipment checks whether this is a helmet, vest, leggings or plate.
-- **Values:** `0` helmet, `1` vest, `2` leggings, `3` plate, `4` monster, `5` vehicle
-  (`Tactical/Weapons.h:102-110`). Shipped data uses 0..4.
+- **Values:** `0` helmet, `1` vest, `2` leggings, `3` plate, `4` monster, `5` vehicle.
+  Shipped data uses 0..4.
 - **Default:** `0` (helmet) when the element is missing, because the record is zeroed first.
-- **Source:** `Tactical/XML_Armour.cpp:105`, `Tactical/Weapons.h:104-109`
+- **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
 
 ### `ARMOURLIST/ARMOUR/ubProtection`
@@ -102,7 +100,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
   the struct field is `UINT16`.
 - **Values:** `0..255` effectively; shipped data uses 1..54.
 - **Default:** `0`.
-- **Source:** `Tactical/XML_Armour.cpp:110`, `Tactical/Weapons.h:408`
+- **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
 
 ### `ARMOURLIST/ARMOUR/ubCoverage`
@@ -111,10 +109,10 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
 - **Description:** Percentage of the body slot covered by the armour. It is used as a
   multiplier in protection calculations and in the item comparison panel.
 - **Values:** `0..100`; shipped data uses 25..100.
-- **Default:** `100` when `ENABLE_ARMOR_COVERAGE` is false. The option defaults to `FALSE`
-  (`Ja2/GameSettings.cpp:2258`), so a default game forces every row to 100 and ignores the XML
-  value. When coverage is enabled and the element is missing, the zeroed record yields `0`.
-- **Source:** `Tactical/XML_Armour.cpp:114-118`, `Ja2/GameSettings.cpp:2258`
+- **Default:** `100` when `ENABLE_ARMOR_COVERAGE` is false. The option defaults to `FALSE`,
+  so a default game forces every row to 100 and ignores the XML value. When coverage is
+  enabled and the element is missing, the zeroed record yields `0`.
+- **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
 
 ### `ARMOURLIST/ARMOUR/ubDegradePercent`
@@ -124,7 +122,7 @@ duplicate `uiIndex` overwrites the earlier row; the data has no duplicates. Reco
   when it absorbs a hit. Higher values wear out faster.
 - **Values:** `0..100`; shipped data uses 5..50.
 - **Default:** `0`.
-- **Source:** `Tactical/XML_Armour.cpp:123`, `Tactical/Weapons.cpp:7929`, `:7945`
+- **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
 - **Confidence:** `source`
 
 ## Relations
@@ -159,15 +157,16 @@ matters). No overlay covers `Items/Armours.xml`.
 
 ## Sources
 
-- `Tactical/XML_Armour.cpp` - parser and save function.
-- `Tactical/Weapons.h:102-110` - `ARMOURCLASS_*`; `:405-412` - `ARMOURTYPE`.
-- `Tactical/Weapons.cpp:7929`, `:7945` - degradation formula.
-- `Ja2/GameSettings.cpp:2258` - `ENABLE_ARMOR_COVERAGE` default.
-- `TableData/Items/Armours.xml` - shipped values.
+- Game code: the armour loader, the per-hit protection pass and the item setting that
+  controls coverage.
+- Table data: `Items/Armours.xml` values.
+- The protection and wear calculation is described in
+  [Related formulas](../../FORMULAS.md#armour-protection).
 
 ## Open questions
 
-- The exact damage formula and how `ubProtection`, `ubCoverage` and ammo type combine is
-  spread across `Weapons.cpp`; a full formula is outside this table page.
-- Duplicate `uiIndex` handling is "last record wins" by code; the shipped data has no
+- The exact damage formula and how `ubProtection`, `ubCoverage` and ammo type combine are
+  described in [Related formulas](../../FORMULAS.md); a full balance discussion is outside
+  this table page.
+- Duplicate `uiIndex` handling is "last record wins" in the loader; the shipped data has no
   duplicates, so this is not exercised.

@@ -9,15 +9,15 @@ authority. All arithmetic below is integer arithmetic unless a value is marked `
 - [Reading the formulas](#reading-the-formulas)
 - [Armour protection](#armour-protection)
 - [Ammo and weapon damage dealt](#ammo-and-weapon-damage-dealt)
-- [Implementation map](#implementation-map)
+- [Formula map](#formula-map)
 
 ## Reading the formulas
 
 - `trunc` means C++ integer division; fractions are discarded at that step.
 - `max(1, divisor)` means the code guards against a zero divisor. The XML data should use
   non-zero divisors, but the formula is written as the code executes it.
-- `PreRandom(n)` returns an integer from `0` to `n-1`; `Random(n)` behaves the same way in
-  these functions.
+- `roll(n)` returns an integer from `0` to `n-1`; the same convention is used throughout
+  these formulas.
 - The formulas describe the default code path. Options, difficulty settings, traits and
   target type can add branches; those branches are named where they matter.
 - The order of operations matters. The same numbers applied in a different order can produce
@@ -26,8 +26,8 @@ authority. All arithmetic below is integer arithmetic unless a value is marked `
 ## Armour protection
 
 The game resolves a hit against each armour item separately and then subtracts the total
-from the bullet impact. The relevant functions are `ArmourProtection` and
-`TotalArmourProtection`.
+from the bullet impact. The calculation has two passes: one for each armour item and one
+that combines the armour slots.
 
 ### Inputs for one armour item
 
@@ -42,10 +42,10 @@ from the bullet impact. The relevant functions are `ArmourProtection` and
 
 ### Coverage and condition
 
-The code first checks whether the armour covers the hit at all:
+The armour pass first checks whether the armour covers the hit at all:
 
 ```
-r1 = PreRandom(100) + 1
+r1 = roll(100) + 1
 if r1 > C:
     if K == VEST and not AmmoTypes[type].ignoreArmour:
         return I / 2
@@ -58,7 +58,7 @@ ammo ignores armour; other classes return zero protection on a miss.
 If the armour is hit, the code checks for a weak spot using the current condition:
 
 ```
-r2 = PreRandom(100) + 1
+r2 = roll(100) + 1
 if r2 > S:
     P0 = P0 - (r2 - S)
     if P0 < 0:
@@ -80,7 +80,7 @@ P = trunc(P0 * AmmoTypes[type].armourImpactReductionMultiplier
                 / max(1, AmmoTypes[type].armourImpactReductionDivisor))
 ```
 
-`AmmoTypes` is `Items.AmmoTypes`; the two divisor fields are integers, not percentages.
+The ammo factors come from `Items.AmmoTypes`; the two divisor fields are integers, not percentages.
 The result `P` is the protection actually offered by the armour after the ammo's penetration
 modifier.
 
@@ -117,7 +117,7 @@ so the armour still loses condition even when it does not stop the hit.
 
 ### Which armour is checked
 
-`TotalArmourProtection` selects the slot from the hit location:
+The total-armour pass selects the slot from the hit location:
 
 | Hit location | Slot |
 |---|---|
@@ -136,42 +136,40 @@ a plate can stop more than either item alone.
 The final result for the hit is:
 
 ```
-totalProtection = TotalArmourProtection(...)
+totalProtection = totalArmourPass(...)
 impactAfterArmour = impactBeforeArmour - totalProtection
 ```
 
 The minimum-damage rule in [Ammo and weapon damage dealt](#ammo-and-weapon-damage-dealt)
-then applies. A plate can also break when its condition drops below `USABLE`.
+then applies. A plate can also break when its condition drops below the usable threshold.
 
-### Where it is implemented
+### Related data
 
-- `Tactical/Weapons.cpp:7860-7951` - `ArmourProtection` (coverage, condition, ammo, wear).
-- `Tactical/Weapons.cpp:7954-8089` - `TotalArmourProtection` (slot, vest pack, plates, flak).
-- `Tactical/Weapons.cpp:8238-8258` - subtraction and minimum damage.
-- `Tactical/Weapons.h:221-245` - ammo multipliers and flags.
-- `Items.Armours` fields: `ubProtection`, `ubCoverage`, `ubDegradePercent`,
-  `ubArmourClass`; see [Items.Armours](tables/Items/Armours.md).
+- [Items.Armours](tables/Items/Armours.md) - protection, coverage, wear and class.
+- `Items.AmmoTypes` - armour-penetration and damage multipliers.
+- The calculation lives in the game's armour/protection code; no source file or line
+  references are kept in this help.
 
 ## Ammo and weapon damage dealt
 
 This is a pipeline, not one closed formula. The output of each stage is the input of the
-next; the names below follow the code.
+next; the names below describe the stages.
 
 ### 1. Base weapon damage
 
-For a gun, `GetDamage` starts from the weapon's `ubImpact` and applies the gun-type damage
+For a gun, the base-damage step starts from the weapon's `ubImpact` and applies the gun-type damage
 modifier, the item damage bonus and the global gun-damage modifier:
 
 ```
 B0 = Weapon[item].ubImpact
 B1 = trunc(B0 * fDamageModifierGun[Weapon[item].ubWeaponType])
-B2 = B1 + GetDamageBonus(weapon)
-B  = min(255, GetModifiedGunDamage(B2))
+B2 = B1 + itemDamageBonus
+B  = min(255, globalGunAdjustment(B2))
 ```
 
 `ubImpact` is the `Items.Weapons.ubImpact` field; `fDamageModifierGun` is an item-setting
-multiplier by weapon type. The exact composition of `GetDamageBonus` is attachment- and
-trait-dependent; it is added before `GetModifiedGunDamage`, not after.
+multiplier by weapon type. The exact composition of the item damage bonus is attachment- and
+trait-dependent; it is added before the global gun-damage adjustment, not after.
 
 ### 2. Multiple projectiles
 
@@ -205,13 +203,13 @@ before the damage factor is used.
 
 ```
 I0 = trunc(B * F)
-fluke = PreRandom(51) - 25          // -25 .. +25
-bonus = sHitBy / 2                  // up to +50
+fluke = roll(51) - 25          // -25 .. +25
+bonus = hitMargin / 2                  // up to +50
 I1 = I0 * (100 + fluke + bonus) / 100
 if I1 < 1: I1 = 1
 ```
 
-`sHitBy` is the hit margin carried by the bullet; it is not the final chance to hit. The
+The hit margin is carried by the bullet carried by the bullet; it is not the final chance to hit. The
 fluke represents organ hits, a lucky lighter and similar random events.
 
 ### 5. High-explosive ammo
@@ -226,7 +224,7 @@ if AmmoTypes[type].highExplosive:
 ### 6. Armour subtraction
 
 ```
-armour = TotalArmourProtection(target, hitLocation, I1, ammoType, fragments)
+armour = totalArmourPass(target, hitLocation, I1, ammoType, fragments)
 I2 = I1 - armour
 ```
 
@@ -266,44 +264,43 @@ These bonuses are added to `I3`, not multiplied into the base weapon damage.
 ### 10. Damage resistance
 
 ```
-I4 = max(0 or 1, trunc(I3 * (100 - target.GetDamageResistance(...)) / 100))
+I4 = max(0 or 1, trunc(I3 * (100 - target.damageResistance) / 100))
 ```
 
-The floor is `0` for `zeroMinimumDamage` ammo and `1` otherwise. `GetDamageResistance`
+The floor is `0` for `zeroMinimumDamage` ammo and `1` otherwise. the target damage resistance
 combines the target's armour/robot/creature resistances and the current difficulty/option
 state; it is not only the armour value from `Items.Armours`.
 
 ### 11. Hit location and criticals
 
-`AdjustImpactByHitLocation` runs after resistance. It can add critical damage for head,
+The hit-location adjustment runs after resistance. It can add critical damage for head,
 torso and leg hits and produces a separate critical value used by the wound/stat-loss code.
 Drug effects, cryo, knockdown and other special effects run after this core pipeline.
 
-### Where it is implemented
+### Related data
 
-- `Tactical/Weapons.cpp:10804-10868` - `GetDamage` (base weapon/melee damage).
-- `Tactical/LOS.cpp:4887-4902` - base impact and multiple-projectile divisor.
-- `Tactical/Weapons.cpp:8156-8264` - ammo factor, fluke, HE, armour subtraction, minimum.
-- `Tactical/Weapons.cpp:8299-8334` - after-armour factor, traits, resistance, hit location.
-- `Tactical/Weapons.h:214-262` - `AmmoTypes` fields.
-- [Items.Armours](tables/Items/Armours.md), [Items.Magazines](tables/Items/Magazines.md),
-  `Items.AmmoTypes`, `Items.Weapons` - the data fields used above.
+- [Items.Armours](tables/Items/Armours.md) - the armour that reduces the result.
+- [Items.Magazines](tables/Items/Magazines.md) - the ammo item that selects the ammo type.
+- `Items.AmmoTypes` - damage, penetration, projectile count and special-ammo flags.
+- `Items.Weapons` - base impact and weapon-type modifier.
+- The calculation lives in the game's damage pipeline; no source file or line references are
+  kept in this help.
 
-## Implementation map
+## Formula map
 
-| Formula | Entry point | Main data |
-|---|---|---|
-| Armour protection | `Tactical/Weapons.cpp:7860` | `Items.Armours`, `Items.AmmoTypes` |
-| Total armour | `Tactical/Weapons.cpp:7954` | `Items.Armours`, `Items.Items` |
-| Weapon base damage | `Tactical/Weapons.cpp:10804` | `Items.Weapons`, `Items.Items` |
-| Bullet damage | `Tactical/Weapons.cpp:8092` | `Items.AmmoTypes`, `Items.Weapons`, `Items.Armours` |
+| Formula | Data used |
+|---|---|
+| Armour protection | `Items.Armours`, `Items.AmmoTypes` |
+| Total armour | `Items.Armours`, `Items.Items` |
+| Weapon base damage | `Items.Weapons`, `Items.Items` |
+| Bullet damage | `Items.AmmoTypes`, `Items.Weapons`, `Items.Armours` |
 
 ## Open questions
 
-- The formulas above describe the code paths used by ordinary guns. Melee, explosions,
-  structures and vehicle-specific branches are separate and are not documented here.
-- `GetDamageBonus` and `GetModifiedGunDamage` are named as stages, not expanded into every
-  attachment and trait contribution; those contributions belong to `Items.Items` and
+- The formulas above describe the ordinary gun path. Melee, explosions, structures and
+  vehicle-specific branches are separate and are not documented here.
+- The item damage bonus and the global gun-damage adjustment are stages, not expanded into
+  every attachment and trait contribution; those contributions belong to `Items.Items` and
   `Items.Weapons` once those tables are documented.
-- `GetDamageResistance` is a target-side aggregate; it will be documented with the soldier
+- The target damage resistance is an aggregate; it will be documented with the soldier
   profile/armour tables if the user asks for it.

@@ -11,10 +11,8 @@ root: MAGAZINELIST
 record: MAGAZINE
 key: uiIndex
 sources:
-  - Tactical/XML_Magazine.cpp
-  - Tactical/Weapons.h
-  - Tactical/Items.h
-  - Tactical/XML_AmmoStrings.cpp
+  - Game code (magazine loader and ammo lookups)
+  - Ammo type and caliber data
 status: draft
 updated: 2026-11-07
 ---
@@ -79,7 +77,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
   uses `ubClassIndex` to point at this row for ammo items.
 - **Values:** `0..MAXITEMS-1`; shipped data is contiguous.
 - **Default:** none; a missing value leaves the array slot at zero.
-- **Source:** `Tactical/XML_Magazine.cpp:101`, `:93-95`
+- **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
 ### `MAGAZINELIST/MAGAZINE/ubCalibre`
@@ -87,13 +85,12 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Caliber group of the ammo. The game uses it together with `ubMagSize` and
   `ubAmmoType` to find a matching magazine for a weapon and to name the caliber in the UI.
-  It indexes the `AmmoStrings` list, which is filled in file order by `XML_AmmoStrings.cpp`
+  It indexes the `AmmoStrings` list, which is filled in file order by the caliber loader
   (the `uiIndex` element is not read by that loader).
 - **Values:** `1..50` in the shipped data; the `AmmoStrings` file has a row for each used
   caliber.
 - **Default:** `0` (no caliber).
-- **Source:** `Tactical/XML_Magazine.cpp:106`, `Tactical/Weapons.h:396`,
-  `Tactical/XML_AmmoStrings.cpp:80-96`
+- **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
 ### `MAGAZINELIST/MAGAZINE/ubMagSize`
@@ -104,7 +101,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
   `UINT16`.
 - **Values:** `1..65535`; shipped data uses 1..5000.
 - **Default:** `0`.
-- **Source:** `Tactical/XML_Magazine.cpp:111`, `Tactical/Weapons.h:397`
+- **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
 ### `MAGAZINELIST/MAGAZINE/ubAmmoType`
@@ -114,7 +111,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
   interaction, tracer and other projectile properties.
 - **Values:** `0..34` in the shipped data; the valid range is the `AmmoTypes` row count.
 - **Default:** `0` (regular ammo).
-- **Source:** `Tactical/XML_Magazine.cpp:116`, `TableData/Items/AmmoTypes.xml`
+- **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
 ### `MAGAZINELIST/MAGAZINE/ubMagType`
@@ -125,7 +122,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - **Values:** `0` magazine (`AMMO_MAGAZINE`), `1` bullet(s) (`AMMO_BULLET`), `2` box
   (`AMMO_BOX`), `3` crate (`AMMO_CRATE`).
 - **Default:** `0` (magazine).
-- **Source:** `Tactical/XML_Magazine.cpp:121`, `Tactical/Weapons.h:139-144`
+- **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
 ## Relations
@@ -161,15 +158,14 @@ differ; compare the files when a specific magazine matters.
 
 ## Sources
 
-- `Tactical/XML_Magazine.cpp` - parser, array write and save function.
-- `Tactical/Weapons.h:394-403` - `MAGTYPE`; `:139-144` - `AMMO_*`.
-- `Tactical/XML_AmmoStrings.cpp` - caliber list order.
-- `TableData/Items/Magazines.xml`, `AmmoStrings.xml`, `AmmoTypes.xml` - shipped data.
+- Game code: the magazine loader and the ammo/caliber lookup code.
+- Table data: `Items/Magazines.xml`, `Items/AmmoStrings.xml`, `Items/AmmoTypes.xml`.
+- Damage and armour interaction: [Related formulas](../../FORMULAS.md).
 
 ## Open questions
 
 - `ubCalibre` is an index into a list filled in file order, not an explicit ID. Reordering
   `AmmoStrings.xml` would silently change every caliber name. This is a data-integrity risk
   worth reporting, but the loader is authoritative.
-- The exact match rule for `FindAmmo` (caliber, capacity, ammo type) is in `Items.cpp`; this
+- The exact ammo match rule (caliber, capacity, ammo type) is in the item lookup code; this
   page documents the fields, not the search algorithm.

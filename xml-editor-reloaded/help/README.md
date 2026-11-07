@@ -32,7 +32,7 @@ Language overlays (`Russian.*.xml`) are not separate tables. They are described 
 Every field entry carries a confidence label: `source`, `comment`, `metadata`, `inferred`,
 or `unknown`. When the source is unclear, the entry says so instead of guessing.
 
-See `SOURCES.md` for roots, file references and the exact citation format.
+See `SOURCES.md` for source types, evidence order and confidence rules.
 
 ## Layout
 
@@ -42,7 +42,7 @@ help/
 ├── INDEX.md           all tables -> document (generated)
 ├── COVERAGE.md        coverage report (generated)
 ├── GLOSSARY.md        English canon and approved Russian terms
-├── SOURCES.md         source hierarchy and citation rules
+├── SOURCES.md         source types and evidence rules
 ├── Localization.md    overlays and translatable fields
 ├── FORMULAS.md        multi-stage combat formulas (armour, ammo and damage)
 ├── tables/            table documents
@@ -74,8 +74,8 @@ root: WEAPONLIST
 record: WEAPON
 key: uiIndex
 sources:
-  - Tactical/Weapons.cpp
-  - Tactical/Weapons.h
+  - Game code (item loader)
+  - Item table data
 status: draft
 updated: 2026-11-07
 ---
@@ -104,7 +104,7 @@ A field is a level-3 heading with its full path from the document root, followed
 - **Description:** Item coolness: how early the item appears in enemy loadouts and shops.
 - **Values:** 0-255; game data uses small values.
 - **Default:** `0`
-- **Source:** `Utils/XML_Items.cpp:577-580`
+- **Source:** game code (item loader); item table data.
 - **Confidence:** `source`
 ```
 
@@ -117,16 +117,25 @@ Use this only when the table has no nested containers with the same leaf name.
 
 ### Anchors
 
-Heading anchors follow the usual Markdown slug: lower case, punctuation and backticks removed,
-spaces replaced with `-`. A field heading `### \`ITEMLIST/ITEM/ubCoolness\`` becomes
-`#itemlistitemubcoolness`. Cross-document links are relative: use the target document path and, when needed, an anchor
+Heading anchors follow the GitHub-style slug: lower case, punctuation and backticks removed,
+underscores preserved, spaces replaced with `-`. A field heading
+`### \`ITEMLIST/ITEM/ubCoolness\`` becomes `#itemlistitemubcoolness`; a path with
+`CITY_INFO` becomes `#city_info...`.
+
+Cross-document links are relative: use the target document path and, when needed, an anchor
 such as `tables/Lookup.md` plus `#lookupitemclass`.
+
+**Preview limitation.** The DSH document preview renders headings without `id` attributes, so
+same-page anchor clicks do nothing there. The links are valid in GitHub, VS Code and other
+standard Markdown viewers, and they will be used by the app's own help window. This is a
+preview-renderer limitation, not a document defect. `help-check` still validates every anchor
+against the GitHub-style slug.
 
 ## Statuses
 
 - `draft` - written, not reviewed; may contain open questions.
 - `reviewed` - checked against the source by the author and one reviewer.
-- `verified` - both the field set and the source references were rechecked at the end of a
+- `verified` - both the field set and the source evidence were rechecked at the end of a
   block; release documents must be at least `reviewed`, and `help-check -Release` requires
   `reviewed` or `verified`.
 
@@ -145,7 +154,7 @@ such as `tables/Lookup.md` plus `#lookupitemclass`.
 1. Copy the closest existing document and change the front matter.
 2. Run `pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-inventory.ps1` and
    look up the table in `.tmp/help/inventory.csv`.
-3. Find the loader by its root/record tag in `References/Ja 2 1.13 source`.
+3. Find the loader for its root/record tag in the game source.
 4. Document every field path, including nested and empty optional elements.
 5. Add the document to `INDEX.md`/`COVERAGE.md` with
    `pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Write`.
