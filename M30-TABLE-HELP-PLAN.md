@@ -490,8 +490,8 @@ B0 оставил `Lookup.md` одним документом; остальны�
 Статус B0 (2026-11-07): approved пользователем; документы переведены в `reviewed`.
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
-`FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. Следующий шаг — B1a
-(`Items.Items`).
+`FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. Следующий шаг — B1a/B1b
+(`Items.Items`, затем оружейное ядро).
 
 ### B1. Items: ядро
 
@@ -506,8 +506,15 @@ B0 оставил `Lookup.md` одним документом; остальны�
 Tons of Guns, disease; `ubPerPocket` — ёмкость OIV (в NIV не управляет ёмкостью, но
 читается для признака "small"); `ItemSize` = `OLD_INVENTORY_ITEM_NUMBER` — OIV-only маркер;
 NCTH-поля сгруппированы. Одобрен пользователем 2026-11-07, документ переведён в
-`reviewed`. Следующий шаг — B1b (`Weapons`, `AmmoTypes`, `AmmoStrings`, `Explosives`,
-`ExplosionData`).
+`reviewed`.
+
+Статус B1b (2026-11-07): созданы `Items/Weapons.md`, `Items/AmmoTypes.md`,
+`Items/AmmoStrings.md`, `Items/Explosives.md`, `Items/ExplosionData.md`; 48 + 38 + 4 + 19 + 8
+= 117 путей. В документах нет row counts и наблюдаемых диапазонов; `Values` — code/type/metadata
+limits, lookup lists и формулы из schema-комментариев. NCTH/OCTH в `Weapons` разведены,
+`AmmoTypes` использует schema-комментарий, `Explosives`/`ExplosionData` связаны через
+`ubAnimationID`/`ubFragType`. `help-check -Write` проходит (452/2985 путей), документы ждут
+ревью пользователем. Следующий шаг — B2.
 
 ### B2. Items: вложения и состав
 
