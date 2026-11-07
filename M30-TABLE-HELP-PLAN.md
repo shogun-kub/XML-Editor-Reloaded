@@ -498,6 +498,9 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `Items.Items` (254), `Items.Weapons` (48), `Items.AmmoTypes` (38), `Items.AmmoStrings` (4),
 `Items.Explosives` (19), `Items.ExplosionData` (8). Отдельно: классы предметов, флаги,
 `usItemClass`, `ubClassIndex`, `nas*`, оружейные модификаторы по стойкам.
+Статус B1a (2026-11-07): `Items/Items.md` создан; 254 скалярных поля плюс три
+структурных контейнера `STAND_MODIFIERS`/`CROUCH_MODIFIERS`/`PRONE_MODIFIERS`;
+`help-check -Write` проходит (257/257 путей). Ждёт ревью пользователем.
 
 ### B2. Items: вложения и состав
 
