@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08, B6 draft; sixty-two documents, 103 tables, 1404 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08, B6/B7 draft; seventy-six documents, 220 tables, 2873 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -72,4 +72,11 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 проходит (1404/2985); 20 файлов ExtraItems дают 100 табличных путей. Facility chances
 интерпретированы как шкала 0–1000 (`500` = 50%) и это вынесено в Open questions.
 
-**Дальше.** Ревью B6, затем B7 — `ArmyComposition` и остальные таблицы армии, ИИ и инвентарей.
+**B7 (2026-11-08, draft).** 14 документов, 117 таблиц, 238 уникальных путей (1469 табличных
+путей): четыре армейских документа, `SoldierProfiles` (6 файлов, 8 полей), пять drop-документов
+(по 4 поля), `GunChoices` (13 таблиц: 7 живых + 6 backup-алиасов), `ItemChoices` (7 таблиц),
+`IMPItemChoices` (54 поля) и `Traders` (81 таблица: 20 полей `Merchants` + 80 инвентарей по
+3 поля, таблица «файл → дилер»). `help-check -Write` проходит (2873/2985). Документы в `draft`.
+Backup-папка — алиас; точные merchant flags/coolness formula вынесены в `Open questions`.
+
+**Дальше.** Ревью B6/B7, затем B8 — laptop/UI/vehicles и остаток таблиц.
