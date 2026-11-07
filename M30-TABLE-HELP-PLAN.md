@@ -517,7 +517,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2–B5 одобрены; B6 и B7 подготовлены (draft) и ждут ревью.
+B2–B5 одобрены; B6–B8 подготовлены (draft) и ждут ревью.
 
 ### B1. Items: ядро
 
@@ -635,10 +635,18 @@ formula — в `Open questions`.
 ### B8. Laptop, UI и прочее
 
 `Email*` (3 файла, 8 полей), `BriefingRoom` (8), `History` (2), `CampaignStatsEvents` (12),
-`LoadScreenHints` (12), `LayoutMainMenu` (13), `ActionItems` (6), `EnemyNames` (4),
+`LoadScreenHints` (12), `LayoutMainMenu` (13), `ActionItems` (5), `EnemyNames` (4),
 `EnemyRank` (4), `RandomTeams` (1), `Sounds`/`BurstSounds` (1 общий), `HiddenNames` (3),
 `CivGroupNames` (6), `SquadNames` (2), `SpreadPatterns` (7), `Vehicles` (23),
 `Multiplayer` (1). Плюс `help/Localization.md` — общий документ об оверлеях.
+
+Статус B8 (2026-11-08, draft): 18 табличных документов + обновлён `help/Localization.md`;
+19 таблиц, 112 путей. `Email` — 3 документа, `BriefingRoom` — 8, `History` — 2,
+`CampaignStatsEvents` — 12, `LoadScreenHints` — 12, `LayoutMainMenu` — 13, `ActionItems` — 5,
+`EnemyNames`/`EnemyRank` — по 4, `RandomTeams` — 1, `Sounds`/`BurstSounds` — один общий
+документ по 1 полю, `HiddenNames` — 3, `CivGroupNames` — 6, `SquadNames` — 2,
+`SpreadPatterns` — 7, `Vehicles` — 23. `help-check -Write` проходит (2985/2985 путей,
+239/239 таблиц). Документы в `draft`; нужно ревью B6–B8.
 
 ### B9. Сквозная проверка (не блок документов)
 

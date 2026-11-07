@@ -30,6 +30,8 @@ Language overlays are `<Language>.<BaseFile>.xml` files in `TableData` (for exam
 A table page lists only the fields that can appear in an overlay, under `## Localization`.
 The overlay files themselves are not documented one by one; this page is the shared reference.
 
-For the current pilot, `Map/Cities` is the only translated table: `Map/Russian.Cities.xml`
-overrides `countryName`, `countryNoun` and `townName`, keyed by `uiIndex`; the `CITY_TABLE`
-matrix and the numeric city fields stay in the base.
+The current table documents list the localizable fields under `## Localization`. Typical
+examples are city/town names, facility names and tooltips, e-mail subjects and messages,
+history strings, and enemy/militia display names. Numeric IDs, coordinates, flags, matrix
+values and other structural data stay in the base table. A translation overlay may be
+incomplete; the editor shows the base value for any missing translation.
