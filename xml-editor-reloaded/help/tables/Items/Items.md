@@ -566,7 +566,7 @@ Fields marked `source` are verified against the table and lookup data.
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. In NIV the field does not control pocket capacity (LBE/Pockets and ItemSize do), but the item-description code still reads it for the "small" property: under NIV every item otherwise reports as fitting a small pocket.
-- **Values:** `0..8`; metadata validation limit; stored as `UINT8`.
+- **Values:** `0..8` metadata validation limit; stored as `UINT8`; the OIV slot capacity is clamped to `MAX_OBJECTS_PER_SLOT` (`255`).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
