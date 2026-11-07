@@ -72,7 +72,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/usDeconstructItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID used to deconstruct the structure. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID used to deconstruct the structure.
 - **Values:** Item ID used to deconstruct the structure.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
@@ -81,7 +81,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/usItemToCreate`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID created when the structure is deconstructed. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID created when the structure is deconstructed.
 - **Values:** Item ID created by deconstruction.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
@@ -126,7 +126,7 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/allowedtile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index on which deconstruction is allowed. The element may repeat. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Tile index on which deconstruction is allowed. The element may repeat.
 - **Values:** Allowed tile index; the element may repeat.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.

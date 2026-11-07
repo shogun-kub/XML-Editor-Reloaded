@@ -62,7 +62,7 @@ FOODOPINIONSLIST
 ### `FOODOPINIONSLIST/FOODOPINION/uProfile`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Profile whose food preference is described by this row. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Profile whose food preference is described by this row.
 - **Only used with:** Food system.
 - **Values:** Profile ID; the same profile can have several `PROFILE_OPINION` rows.
 - **Default:** `0` when omitted; an empty element follows the game default.

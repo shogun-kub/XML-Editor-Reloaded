@@ -78,7 +78,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** IMP portrait row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** IMP portrait row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -87,7 +87,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/PortraitId`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Portrait ID used by the IMP portrait list. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Portrait ID used by the IMP portrait list.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -96,7 +96,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/bSex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sex of the portrait. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Sex of the portrait.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -141,7 +141,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/DefaultSkin`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Default skin palette index. Numeric semantics: Palette/asset index; it selects a palette entry, so larger values are not a magnitude, and negative values are invalid.
+- **Description:** Default skin palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -150,7 +150,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/DefaultHair`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Default hair palette index. Numeric semantics: Palette/asset index; it selects a palette entry, so larger values are not a magnitude, and negative values are invalid.
+- **Description:** Default hair palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -159,7 +159,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/DefaultShirt`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Default shirt palette index. Numeric semantics: Palette/asset index; it selects a palette entry, so larger values are not a magnitude, and negative values are invalid.
+- **Description:** Default shirt palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -168,7 +168,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/DefaultPants`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Default pants palette index. Numeric semantics: Palette/asset index; it selects a palette entry, so larger values are not a magnitude, and negative values are invalid.
+- **Description:** Default pants palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -177,7 +177,7 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/DefaultBigBody`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Default big-body type. Numeric semantics: Palette/asset index; it selects a palette entry, so larger values are not a magnitude, and negative values are invalid.
+- **Description:** Default big-body type.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.

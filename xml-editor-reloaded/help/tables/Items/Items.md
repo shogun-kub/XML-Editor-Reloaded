@@ -652,7 +652,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Primary item ID. Cross-table references and localization overlays use this value; it is unique inside one file. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Primary item ID. Cross-table references and localization overlays use this value; it is unique inside one file.
 - **Values:** Non-negative integer; stored as `UINT32`; unique inside the file.
 - **Default:** None; required and unique inside the file.
 - **Source:** item table data; item property metadata.
@@ -771,7 +771,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubClassIndex`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Index of the class-specific record selected by `usItemClass`: an armour row, magazine row, weapon row, explosive row, and so on. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the class-specific record selected by `usItemClass`: an armour row, magazine row, weapon row, explosive row, and so on.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -789,7 +789,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/bSoundType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Sound family used when the item is handled or fired. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Sound family used when the item is handled or fired.
 - **Values:** `0` = default sound family; the full enum is the source constant set.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -800,7 +800,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubGraphicType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Graphic family for the inventory picture: `0` none, `1` big item, `2` interface, `3` alternate interface. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Graphic family for the inventory picture: `0` none, `1` big item, `2` interface, `3` alternate interface.
 - **Values:** `0` none, `1` big item, `2` interface, `3` alternate interface.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -809,7 +809,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubGraphicNum`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Graphic index inside the family selected by `ubGraphicType`. Numeric semantics: Index; larger values select a different graphic rather than measuring an amount, and negative values are invalid.
+- **Description:** Graphic index inside the family selected by `ubGraphicType`.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -836,7 +836,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ItemSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits. In NIV, an item whose size equals `OLD_INVENTORY_ITEM_NUMBER` (default `99`) is treated as an OIV-only item and is not available. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits. In NIV, an item whose size equals `OLD_INVENTORY_ITEM_NUMBER` (default `99`) is treated as an OIV-only item and is not available.
 - **Values:** `0..99`; `99` means the item does not fit a normal pocket.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -845,7 +845,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ItemSizeBonus`
 
 - **Type:** `Integer`
-- **Description:** Adjustment added to the item's effective size when pocket capacity is checked. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Adjustment added to the item's effective size when pocket capacity is checked.
 - **Values:** `-34..34`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -899,7 +899,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_NewInventory`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's new-inventory stock level or quantity for this item. Numeric semantics: Boolean/flag value: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Bobby Ray's new-inventory stock level or quantity for this item. Numeric semantics: Higher values mean a larger stock level; negative values are not meaningful.
 - **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -908,7 +908,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_UsedInventory`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's used-inventory stock level or quantity. Numeric semantics: Boolean/flag value: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Bobby Ray's used-inventory stock level or quantity. Numeric semantics: Higher values mean a larger stock level; negative values are not meaningful.
 - **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -917,7 +917,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_ROF`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's rate-of-fire/restock value for this item. Numeric semantics: Boolean/flag value: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Bobby Ray's rate-of-fire/restock value for this item. Numeric semantics: Higher values mean a higher rate-of-fire/restock value; negative values are not meaningful.
 - **Values:** `0..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -928,7 +928,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DrugType`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Drug/effect class. Editor metadata marks it as a flag mask, while the lookup is also presented as a sequence; see [DrugType](../Lookup.md#drugtype) and Open questions. Numeric semantics: Row ID; it selects another table row rather than measuring an amount, and negative values are invalid.
+- **Description:** Drug/effect class. Editor metadata marks it as a flag mask, while the lookup is also presented as a sequence; see [DrugType](../Lookup.md#drugtype) and Open questions.
 - **Values:** `0` = none; values are lookup IDs in [DrugType](../Lookup.md#drugtype).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -937,7 +937,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/FoodType`
 
 - **Type:** `Integer`
-- **Description:** Food or drink class used by the food system. The target food table is not embedded in v5. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Food or drink class used by the food system. The target food table is not embedded in v5.
 - **Values:** `0` = none; values index the food definitions. No separate v5 lookup file exists.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -946,7 +946,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usActionItemFlag`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Bit mask of action-item flags. It controls special use actions such as NET, radio, or remote detonator. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Bit mask of action-item flags. It controls special use actions such as NET, radio, or remote detonator.
 - **Values:** Bit mask; `0` = none. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -955,7 +955,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/clothestype`
 
 - **Type:** `Integer`
-- **Description:** Clothing type index used by the clothes system; see the future `Clothes` document. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Clothing type index used by the clothes system; see the future `Clothes` document.
 - **Values:** `0` = none; index into the clothes definitions (future `Clothes` document).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -973,7 +973,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/Alcohol`
 
 - **Type:** `Decimal`
-- **Description:** Alcohol strength/effect value for drinks; feeds the drunk state and related penalties. Numeric semantics: Boolean/flag value: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Alcohol strength/effect value for drinks; feeds the drunk state and related penalties. Numeric semantics: Higher values mean a stronger alcohol effect; negative values are not meaningful.
 - **Values:** Decimal value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1109,7 +1109,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DiscardedLauncherItem`
 
 - **Type:** `Integer`
-- **Description:** Item ID left behind after a disposable launcher is fired. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID left behind after a disposable launcher is fired.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1118,7 +1118,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/randomitem`
 
 - **Type:** `Integer`
-- **Description:** Random-item table ID used when this item is generated as random loot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Random-item table ID used when this item is generated as random loot.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1127,7 +1127,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/buddyitem`
 
 - **Type:** `Integer`
-- **Description:** Item ID of the buddy/companion item linked to this item. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the buddy/companion item linked to this item.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1145,7 +1145,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usRiotShieldGraphic`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Graphic index for the riot-shield overlay. Numeric semantics: Higher values mean a larger value/amount, and negative values are not meaningful.
+- **Description:** Graphic index for the riot-shield overlay.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1165,7 +1165,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/Bipod`
 
 - **Type:** `Integer`
-- **Description:** Bipod bonus value; adds stability when the weapon is deployed. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Bipod bonus value; adds stability when the weapon is deployed.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1246,7 +1246,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BloodiedItem`
 
 - **Type:** `Integer`
-- **Description:** Item ID of the bloodied variant produced when this item is bloodied. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Item ID of the bloodied variant produced when this item is bloodied.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1583,7 +1583,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ItemChoiceTimeSetting`
 
 - **Type:** `Integer`
-- **Description:** Time setting used when the item is selected in an item-choice list. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Time setting used when the item is selected in an item-choice list.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1628,7 +1628,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/randomitemcoolnessmodificator`
 
 - **Type:** `Integer`
-- **Description:** Coolness adjustment applied when this item is chosen as random loot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Coolness adjustment applied when this item is chosen as random loot.
 - **Values:** `-20..20`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1664,7 +1664,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotTargetingSkillGrant`
 
 - **Type:** `Integer`
-- **Description:** Targeting skill granted by the robot chassis or module. Numeric semantics: Boolean switch: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Targeting skill granted by the robot chassis or module.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1673,7 +1673,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotUtilitySkillGrant`
 
 - **Type:** `Integer`
-- **Description:** Utility skill granted by the robot chassis or module. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Utility skill granted by the robot chassis or module.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1682,7 +1682,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotChassisSkillGrant`
 
 - **Type:** `Integer`
-- **Description:** Chassis skill granted by the robot item. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Chassis skill granted by the robot item.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1709,7 +1709,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DefaultAttachment`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Repeated element listing an item ID installed by default. Up to ten occurrences per item; empty means no default attachment. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Repeated element listing an item ID installed by default. Up to ten occurrences per item; empty means no default attachment.
 - **Values:** Item ID; repeated up to ten times; empty = none.
 - **Default:** Empty; no default attachment.
 - **Source:** item table data; item property metadata.

@@ -149,7 +149,7 @@ DISEASESLIST
 ### `DISEASESLIST/DISEASE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Disease row identity.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

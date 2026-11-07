@@ -77,7 +77,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the blast presentation row. `Explosives.ubAnimationID` points here.
 - **Values:** Non-negative integer; unique within the file. `Explosives.ubAnimationID` points here.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -95,7 +95,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/TransKeyFrame`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the transparency key is applied. Numeric semantics: Frame index; it selects an animation frame rather than measuring an amount, and negative values are invalid.
+- **Description:** Animation frame at which the transparency key is applied.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -113,7 +113,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/ExplosionSoundID`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Primary sound ID played for the explosion. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Primary sound ID played for the explosion.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -122,7 +122,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/AltExplosionSoundID`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Alternate sound ID used when the explosion needs a variant. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Alternate sound ID used when the explosion needs a variant.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.

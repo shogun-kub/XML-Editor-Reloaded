@@ -59,7 +59,7 @@ INCOMPATIBLEATTACHMENTLIST
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment. The row declares that this attachment cannot be mounted together with the incompatible attachment. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Item ID of the attachment. The row declares that this attachment cannot be mounted together with the incompatible attachment.
 - **Values:** Item ID of the attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** incompatible attachment table data; field metadata.
@@ -68,7 +68,7 @@ INCOMPATIBLEATTACHMENTLIST
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the attachment that may not be mounted together with `itemIndex`. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Item ID of the attachment that may not be mounted together with `itemIndex`.
 - **Values:** Item ID of the attachment that may not be mounted together with `itemIndex`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** incompatible attachment table data; field metadata.

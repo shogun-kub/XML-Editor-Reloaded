@@ -63,7 +63,7 @@ CLOTHESLIST
 ### `CLOTHESLIST/CLOTHES/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the clothing row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the clothing row and identity of the XML record.
 - **Values:** Non-negative integer; unique within the file.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** clothes table data; field metadata.

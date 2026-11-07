@@ -68,7 +68,7 @@ meaningful until a caller proves otherwise.
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item index of the launcher in `Items.uiIndex`. It identifies the
-  weapon that can fire the item on the other side of the pair. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  weapon that can fire the item on the other side of the pair.
 - **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
 - **Default:** `0`; the pair is still stored, so a zero value is a data error, not "none".
 - **Source:** game code (launcher loader); item table data.
@@ -78,7 +78,7 @@ meaningful until a caller proves otherwise.
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item index of the launchable ammo/projectile in `Items.uiIndex`.
-  It is the item the launcher fires. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  It is the item the launcher fires.
 - **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
 - **Default:** `0`; a zero value is a data error.
 - **Source:** game code (launcher loader); item table data.

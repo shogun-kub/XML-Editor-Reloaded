@@ -74,7 +74,7 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/uiSlotIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Identity of the attachment slot. Slots are referenced by the NAS attachment layout and by the slot presentation code. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Identity of the attachment slot. Slots are referenced by the NAS attachment layout and by the slot presentation code.
 - **Only used with:** NAS.
 - **Values:** Non-negative slot index; unique within the file.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -154,7 +154,7 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/ubPocketMapping`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket index used by the NAS slot layout. The value maps the attachment slot to an inventory pocket. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Pocket index used by the NAS slot layout. The value maps the attachment slot to an inventory pocket.
 - **Only used with:** NAS.
 - **Values:** Pocket index used by the NAS layout; no fixed range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

@@ -158,7 +158,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the weapon row in the runtime weapon table and the identity of the XML record. `Items.ubClassIndex` of a weapon item points here.
 - **Values:** Non-negative integer; unique within the file. The loader uses the value as the runtime index; no fixed upper bound is declared by the schema.
 - **Default:** none; a missing element leaves the runtime slot at `0`.
 - **Source:** weapon table data; field metadata.
@@ -176,7 +176,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubWeaponClass`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Broad weapon class used by equipment checks, AI selection and UI grouping. It is coarser than `ubWeaponType`.
 - **Values:** IDs from `Lookup.WeaponClass`: `0` None, `1` Handgun, `2` Submachinegun, `3` Rifle, `4` Machinegun, `5` Shotgun, `6` Knife, `7` Monster.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -185,7 +185,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubWeaponType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Specific weapon type within the class, used for AI preferences, Bobby Ray categories and weapon-specific handling.
 - **Values:** IDs from `Lookup.WeaponType`: `0` None, `1` Pistol, `2` Machine Pistol, `3` Submachinegun, `4` Rifle, `5` Sniper Rifle, `6` Assault Rifle, `7` Light Machinegun, `8` Shotgun.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -194,7 +194,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubCalibre`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Calibre index. It selects the matching row in `AmmoStrings` for display and connects the weapon to its ammunition family. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Calibre index. It selects the matching row in `AmmoStrings` for display and connects the weapon to its ammunition family.
 - **Values:** Index of a row in [AmmoStrings](AmmoStrings.md); `AmmoCaliber` is the display string.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -330,7 +330,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a normal shot. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played for a normal shot.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -339,7 +339,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sBurstSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played for a burst.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -348,7 +348,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sSilencedBurstSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played for a burst from a silenced weapon. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played for a burst from a silenced weapon.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -357,7 +357,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sReloadSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played while reloading. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played while reloading.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -366,7 +366,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/sLocknLoadSound`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Sound ID played when a round is chambered or the weapon is readied. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played when a round is chambered or the weapon is readied.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -375,7 +375,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/SilencedSound`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played for a silenced shot. `0` means no separate silenced sound.
 - **Values:** Sound ID from the sound table; `0` means no separate silenced sound.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -465,7 +465,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ManualReloadSound`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Sound ID played during a manual reload. Numeric semantics: Sound index; larger values select a different sound asset rather than a stronger effect, and negative values are invalid.
+- **Description:** Sound ID played during a manual reload.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -579,7 +579,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/BarrelConfiguration`
 
 - **Type:** `UINT8` (`UINT16`)
-- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed. Numeric semantics: Numeric code that selects a barrel configuration; larger numbers have no inherent ordering, and negative values are invalid.
+- **Description:** Number of barrels/projectiles in one barrel configuration. The element may repeat to describe several configurations; if it is absent, one barrel is assumed.
 - **Values:** Positive barrel count; one element per barrel configuration. Absent means one barrel. The element may repeat.
 - **Default:** absent means one barrel; repeated elements add barrel configurations.
 - **Source:** weapon table data; field metadata.

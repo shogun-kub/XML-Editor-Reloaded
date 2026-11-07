@@ -247,7 +247,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Background row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Background row identity.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -967,7 +967,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/smoker`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Smoker flag or modifier. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Smoker flag or modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1047,7 +1047,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/dislikebackground`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Background ID that this background dislikes. Numeric semantics: Row ID; it selects another table row rather than measuring an amount, and negative values are invalid.
+- **Description:** Background ID that this background dislikes.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1067,7 +1067,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/drugtypes/drugtype`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drug type ID associated with the background. Numeric semantics: Row ID; it selects another table row rather than measuring an amount, and negative values are invalid.
+- **Description:** Drug type ID associated with the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Drug row index from [Drugs](Items/Drugs.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1077,7 +1077,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/drugitems/drugitem`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drug item ID associated with the background. Numeric semantics: Row ID; it selects another table row rather than measuring an amount, and negative values are invalid.
+- **Description:** Drug item ID associated with the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Item ID from [Items](Items/Items.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1137,7 +1137,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/no_male`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Excludes male characters from this background. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Excludes male characters from this background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1147,7 +1147,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/no_female`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Excludes female characters from this background. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Excludes female characters from this background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -1187,7 +1187,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/alt_impcreation`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Alternative IMP-creation flag for the background. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Alternative IMP-creation flag for the background.
 - **Only used with:** ENABLE_BACKGROUNDS, ALTERNATIVE_IMP_CREATION.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.

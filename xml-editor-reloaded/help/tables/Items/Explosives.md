@@ -99,7 +99,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the explosion row in the runtime explosion table. `Items.ubClassIndex` of an explosive item points here.
 - **Values:** Non-negative integer; unique within the file. `Items.ubClassIndex` of an explosive item points here.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -108,7 +108,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Explosion type from `Lookup.ExplosionType`; it selects damage handling, gas/smoke behaviour and visual/sound treatment.
 - **Values:** IDs from `Lookup.ExplosionType`: `0` Normal, `1` Stun, `2` Tear Gas, `3` Mustard Gas, `4` Flare, `5` Noise, `6` Smoke, `7` Creature Gas, `8` Fire, `9` Flashbang, `10` Signal Shell, `11` Roof Collapse, `12` White Smoke.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -162,7 +162,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Index of the blast animation and sound row in `ExplosionData`. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the blast animation and sound row in `ExplosionData`.
 - **Values:** Index of a row in [ExplosionData](ExplosionData.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.
@@ -216,7 +216,7 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragType`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Ammo type used for the fragments; it supplies the fragment projectile’s damage and impact behaviour.
 - **Values:** Index of a row in [AmmoTypes](AmmoTypes.md); the fragment projectile uses that ammo type.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosive table data; field metadata.

@@ -59,7 +59,7 @@ COMPATIBLEFACEITEMLIST
 ### `COMPATIBLEFACEITEMLIST/COMPATIBLEFACEITEM/compatiblefaceitemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the first face item. The row declares that the two face items can be worn together. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Item ID of the first face item. The row declares that the two face items can be worn together.
 - **Values:** Item ID of the first face item.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** compatible face-item table data; field metadata.
@@ -68,7 +68,7 @@ COMPATIBLEFACEITEMLIST
 ### `COMPATIBLEFACEITEMLIST/COMPATIBLEFACEITEM/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the second face item. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Item ID of the second face item.
 - **Values:** Item ID of the second face item.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** compatible face-item table data; field metadata.

@@ -197,7 +197,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Difficulty-level index. The valid range is `0..4`; the table comment warns that the four original levels are still hardcoded. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Difficulty-level index. The valid range is `0..4`; the table comment warns that the four original levels are still hardcoded.
 - **Values:** `0..4`; the table comment states that these four original levels are hardcoded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -287,7 +287,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/UnlimitedPoolOfTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** If set, the queen has an unlimited troop pool and the queen-pool limits are ignored. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** If set, the queen has an unlimited troop pool and the queen-pool limits are ignored.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -404,7 +404,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AggressiveQueenAi`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Enables the aggressive queen AI behavior. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Enables the aggressive queen AI behavior.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -548,7 +548,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/StrategicAiActionWakeQueen`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Strategic AI action that wakes the queen. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Strategic AI action that wakes the queen.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -557,7 +557,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/UpdateLastDayOfPlayerActivity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Updates the last day of player activity. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Updates the last day of player activity.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -575,7 +575,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AllowReinforcements`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Allows enemy reinforcements. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Allows enemy reinforcements.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -584,7 +584,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AllowReinforcementsOmerta`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Allows enemy reinforcements in Omerta. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Allows enemy reinforcements in Omerta.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -656,7 +656,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/UpgradeAdminsToTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Upgrades admins to troops. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Upgrades admins to troops.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -665,7 +665,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/UpgradeGarrisonsAdminsToTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Upgrades garrison admins to troops. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Upgrades garrison admins to troops.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -674,7 +674,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AlwaysUpGradeAdminsToTroopsProgress`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Always upgrades admins to troops as progress advances. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Always upgrades admins to troops as progress advances.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -701,7 +701,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AllowUnrestrictedXPLevels`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Allows experience levels above the normal cap. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Allows experience levels above the normal cap.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -710,7 +710,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenAttackLosingControlOfSector`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Queen attack behavior when losing control of a sector. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Queen attack behavior when losing control of a sector.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -719,7 +719,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/BloodcatAmbushSectors`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Bloodcat ambush sector setting. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Bloodcat ambush sector setting.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -728,7 +728,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/AirRaidLookForDive`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Air-raid AI behavior flag. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Air-raid AI behavior flag.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -746,7 +746,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/RadioSightings`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Radio-sighting setting. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Radio-sighting setting.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -755,7 +755,7 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/RadioSightings2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Second radio-sighting setting. Numeric semantics: Boolean switch stored as a number: `0` is off and `1` is on; larger or negative values are not meaningful.
+- **Description:** Second radio-sighting setting.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.

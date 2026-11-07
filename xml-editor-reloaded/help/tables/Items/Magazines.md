@@ -74,7 +74,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 - **Type:** `Integer` (`UINT32`)
 - **Description:** XML identity and the index in the runtime `Magazine[]` array. `Items`
-  uses `ubClassIndex` to point at this row for ammo items. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  uses `ubClassIndex` to point at this row for ammo items.
 - **Values:** `0..MAXITEMS-1`; non-negative array index.
 - **Default:** none; a missing value leaves the array slot at zero.
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
@@ -86,7 +86,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 - **Description:** Caliber group of the ammo. The game uses it together with `ubMagSize` and
   `ubAmmoType` to find a matching magazine for a weapon and to name the caliber in the UI.
   It indexes the `AmmoStrings` list, which is filled in file order by the caliber loader
-  (the `uiIndex` element is not read by that loader). Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+  (the `uiIndex` element is not read by that loader).
 - **Values:** `UINT8` index; the `AmmoStrings` file supplies the name for each used caliber.
 - **Default:** `0` (no caliber).
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
@@ -106,7 +106,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Ammo type index into `AmmoTypes`. It selects the damage, armour
-  interaction, tracer and other projectile properties. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+  interaction, tracer and other projectile properties.
 - **Values:** `UINT8` index; valid IDs are the `AmmoTypes` rows.
 - **Default:** `0` (regular ammo).
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
@@ -116,7 +116,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 - **Type:** `Integer` (`UINT8`), enum `AMMO_*`
 - **Description:** Kind of ammo item. Values at or above `AMMO_BOX` are treated as bulk ammo
-  and use different inventory, reload and transport rules. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+  and use different inventory, reload and transport rules.
 - **Values:** `0` magazine (`AMMO_MAGAZINE`), `1` bullet(s) (`AMMO_BULLET`), `2` box
   (`AMMO_BOX`), `3` crate (`AMMO_CRATE`).
 - **Default:** `0` (magazine).

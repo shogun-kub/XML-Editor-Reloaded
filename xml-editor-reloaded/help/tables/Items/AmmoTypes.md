@@ -140,7 +140,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the ammunition behaviour row. Magazines reference it through `ubAmmoType`; explosives can reference it as their fragment type. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the ammunition behaviour row. Magazines reference it through `ubAmmoType`; explosives can reference it as their fragment type.
 - **Values:** Non-negative integer; unique within the file. Referenced by `Magazines.ubAmmoType` and `Explosives.ubFragType`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -158,7 +158,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/red`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Red component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Red component of the ammunition-count colour, `0..255`.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -167,7 +167,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/green`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Green component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Green component of the ammunition-count colour, `0..255`.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -176,7 +176,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/blue`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Blue component of the ammunition-count colour, `0..255`. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Blue component of the ammunition-count colour, `0..255`.
 - **Values:** `0..255`; byte colour component.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -311,7 +311,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/highExplosive`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Number of explosive items used when this ammunition explodes. Zero means the round does not use the explosive path. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Number of explosive items used when this ammunition explodes. Zero means the round does not use the explosive path.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.
@@ -419,7 +419,7 @@ The schema comment is the primary description of this table; the damage-stage fi
 ### `AMMOTYPELIST/AMMOTYPE/ammoflag`
 
 - **Type:** `Flags` (`UINT16`)
-- **Description:** Bitmask of special ammunition properties: cryo, blind, anti-materiel, white-smoke trail and fire trail. Numeric semantics: Boolean/bit flag: `0` is off and a nonzero value enables it; larger or negative values are not meaningful.
+- **Description:** Bitmask of special ammunition properties: cryo, blind, anti-materiel, white-smoke trail and fire trail.
 - **Values:** Bitmask: `1` cryo, `2` blind, `4` anti-materiel, `8` white-smoke trail, `16` fire trail. Combine bits with bitwise OR. The `AmmoFlag` lookup labels bit positions; it is not the raw mask value.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** ammo type table data; field metadata.

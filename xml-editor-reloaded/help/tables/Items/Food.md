@@ -67,7 +67,7 @@ FOODSLIST
 ### `FOODSLIST/FOOD/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the food row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the food row and identity of the XML record.
 - **Only used with:** Food system.
 - **Values:** Non-negative index; unique within the file. It is referenced by the item row through the food type.
 - **Default:** `0` when omitted; an empty element follows the game default.

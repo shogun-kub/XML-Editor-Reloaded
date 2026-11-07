@@ -76,7 +76,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the row in the runtime armour table and the identity of the
-  XML record. `Items.ubClassIndex` of an armour item points here. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  XML record. `Items.ubClassIndex` of an armour item points here.
 - **Values:** `0..N-1`; non-negative array index. The loader ignores values outside the array.
 - **Default:** none; a missing value leaves the table slot at zero.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -86,7 +86,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 
 - **Type:** `Integer` (`UINT8`), enum `ARMOURCLASS_*`
 - **Description:** Body slot/class of the armour. It is not the protection value; it tells
-  the UI and equipment checks whether this is a helmet, vest, leggings or plate. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+  the UI and equipment checks whether this is a helmet, vest, leggings or plate.
 - **Values:** `0` helmet, `1` vest, `2` leggings, `3` plate, `4` monster, `5` vehicle.
 - **Default:** `0` (helmet) when the element is missing, because the record is zeroed first.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).

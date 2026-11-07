@@ -108,7 +108,7 @@ overwrite earlier rows.
 
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Town identity and array index. `0` is reserved (no town); the loader
-  skips it. The highest index sets `NUM_TOWNS`. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  skips it. The highest index sets `NUM_TOWNS`.
 - **Values:** `1..MAX_TOWNS-1`; the loader skips `0` and indexes outside the array.
 - **Default:** none; a missing value is treated as invalid and the town is skipped.
 - **Source:** game code (strategic-map loader and map UI); city table data.

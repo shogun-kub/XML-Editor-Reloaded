@@ -118,15 +118,16 @@ duplicated or reordered field, as well as a key that is not first.
 
 ### Numeric fields
 
-Every `Integer`, `Decimal`, `Float`, `UINT8` or `Flags` field describes its numeric meaning in
-the `Description`, prefixed with `Numeric semantics:`. The sentence must say what a larger value
-means relative to a smaller one, and what negative values mean. For a boolean-like switch, say
-that `0` is off and `1` is on. For an identifier or enum, say that larger numbers are not a
-magnitude and that negative values are invalid.
+A measurable `Integer`, `Decimal`, `Float`, `UINT8` or `Flags` field describes its numeric
+meaning in the `Description`, prefixed with `Numeric semantics:`. The sentence says what a
+larger value means relative to a smaller one, and what negative values mean.
 
-If the direction or negative-value meaning cannot be verified, write `Numeric semantics: not
-confirmed; see Open questions.` and add the field to `## Open questions`. Booleans and strings
-are exempt.
+Do **not** add this to identifiers, indexes, references, enum/class codes or 0/1 switches.
+Those values have no more/less meaning; they are normally non-negative, and a documented
+sentinel belongs in `Values`. Booleans and strings are exempt.
+
+If the direction or negative-value meaning cannot be verified, write `Numeric semantics: Not
+confirmed; see Open questions.` and add the field to `## Open questions`.
 
 A field is a level-3 heading with its full path from the document root, followed by a list:
 

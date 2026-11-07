@@ -190,7 +190,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/mIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md). Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md).
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -226,7 +226,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting helmet. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the starting helmet.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -253,7 +253,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mVest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting vest. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the starting vest.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -280,7 +280,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting leggings. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the starting leggings.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -307,7 +307,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting weapon. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the starting weapon.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -334,7 +334,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 0. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV big slot 0.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -370,7 +370,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 1. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV big slot 1.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -406,7 +406,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 2. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV big slot 2.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -442,7 +442,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 3. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV big slot 3.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -478,7 +478,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 0. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 0.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -505,7 +505,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 1. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 1.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -532,7 +532,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 2. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 2.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -559,7 +559,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 3. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 3.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -586,7 +586,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 4. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 4.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -613,7 +613,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 5. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 5.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -640,7 +640,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 6. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 6.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -667,7 +667,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 7. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID in OIV small slot 7.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merc starting gear table data; item/profile metadata.
@@ -694,7 +694,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lVest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV vest slot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the NIV vest slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -714,7 +714,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lLeftThigh`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV left-thigh slot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the NIV left-thigh slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -734,7 +734,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lRightThigh`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV right-thigh slot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the NIV right-thigh slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -754,7 +754,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV combat-pack slot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the NIV combat-pack slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -774,7 +774,7 @@ MERCGEARLIST
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV backpack slot. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the NIV backpack slot.
 - **Only used with:** NIV.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.

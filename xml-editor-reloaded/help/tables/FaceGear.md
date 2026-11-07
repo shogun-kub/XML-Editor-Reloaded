@@ -60,7 +60,7 @@ FACE_GEAR
 ### `FACE_GEAR/ITEM/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Face-gear row identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Face-gear row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** face gear table data; item/profile metadata.
@@ -69,7 +69,7 @@ FACE_GEAR
 ### `FACE_GEAR/ITEM/Type`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Face-gear type used by the portrait renderer. Numeric semantics: Numeric code that selects one listed option; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Face-gear type used by the portrait renderer.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** face gear table data; item/profile metadata.

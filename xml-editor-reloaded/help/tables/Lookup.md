@@ -290,7 +290,7 @@ JA2Data
 
 - **Type:** `Integer` (up to 64-bit for `ItemFlag`)
 - **Description:** Numeric identifier of the value. For flag lookups this is a bit or a
-  combination of bits; for sequence lookups it is an ordinal or an explicit ID. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+  combination of bits; for sequence lookups it is an ordinal or an explicit ID.
 - **Values:** `0..max`; sparse IDs are allowed (`AmmoChoices`).
 - **Default:** none; the value must exist in the file.
 - **Source:** lookup XML data; editor metadata for flag/sequence kind.

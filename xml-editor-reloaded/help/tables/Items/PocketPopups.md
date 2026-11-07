@@ -78,7 +78,7 @@ POCKETPOPUPS
 ### `POCKETPOPUPS/POCKET/pIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket index that owns this popup definition. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Pocket index that owns this popup definition.
 - **Only used with:** NIV.
 - **Values:** Pocket index; it should match a row in [Pockets](Pockets.md).
 - **Default:** `0` when omitted; an empty element follows the game default.

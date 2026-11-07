@@ -87,7 +87,7 @@ RANDOM_STATS
 ### `RANDOM_STATS/PROFILE/uiIndex`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Profile identity. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Profile identity.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** Integer base attribute value.
 - **Default:** `0` when omitted; an empty element follows the game default.

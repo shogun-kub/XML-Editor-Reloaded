@@ -85,7 +85,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the item being transformed. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID of the item being transformed.
 - **Values:** Item ID of the item being transformed.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -94,7 +94,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 1. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 1. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Item ID of the first result; `0` leaves the slot empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -103,7 +103,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 2. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 2. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -112,7 +112,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 3. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 3. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -121,7 +121,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 4. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 4. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -130,7 +130,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 5. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 5. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -139,7 +139,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 6. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 6. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -148,7 +148,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 7. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 7. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -157,7 +157,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 8. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 8. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -166,7 +166,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 9. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 9. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -175,7 +175,7 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 10. Zero leaves the slot empty; the same item may appear in several slots. Numeric semantics: Item ID; it selects an item row rather than measuring an amount, and negative values are invalid.
+- **Description:** Item ID produced in result slot 10. Zero leaves the slot empty; the same item may appear in several slots.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.

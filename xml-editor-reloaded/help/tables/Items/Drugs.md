@@ -92,7 +92,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/uiIndex`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the drug row and identity of the XML record. Numeric semantics: Identifier; larger numbers have no inherent meaning beyond row order, and negative values are invalid.
+- **Description:** Index of the drug row and identity of the XML record.
 - **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the schema comment allows up to 100 drugs.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -119,7 +119,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/effect`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Stat or resource changed by this effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Stat or resource changed by this effect.
 - **Values:** IDs from the drug-effect list: `0` HP, `1` BP, `2` AP, `3` Morale, `4` Physical resistance, `5` Strength, `6` Agility, `7` Dexterity, `8` Wisdom.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -155,7 +155,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/disease`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Disease row affected by this drug. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Disease row affected by this drug.
 - **Only used with:** Disease system.
 - **Values:** Disease row index in `Disease.xml`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -185,7 +185,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Disability added for the duration of the effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Disability added for the duration of the effect.
 - **Values:** Disability ID: `1` Heat intolerant, `2` Nervous, `3` Claustrophobic, `4` Nonswimmer, `5` Fear of insects, `6` Forgetful, `7` Psycho, `8` Deaf, `9` Shortsighted, `10` Hemophiliac, `11` Afraid of heights, `12` Self-harm.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.
@@ -212,7 +212,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/personality`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Personality trait added for the duration of the effect. Numeric semantics: Numeric code that selects one listed effect; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+- **Description:** Personality trait added for the duration of the effect.
 - **Values:** Personality trait ID: `1` Sociable, `2` Loner, `3` Optimist, `4` Assertive, `5` Intellectual, `6` Primitive, `7` Aggressive, `8` Phlegmatic, `9` Dauntless, `10` Pacifist, `11` Malicious, `12` Show-off.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** drug table data; field metadata.

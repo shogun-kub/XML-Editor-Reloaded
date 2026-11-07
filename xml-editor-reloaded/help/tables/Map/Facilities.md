@@ -84,7 +84,7 @@ would overwrite the previous flags (last record wins).
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the facility type in `FacilityTypes.ubIndex`. It selects the
-  facility's name, assignment, staff limits and effects. Numeric semantics: Numeric code that selects a listed type/class; larger numbers have no inherent ordering, and negative values are outside the listed choices.
+  facility's name, assignment, staff limits and effects.
 - **Values:** `0` means "no facility" and the loader skips the record; non-zero values are
   valid `FacilityTypes.ubIndex` IDs.
 - **Default:** `0` (skipped).
@@ -96,7 +96,7 @@ would overwrite the previous flags (last record wins).
 - **Type:** `Integer` (`0..2`)
 - **Description:** When the facility appears in the sector info popup: always, after the
   sector has been explored, or never. `2` is a valid value, so do not treat this as a plain
-  0/1 flag. Numeric semantics: Boolean switch: `0` is off and `1` is on; larger or negative values are not meaningful.
+  0/1 flag.
 - **Values:** `0` always show, `1` after exploration, `2` never.
 - **Default:** `0` (always show).
 - **Source:** game code (facility placement loader); facility type data.
