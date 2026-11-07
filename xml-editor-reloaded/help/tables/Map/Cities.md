@@ -61,7 +61,7 @@ The file is not a single flat list: it contains one `COUNTRY` singleton, a `CITY
 
 | Table | File | Records | Notes |
 |---|---|---:|---|
-| `Map.Cities` | `Map/Cities.xml` | 12 `CITY` records | plus `COUNTRY` and `CITY_TABLE` |
+| `Cities` | `Map/Cities.xml` | 12 `CITY` records | plus `COUNTRY` and `CITY_TABLE` |
 
 The editor treats `CITYLIST/CITY` as the record collection (key `uiIndex`) and `COUNTRY` as a
 root singleton. `CITY_TABLE` is a special matrix, not a record collection.

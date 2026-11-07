@@ -47,7 +47,7 @@ The v5 file has 71 records. There are no duplicate sector/type pairs in the ship
 
 | Table | File | Records | Notes |
 |---|---|---:|---|
-| `Map.Facilities` | `Map/Facilities.xml` | 71 | no metadata key; the logical key is sector + type |
+| `Facilities` | `Map/Facilities.xml` | 71 | no metadata key; the logical key is sector + type |
 
 `Map.Facilities` has no row in the editor metadata (it is one of the 66 tables without a
 metadata entry), so the editor shows it as a document-driven table.

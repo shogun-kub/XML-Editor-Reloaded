@@ -118,31 +118,31 @@ both v4 and v5; `Lookup/AttachmentPoint.xml` was repaired on 2026-11-07.
 All 23 files use `JA2Data` as the document root and the lookup name as the record element
 (`AmmoChoices`, `ItemClass`, ...). The record count is the number of values.
 
-| Lookup | Values | Kind | ID range | Notes |
-|---|---:|---|---|---|
-| `Lookup.AmmoChoices` | 7 | sequence | 19..79 | sparse IDs for enemy/militia ammo choices |
-| `Lookup.AmmoFlag` | 5 | flags | 0..4 | ammo property bits |
-| `Lookup.ArmourClass` | 6 | sequence | 0..5 | matches `ARMOURCLASS_*` |
-| `Lookup.AttachmentClass` | 36 | flags | 0..33554432 | OAS attachment classes |
-| `Lookup.AttachmentPoint` | 8 | flags | 0..16 | v5 repaired; same eight values as v4 |
-| `Lookup.AttachmentSystem` | 3 | sequence | 0..2 | Any / OAS / NAS |
-| `Lookup.Cursor` | 23 | sequence | 0..23 | cursor IDs |
-| `Lookup.DrugType` | 26 | flags | 0..1081324 | drug effect bits |
-| `Lookup.ExplosionSize` | 5 | sequence | 0..4 | explosion size |
-| `Lookup.ExplosionType` | 13 | sequence | 0..12 | explosion kind |
-| `Lookup.ItemClass` | 23 | flags | 1..1073741824 | `IC_*` bit flags |
-| `Lookup.ItemFlag` | 36 | flags | 0..8589934592 | item flags, 64-bit |
-| `Lookup.LBEClass` | 5 | sequence | 0..4 | load-bearing equipment class |
-| `Lookup.MagazineType` | 4 | sequence | 0..3 | magazine / bullet / box / crate |
-| `Lookup.MergeType` | 16 | sequence | 0..15 | merge transformation kind |
-| `Lookup.NasAttachmentClass` | 16 | flags | 0..16384 | NAS attachment classes |
-| `Lookup.NasLayoutClass` | 7 | flags | 0..32 | NAS layout classes |
-| `Lookup.PocketSize` | 4 | sequence | 0..3 | pocket size |
-| `Lookup.Separability` | 3 | sequence | 0..2 | removable / inseparable / replaceable |
-| `Lookup.Silhouette` | 56 | sequence | 0..55 | item silhouette |
-| `Lookup.SkillCheckType` | 16 | sequence | 0..15 | skill check kind |
-| `Lookup.WeaponClass` | 8 | sequence | 0..7 | `WEAPONCLASS_*` |
-| `Lookup.WeaponType` | 9 | sequence | 0..8 | `WEAPONTYPE_*` |
+| Lookup | File | Values | Kind | ID range | Notes |
+|---|---|---:|---|---|---|
+| `AmmoChoices` | `Lookup/AmmoChoices.xml` | 7 | sequence | 19..79 | sparse IDs for enemy/militia ammo choices |
+| `AmmoFlag` | `Lookup/AmmoFlag.xml` | 5 | flags | 0..4 | ammo property bits |
+| `ArmourClass` | `Lookup/ArmourClass.xml` | 6 | sequence | 0..5 | matches `ARMOURCLASS_*` |
+| `AttachmentClass` | `Lookup/AttachmentClass.xml` | 36 | flags | 0..33554432 | OAS attachment classes |
+| `AttachmentPoint` | `Lookup/AttachmentPoint.xml` | 8 | flags | 0..16 | v5 repaired; same eight values as v4 |
+| `AttachmentSystem` | `Lookup/AttachmentSystem.xml` | 3 | sequence | 0..2 | Any / OAS / NAS |
+| `Cursor` | `Lookup/Cursor.xml` | 23 | sequence | 0..23 | cursor IDs |
+| `DrugType` | `Lookup/DrugType.xml` | 26 | flags | 0..1081324 | drug effect bits |
+| `ExplosionSize` | `Lookup/ExplosionSize.xml` | 5 | sequence | 0..4 | explosion size |
+| `ExplosionType` | `Lookup/ExplosionType.xml` | 13 | sequence | 0..12 | explosion kind |
+| `ItemClass` | `Lookup/ItemClass.xml` | 23 | flags | 1..1073741824 | `IC_*` bit flags |
+| `ItemFlag` | `Lookup/ItemFlag.xml` | 36 | flags | 0..8589934592 | item flags, 64-bit |
+| `LBEClass` | `Lookup/LBEClass.xml` | 5 | sequence | 0..4 | load-bearing equipment class |
+| `MagazineType` | `Lookup/MagazineType.xml` | 4 | sequence | 0..3 | magazine / bullet / box / crate |
+| `MergeType` | `Lookup/MergeType.xml` | 16 | sequence | 0..15 | merge transformation kind |
+| `NasAttachmentClass` | `Lookup/NasAttachmentClass.xml` | 16 | flags | 0..16384 | NAS attachment classes |
+| `NasLayoutClass` | `Lookup/NasLayoutClass.xml` | 7 | flags | 0..32 | NAS layout classes |
+| `PocketSize` | `Lookup/PocketSize.xml` | 4 | sequence | 0..3 | pocket size |
+| `Separability` | `Lookup/Separability.xml` | 3 | sequence | 0..2 | removable / inseparable / replaceable |
+| `Silhouette` | `Lookup/Silhouette.xml` | 56 | sequence | 0..55 | item silhouette |
+| `SkillCheckType` | `Lookup/SkillCheckType.xml` | 16 | sequence | 0..15 | skill check kind |
+| `WeaponClass` | `Lookup/WeaponClass.xml` | 8 | sequence | 0..7 | `WEAPONCLASS_*` |
+| `WeaponType` | `Lookup/WeaponType.xml` | 9 | sequence | 0..8 | `WEAPONTYPE_*` |
 
 ## Lookup details
 

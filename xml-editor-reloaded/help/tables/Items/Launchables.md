@@ -46,7 +46,7 @@ The v5 file has 159 records and no duplicate pairs.
 
 | Table | File | Records | Notes |
 |---|---|---:|---|
-| `Items.Launchables` | `Items/Launchables.xml` | 159 | v4 and v5 have the same two fields |
+| `Launchables` | `Items/Launchables.xml` | 159 | v4 and v5 have the same two fields |
 
 ## Structure
 

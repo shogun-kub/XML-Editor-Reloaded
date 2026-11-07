@@ -51,7 +51,7 @@ The v5 file has 201 records.
 
 | Table | File | Records | Notes |
 |---|---|---:|---|
-| `Items.Armours` | `Items/Armours.xml` | 201 | v4 and v5 have the same schema; values may differ |
+| `Armours` | `Items/Armours.xml` | 201 | v4 and v5 have the same schema; values may differ |
 
 ## Structure
 

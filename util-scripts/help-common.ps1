@@ -193,6 +193,16 @@ function Read-HelpFrontMatter {
     }
 }
 
+function Get-HelpCleanTableName {
+    param([Parameter(Mandatory)][string]$Table)
+
+    $dot = $Table.LastIndexOf('.')
+    if ($dot -ge 0 -and $dot -lt ($Table.Length - 1)) {
+        return $Table.Substring($dot + 1)
+    }
+    return $Table
+}
+
 function ConvertTo-HelpAnchor {
     param([Parameter(Mandatory)][string]$Text)
 

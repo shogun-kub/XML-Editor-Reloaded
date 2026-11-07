@@ -378,7 +378,8 @@ if ($Write) {
         $doc = if ($tableOwners.ContainsKey($table.Table)) { $tableOwners[$table.Table] } else { $null }
         $docLink = if ($doc) { "[$doc]($doc)" } else { '—' }
         $status = if ($doc) { 'documented' } else { 'pending' }
-        $indexLines.Add("| ``$($table.Table)`` | ``$($table.File)`` | $docLink | $status |")
+        $cleanName = Get-HelpCleanTableName -Table $table.Table
+        $indexLines.Add("| ``$cleanName`` | ``$($table.File)`` | $docLink | $status |")
     }
     Write-HelpLines -Path (Join-Path $HelpRoot 'INDEX.md') -Lines $indexLines
 
@@ -415,12 +416,14 @@ if ($Write) {
     $coverageLines.Add('')
     $coverageLines.Add('## Documented tables')
     $coverageLines.Add('')
-    $coverageLines.Add('| Table | Document | Paths | Source |')
-    $coverageLines.Add('|---|---|---:|---|')
+    $coverageLines.Add('| Table | File | Document | Paths | Source |')
+    $coverageLines.Add('|---|---|---|---:|---|')
     foreach ($doc in $docInfos) {
         foreach ($info in $doc.TableInfo) {
             $source = if ($info.ParseError) { 'v4 fallback' } else { $info.SourceVersion }
-            $coverageLines.Add("| ``$($info.Table)`` | ``$($doc.Relative)`` | $($info.Covered)/$($info.Expected) | $source |")
+            $cleanName = Get-HelpCleanTableName -Table $info.Table
+            $file = $byTable[$info.Table].File
+            $coverageLines.Add("| ``$cleanName`` | ``$file`` | ``$($doc.Relative)`` | $($info.Covered)/$($info.Expected) | $source |")
         }
     }
     Write-HelpLines -Path (Join-Path $HelpRoot 'COVERAGE.md') -Lines $coverageLines

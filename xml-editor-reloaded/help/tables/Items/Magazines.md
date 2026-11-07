@@ -50,7 +50,7 @@ The v5 file has 613 records.
 
 | Table | File | Records | Notes |
 |---|---|---:|---|
-| `Items.Magazines` | `Items/Magazines.xml` | 613 | v4 and v5 have the same schema; values may differ |
+| `Magazines` | `Items/Magazines.xml` | 613 | v4 and v5 have the same schema; values may differ |
 
 ## Structure
 
