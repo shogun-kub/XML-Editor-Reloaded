@@ -770,8 +770,11 @@ case-sensitive список палитр; у пяти enemy-drop таблиц у
 В `Sounds` позиция `SOUND` в списке является ID, путь хранится как `CHAR8` до 255 символов.
 В `SpreadPatterns` `method` сравнивается **case-sensitive** с `RECTANGLE`/`DIAMOND`/`ELLIPSE`;
 значения `Rectangle`/`Ellipse` из XML-комментария не совпадают и оставляют дефолтный `ELLIPSE`;
-`DESC` не читается, `xspread`/`yspread` берутся по модулю. Остались непроверенные поля
-B1/B3/B4/B5 и часть B7/B8; `help-check -Write` проходит после каждого коммита.
+`DESC` не читается, `xspread`/`yspread` берутся по модулю. В `Vehicles` подтверждены типы
+`uiIndex`/`SeatIndex` `UINT8`, `MvtTypes`/`SeatingCapacities`/sound IDs `INT32`,
+`VehicleArmourType` `INT16`, `Pilot` `INT8`, координаты сидений `INT8`, `Rotation`/`Compartment`
+`UINT8`, строки `CHAR16`. Остались непроверенные поля B1/B3/B4/B5 и часть B7/B8;
+`help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 
