@@ -208,12 +208,12 @@ ENEMYGUNCHOICESLIST
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the weapon-choice group. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/name`
 
@@ -226,463 +226,463 @@ ENEMYGUNCHOICESLIST
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/ubChoices`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Number of valid weapon slots in this group.
 - **Numeric semantics:** higher = more choices; negative values are not meaningful.
 - **Values:** Count `0..50`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo1`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 1. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo2`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 2. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo3`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 3. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo4`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 4. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo5`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 5. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo6`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 6. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo7`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 7. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo8`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 8. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo9`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 9. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo10`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 10. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo11`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 11. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo12`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 12. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo13`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 13. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo14`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 14. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo15`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 15. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo16`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 16. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo17`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 17. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo18`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 18. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo19`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 19. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo20`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 20. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo21`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 21. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo22`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 22. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo23`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 23. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo24`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 24. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo25`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 25. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo26`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 26. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo27`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 27. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo28`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 28. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo29`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 29. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo30`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 30. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo31`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 31. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo32`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 32. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo33`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 33. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo34`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 34. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo35`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 35. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo36`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 36. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo37`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 37. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo38`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 38. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo39`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 39. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo40`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 40. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo41`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 41. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo42`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 42. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo43`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 43. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo44`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 44. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo45`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 45. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo46`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 46. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo47`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 47. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo48`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 48. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo49`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 49. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/bItemNo50`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID in weapon slot 50. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
