@@ -99,6 +99,7 @@ merchant flags/coolness formula вынесены в `Open questions`.
 `Explosives`, `ExplosionData`: исправлены знаки burst/auto penalty, смысл `ubAimLevels`, знаки
 recoil, скорость `ubShotsPer4Turns`, `ubVolatility`, диапазон `ubMagSize`, `bIndoorModifier` и
 `DamageKeyFrame`. В B1a исправлены `ItemSize`, `usSpotting` (clamp `0..100`), `usPortionSize`
-(дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик) и единицы `ubWeight`. Остальные
-поля B1 и блоки B2–B8 ещё не пройдены. **Дальше.** Продолжить B1 → B8; после B10 — повторный
-B9-гейт и финальный коммит.
+(дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик) и единицы `ubWeight`. В
+`GLOSSARY.md` добавлены `recoil`, `aim level`, `burst penalty`. Остальные поля B1 и блоки B2–B8
+ещё не пройдены. **Дальше.** Продолжить B1 → B8; после B10 — повторный B9-гейт и финальный
+коммит.
