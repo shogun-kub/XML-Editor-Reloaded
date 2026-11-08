@@ -73,94 +73,94 @@ MERC_AVAILABLES
 
 ### `MERC_AVAILABLES/MERC/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Availability row identity.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/Name`
 
 - **Type:** `String` (`String`)
-- **Description:** Display name of the mercenary.
-- **Values:** Free text.
+- **Description:** Mercenary name stored in the table, but the loader does not read this element; it is ignored.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/Drunk`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Marks the MERC as drunk for its availability/dialogue state.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/uiAlternateIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Alternate availability index; `-1` means none.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/StartMercsAvailable`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Whether the mercenary is available at the start.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/NewMercsAvailable`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Whether the mercenary becomes available later.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/MercBioID`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Biography ID for the MERC site.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/ProfilId`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Profile ID of the MERC mercenary.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/usMoneyPaid`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Money paid value associated with the availability row.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MERC_AVAILABLES/MERC/usDay`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Day on which the availability changes.
 - **Numeric semantics:** Day number; higher values mean a later day, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_ConditionsForMercAvailability.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
