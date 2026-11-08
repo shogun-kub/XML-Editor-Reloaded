@@ -62,40 +62,40 @@ ENEMY_RANK
 
 ### `ENEMY_RANK/RANK/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the enemy rank. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-rank loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMY_RANK/RANK/Enabled`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, this rank name is enabled. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-rank loader); table data.
+- **Confidence:** `source`
 
 ### `ENEMY_RANK/RANK/ExpLevel`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Experience level associated with this rank.
-- **Numeric semantics:** higher = more experienced; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** higher = more experienced; the table comment gives the intended range `1..9`.
+- **Values:** `1..9` intended; the loader stores this field as `UINT16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-rank loader); table XML comment.
+- **Confidence:** `source`
 
 ### `ENEMY_RANK/RANK/szRank`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the rank, such as `Recruit` or `Colonel`.
-- **Values:** Free text or a symbolic code.
+- **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-rank loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
