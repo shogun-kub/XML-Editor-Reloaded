@@ -205,21 +205,21 @@ DIFFICULTY_SETTINGS
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/Name`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Short name of the difficulty level.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/ConfirmText`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Confirmation text shown for the difficulty level.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/StartingCash`
 

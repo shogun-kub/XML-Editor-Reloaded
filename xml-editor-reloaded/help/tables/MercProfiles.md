@@ -266,12 +266,12 @@ MERCPROFILES
 
 ### `MERCPROFILES/PROFILE/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Profile identity and index in the profile array.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..4294967295`; the loader parses this field as `UINT32` and uses it as the array index.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc profile table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader); merc profile table data.
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/Type`
 
@@ -284,21 +284,21 @@ MERCPROFILES
 
 ### `MERCPROFILES/PROFILE/zName`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Full name of the mercenary or NPC.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** merc profile table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader); merc profile table data.
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/zNickname`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Short name used in dialogue and the roster.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** merc profile table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader); merc profile table data.
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/ubFaceIndex`
 

@@ -251,8 +251,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/szName`
 
@@ -261,8 +261,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/szShortName`
 
@@ -271,8 +271,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/szDescription`
 
@@ -281,8 +281,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_polar`
 
@@ -292,8 +292,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_desert`
 
@@ -303,8 +303,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_swamp`
 
@@ -314,8 +314,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_urban`
 
@@ -325,8 +325,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_forest`
 
@@ -336,8 +336,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_plains`
 
@@ -347,8 +347,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_river`
 
@@ -358,8 +358,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_coastal`
 
@@ -369,8 +369,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_tropical`
 
@@ -380,8 +380,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_mountain`
 
@@ -391,8 +391,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/agility`
 
@@ -402,8 +402,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/strength`
 
@@ -413,8 +413,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/dexterity`
 
@@ -424,8 +424,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/mechanical`
 
@@ -435,8 +435,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/medical`
 
@@ -446,8 +446,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/wisdom`
 
@@ -457,8 +457,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/explosives`
 
@@ -468,8 +468,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/leadership`
 
@@ -479,8 +479,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/marksmanship`
 
@@ -490,8 +490,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_height`
 
@@ -501,8 +501,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_swimming`
 
@@ -512,8 +512,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_fortify`
 
@@ -523,8 +523,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_artillery`
 
@@ -534,8 +534,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_inventory`
 
@@ -545,8 +545,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_airdrop`
 
@@ -556,8 +556,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ap_assault`
 
@@ -567,8 +567,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/travel_foot`
 
@@ -578,8 +578,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/travel_car`
 
@@ -589,8 +589,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/travel_air`
 
@@ -600,8 +600,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/travel_boat`
 
@@ -611,8 +611,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/resistance_fear`
 
@@ -622,8 +622,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/resistance_suppression`
 
@@ -633,8 +633,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/resistance_physical`
 
@@ -644,8 +644,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/resistance_alcohol`
 
@@ -655,8 +655,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/resistance_disease`
 
@@ -666,8 +666,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/interrogation`
 
@@ -677,8 +677,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/prisonguard`
 
@@ -688,8 +688,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/betterprices_guns`
 
@@ -699,8 +699,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/betterprices`
 
@@ -710,8 +710,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/capitulation`
 
@@ -721,8 +721,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/speed_run`
 
@@ -732,8 +732,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/speed_bandaging`
 
@@ -743,8 +743,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/drink_energyregen`
 
@@ -754,8 +754,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/carrystrength`
 
@@ -765,8 +765,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/food`
 
@@ -776,8 +776,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/water`
 
@@ -787,8 +787,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/sleep`
 
@@ -798,8 +798,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/meleedamage`
 
@@ -809,8 +809,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/cth_blades`
 
@@ -820,8 +820,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/camo`
 
@@ -831,8 +831,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/stealth`
 
@@ -842,8 +842,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/increased_maxcth`
 
@@ -853,8 +853,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/hearing_night`
 
@@ -864,8 +864,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/hearing_day`
 
@@ -875,8 +875,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/disarm_trap`
 
@@ -886,8 +886,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/SAM_cth`
 
@@ -897,8 +897,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/approach_friendly`
 
@@ -908,8 +908,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/approach_direct`
 
@@ -919,8 +919,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/approach_threaten`
 
@@ -930,8 +930,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/approach_recruit`
 
@@ -941,8 +941,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/breachingcharge`
 
@@ -952,8 +952,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/cth_vs_creatures`
 
@@ -963,8 +963,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/insurance`
 
@@ -974,8 +974,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/spotter`
 
@@ -985,8 +985,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/disease_diagnose`
 
@@ -996,8 +996,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/disease_treatment`
 
@@ -1007,8 +1007,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/tracker_ability`
 
@@ -1018,8 +1018,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/ambush_radius`
 
@@ -1029,8 +1029,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/smoker`
 
@@ -1039,8 +1039,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/croucheddefense`
 
@@ -1050,8 +1050,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/fortify_assignment`
 
@@ -1061,8 +1061,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/snake_defense`
 
@@ -1072,8 +1072,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/hackerskill`
 
@@ -1083,8 +1083,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/burial_assignment`
 
@@ -1094,8 +1094,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/administration_assignment`
 
@@ -1105,8 +1105,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/exploration_assignment`
 
@@ -1116,8 +1116,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/dislikebackground`
 
@@ -1126,8 +1126,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/druguse`
 
@@ -1137,8 +1137,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/drugtypes/drugtype`
 
@@ -1147,8 +1147,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Drug row index from [Drugs](Items/Drugs.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/drugitems/drugitem`
 
@@ -1157,8 +1157,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Item ID from [Items](Items/Items.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/xenophobic`
 
@@ -1168,8 +1168,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/level_underground`
 
@@ -1179,8 +1179,8 @@ BACKGROUNDS
 - **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/scrounging`
 
@@ -1190,8 +1190,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/traplevel`
 
@@ -1201,8 +1201,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/corruptionspread`
 
@@ -1212,8 +1212,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/no_male`
 
@@ -1222,8 +1222,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/no_female`
 
@@ -1232,8 +1232,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/loyalitylossondeath`
 
@@ -1243,8 +1243,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/animal_friend`
 
@@ -1254,8 +1254,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/civgroup_loyal`
 
@@ -1265,8 +1265,8 @@ BACKGROUNDS
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ### `BACKGROUNDS/BACKGROUND/alt_impcreation`
 
@@ -1275,8 +1275,8 @@ BACKGROUNDS
 - **Only used with:** ENABLE_BACKGROUNDS, ALTERNATIVE_IMP_CREATION.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** background table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Background.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

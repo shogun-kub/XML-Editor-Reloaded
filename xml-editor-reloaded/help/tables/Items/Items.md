@@ -767,13 +767,13 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/AttachToPointAPCost`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** AP cost to attach or detach the item at its attachment point.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer value; no narrower validation limit is recorded.
+- **Numeric semantics:** Action-point cost; higher values make attaching/detaching more expensive in AP, and negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/ubClassIndex`
 
