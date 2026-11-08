@@ -15,7 +15,7 @@ key: ubIndex
 sources:
   - Map table data
   - Field names, XML comments and observed values
-  - Facility and assignment terminology from the map UI
+  - Game code (facility type loader and facility runtime)
 status: reviewed
 updated: 2026-11-08
 ---
@@ -91,7 +91,9 @@ updated: 2026-11-08
 
 ## Purpose
 
-`FacilityTypes.xml` defines facility types and the assignments that can be performed there. A facility has a name, staff limits and optional PMC entry point; each assignment has a type, tooltip, staff limit, performance, cost, fatigue/sleep values and optional morale, loyalty, drunkenness and injury effects. Facilities can also define production lines that turn inputs into items at an hourly cost and loyalty requirement. Chance fields are expressed against the INI-defined hourly denominator (normally `1000`, so `500` = 50%), but the loader stores `ubChance` through a `UINT8` cast: values above `255` truncate, and the shipped `usChance` element has no loader case at all.
+`FacilityTypes.xml` defines facility types and the assignments that can be performed there. A facility has a name, staff limits and optional PMC entry point; each assignment has a type, tooltip, staff limit, performance, cost, fatigue/sleep values and optional morale, loyalty, drunkenness and injury effects. Facilities can also define production lines that turn inputs into items at an hourly cost and loyalty requirement.
+
+Risk chances are expressed against the INI setting `FACILITY_EVENT_RARITY` (default `1000`, so a stored `250` is about 25% per hour). The loader stores every `ubChance` through a one-byte cast, so written values are taken modulo 256: `500` becomes `244`, not 50%. The shipped `usChance` element is not on the loader's element list at all, and `usPerformance` nested inside `CONDITIONS` is skipped for the same reason.
 
 ## Tables
 
@@ -172,537 +174,537 @@ FACILITYTYPES
 
 ### `FACILITYTYPES/FACILITYTYPE/ubIndex`
 
-- **Type:** `Integer`
-- **Description:** Index of the facility type. It is an array key and is referenced by placed facilities.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Index of the facility type. It is an array key and is referenced by placed facilities; the loader parses a record but only stores it when the index is at least `1`.
+- **Values:** `1..254`; the facility array holds `MAX_NUM_FACILITY_TYPES` (`255`) entries and index `0` is not stored.
 - **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (facility type loader); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/szFacilityName`
 
-- **Type:** `String`
-- **Description:** Full display name of the facility, such as `Hospital` or `Munitions Factory`.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Full display name of the facility, such as `Hospital` or `Munitions Factory`. It is converted from UTF-8 into a 30-character buffer, so longer text is truncated.
 - **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Empty string when the element is omitted.
+- **Source:** game code (facility type loader); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/szFacilityShortName`
 
-- **Type:** `String`
-- **Description:** Short display name for the facility.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Short display name for the facility. It is converted into a 15-character buffer and is used in the strategic merc panel's assignment line and in encyclopedia buttons, where it is truncated to 7 characters.
 - **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Empty string when the element is omitted.
+- **Source:** game code (facility type loader; strategic screen and encyclopedia); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ubTotalStaffLimit`
 
-- **Type:** `Integer`
-- **Description:** Maximum number of mercenaries that can work in the facility across all its assignments.
-- **Numeric semantics:** higher = more staff; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Maximum number of mercenaries that can operate the facility at the same time across all its assignments. `0` means nobody can work there.
+- **Numeric semantics:** Higher values allow more staff; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; free-slot counting); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ubMilitiaTrainersAllowed`
 
-- **Type:** `Integer`
-- **Description:** Number of militia trainers the facility can support.
-- **Numeric semantics:** higher = more trainers; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Number of militia trainers the facility can host simultaneously; it is added to the sector's militia-trainer allowance.
+- **Numeric semantics:** Higher values allow more trainers; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; militia training allowance); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/pmcentrypoint`
 
-- **Type:** `Integer`
-- **Description:** Entry-point index for the PMC (private military company) system. `0` means the facility is not a PMC entry point; non-zero values are entry-point identifiers, not distances.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Boolean`
+- **Description:** Flag element. Any non-zero value sets the facility's PMC entry-point flag, and sectors containing such a facility are offered as PMC landing sites; the number itself is not stored.
+- **Values:** `0` or `1`; any non-zero value sets the flag.
+- **Default:** `0` (flag clear) when omitted.
+- **Source:** game code (facility type loader; PMC landing-site list); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubAssignmentType`
 
 - **Type:** `String`
-- **Description:** Assignment type code, such as `DOCTOR`, `REST` or `REPAIR_ITEMS`. It is an enum key; each code selects the assignment logic and UI text.
-- **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Description:** Assignment type code. It is a closed, case-sensitive enum rather than free text: the loader maps the exact string to the assignment index and aborts loading with an error for an unknown code.
+- **Values:** `AMBIENT`, `STAFF`, `FACILITY_EAT`, `REST`, `DOCTOR`, `PATIENT`, `REPAIR_ITEMS`, `REPAIR_VEHICLE`, `REPAIR_ROBOT`, `PRACTICE_STRENGTH`, `PRACTICE_DEXTERITY`, `PRACTICE_AGILITY`, `PRACTICE_HEALTH`, `PRACTICE_MARKSMANSHIP`, `PRACTICE_LEADERSHIP`, `PRACTICE_MEDICAL`, `PRACTICE_MECHANICAL`, `PRACTICE_EXPLOSIVES`, `TRAINER_STRENGTH`, `TRAINER_DEXTERITY`, `TRAINER_AGILITY`, `TRAINER_HEALTH`, `TRAINER_MARKSMANSHIP`, `TRAINER_LEADERSHIP`, `TRAINER_MECHANICAL`, `TRAINER_MEDICAL`, `TRAINER_EXPLOSIVES`, `STUDENT_STRENGTH`, `STUDENT_DEXTERITY`, `STUDENT_AGILITY`, `STUDENT_HEALTH`, `STUDENT_MARKSMANSHIP`, `STUDENT_LEADERSHIP`, `STUDENT_MECHANICAL`, `STUDENT_MEDICAL`, `STUDENT_EXPLOSIVES`, `INTERROGATE_PRISONERS`, `PRISON_SNITCH`, `SPREAD_PROPAGANDA`, `SPREAD_PROPAGANDA_GLOBAL`, `GATHER_RUMOURS`, `STRATEGIC_MILITIA_MOVEMENT`.
+- **Default:** Required; an `ASSIGNMENT` without this element aborts loading.
+- **Source:** game code (facility type loader assignment-type mapping); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/szTooltipText`
 
-- **Type:** `String`
-- **Description:** Tooltip shown for the assignment in the facility UI. It is display text, not a rule value.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Tooltip shown for the assignment in the facility UI. It is display text, not a rule value, and is converted into a 300-character buffer.
 - **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Empty string when the element is omitted.
+- **Source:** game code (facility type loader); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubStaffLimit`
 
-- **Type:** `Integer`
-- **Description:** Maximum number of mercenaries assigned to this particular assignment.
-- **Numeric semantics:** higher = more workers; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Maximum number of mercenaries assigned to this particular assignment. The loader requires a non-zero value for every assignment except `AMBIENT` (language overlays are exempt) and aborts loading when it is missing or `0`.
+- **Numeric semantics:** Higher values allow more workers on the assignment; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted, which is invalid for non-`AMBIENT` assignments.
+- **Source:** game code (facility type loader; assignment slot counting); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usPerformance`
 
-- **Type:** `Integer`
-- **Description:** Performance factor of the assignment. `100` is normal speed/efficiency.
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Percentage effectiveness of the assignment. The assignment value and the facility's `AMBIENT` (index `0`) value combine additively as offsets from `100`.
 - **Numeric semantics:** `100` = normal, `200` = twice normal; higher values are more effective, and negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `100` when omitted.
+- **Source:** game code (facility type loader; facility performance modifier); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usKitDegrade`
 
-- **Type:** `Integer`
-- **Description:** How quickly the assignment wears out its medical or repair kit.
-- **Numeric semantics:** higher = faster wear; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Percentage speed at which the assignment wears out its medical or repair kit.
+- **Numeric semantics:** `100` = normal wear, higher = faster wear; negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `100` when omitted.
+- **Source:** game code (facility type loader; kit-degradation modifier); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/sCostPerHour`
 
-- **Type:** `Integer`
-- **Description:** Hourly cost of running this assignment, in money.
-- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
-- **Values:** Money or points per hour, as named.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT16`)
+- **Description:** Money charged per hour while a mercenary performs the assignment. Negative values are a flat profit.
+- **Numeric semantics:** Higher values are more expensive; negative values pay the player instead.
+- **Values:** `-32768..32767`; the loader stores this field as `INT16`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility running costs); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usSleep`
 
-- **Type:** `Integer`
-- **Description:** Sleep or rest quality provided by this assignment.
-- **Numeric semantics:** higher = better rest; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Percentage effectiveness of sleeping while on this assignment.
+- **Numeric semantics:** `100` = normal rest, higher = better rest; negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `100` when omitted.
+- **Source:** game code (facility type loader; sleep modifier); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usFatigue`
 
-- **Type:** `Integer`
-- **Description:** Fatigue factor of the assignment.
-- **Numeric semantics:** higher = more fatigue; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Percentage speed at which the mercenary loses maximum breath while on the assignment.
+- **Numeric semantics:** `100` = normal fatigue, higher = faster breath loss; negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `100` when omitted.
+- **Source:** game code (facility type loader; fatigue modifier); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usPrisonBaseLimit`
 
-- **Type:** `Integer`
-- **Description:** Base prisoner capacity for a prison assignment.
-- **Numeric semantics:** higher = more capacity; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Baseline prisoner capacity for a prison assignment. A non-zero value is also how the game recognises a facility as a prison.
+- **Numeric semantics:** Higher values mean more prisoners; negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; prison capacity and prison detection); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/sCantinaFoodModifier`
 
-- **Type:** `Integer`
-- **Description:** Relative food and drink modifier for a cantina assignment.
-- **Numeric semantics:** higher positive values strengthen the effect, negative values weaken it, and `0` is neutral; the table uses values such as `500`, so this is not a plain percentage.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT16`)
+- **Description:** Food points added when a mercenary eats at a facility with a `FACILITY_EAT` assignment; the drink amount is three times this value. `0` or less disables facility eating.
+- **Numeric semantics:** Higher values give more food and drink; non-positive values disable the effect rather than reducing it.
+- **Values:** `-32768..32767`; the loader stores this field as `INT16`.
+- **Default:** `100` when omitted.
+- **Source:** game code (facility type loader; facility food handling); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/fCountEnemiesInWild`
 
 - **Type:** `Boolean`
-- **Description:** If set, this assignment counts enemy activity in the wilderness around the facility. It is a switch.
+- **Description:** If set, the assignment enables counting enemy groups in wilderness sectors on the strategic map.
 - **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** `0` (false) when omitted.
+- **Source:** game code (facility type loader; strategic detection flags); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/fDetectEnemiesDynamic`
 
 - **Type:** `Boolean`
-- **Description:** If set, enemy detection from this assignment updates dynamically instead of using a fixed result. It is a switch.
+- **Description:** If set, the assignment enables detection of enemies in Mobile Militia areas.
 - **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** `0` (false) when omitted.
+- **Source:** game code (facility type loader; strategic detection flags); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubDetectEnemiesImmediate`
 
-- **Type:** `Integer`
-- **Description:** Immediate enemy-detection strength for the assignment. It is a strength/level, not a count of enemies.
-- **Numeric semantics:** higher = wider detection; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Immediate detection radius in sectors. Every sector within that distance of the facility is marked as detected while the assignment is staffed. The loader casts through `BOOLEAN` (a byte type), so values above `1` are preserved.
+- **Numeric semantics:** Higher values mean a wider detection radius; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; sector detection loop); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS`
 
 - **Type:** `Container`
-- **Description:** Optional container for the assignment’s skill requirements. An empty `CONDITIONS` element means the assignment has no skill requirement; the container itself has no value.
+- **Description:** Optional container for the assignment's minimum-stat requirements. An empty `CONDITIONS` element means the assignment has no skill requirement; the container itself has no value.
 - **Values:** Empty, or one or more minimum-stat children.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Absent; the assignment has no requirements.
+- **Source:** game code (facility type loader parse stage); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumAgility`
 
-- **Type:** `Integer`
-- **Description:** Minimum Agility a mercenary needs for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Minimum Agility a mercenary needs to take this assignment.
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumDexterity`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Dexterity required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumExplosives`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Explosives skill required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumHealth`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Health required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLeadership`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Leadership required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLevel`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum experience level required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLoyaltyHere`
 
-- **Type:** `Integer`
-- **Description:** Minimum local loyalty required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Minimum loyalty in the town where the facility is placed. It only has an effect in town sectors.
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumMechanical`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Mechanical skill required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumMedical`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Medical skill required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumStrength`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Strength required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumWisdom`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum Wisdom required for this assignment.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; assignment condition check); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/usPerformance`
 
-- **Type:** `Integer`
-- **Description:** Performance factor used when this assignment’s conditions are present.
-- **Numeric semantics:** `100` = normal; higher values are more effective, and negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Performance value nested inside `CONDITIONS`. The loader's `CONDITIONS` element list does not include `usPerformance`, so the element is skipped and has no effect; put `usPerformance` directly under `ASSIGNMENT` instead.
+- **Numeric semantics:** Higher values would mean a more effective assignment, but this position is not read.
+- **Values:** `0..65535`; the loader would store it as `UINT16` if it were read.
+- **Default:** No effect when omitted.
+- **Source:** game code (facility type loader `CONDITIONS` parse stage); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/ubChance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that the assignment changes morale, in units of the INI-defined hourly risk denominator (normally `1000`, so `500` = 50%). The loader stores the value in one byte, so XML values above `255` are truncated.
-- **Numeric semantics:** higher = more likely; `0` disables the effect, and negative values are not meaningful.
-- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast. Shipped data uses values up to `500`.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`FacilityRiskType.usChance` comment; `XML_FacilityTypes.cpp` stores `(UINT8)`).
+- **Description:** Chance per hour that the morale risk triggers, expressed against the INI setting `FACILITY_EVENT_RARITY` (default `1000`). The loader stores the value in one byte, so a written value is taken modulo 256: `500` is stored as `244`, and only values up to `255` behave as their face value.
+- **Numeric semantics:** Higher values are more likely; `0` disables the effect, and negative values wrap into the large end of the byte range.
+- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader `(UINT8)` cast; facility risk roll); map table data.
 - **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/usChance`
 
-- **Type:** `Integer` (`UINT16` in the shipped data)
-- **Description:** Alternative morale-change chance present in shipped `FacilityTypes.xml`, but the current loader has no `usChance` case. It is not read and has no gameplay effect.
+- **Type:** `Integer`
+- **Description:** Alternative chance element present in shipped `FacilityTypes.xml`, but the loader has no `usChance` element case and no `usChance` assignment. It is not read and has no gameplay effect.
 - **Numeric semantics:** Intended chance units, but no loader path applies this element.
-- **Values:** `0..1000` in the data; ignored by the current loader.
-- **Default:** Absent; ignored either way.
-- **Source:** game code (`XML_FacilityTypes.cpp` handles `ubChance`, not `usChance`); map table data.
+- **Values:** `0..1000` in the shipped data; ignored by the current loader.
+- **Default:** Ignored either way.
+- **Source:** game code (facility type loader reads only `ubChance`); map table data.
 - **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/bBaseEffect`
 
-- **Type:** `Integer`
-- **Description:** Base morale change when the morale event fires.
-- **Numeric semantics:** positive = better morale; negative = worse.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Base morale change when the morale event fires. It is added to the mercenary's morale (clamped to `0..100`) and to the strategic morale modifier (clamped to `-50..50`).
+- **Numeric semantics:** Positive values raise morale, negative values lower it; `0` lets the result take either sign.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/ubRange`
 
-- **Type:** `Integer`
-- **Description:** Random spread added to the morale effect.
-- **Numeric semantics:** higher = more variation; negative values are not meaningful.
-- **Values:** Non-negative integer.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Random deviation added around the base morale effect.
+- **Numeric semantics:** Higher values mean more variation; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/ubChance`
 
-- **Type:** `Integer`
-- **Description:** Chance that the assignment changes local loyalty, in chance units (the table uses a 0–1000 scale, so `40` = 4%).
-- **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage or chance units as described; `0` disables the effect.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance per hour that the local-loyalty risk triggers, expressed against the INI setting `FACILITY_EVENT_RARITY` (default `1000`). As with every `ubChance`, the loader takes the written value modulo 256.
+- **Numeric semantics:** Higher values are more likely; `0` disables the effect, and negative values wrap into the large end of the byte range.
+- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader `(UINT8)` cast; facility risk roll); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/bBaseEffect`
 
-- **Type:** `Integer`
-- **Description:** Base local-loyalty change when the event fires.
-- **Numeric semantics:** positive = better loyalty; negative = worse.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Base local-loyalty change when the event fires. The game multiplies the value by the loyalty-points-per-percent constant before applying it.
+- **Numeric semantics:** Positive values raise loyalty, negative values lower it; `0` lets the result take either sign.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/ubRange`
 
-- **Type:** `Integer`
-- **Description:** Random spread added to the local-loyalty effect.
-- **Numeric semantics:** higher = more variation; negative values are not meaningful.
-- **Values:** Non-negative integer.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Random deviation added around the base local-loyalty effect.
+- **Numeric semantics:** Higher values mean more variation; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/ubChance`
 
-- **Type:** `Integer`
-- **Description:** Chance that a mercenary gets drunk on this assignment, in chance units (the table uses a 0–1000 scale, so `500` = 50%).
-- **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage or chance units as described; `0` disables the effect.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance per hour that a mercenary gets drunk on this assignment, expressed against the INI setting `FACILITY_EVENT_RARITY` (default `1000`). As with every `ubChance`, the loader takes the written value modulo 256.
+- **Numeric semantics:** Higher values are more likely; `0` disables the effect, and negative values wrap into the large end of the byte range.
+- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader `(UINT8)` cast; facility risk roll); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/bBaseEffect`
 
-- **Type:** `Integer`
-- **Description:** Base drunkenness effect.
-- **Numeric semantics:** higher = stronger effect; negative = opposite effect.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Base result of the drunkenness event. The current code only tests whether the result is non-zero, then applies one of the listed `drugitem` entries, or alcohol when the list is empty.
+- **Numeric semantics:** Any non-zero value enables the event; the sign and magnitude do not change the effect.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/ubRange`
 
-- **Type:** `Integer`
-- **Description:** Random spread added to the drunkenness effect.
-- **Numeric semantics:** higher = more variation; negative values are not meaningful.
-- **Values:** Non-negative integer.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Random deviation added around the base drunkenness result.
+- **Numeric semantics:** Higher values mean more variation; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/drugitems/drugitem`
 
-- **Type:** `Integer`
-- **Description:** Item ID of a drug or drink that can be consumed during this assignment. It is an item reference; the element may repeat to offer several items.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT16`)
+- **Description:** Item ID of a drug or drink that can be consumed when the drunk event fires. The element may repeat, and the game picks one entry at random, so repeating an ID makes it more likely rather than adding a quantity.
+- **Values:** `-32768..32767`; the loader stores each entry as `INT16`.
+- **Default:** Empty list; the game then applies alcohol.
+- **Source:** game code (facility type loader drug-item vector; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/bBaseEffect`
 
-- **Type:** `Integer`
-- **Description:** Base injury effect of the assignment.
-- **Numeric semantics:** positive = safer; negative = more dangerous.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Base injury result. Only negative results are applied, as direct damage plus bleeding; a positive value triggers nothing.
+- **Numeric semantics:** More negative values cause more damage; `0` and positive values are ignored.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/ubChance`
 
-- **Type:** `Integer`
-- **Description:** Chance that the assignment causes an injury, in chance units (the table uses a 0–1000 scale, so `50` = 5%).
-- **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage or chance units as described; `0` disables the effect.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance per hour that the injury risk triggers, expressed against the INI setting `FACILITY_EVENT_RARITY` (default `1000`). As with every `ubChance`, the loader takes the written value modulo 256.
+- **Numeric semantics:** Higher values are more likely; `0` disables the effect, and negative values wrap into the large end of the byte range.
+- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader `(UINT8)` cast; facility risk roll); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/ubRange`
 
-- **Type:** `Integer`
-- **Description:** Random spread added to the injury effect.
-- **Numeric semantics:** higher = more variation; negative values are not meaningful.
-- **Values:** Non-negative integer.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Random deviation added around the base injury effect.
+- **Numeric semantics:** Higher values mean more variation; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; facility risk result); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/requires_staff`
 
 - **Type:** `Boolean`
-- **Description:** If set, the production line only runs while staff are assigned. It is a switch.
-- **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Description:** If set, the production line only runs while a mercenary is operating the facility; otherwise it keeps running unattended.
+- **Values:** `0` or `1`; any non-zero value sets the flag.
+- **Default:** `0` (false) when omitted.
+- **Source:** game code (facility type loader `REQUIRES_STAFFING` flag; hourly factory update); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sGridNo_Creation`
 
-- **Type:** `Integer`
-- **Description:** Map grid number where the produced item appears. It is a grid identifier.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`)
+- **Description:** Map grid number where the produced item appears. `-1` is the loader default and is not a real grid number.
+- **Values:** `-2147483648..2147483647`; `-1` is the default sentinel.
+- **Default:** `-1` when omitted.
+- **Source:** game code (facility type loader; hourly factory update item placement); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sHourlyCost`
 
-- **Type:** `Integer`
-- **Description:** Hourly cost of running this production line, in money.
-- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
-- **Values:** Money or points per hour, as named.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`)
+- **Description:** Money charged per hour while the production line runs; it is not charged per produced item. Negative values mean the line earns money.
+- **Numeric semantics:** Higher values are more expensive; negative values produce income.
+- **Values:** `-2147483648..2147483647`; the loader stores this field as `INT32`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; hourly factory update cost); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sMinutesRequired`
 
-- **Type:** `Integer`
-- **Description:** Minutes needed to produce one batch.
-- **Numeric semantics:** higher = slower; negative values are not meaningful.
-- **Values:** Minutes.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`)
+- **Description:** Minutes needed to produce one item. The loader clamps the value to at least `1`.
+- **Numeric semantics:** Higher values mean slower production; `0` and negative values become `1`.
+- **Values:** `1..2147483647`; the loader applies `max(1, value)`.
+- **Default:** `60` when omitted.
+- **Source:** game code (facility type loader; hourly factory update); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/szAdditionalRequirementTips`
 
-- **Type:** `String`
-- **Description:** Extra requirement text shown for the production line, for example `- Requires storage access`. It is display text, not a rule value.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Extra requirement text shown for the production line, for example `- Requires storage access`. It is display text, not a rule value, and is converted into an 80-character buffer.
 - **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Empty string when the element is omitted.
+- **Source:** game code (facility type loader); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/szProductionName`
 
-- **Type:** `String`
-- **Description:** Optional display name for the produced item. When absent, the item’s own name is used.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Optional display name for the produced item; when empty, the game shows the item's own name. It is converted into a 30-character buffer.
 - **Values:** Free text.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** Empty string when the element is omitted.
+- **Source:** game code (facility type loader; hourly factory update); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usItemToCreate`
 
-- **Type:** `Integer`
-- **Description:** Item ID produced by this line. It is an item reference.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID produced by this line. `0` means no item is set.
+- **Values:** `0..65535`; the loader stores this field as `UINT16` and defaults it to `NOTHING` (`0`).
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; item creation); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usOptional_ItemUsedUp`
 
-- **Type:** `Integer`
-- **Description:** Item ID consumed by each production run, or `0` when nothing is consumed. It is an item reference.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item ID consumed per produced item. The element repeats once per required unit, and repeating the same ID increases the required quantity for that item.
+- **Values:** `0..65535`; each entry is stored as `UINT16`.
+- **Default:** Absent; the line consumes nothing.
+- **Source:** game code (facility type loader pre-product list; hourly factory update); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usOptional_LoyaltyRequired`
 
-- **Type:** `Integer`
-- **Description:** Minimum local loyalty needed to run this production line.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Minimum local loyalty needed to run the production line. It is only checked in town sectors; `0` means no requirement.
+- **Numeric semantics:** Higher values are stricter; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
+- **Default:** `0` when omitted.
+- **Source:** game code (facility type loader; hourly factory update loyalty check); map table data.
+- **Confidence:** `source`
 
 ## Relations
 
@@ -714,17 +716,17 @@ Display names, tooltips and descriptions are localized through language overlays
 
 ## Versions
 
-v4 and v5 use the same field paths; values may differ.
+v4 and v5 use the same field paths; values may differ. Both versions ship `usChance` and `CONDITIONS/usPerformance` elements that the current loader does not read.
 
 ## Sources
 
 - Map table data.
 - Field names, XML comments and observed values.
-- Facility and assignment terminology from the map UI.
-- Descriptions are based on the field names and observed table values; no runtime formula is claimed.
+- Game code (facility type loader, facility risk roll, hourly factory update, PMC landing list, strategic detection and facility food handling).
+- Field types are the types of the runtime `FACILITYTYPE`, `FACILITYASSIGNMENTTYPE` and `PRODUCTION_LINE` fields and of the loader casts.
 
 ## Open questions
 
-- Which facility UI surface uses `szFacilityShortName` instead of `szFacilityName` is not confirmed; this needs a code/UI check.
-- The `100` baseline for performance and the exact scale of `sCantinaFoodModifier` are inferred from observed values, not stated by an XML comment. The chance denominator is confirmed by `FacilityRiskType.usChance`; the `UINT8` truncation and the ignored `usChance` element are loader facts.
-- `pmcentrypoint` and the severe-injury/assignment formulas are implemented by the game code, not by additional fields.
+- The loader stores `ubChance` in one byte, so the intended `0..1000` scale cannot be used for values above `255`; a shipped `500` is meant as 50% on that scale but is actually stored as `244`. The shipped `usChance` value `700` is not read at all. Whether these values were authored for a loader that honoured the full scale is unknown.
+- `usChance` has no loader case and no effect; whether it is a leftover of an older schema or a planned alternative is unknown.
+- `usPerformance` inside `CONDITIONS` is skipped by the loader; whether the shipped values were expected to apply is unknown.
