@@ -196,12 +196,12 @@ DIFFICULTY_SETTINGS
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Difficulty-level index. The valid range is `0..4`; the table comment warns that the four original levels are still hardcoded.
 - **Values:** `0..4`; the table comment states that these four original levels are hardcoded.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/Name`
 
@@ -233,23 +233,23 @@ DIFFICULTY_SETTINGS
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EnemyAPBonus`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Extra APs for enemy soldiers. The value is not adjusted for the selected AP system.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
-- **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Signed modifier: positive values give enemies extra AP, negative values reduce their AP, and `0` is neutral.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/NumKillsPerProgressPoint`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Kills required to gain one progress point.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Higher values mean more kills are needed per progress point; negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/InitialGarrisonPercentages`
 
@@ -263,23 +263,23 @@ DIFFICULTY_SETTINGS
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/MinEnemyGroupSize`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Minimum enemy group size.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Higher values mean a larger minimum group; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CounterAttackGroupSize`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Size of each of the four counter-attack groups.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Higher values mean a larger group; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/PercentElitesBonus`
 
@@ -818,13 +818,13 @@ DIFFICULTY_SETTINGS
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/MaxMortarsPerTeam`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Maximum mortars per enemy team.
-- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
-- **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Higher values mean a larger mortar allowance; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** difficulty table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (difficulty loader); difficulty table data.
+- **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsAimDifficulty`
 
