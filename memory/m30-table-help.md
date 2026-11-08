@@ -119,7 +119,9 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 `History` — `UINT16`/`CHAR16`; `LoadScreenHints` — category-биты, `item` не читается,
 рабочий элемент — `items`; `LayoutMainMenu` — поля изображения только при `uiIndex > 0`,
 поля меню только при `uiIndex = 0`, `Description` не читается; `ActionItems` — `ActionID`
-`UINT8`, `Blow_up`/`BombItem` только при `ActionID = 3`. В `GLOSSARY.md`
+`UINT8`, `Blow_up`/`BombItem` только при `ActionID = 3`; `RandomTeams.id` — `INT8`-профиль
+наёмника, `HiddenNames.description` не читается, `CivGroupNames.Loyalty = 0` отключает
+штраф, `Enabled` включает показ имени группы. В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`, `action item`. Остались непроверенные поля
 B1/B3/B4/B5 и часть B7/B8.
 **Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.
