@@ -125,7 +125,7 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 слот, опция `USE_XML_SQUADNAMES`); `Sounds` — ID по позиции, `CHAR8` до 255; `SpreadPatterns.method`
 case-sensitive (`RECTANGLE`/`DIAMOND`/`ELLIPSE`), `Rectangle`/`Ellipse` не совпадают, `DESC`
 не читается; `Vehicles` — `uiIndex`/`SeatIndex` `UINT8`, `MvtTypes`/вместимость/звуки `INT32`,
-броня `INT16`, `Pilot` `INT8`, смещения сидений `INT8`. В `GLOSSARY.md`
-добавлены `recoil`, `aim level`, `burst penalty`, `action item`. Остались непроверенные поля
-B1/B3/B4/B5 и часть B7/B8.
-**Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.
+броня `INT16`, `Pilot` `INT8`, смещения сидений `INT8`; `Email*` — `uiIndex` `UINT8`/`UINT16`,
+строки `CHAR16`. B7/B8 завершены, остались B1/B3/B4/B5. В `GLOSSARY.md`
+добавлены `recoil`, `aim level`, `burst penalty`, `action item`.
+**Дальше.** Продолжить B1/B3/B4/B5; после B10 — повторный B9-гейт и финальный коммит.
