@@ -104,7 +104,8 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/DamageKeyFrame`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Animation frame at which the blast begins to apply damage. Numeric semantics: Higher values mean more damage; negative values are not meaningful.
+- **Description:** Animation frame at which the blast begins to apply damage.
+- **Numeric semantics:** Higher values mean more damage; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.
@@ -140,7 +141,8 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/BlastSpeed`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Playback speed of the blast animation. Numeric semantics: Higher values mean a faster speed; negative values are not meaningful.
+- **Description:** Playback speed of the blast animation.
+- **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** explosion data table; field metadata.

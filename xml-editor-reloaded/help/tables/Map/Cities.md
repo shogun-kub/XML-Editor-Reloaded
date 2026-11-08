@@ -137,8 +137,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/townRebelSentiment`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** How strongly the town hates the Queen's rule. It scales the rate of
-  loyalty change: the same event changes loyalty more in a town with a high value. Numeric semantics: Higher values mean a stronger rebel sentiment and a larger loyalty-change effect; negative values are outside the valid range.
+- **Description:** How strongly the town hates the Queen's rule. It scales the rate of loyalty change: the same event changes loyalty more in a town with a high value.
+- **Numeric semantics:** Higher values mean a stronger rebel sentiment and a larger loyalty-change effect; negative values are outside the valid range.
 - **Values:** `1..100`. The loader clamps values above 100 to 100 and values below 1 to 1.
 - **Default:** `1` after clamping.
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -188,7 +188,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/iconPosition/x`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** X position of the custom town icon on the strategic map. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X position of the custom town icon on the strategic map.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** `0..255`; screen coordinates.
 - **Default:** `0`.
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -197,7 +198,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/iconPosition/y`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Y position of the custom town icon on the strategic map. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y position of the custom town icon on the strategic map.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** `0..255`; screen coordinates.
 - **Default:** `0`.
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -206,8 +208,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/baseSector/x`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** X coordinate of the top-left sector of the 3x3 town cutout in
-  `Interface/MilitiaMaps.sti`. `1..16`; the loader ignores values outside that range. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X coordinate of the top-left sector of the 3x3 town cutout in `Interface/MilitiaMaps.sti`. `1..16`; the loader ignores values outside that range.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** `1..16`.
 - **Default:** `0` (invalid; the row is not placed).
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -216,7 +218,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/baseSector/y`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Y coordinate of the top-left sector of the town militia cutout. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y coordinate of the top-left sector of the town militia cutout.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** `1..16`.
 - **Default:** `0` (invalid).
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -225,8 +228,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/townPoint/x`
 
 - **Type:** `Integer` (32-bit map coordinate)
-- **Description:** X position of the town name label on the strategic map, in tenths of a
-  sector (the XML comment describes it as `10 * (X, Y)`). Fractions are possible. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X position of the town name label on the strategic map, in tenths of a sector (the XML comment describes it as `10 * (X, Y)`). Fractions are possible.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** map coordinates in tenths of a sector.
 - **Default:** `0`.
 - **Source:** game code (strategic-map loader and map UI); city table data.
@@ -235,7 +238,8 @@ overwrite earlier rows.
 ### `CITY_INFO/CITYLIST/CITY/townPoint/y`
 
 - **Type:** `Integer` (32-bit map coordinate)
-- **Description:** Y position of the town name label, in tenths of a sector. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y position of the town name label, in tenths of a sector.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** map coordinates.
 - **Default:** `0`.
 - **Source:** game code (strategic-map loader and map UI); city table data.

@@ -105,7 +105,8 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/usEyesX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the eyes. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X coordinate of the eyes.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -114,7 +115,8 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/usEyesY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the eyes. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y coordinate of the eyes.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -123,7 +125,8 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/usMouthX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the mouth. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X coordinate of the mouth.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.
@@ -132,7 +135,8 @@ IMPPORTRAITSLIST
 ### `IMPPORTRAITSLIST/IMP/usMouthY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the mouth. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y coordinate of the mouth.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** imp portrait table data; item/profile metadata.

@@ -117,8 +117,9 @@ RANDOM_STATS
 ### `RANDOM_STATS/PROFILE/BaseAttribute`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base attribute used to build random stats; only used when `MERCS_RANDOM_STATS` is 3. Numeric semantics: Higher values mean a higher base attribute used to build the random stat; negative values are outside the normal range.
+- **Description:** Base attribute used to build random stats; only used when `MERCS_RANDOM_STATS` is 3.
 - **Only used with:** MERCS_RANDOM_STATS 3.
+- **Numeric semantics:** Higher values mean a higher base attribute used to build the random stat; negative values are outside the normal range.
 - **Values:** Integer base attribute value.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** random stats table data; table metadata.

@@ -188,8 +188,9 @@ POCKETLIST
 ### `POCKETLIST/POCKET/pVolume`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Volume of the pocket. It is used by the LBE volume checks. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Volume of the pocket. It is used by the LBE volume checks.
 - **Only used with:** NIV.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Pocket volume; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** pocket table data; field metadata.

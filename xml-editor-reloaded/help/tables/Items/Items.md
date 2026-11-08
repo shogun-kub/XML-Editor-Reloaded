@@ -708,7 +708,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usItemClass`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Bit mask of item-class flags (`IC_*`). It selects the class-specific subtable reached through `ubClassIndex` and controls which item behaviours apply. See `ItemClass`. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Bit mask of item-class flags (`IC_*`). It selects the class-specific subtable reached through `ubClassIndex` and controls which item behaviours apply. See `ItemClass`.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none. Bits are defined by [ItemClass](../Lookup.md#itemclass).
 - **Default:** None; every item declares a class.
 - **Source:** item table data; item property metadata.
@@ -717,7 +718,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AttachmentClass`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Built-in attachment-class bit mask used by the legacy attachment system. Bits are defined by the [AttachmentClass](../Lookup.md#attachmentclass) lookup. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Built-in attachment-class bit mask used by the legacy attachment system. Bits are defined by the [AttachmentClass](../Lookup.md#attachmentclass) lookup.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentClass](../Lookup.md#attachmentclass).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -726,7 +728,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/nasAttachmentClass`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Custom NAS attachment-class bit mask used with [AttachmentSystem](../Lookup.md#attachmentsystem) and NAS attachment points. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Custom NAS attachment-class bit mask used with [AttachmentSystem](../Lookup.md#attachmentsystem) and NAS attachment points.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none; bits are defined by `NasAttachmentClass`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -735,7 +738,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/nasLayoutClass`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** NAS layout-class bit mask. It tells the NAS layout which attachment slots the item exposes; bits are defined by [NasLayoutClass](../Lookup.md#naslayoutclass). Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** NAS layout-class bit mask. It tells the NAS layout which attachment slots the item exposes; bits are defined by [NasLayoutClass](../Lookup.md#naslayoutclass).
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none; bits are defined by `NasLayoutClass`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -744,7 +748,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AvailableAttachmentPoint`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Bit mask of attachment points the item can accept. Used for receivers and mounts; bits are defined by the [AttachmentPoint](../Lookup.md#attachmentpoint) lookup. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Bit mask of attachment points the item can accept. Used for receivers and mounts; bits are defined by the [AttachmentPoint](../Lookup.md#attachmentpoint) lookup.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentPoint](../Lookup.md#attachmentpoint).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -753,7 +758,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AttachmentPoint`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Attachment point occupied by this item when installed. Zero means the item is not installed at a point. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Attachment point occupied by this item when installed. Zero means the item is not installed at a point.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none; bits are defined by [AttachmentPoint](../Lookup.md#attachmentpoint).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -762,7 +768,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AttachToPointAPCost`
 
 - **Type:** `Integer`
-- **Description:** AP cost to attach or detach the item at its attachment point. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** AP cost to attach or detach the item at its attachment point.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -818,7 +825,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubWeight`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item weight in the game's weight units; used by carry strength and backpack capacity. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Item weight in the game's weight units; used by carry strength and backpack capacity.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** `0..32000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -827,7 +835,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubPerPocket`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. In NIV the field does not control pocket capacity (LBE/Pockets and ItemSize do), but the item-description code still reads it for the "small" property: under NIV every item otherwise reports as fitting a small pocket. Numeric semantics: Higher values mean a larger pocket capacity, and negative values are not meaningful.
+- **Description:** Old-inventory (OIV) pocket capacity: how many identical items fit into one pocket. Zero means no stacking. In NIV the field does not control pocket capacity (LBE/Pockets and ItemSize do), but the item-description code still reads it for the "small" property: under NIV every item otherwise reports as fitting a small pocket.
+- **Numeric semantics:** Higher values mean a larger pocket capacity, and negative values are not meaningful.
 - **Values:** `0..8` metadata validation limit; stored as `UINT8`; the OIV slot capacity is clamped to `MAX_OBJECTS_PER_SLOT` (`255`).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -854,7 +863,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usPrice`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Base purchase price. Bobby Ray prices and some trade calculations derive from it. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** Base purchase price. Bobby Ray prices and some trade calculations derive from it.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** `0..1000000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -863,7 +873,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubCoolness`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Coolness/progress level at which the item becomes available in the campaign. Numeric semantics: Higher values mean a later/rarer coolness tier; negative values are outside the normal range.
+- **Description:** Coolness/progress level at which the item becomes available in the campaign.
+- **Numeric semantics:** Higher values mean a later/rarer coolness tier; negative values are outside the normal range.
 - **Values:** `0..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -872,7 +883,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/bReliability`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Reliability modifier: higher values make the item less likely to jam or fail. Numeric semantics: Higher values mean better reliability/condition; negative values are outside the normal range.
+- **Description:** Reliability modifier for the item.
+- **Numeric semantics:** Higher values mean better reliability; lower values mean worse reliability, and negative values are outside the normal range.
 - **Values:** `-10..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -881,7 +893,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/bRepairEase`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Repair-difficulty modifier: higher values make repair easier. Numeric semantics: Higher values mean better reliability/condition; negative values are outside the normal range.
+- **Description:** Repair-difficulty modifier for the item.
+- **Numeric semantics:** Higher values make repair easier; lower values make it harder, and negative values are outside the normal range.
 - **Values:** `-10..10`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -899,7 +912,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_NewInventory`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's new-inventory stock level or quantity for this item. Numeric semantics: Higher values mean a larger stock level; negative values are not meaningful.
+- **Description:** Bobby Ray's new-inventory stock level or quantity for this item.
+- **Numeric semantics:** Higher values mean a larger stock level; negative values are not meaningful.
 - **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -908,7 +922,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_UsedInventory`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's used-inventory stock level or quantity. Numeric semantics: Higher values mean a larger stock level; negative values are not meaningful.
+- **Description:** Bobby Ray's used-inventory stock level or quantity.
+- **Numeric semantics:** Higher values mean a larger stock level; negative values are not meaningful.
 - **Values:** `-100..250`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -917,7 +932,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BR_ROF`
 
 - **Type:** `Integer`
-- **Description:** Bobby Ray's rate-of-fire/restock value for this item. Numeric semantics: Higher values mean a higher rate-of-fire/restock value; negative values are not meaningful.
+- **Description:** Bobby Ray's rate-of-fire/restock value for this item.
+- **Numeric semantics:** Higher values mean a higher rate-of-fire/restock value; negative values are not meaningful.
 - **Values:** `0..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -973,7 +989,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/Alcohol`
 
 - **Type:** `Decimal`
-- **Description:** Alcohol strength/effect value for drinks; feeds the drunk state and related penalties. Numeric semantics: Higher values mean a stronger alcohol effect; negative values are not meaningful.
+- **Description:** Alcohol strength/effect value for drinks; feeds the drunk state and related penalties.
+- **Numeric semantics:** Higher values mean a stronger alcohol effect; negative values are not meaningful.
 - **Values:** Decimal value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -984,8 +1001,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ScopeMagFactor`
 
 - **Type:** `Decimal`
-- **Description:** NCTH scope magnification factor. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** NCTH scope magnification factor.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -994,8 +1012,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ProjectionFactor`
 
 - **Type:** `Decimal`
-- **Description:** NCTH laser projection factor. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** NCTH laser projection factor.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1004,8 +1023,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RecoilModifierX`
 
 - **Type:** `Decimal`
-- **Description:** Horizontal recoil modifier added to the weapon's base recoil. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Horizontal recoil modifier added to the weapon's base recoil.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1014,8 +1034,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RecoilModifierY`
 
 - **Type:** `Decimal`
-- **Description:** Vertical recoil modifier added to the weapon's base recoil. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Vertical recoil modifier added to the weapon's base recoil.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1024,8 +1045,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentRecoilModifier`
 
 - **Type:** `Integer`
-- **Description:** NCTH percentage recoil modifier. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percentage recoil modifier.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1034,8 +1056,9 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentAccuracyModifier`
 
 - **Type:** `Integer`
-- **Description:** NCTH percentage accuracy modifier. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percentage accuracy modifier.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1044,7 +1067,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usOverheatingCooldownFactor`
 
 - **Type:** `Decimal`
-- **Description:** Overheating cooldown factor. `100` is neutral; higher values cool faster. Numeric semantics: Higher values mean a higher overheating threshold/temperature, and negative values are not meaningful.
+- **Description:** Overheating cooldown factor.
+- **Numeric semantics:** `100` is neutral; higher values cool the weapon faster, lower values cool it more slowly, and negative values are not meaningful.
 - **Values:** `100` = neutral; higher values cool faster.
 - **Default:** `100`.
 - **Source:** item table data; item property metadata.
@@ -1053,7 +1077,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/overheatTemperatureModificator`
 
 - **Type:** `Decimal`
-- **Description:** Adjustment to the weapon's overheat temperature threshold. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** Adjustment to the weapon's overheat temperature threshold.
+- **Numeric semantics:** Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1062,7 +1087,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/overheatCooldownModificator`
 
 - **Type:** `Decimal`
-- **Description:** Adjustment to the overheat cooldown rate. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** Adjustment to the overheat cooldown rate.
+- **Numeric semantics:** Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1071,7 +1097,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/overheatJamThresholdModificator`
 
 - **Type:** `Decimal`
-- **Description:** Adjustment to the heat level at which the weapon starts jamming. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** Adjustment to the heat level at which the weapon starts jamming.
+- **Numeric semantics:** Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1080,7 +1107,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/overheatDamageThresholdModificator`
 
 - **Type:** `Decimal`
-- **Description:** Adjustment to the heat level at which the weapon takes damage. Numeric semantics: Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** Adjustment to the heat level at which the weapon takes damage.
+- **Numeric semantics:** Signed modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** `-1..10`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1089,7 +1117,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DirtIncreaseFactor`
 
 - **Type:** `Decimal`
-- **Description:** How quickly the item accumulates dirt; higher values increase dirt gain. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** How quickly the item accumulates dirt.
+- **Numeric semantics:** Higher values accumulate dirt faster; `0` means no dirt gain, and negative values are not meaningful.
 - **Values:** Decimal value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1100,7 +1129,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotDamageReduction`
 
 - **Type:** `Decimal`
-- **Description:** Damage-reduction multiplier for robot items; `1.0` means no reduction. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Damage-reduction multiplier for robot items; `1.0` means no reduction.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Decimal multiplier; `1.0` = no reduction.
 - **Default:** `1`.
 - **Source:** item table data; item property metadata.
@@ -1136,7 +1166,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usRiotShieldStrength`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Riot-shield protection strength. Numeric semantics: Higher values mean a larger value/amount, and negative values are not meaningful.
+- **Description:** Riot-shield protection strength.
+- **Numeric semantics:** Higher values mean a larger value/amount, and negative values are not meaningful.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1154,7 +1185,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentNoiseReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage reduction of the noise produced by the item. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage reduction of the noise produced by the item.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1174,7 +1206,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ToHitBonus`
 
 - **Type:** `Integer`
-- **Description:** Flat bonus to hit probability. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Flat bonus to hit probability.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1183,7 +1216,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BestLaserRange`
 
 - **Type:** `Integer`
-- **Description:** Range at which the laser sight gives its best accuracy bonus. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
+- **Description:** Range at which the laser sight gives its best accuracy bonus.
+- **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** `0..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1192,7 +1226,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Flat range bonus in tiles. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Flat range bonus in tiles.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1201,7 +1236,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Percentage range bonus. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage range bonus.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1210,7 +1246,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AimBonus`
 
 - **Type:** `Integer`
-- **Description:** Flat aim bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Flat aim bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1219,7 +1256,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/MinRangeForAimBonus`
 
 - **Type:** `Integer`
-- **Description:** Minimum range at which `AimBonus` applies. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Minimum range at which `AimBonus` applies.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `0..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1228,7 +1266,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentAPReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage reduction of AP costs for actions with this item. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage reduction of AP costs for actions with this item.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1237,7 +1276,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentStatusDrainReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage reduction of status/condition drain. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage reduction of status/condition drain.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1255,7 +1295,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/HearingRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to hearing range. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to hearing range.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1264,7 +1305,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/VisionRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to general vision range. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to general vision range.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1273,7 +1315,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/NightVisionRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to night vision range. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to night vision range.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1282,7 +1325,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DayVisionRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to day vision range. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to day vision range.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1291,7 +1335,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/CaveVisionRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to cave vision range. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to cave vision range.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1300,7 +1345,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BrightLightVisionRangeBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus to vision range in bright light. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus to vision range in bright light.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-1000..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1309,7 +1355,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DamageBonus`
 
 - **Type:** `Integer`
-- **Description:** Flat damage bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Flat damage bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1318,7 +1365,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/MeleeDamageBonus`
 
 - **Type:** `Integer`
-- **Description:** Flat melee damage bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Flat melee damage bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1327,7 +1375,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/MagSizeBonus`
 
 - **Type:** `Integer`
-- **Description:** Magazine-size bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Magazine-size bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-250..1000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1336,7 +1385,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentBurstFireAPReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage AP reduction for burst fire. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage AP reduction for burst fire.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1345,7 +1395,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentAutofireAPReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage AP reduction for autofire. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage AP reduction for autofire.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1354,7 +1405,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentReadyTimeAPReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage AP reduction for readying the item. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage AP reduction for readying the item.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1363,7 +1415,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentReloadTimeAPReduction`
 
 - **Type:** `Integer`
-- **Description:** Percentage AP reduction for reloading. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage AP reduction for reloading.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1372,7 +1425,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/AutoFireToHitBonus`
 
 - **Type:** `Integer`
-- **Description:** To-hit bonus applied to autofire. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** To-hit bonus applied to autofire.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1381,7 +1435,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/APBonus`
 
 - **Type:** `Integer`
-- **Description:** Bonus action points while the item is equipped. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus action points while the item is equipped.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1390,7 +1445,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RateOfFireBonus`
 
 - **Type:** `Integer`
-- **Description:** Rate-of-fire bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Rate-of-fire bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1399,7 +1455,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BurstSizeBonus`
 
 - **Type:** `Integer`
-- **Description:** Extra shots in a burst. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Extra shots in a burst.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1408,7 +1465,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BurstToHitBonus`
 
 - **Type:** `Integer`
-- **Description:** To-hit bonus applied to burst fire. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** To-hit bonus applied to burst fire.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1417,7 +1475,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/BulletSpeedBonus`
 
 - **Type:** `Integer`
-- **Description:** Bullet-speed bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bullet-speed bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1428,7 +1487,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/CamoBonus`
 
 - **Type:** `Integer`
-- **Description:** General camouflage bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** General camouflage bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1437,7 +1497,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/UrbanCamoBonus`
 
 - **Type:** `Integer`
-- **Description:** Additional camouflage bonus in urban sectors. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Additional camouflage bonus in urban sectors.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1446,7 +1507,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DesertCamoBonus`
 
 - **Type:** `Integer`
-- **Description:** Additional camouflage bonus in desert sectors. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Additional camouflage bonus in desert sectors.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1455,7 +1517,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/SnowCamoBonus`
 
 - **Type:** `Integer`
-- **Description:** Additional camouflage bonus in snow sectors. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Additional camouflage bonus in snow sectors.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1464,7 +1527,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/StealthBonus`
 
 - **Type:** `Integer`
-- **Description:** Stealth bonus; improves the chance to avoid detection. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Stealth bonus; improves the chance to avoid detection.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1473,7 +1537,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usSpotting`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Spotting modifier; positive values improve detection of hidden targets. Numeric semantics: Higher values mean a larger value/amount, and negative values are not meaningful.
+- **Description:** Spotting modifier.
+- **Numeric semantics:** Positive values improve spotting, negative values reduce it.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1482,7 +1547,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/sBackpackWeightModifier`
 
 - **Type:** `Integer`
-- **Description:** Carry-strength modifier applied when the item is in the backpack. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Carry-strength modifier applied when the item is in the backpack.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-10000..10000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1491,7 +1557,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/sFireResistance`
 
 - **Type:** `Integer`
-- **Description:** Fire-resistance modifier. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Fire-resistance modifier.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1500,7 +1567,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/PercentTunnelVision`
 
 - **Type:** `Integer`
-- **Description:** Percentage of tunnel vision imposed by the item. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage of tunnel vision imposed by the item.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1520,7 +1588,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/CrowbarModifier`
 
 - **Type:** `Integer`
-- **Description:** Bonus applied when the item is used as a crowbar. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus applied when the item is used as a crowbar.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1529,7 +1598,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DisarmModifier`
 
 - **Type:** `Integer`
-- **Description:** Bonus applied when disarming traps or bombs. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Bonus applied when disarming traps or bombs.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1538,7 +1608,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RepairModifier`
 
 - **Type:** `Integer`
-- **Description:** Repair-kit effectiveness modifier. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Repair-kit effectiveness modifier.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1547,7 +1618,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usHackingModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hacking bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Hacking bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1556,7 +1628,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usBurialModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Burial modifier. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Burial modifier.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1565,7 +1638,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/DamageChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that the item takes dirt or damage when used. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Description:** Chance that the item takes dirt or damage when used.
+- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1574,7 +1648,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/FlashLightRange`
 
 - **Type:** `Integer`
-- **Description:** Flashlight range in tiles. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
+- **Description:** Flashlight range in tiles.
+- **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1592,7 +1667,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/SleepModifier`
 
 - **Type:** `Integer`
-- **Description:** Sleep modifier for food, drink, or resting items. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Sleep modifier for food, drink, or resting items.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1601,7 +1677,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usPortionSize`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Portion size for food or drink items. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Portion size for food or drink items.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1610,7 +1687,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usAdministrationModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Administration modifier for strategic actions. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Administration modifier for strategic actions.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1619,7 +1697,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/LockPickModifier`
 
 - **Type:** `Integer`
-- **Description:** Lockpicking bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Lockpicking bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** `-100..100`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1637,7 +1716,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotStrBonus`
 
 - **Type:** `Integer`
-- **Description:** Robot strength bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Robot strength bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1646,7 +1726,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotAgiBonus`
 
 - **Type:** `Integer`
-- **Description:** Robot agility bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Robot agility bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1655,7 +1736,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/RobotDexBonus`
 
 - **Type:** `Integer`
-- **Description:** Robot dexterity bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Robot dexterity bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1691,7 +1773,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/TransportGroupMinProgress`
 
 - **Type:** `Integer`
-- **Description:** Minimum transport progress at which this item or group can appear. Numeric semantics: Higher values mean a larger value/amount, and negative values are not meaningful.
+- **Description:** Minimum transport progress at which this item or group can appear.
+- **Numeric semantics:** Higher values mean a larger value/amount, and negative values are not meaningful.
 - **Values:** Integer progress value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1700,7 +1783,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/TransportGroupMaxProgress`
 
 - **Type:** `Integer`
-- **Description:** Maximum transport progress at which this item or group can appear. Numeric semantics: Higher values mean a larger value/amount, and negative values are not meaningful.
+- **Description:** Maximum transport progress at which this item or group can appear.
+- **Numeric semantics:** Higher values mean a larger value/amount, and negative values are not meaningful.
 - **Values:** Integer progress value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -2681,8 +2765,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat base modifier while standing. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat base modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2691,8 +2776,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent base modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent base modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2701,8 +2787,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat aim modifier while standing. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat aim modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2711,8 +2798,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent aim modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent aim modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2721,8 +2809,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-cap modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH aim-cap modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2731,8 +2820,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** NCTH handling modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH handling modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2741,8 +2831,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** NCTH target-tracking speed modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH target-tracking speed modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2751,8 +2842,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** NCTH drop-compensation modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH drop-compensation modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2761,8 +2853,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** NCTH maximum counter-force modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH maximum counter-force modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2771,8 +2864,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** NCTH counter-force accuracy modifier while standing. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH counter-force accuracy modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2781,8 +2875,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/STAND_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-level modifier while standing. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
+- **Description:** NCTH aim-level modifier while standing.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2800,8 +2895,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat base modifier while crouching. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat base modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2810,8 +2906,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent base modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent base modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2820,8 +2917,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat aim modifier while crouching. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat aim modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2830,8 +2928,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent aim modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent aim modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2840,8 +2939,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-cap modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH aim-cap modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2850,8 +2950,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** NCTH handling modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH handling modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2860,8 +2961,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** NCTH target-tracking speed modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH target-tracking speed modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2870,8 +2972,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** NCTH drop-compensation modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH drop-compensation modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2880,8 +2983,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** NCTH maximum counter-force modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH maximum counter-force modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2890,8 +2994,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** NCTH counter-force accuracy modifier while crouching. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH counter-force accuracy modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2900,8 +3005,9 @@ contains the same eleven fields listed after the group blocks.
 ### `ITEMLIST/ITEM/CROUCH_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-level modifier while crouching. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
+- **Description:** NCTH aim-level modifier while crouching.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2922,8 +3028,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/FlatBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat base modifier while prone. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat base modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2932,8 +3039,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentBase`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent base modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent base modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2942,8 +3050,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/FlatAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH flat aim modifier while prone. Numeric semantics: Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
+- **Description:** NCTH flat aim modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Signed stance modifier: higher values mean a stronger positive effect, and negative values apply the opposite effect.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2952,8 +3061,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentAim`
 
 - **Type:** `Integer`
-- **Description:** NCTH percent aim modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH percent aim modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2962,8 +3072,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentCap`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-cap modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH aim-cap modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2972,8 +3083,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentHandling`
 
 - **Type:** `Integer`
-- **Description:** NCTH handling modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH handling modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2982,8 +3094,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentTargetTrackingSpeed`
 
 - **Type:** `Integer`
-- **Description:** NCTH target-tracking speed modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH target-tracking speed modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -2992,8 +3105,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentDropCompensation`
 
 - **Type:** `Integer`
-- **Description:** NCTH drop-compensation modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH drop-compensation modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -3002,8 +3116,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentMaxCounterForce`
 
 - **Type:** `Integer`
-- **Description:** NCTH maximum counter-force modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH maximum counter-force modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -3012,8 +3127,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/PercentCounterForceAccuracy`
 
 - **Type:** `Integer`
-- **Description:** NCTH counter-force accuracy modifier while prone. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** NCTH counter-force accuracy modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.
@@ -3022,8 +3138,9 @@ Empty means neutral; positive and negative percentages are allowed.
 ### `ITEMLIST/ITEM/PRONE_MODIFIERS/AimLevels`
 
 - **Type:** `Integer`
-- **Description:** NCTH aim-level modifier while prone. Numeric semantics: Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
+- **Description:** NCTH aim-level modifier while prone.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Higher values mean a stronger associated combat value; negative values reduce it and are not meaningful unless the field is explicitly signed.
 - **Values:** Integer modifier; empty means neutral. No narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element is neutral.
 - **Source:** item table data; stance modifier metadata.

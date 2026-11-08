@@ -72,7 +72,7 @@ FOODOPINIONSLIST
 ### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Food row that the profile likes or dislikes. Numeric semantics: Higher values mean a larger quantity/count, and negative values are not meaningful.
+- **Description:** Food row that the profile likes or dislikes.
 - **Only used with:** Food system.
 - **Values:** Food row index in [Food](Food.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -82,8 +82,9 @@ FOODOPINIONSLIST
 ### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/MoraleMod`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Morale modifier applied to this profile when it consumes the food. Numeric semantics: Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
+- **Description:** Morale modifier applied to this profile when it consumes the food.
 - **Only used with:** Food system.
+- **Numeric semantics:** Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
 - **Values:** Morale modifier for this profile and food.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** food opinion table data; field metadata.

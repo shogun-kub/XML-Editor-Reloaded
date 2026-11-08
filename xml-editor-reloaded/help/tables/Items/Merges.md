@@ -113,7 +113,8 @@ MERGELIST
 ### `MERGELIST/MERGE/APCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of the merge. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** AP cost of the merge.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** merge table data; field metadata.

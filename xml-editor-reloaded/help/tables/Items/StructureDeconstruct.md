@@ -90,7 +90,8 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Status of the created item. It uses the same status units as item condition. Numeric semantics: Higher values mean better reliability/condition; negative values are outside the normal range.
+- **Description:** Status of the created item. It uses the same status units as item condition.
+- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
 - **Values:** Status of the created item, in the same status units as item condition.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.
@@ -117,7 +118,8 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Deconstruction cost. The unit is defined by the construction system; it is a decimal value. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** Deconstruction cost. The unit is defined by the construction system; it is a decimal value.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** Decimal deconstruction cost.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure deconstruction table data; field metadata.

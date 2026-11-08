@@ -94,8 +94,9 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/nasAttachmentClass`
 
 - **Type:** `Flags` (`UINT64`)
-- **Description:** Bitmask of attachment classes that the slot accepts. It is read by the New Attachment System (NAS). Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Bitmask of attachment classes that the slot accepts. It is read by the New Attachment System (NAS).
 - **Only used with:** NAS.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bitmask of IDs from `Lookup.NasAttachmentClass`: `1` Default, `2` Barrel, `4` Laser, `8` Sight, `16` Scope, `32` Stock, `64` Ammo, `128` Internal, `256` External, `512` Underbarrel, `1024` Grenade, `2048` Rocket, `4096` MOLLE Small, `8192` MOLLE Medium, `16384` Batteries. Combine bits with OR.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment slot table data; field metadata.
@@ -104,8 +105,9 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/nasLayoutClass`
 
 - **Type:** `Flags` (`UINT64`)
-- **Description:** Bitmask of layout classes to which the slot belongs. It is read by the New Attachment System (NAS). Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Bitmask of layout classes to which the slot belongs. It is read by the New Attachment System (NAS).
 - **Only used with:** NAS.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bitmask of IDs from `Lookup.NasLayoutClass`: `1` Weapons, `2` Multi-Shot Launchers, `4` Molle Leg Rigs, `8` Molle Vests, `16` Molle Combat Packs, `32` Molle Backpacks. Combine bits with OR.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment slot table data; field metadata.
@@ -114,8 +116,9 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/usDescPanelPosX`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Horizontal position of the slot icon in the attachment description panel. Numeric semantics: Coordinate; larger X/Y values move right/down, and negative coordinates are outside the valid range.
+- **Description:** Horizontal position of the slot icon in the attachment description panel.
 - **Only used with:** NAS.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment slot table data; field metadata.
@@ -124,8 +127,9 @@ ATTACHMENTSLOTLIST
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/usDescPanelPosY`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Vertical position of the slot icon in the attachment description panel. Numeric semantics: Coordinate; larger X/Y values move right/down, and negative coordinates are outside the valid range.
+- **Description:** Vertical position of the slot icon in the attachment description panel.
 - **Only used with:** NAS.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment slot table data; field metadata.

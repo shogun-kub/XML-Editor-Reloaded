@@ -267,7 +267,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/szShortName`
 
 - **Type:** `String` (`String`)
-- **Description:** Short display name used where space is limited.
+- **Description:** Short display name for the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
@@ -287,8 +287,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_polar`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the polar environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the polar environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -297,8 +298,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_desert`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the desert environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the desert environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -307,8 +309,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_swamp`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the swamp environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the swamp environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -317,8 +320,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_urban`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the urban environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the urban environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -327,8 +331,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_forest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the forest environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the forest environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -337,8 +342,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_plains`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the plains environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the plains environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -347,8 +353,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_river`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the river environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the river environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -357,8 +364,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_coastal`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the coastal environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the coastal environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -367,8 +375,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_tropical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the tropical environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the tropical environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -377,8 +386,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_mountain`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the mountain environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the mountain environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -387,8 +397,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/agility`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Agility bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Agility bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -397,8 +408,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/strength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Strength bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Strength bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -407,8 +419,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/dexterity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Dexterity bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Dexterity bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -417,8 +430,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/mechanical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Mechanical skill bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Mechanical skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -427,8 +441,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/medical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Medical skill bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Medical skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -437,8 +452,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/wisdom`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Wisdom bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Wisdom bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -447,8 +463,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/explosives`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Explosives skill bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Explosives skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -457,8 +474,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/leadership`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Leadership bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Leadership bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -467,8 +485,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/marksmanship`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Marksmanship bonus or penalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Marksmanship bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -477,8 +496,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_height`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the height environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the height environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -487,8 +507,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_swimming`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the swimming environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the swimming environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -497,8 +518,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_fortify`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the fortify environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the fortify environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -507,8 +529,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_artillery`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the artillery environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the artillery environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -517,8 +540,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_inventory`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the inventory environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the inventory environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -527,8 +551,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_airdrop`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the airdrop environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the airdrop environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -537,8 +562,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ap_assault`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Action-point modifier for the assault environment/action. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Action-point modifier for the assault environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -547,8 +573,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/travel_foot`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for foot travel. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Travel modifier for foot travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -557,8 +584,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/travel_car`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for car travel. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Travel modifier for car travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -567,8 +595,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/travel_air`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for air travel. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Travel modifier for air travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -577,8 +606,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/travel_boat`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Travel modifier for boat travel. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Travel modifier for boat travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -587,8 +617,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/resistance_fear`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against fear. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Resistance modifier against fear.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -597,8 +628,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/resistance_suppression`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against suppression. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Resistance modifier against suppression.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -607,8 +639,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/resistance_physical`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against physical. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Resistance modifier against physical.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -617,8 +650,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/resistance_alcohol`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against alcohol. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Resistance modifier against alcohol.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -627,8 +661,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/resistance_disease`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Resistance modifier against disease. Numeric semantics: Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
+- **Description:** Resistance modifier against disease.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -637,8 +672,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/interrogation`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Interrogation modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Interrogation modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -647,8 +683,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/prisonguard`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Prison-guard modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Prison-guard modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -657,8 +694,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/betterprices_guns`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Gun-shop price modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Gun-shop price modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -667,8 +705,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/betterprices`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Shop price modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Shop price modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -677,8 +716,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/capitulation`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to enemy capitulation chance. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to enemy capitulation chance.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -687,8 +727,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/speed_run`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Running-speed modifier. Numeric semantics: Higher values mean a faster speed; negative values are not meaningful.
+- **Description:** Running-speed modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -697,8 +738,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/speed_bandaging`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Bandaging-speed modifier. Numeric semantics: Higher values mean a faster speed; negative values are not meaningful.
+- **Description:** Bandaging-speed modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -707,8 +749,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/drink_energyregen`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drink energy-regeneration modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Drink energy-regeneration modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -717,8 +760,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/carrystrength`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Carry-strength modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Carry-strength modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -727,8 +771,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/food`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Food-consumption modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Food-consumption modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -737,8 +782,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/water`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Water-consumption modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Water-consumption modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -747,8 +793,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/sleep`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Sleep modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Sleep modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -757,8 +804,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/meleedamage`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Melee damage modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Melee damage modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -767,8 +815,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/cth_blades`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance-to-hit modifier with blade weapons. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Chance-to-hit modifier with blade weapons.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -777,8 +826,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/camo`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Camouflage modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Camouflage modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -787,8 +837,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/stealth`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Stealth modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Stealth modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -797,8 +848,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/increased_maxcth`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to maximum chance to hit. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to maximum chance to hit.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -807,8 +859,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/hearing_night`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Night-time hearing modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Night-time hearing modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -817,8 +870,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/hearing_day`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Daytime hearing modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Daytime hearing modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -827,8 +881,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/disarm_trap`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Trap-disarming modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Trap-disarming modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -837,8 +892,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/SAM_cth`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** SAM-site chance-to-hit modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** SAM-site chance-to-hit modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -847,8 +903,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/approach_friendly`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to friendly approach dialogue. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to friendly approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -857,8 +914,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/approach_direct`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to direct approach dialogue. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to direct approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -867,8 +925,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/approach_threaten`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to threatening approach dialogue. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to threatening approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -877,8 +936,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/approach_recruit`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to recruitment approach dialogue. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to recruitment approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -887,8 +947,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/breachingcharge`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Breaching-charge effectiveness modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Breaching-charge effectiveness modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -897,8 +958,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/cth_vs_creatures`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance-to-hit modifier against creatures. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Chance-to-hit modifier against creatures.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -907,8 +969,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/insurance`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Insurance cost or availability modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Insurance cost or availability modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -917,8 +980,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/spotter`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Spotter modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Spotter modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -927,8 +991,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/disease_diagnose`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease-diagnosis modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Disease-diagnosis modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -937,8 +1002,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/disease_treatment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease-treatment modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Disease-treatment modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -947,8 +1013,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/tracker_ability`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Tracker-ability modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Tracker-ability modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -957,8 +1024,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/ambush_radius`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to ambush detection radius. Numeric semantics: Higher values mean a longer range/radius, and negative values are not meaningful.
+- **Description:** Modifier to ambush detection radius.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -977,8 +1045,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/croucheddefense`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to crouched defense. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to crouched defense.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -987,8 +1056,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/fortify_assignment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to fortify-assignment effectiveness. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to fortify-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -997,8 +1067,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/snake_defense`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Snake-defense modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Snake-defense modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1007,8 +1078,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/hackerskill`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Hacking skill bonus. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Hacking skill bonus.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1017,8 +1089,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/burial_assignment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to burial-assignment effectiveness. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to burial-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1027,8 +1100,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/administration_assignment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to administration-assignment effectiveness. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to administration-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1037,8 +1111,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/exploration_assignment`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to exploration-assignment effectiveness. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to exploration-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1057,8 +1132,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/druguse`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Drug-use modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Drug-use modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1087,8 +1163,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/xenophobic`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Xenophobia modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Xenophobia modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1097,8 +1174,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/level_underground`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Underground-level modifier. Numeric semantics: Higher values mean a higher level; negative values are outside the normal level range.
+- **Description:** Underground-level modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1107,8 +1185,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/scrounging`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Scrounging modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Scrounging modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1117,8 +1196,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/traplevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Trap-level modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Trap-level modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1127,8 +1207,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/corruptionspread`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to corruption spread. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to corruption spread.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1157,8 +1238,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/loyalitylossondeath`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to loyalty loss on death. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to loyalty loss on death.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1167,8 +1249,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/animal_friend`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Animal-friend interaction modifier. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Animal-friend interaction modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1177,8 +1260,9 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/civgroup_loyal`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to civilian-group loyalty. Numeric semantics: Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
+- **Description:** Modifier to civilian-group loyalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
+- **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** background table data; table metadata.
@@ -1218,3 +1302,5 @@ v4 and v5 use the same field paths; values may differ.
 ## Open questions
 
 The exact stacking and rounding of the many background modifiers are defined by the background/assignment code, not by this table.
+
+Which UI surface uses `szShortName` instead of the full background name is not confirmed; this needs a code/UI check, and the neutral wording above is intentional until then.

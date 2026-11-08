@@ -224,7 +224,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/StartingCash`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting cash for the difficulty. Negative values are allowed; the value is stored in an `INT32`. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** Starting cash for the difficulty.
+- **Numeric semantics:** Higher values mean more starting cash; negative values are allowed and represent starting debt.
 - **Values:** Integer cash value; negative values are allowed.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -233,7 +234,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EnemyAPBonus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Extra APs for enemy soldiers. The value is not adjusted for the selected AP system. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Extra APs for enemy soldiers. The value is not adjusted for the selected AP system.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -242,7 +244,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/NumKillsPerProgressPoint`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Kills required to gain one progress point. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Kills required to gain one progress point.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -251,7 +254,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/InitialGarrisonPercentages`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Percentage of troops placed on the map at game start; `100` means the default garrison. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage of troops placed on the map at game start; `100` means the default garrison.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -260,7 +264,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/MinEnemyGroupSize`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Minimum enemy group size. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Minimum enemy group size.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -269,7 +274,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CounterAttackGroupSize`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Size of each of the four counter-attack groups. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Size of each of the four counter-attack groups.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -278,7 +284,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/PercentElitesBonus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Percentage of troops converted to extra elites. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage of troops converted to extra elites.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -296,7 +303,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueensInitialPoolOfTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Troops available to the queen at game start. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Troops available to the queen at game start.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -305,7 +313,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenPoolMaxSizePerDifficultyLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum size of the queen’s reserve pool. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Maximum size of the queen’s reserve pool.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -314,7 +323,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenPoolIncrementDaysPerDifficultyLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Days between queen recruit-group training intervals; `0` uses the old simple schema. Numeric semantics: Higher values mean a higher level; negative values are outside the normal level range.
+- **Description:** Days between queen recruit-group training intervals; `0` uses the old simple schema.
+- **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -323,7 +333,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenPoolBaseIncrementSizePerDifficultyLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Recruit capacity of one training camp. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Recruit capacity of one training camp.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -332,7 +343,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenPoolRecruitPercentPerDifficultyLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Percentage of a sector population recruited by the army each day. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage of a sector population recruited by the army each day.
+- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -341,7 +353,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EnemyStartingAlertLevel`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting enemy alert level. Numeric semantics: Higher values mean a higher level; negative values are outside the normal level range.
+- **Description:** Starting enemy alert level.
+- **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -350,7 +363,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EnemyAlertDecay`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Amount by which alertness decays after an enemy chase. Numeric semantics: Higher values mean a longer delay/decay period, and negative values are not meaningful.
+- **Description:** Amount by which alertness decays after an enemy chase.
+- **Numeric semantics:** Higher values mean a longer delay/decay period, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -359,7 +373,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/NumAwareBattles`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of enemy-initiated battles before the queen leaves full-alert mode. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Number of enemy-initiated battles before the queen leaves full-alert mode.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -368,7 +383,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/BaseDelayInMinutesBetweenEvaluations`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base delay between queen decisions, in minutes. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
+- **Description:** Base delay between queen decisions, in minutes.
+- **Numeric semantics:** Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -377,7 +393,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EvaluationDelayVariance`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Random variation added to the queen decision delay. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
+- **Description:** Random variation added to the queen decision delay.
+- **Numeric semantics:** Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -386,7 +403,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/GracePeriodInHoursAfterSectorLiberation`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Delay before the queen may attack a newly liberated sector, in hours. Numeric semantics: Higher values mean a longer delay/decay period, and negative values are not meaningful.
+- **Description:** Delay before the queen may attack a newly liberated sector, in hours.
+- **Numeric semantics:** Higher values mean a longer delay/decay period, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -395,7 +413,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/GracePeriodInDaysAfterPatrolDestroyed`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Delay before a destroyed patrol can be refilled, in days. Numeric semantics: Higher values mean a longer delay/decay period, and negative values are not meaningful.
+- **Description:** Delay before a destroyed patrol can be refilled, in days.
+- **Numeric semantics:** Higher values mean a longer delay/decay period, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -413,7 +432,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/MaxMercDeaths`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum mercenary deaths allowed by the difficulty. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Maximum mercenary deaths allowed by the difficulty.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -422,7 +442,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/LootStatusModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to dropped-loot status. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Modifier to dropped-loot status.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -431,7 +452,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CreatureSpreadTime`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Time for creatures to spread. Numeric semantics: Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
+- **Description:** Time for creatures to spread.
+- **Numeric semantics:** Time value; higher values mean a longer delay/duration, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -440,7 +462,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenReproductionBase`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Base queen reproduction value. Numeric semantics: Higher values mean a stronger value/effect, and negative values are not meaningful.
+- **Description:** Base queen reproduction value.
+- **Numeric semantics:** Higher values mean a stronger value/effect, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -449,7 +472,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenReproductionBonus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Queen reproduction bonus. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Queen reproduction bonus.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -458,7 +482,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/QueenInitBonusSpread`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Queen initiative bonus spread. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Queen initiative bonus spread.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -467,7 +492,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CreaturePopulationModifier`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to creature population. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Modifier to creature population.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -476,7 +502,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CreatureTownAggressiveness`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Creature aggressiveness in towns. Numeric semantics: Higher values mean a stronger value/effect, and negative values are not meaningful.
+- **Description:** Creature aggressiveness in towns.
+- **Numeric semantics:** Higher values mean a stronger value/effect, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -485,7 +512,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorJ9B1NumTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector J9B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector J9B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -494,7 +522,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorJ9B2NumCreatures`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector J9B2NumC. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector J9B2NumC.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -503,7 +532,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorK4B1NumTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector K4B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector K4B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -512,7 +542,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorK4B1NumElites`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector K4B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector K4B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -521,7 +552,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorO3B1NumTroops`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector O3B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector O3B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -530,7 +562,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorO3B1NumElites`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector O3B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector O3B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -539,7 +572,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorP3B1NumElites`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Starting troop/creature/elite count for sector P3B1N. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Starting troop/creature/elite count for sector P3B1N.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -566,7 +600,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/ChanceOfEnemyAmbushes`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Chance of enemy ambushes. Numeric semantics: Higher values mean a greater chance; negative values are outside the valid chance range.
+- **Description:** Chance of enemy ambushes.
+- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -593,7 +628,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/PopulationLevel2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Population level 2 value. Numeric semantics: Higher values mean a higher level; negative values are outside the normal level range.
+- **Description:** Population level 2 value.
+- **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -602,7 +638,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/PopulationLevel3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Population level 3 value. Numeric semantics: Higher values mean a higher level; negative values are outside the normal level range.
+- **Description:** Population level 3 value.
+- **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -611,7 +648,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/WeaponCacheTroops1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of troops assigned to weapon cache 1. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Number of troops assigned to weapon cache 1.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -620,7 +658,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/WeaponCacheTroops2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of troops assigned to weapon cache 2. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Number of troops assigned to weapon cache 2.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -629,7 +668,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/WeaponCacheTroops3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of troops assigned to weapon cache 3. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Number of troops assigned to weapon cache 3.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -638,7 +678,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/WeaponCacheTroops4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of troops assigned to weapon cache 4. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Number of troops assigned to weapon cache 4.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -647,7 +688,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/WeaponCacheTroops5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of troops assigned to weapon cache 5. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Number of troops assigned to weapon cache 5.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -683,7 +725,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/LevelModifierLowLimit`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Low limit for the level modifier. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Low limit for the level modifier.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -692,7 +735,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/LevelModifierHighLimit`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** High limit for the level modifier. Numeric semantics: Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** High limit for the level modifier.
+- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -737,7 +781,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/NumberOfTurnsPowerGenFanWillBeStoppedFor`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Number of turns the power-generation fan is stopped for. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Number of turns the power-generation fan is stopped for.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -764,7 +809,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/EnemyMoraleWorried`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Enemy morale value for the worried state. Numeric semantics: Higher values mean a stronger value/effect, and negative values are not meaningful.
+- **Description:** Enemy morale value for the worried state.
+- **Numeric semantics:** Higher values mean a stronger value/effect, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -773,7 +819,8 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/MaxMortarsPerTeam`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Maximum mortars per enemy team. Numeric semantics: Higher values mean a larger troop/weapon count, and negative values are not meaningful.
+- **Description:** Maximum mortars per enemy team.
+- **Numeric semantics:** Higher values mean a larger troop/weapon count, and negative values are not meaningful.
 - **Values:** Integer difficulty value; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -782,8 +829,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsAimDifficulty`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH aim-difficulty constant override. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH aim-difficulty constant override.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -792,8 +840,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsBaseDifficulty`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH base-difficulty constant override. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH base-difficulty constant override.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -802,8 +851,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsAimDifficultyMilitia`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH aim-difficulty constant override for militia. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH aim-difficulty constant override for militia.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -812,8 +862,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsBaseDifficultyMilitia`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH base-difficulty constant override for militia. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH base-difficulty constant override for militia.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -822,8 +873,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsAimDifficultyPlayer`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH aim-difficulty constant override for the player. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH aim-difficulty constant override for the player.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.
@@ -832,8 +884,9 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/CthConstantsBaseDifficultyPlayer`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** NCTH base-difficulty constant override for the player. Numeric semantics: Not confirmed; see Open questions.
+- **Description:** NCTH base-difficulty constant override for the player.
 - **Only used with:** NCTH.
+- **Numeric semantics:** Not confirmed; see Open questions.
 - **Values:** Decimal NCTH constant override.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** difficulty table data; table metadata.

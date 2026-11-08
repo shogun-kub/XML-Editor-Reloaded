@@ -184,7 +184,8 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usAPCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of the transformation. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** AP cost of the transformation.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.
@@ -193,7 +194,8 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/iBPCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Blueprint/creation-point cost of the transformation. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** Blueprint/creation-point cost of the transformation.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** Blueprint/creation-point cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item transformation table data; field metadata.

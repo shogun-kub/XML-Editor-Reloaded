@@ -114,7 +114,8 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Creation cost of the structure. The unit is defined by the construction system; it is a decimal value. Numeric semantics: Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Description:** Creation cost of the structure. The unit is defined by the construction system; it is a decimal value.
+- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
 - **Values:** Decimal creation cost.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.
@@ -123,7 +124,8 @@ fields and document order.
 ### `STRUCTURESLIST/STRUCTURE/fFortifyAdjacentAdjustment`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Fortification adjustment applied to adjacent tiles when the structure is built. Numeric semantics: Positive values strengthen adjacent fortification; negative values weaken it, and `0` is neutral.
+- **Description:** Fortification adjustment applied to adjacent tiles when the structure is built.
+- **Numeric semantics:** Positive values strengthen adjacent fortification; negative values weaken it, and `0` is neutral.
 - **Values:** Decimal fortification adjustment applied to adjacent tiles.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** structure construction table data; field metadata.

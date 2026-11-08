@@ -95,9 +95,8 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 ### `ARMOURLIST/ARMOUR/ubProtection`
 
 - **Type:** `Integer` (`UINT16` in the struct, cast to `UINT8` by the loader)
-- **Description:** Raw protection value of the armour; higher values absorb more damage.
-  The loader casts the parsed value to `UINT8`, so values above 255 are truncated even though
-  the struct field is `UINT16`. Numeric semantics: Higher values mean more protection/coverage, and negative values are not meaningful.
+- **Description:** Raw protection value of the armour. The loader casts the parsed value to `UINT8`, so values above 255 are truncated even though the struct field is `UINT16`.
+- **Numeric semantics:** Higher values mean more protection/coverage, and negative values are not meaningful.
 - **Values:** `0..255` effectively; the loader truncates to `UINT8`.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).
@@ -106,8 +105,8 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 ### `ARMOURLIST/ARMOUR/ubCoverage`
 
 - **Type:** `Integer` (`UINT8`), percent
-- **Description:** Percentage of the body slot covered by the armour. It is used as a
-  multiplier in protection calculations and in the item comparison panel. Numeric semantics: Higher values mean more protection/coverage, and negative values are not meaningful.
+- **Description:** Percentage of the body slot covered by the armour. It is used as a multiplier in protection calculations and in the item comparison panel.
+- **Numeric semantics:** Higher values mean more protection/coverage, and negative values are not meaningful.
 - **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `100` when `ENABLE_ARMOR_COVERAGE` is false. The option defaults to `FALSE`,
   so a default game forces every row to 100 and ignores the XML value. When coverage is
@@ -118,8 +117,8 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 ### `ARMOURLIST/ARMOUR/ubDegradePercent`
 
 - **Type:** `Integer` (`UINT8`), percent
-- **Description:** Percentage of the applied protection subtracted from the armour's status
-  when it absorbs a hit. Higher values wear out faster. Numeric semantics: Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
+- **Description:** Percentage of the applied protection subtracted from the armour's status when it absorbs a hit.
+- **Numeric semantics:** Percentage; higher values wear the armour out faster, `0` means no degradation, and negative values are not meaningful for this unsigned percentage.
 - **Values:** percentage; stored as `UINT8`. No separate validation limit is documented.
 - **Default:** `0`.
 - **Source:** game code (armour loader); related: [Armour protection](../../FORMULAS.md#armour-protection).

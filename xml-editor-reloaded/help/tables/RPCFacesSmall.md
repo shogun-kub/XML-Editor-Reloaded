@@ -95,7 +95,8 @@ SMALLFACE
 ### `SMALLFACE/FACE/EyesX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the eyes on the small face. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X coordinate of the eyes on the small face.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** rpc small-face table data; item/profile metadata.
@@ -104,7 +105,8 @@ SMALLFACE
 ### `SMALLFACE/FACE/EyesY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the eyes on the small face. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y coordinate of the eyes on the small face.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** rpc small-face table data; item/profile metadata.
@@ -113,7 +115,8 @@ SMALLFACE
 ### `SMALLFACE/FACE/MouthX`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** X coordinate of the mouth on the small face. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** X coordinate of the mouth on the small face.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** rpc small-face table data; item/profile metadata.
@@ -122,7 +125,8 @@ SMALLFACE
 ### `SMALLFACE/FACE/MouthY`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Y coordinate of the mouth on the small face. Numeric semantics: Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
+- **Description:** Y coordinate of the mouth on the small face.
+- **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** rpc small-face table data; item/profile metadata.

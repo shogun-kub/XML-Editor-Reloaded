@@ -112,8 +112,9 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeCombo`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Combination/merge index for LBE pieces that can be combined. Numeric semantics: Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
+- **Description:** Combination/merge index for LBE pieces that can be combined.
 - **Only used with:** NIV.
+- **Numeric semantics:** Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
@@ -122,8 +123,9 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeFilledSize`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Pre-filled size of the LBE, used when the item starts with contents. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Pre-filled size of the LBE, used when the item starts with contents.
 - **Only used with:** NIV.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
@@ -132,8 +134,9 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbeAvailableVolume`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Total volume available in the LBE. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Total volume available in the LBE.
 - **Only used with:** NIV.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.
@@ -142,8 +145,9 @@ LOADBEARINGEQUIPMENTLIST
 ### `LOADBEARINGEQUIPMENTLIST/LOADBEARINGEQUIPMENT/lbePocketsAvailable`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Bitmask of pocket slots that are available on the LBE. Numeric semantics: Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
+- **Description:** Bitmask of pocket slots that are available on the LBE.
 - **Only used with:** NIV.
+- **Numeric semantics:** Numeric code/count; larger values mean a larger number or a different listed combination, and negative values are not meaningful.
 - **Values:** Bitmask of available pocket slots; bit `n` corresponds to slot `n`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** lbe table data; field metadata.

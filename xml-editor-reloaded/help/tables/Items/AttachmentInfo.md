@@ -84,7 +84,8 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask. Numeric semantics: Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
+- **Description:** Bitmask of item classes this attachment can attach to. The host item class must intersect this mask.
+- **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bitmask of `Lookup.ItemClass` IDs. The attachment can be mounted on items whose class intersects this mask.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.
@@ -102,7 +103,8 @@ ATTACHMENTINFOLIST
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheckMod`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Modifier added to the selected attachment skill check. Positive values make the check easier or harder according to the check definition; it is not a separate skill value. Numeric semantics: Signed modifier added to the skill check: positive values make the check easier, negative values make it harder.
+- **Description:** Modifier added to the selected attachment skill check.
+- **Numeric semantics:** Signed modifier added to the skill check: positive values make the check easier, negative values make it harder.
 - **Values:** Integer modifier added to the selected skill check.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment info table data; field metadata.

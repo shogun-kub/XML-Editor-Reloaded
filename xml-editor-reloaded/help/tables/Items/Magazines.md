@@ -95,8 +95,8 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 ### `MAGAZINELIST/MAGAZINE/ubMagSize`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Capacity of the magazine in rounds. Loose bullets use 1; boxes and crates
-  use a large capacity. The loader casts the value to `UINT16`. Numeric semantics: Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Capacity of the magazine in rounds. Loose bullets use 1; boxes and crates use a large capacity. The loader casts the value to `UINT16`.
+- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** `0..65535`; the loader casts the value to `UINT16`.
 - **Default:** `0`.
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
