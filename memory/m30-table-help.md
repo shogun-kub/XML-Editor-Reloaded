@@ -89,4 +89,6 @@ merchant flags/coolness formula вынесены в `Open questions`.
 `SquadNames` — 2, `SpreadPatterns` — 7, `Vehicles` — 23. Одобрены пользователем
 2026-11-08, документы переведены в `reviewed`; `help-check -Release` проходит.
 
-**Дальше.** B9 — сквозная проверка, INDEX/COVERAGE, терминология и выборочная сверка по коду.
+**Дальше.** B9 — cross-references, ссылки/якоря, терминология, INDEX/COVERAGE; B10 — сверка
+неподтверждённых описаний по коду той же нарезкой B0–B8. После B10 — повторный B9-гейт и
+финальный коммит.
