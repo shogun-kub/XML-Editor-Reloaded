@@ -753,8 +753,12 @@ case-sensitive список палитр; у пяти enemy-drop таблиц у
 `SoldierProfiles` получил `UINT16`/`UINT8`; в `Traders` уточнены типы inventory-полей.
 В B8 у `CampaignStatsEvents` уточнены `UINT16`/`UINT8`; `EnemyRank` получил
 `UINT16`/`BOOLEAN`/`CHAR16` и диапазон `ExpLevel` `1..9`; `EnemyNames.Sector` описан как
-`A1..P16` с проверкой диапазона загрузчиком. Остались непроверенные поля B1/B3/B4/B5 и
-часть B7/B8; `help-check -Write` проходит после каждого коммита.
+`A1..P16` с проверкой диапазона загрузчиком; `BriefingRoom.Hidden` документирован как
+инвертированный (`0` = скрыто, non-zero = видимо), остальные поля получили `UINT32`/`INT32`;
+`History` — `UINT16`/`CHAR16`; у `LoadScreenHints` расшифрованы category-биты, а legacy
+элемент `item` отмечен как не читаемый загрузчиком (`items` — рабочий). Остались
+непроверенные поля B1/B3/B4/B5 и часть B7/B8; `help-check -Write` проходит после каждого
+коммита.
 
 ## 9. Проверки и гейты
 

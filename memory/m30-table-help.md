@@ -115,7 +115,9 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 `ubChoices`/`ubNumItems` `UINT8`, `uiIndex` `UINT32`; `SoldierProfiles` `UINT16`/`UINT8`;
 `Traders` inventory `UINT32`/`INT16`/`UINT8`. B8: `CampaignStatsEvents` `UINT16`/`UINT8`;
 `EnemyRank` `UINT16`/`BOOLEAN`/`CHAR16`, `ExpLevel` `1..9`; `EnemyNames.Sector` — `A1..P16`
-с проверкой диапазона. В `GLOSSARY.md`
+с проверкой диапазона; `BriefingRoom.Hidden` инвертирован (`0` = скрыто, non-zero = видимо);
+`History` — `UINT16`/`CHAR16`; `LoadScreenHints` — category-биты, `item` не читается,
+рабочий элемент — `items`. В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`. Остались непроверенные поля
 B1/B3/B4/B5 и часть B7/B8.
 **Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.
