@@ -56,6 +56,9 @@ entry. The English column is the source of truth; the Russian column is a contro
 | country noun | название жителя страны | `countryNoun` |
 | AP (action points) | очки действия (ОД) | — |
 | CTH (chance to hit) | шанс попадания | — |
+| recoil | отдача | signed muzzle deviation; X is horizontal, Y is vertical |
+| aim level | уровень прицеливания | `0` = automatic level count |
+| burst penalty | штраф за очередь | accuracy penalty per shot after the first |
 
 ## Notes
 
