@@ -246,7 +246,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Background row identity.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
@@ -286,7 +286,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_polar`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the polar environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -297,7 +297,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_desert`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the desert environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -308,7 +308,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_swamp`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the swamp environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -319,7 +319,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_urban`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the urban environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -330,7 +330,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_forest`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the forest environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -341,7 +341,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_plains`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the plains environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -352,7 +352,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_river`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the river environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -363,7 +363,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_coastal`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the coastal environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -374,7 +374,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_tropical`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the tropical environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -385,7 +385,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_mountain`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the mountain environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -396,7 +396,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/agility`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Agility bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -407,7 +407,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/strength`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Strength bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -418,7 +418,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/dexterity`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Dexterity bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -429,7 +429,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/mechanical`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Mechanical skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -440,7 +440,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/medical`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Medical skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -451,7 +451,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/wisdom`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Wisdom bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -462,7 +462,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/explosives`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Explosives skill bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -473,7 +473,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/leadership`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Leadership bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -484,7 +484,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/marksmanship`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Marksmanship bonus or penalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -495,7 +495,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_height`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the height environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -506,7 +506,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_swimming`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the swimming environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -517,7 +517,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_fortify`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the fortify environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -528,7 +528,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_artillery`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the artillery environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -539,7 +539,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_inventory`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the inventory environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -550,7 +550,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_airdrop`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the airdrop environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -561,7 +561,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ap_assault`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Action-point modifier for the assault environment/action.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -572,7 +572,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/travel_foot`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Travel modifier for foot travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -583,7 +583,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/travel_car`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Travel modifier for car travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -594,7 +594,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/travel_air`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Travel modifier for air travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -605,7 +605,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/travel_boat`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Travel modifier for boat travel.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -616,7 +616,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/resistance_fear`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Resistance modifier against fear.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
@@ -627,7 +627,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/resistance_suppression`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Resistance modifier against suppression.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
@@ -638,7 +638,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/resistance_physical`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Resistance modifier against physical.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
@@ -649,7 +649,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/resistance_alcohol`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Resistance modifier against alcohol.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
@@ -660,7 +660,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/resistance_disease`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Resistance modifier against disease.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a stronger reduction/resistance; negative values reduce that protection and are not meaningful unless the field explicitly defines a penalty.
@@ -671,7 +671,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/interrogation`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Interrogation modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -682,7 +682,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/prisonguard`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Prison-guard modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -693,7 +693,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/betterprices_guns`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Gun-shop price modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -704,7 +704,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/betterprices`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Shop price modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -715,7 +715,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/capitulation`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to enemy capitulation chance.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -726,7 +726,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/speed_run`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Running-speed modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
@@ -737,7 +737,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/speed_bandaging`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Bandaging-speed modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
@@ -748,7 +748,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/drink_energyregen`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Drink energy-regeneration modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -759,7 +759,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/carrystrength`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Carry-strength modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -770,7 +770,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/food`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Food-consumption modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -781,7 +781,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/water`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Water-consumption modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -792,7 +792,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/sleep`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Sleep modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -803,7 +803,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/meleedamage`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Melee damage modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -814,7 +814,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/cth_blades`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Chance-to-hit modifier with blade weapons.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -825,7 +825,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/camo`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Camouflage modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -836,7 +836,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/stealth`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Stealth modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -847,7 +847,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/increased_maxcth`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to maximum chance to hit.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -858,7 +858,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/hearing_night`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Night-time hearing modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -869,7 +869,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/hearing_day`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Daytime hearing modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -880,7 +880,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/disarm_trap`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Trap-disarming modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -891,7 +891,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/SAM_cth`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** SAM-site chance-to-hit modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -902,7 +902,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/approach_friendly`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to friendly approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -913,7 +913,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/approach_direct`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to direct approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -924,7 +924,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/approach_threaten`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to threatening approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -935,7 +935,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/approach_recruit`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to recruitment approach dialogue.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -946,7 +946,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/breachingcharge`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Breaching-charge effectiveness modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -957,7 +957,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/cth_vs_creatures`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Chance-to-hit modifier against creatures.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -968,7 +968,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/insurance`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Insurance cost or availability modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -979,7 +979,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/spotter`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Spotter modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -990,7 +990,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/disease_diagnose`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Disease-diagnosis modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1001,7 +1001,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/disease_treatment`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Disease-treatment modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1012,7 +1012,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/tracker_ability`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Tracker-ability modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1023,7 +1023,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/ambush_radius`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to ambush detection radius.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
@@ -1034,7 +1034,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/smoker`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Smoker flag or modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
@@ -1044,7 +1044,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/croucheddefense`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to crouched defence.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1055,7 +1055,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/fortify_assignment`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to fortify-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1066,7 +1066,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/snake_defense`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Snake-defence modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1077,7 +1077,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/hackerskill`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Hacking skill bonus.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1088,7 +1088,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/burial_assignment`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to burial-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1099,7 +1099,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/administration_assignment`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to administration-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1110,7 +1110,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/exploration_assignment`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to exploration-assignment effectiveness.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1121,7 +1121,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/dislikebackground`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Background ID that this background dislikes.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
@@ -1131,7 +1131,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/druguse`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Drug-use modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1142,7 +1142,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/drugtypes/drugtype`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Drug type ID associated with the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Drug row index from [Drugs](Items/Drugs.md).
@@ -1152,7 +1152,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/drugitems/drugitem`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Drug item ID associated with the background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** Item ID from [Items](Items/Items.md).
@@ -1162,7 +1162,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/xenophobic`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Xenophobia modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1173,7 +1173,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/level_underground`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Underground-level modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Higher values mean a higher level; negative values are outside the normal level range.
@@ -1184,7 +1184,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/scrounging`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Scrounging modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1195,7 +1195,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/traplevel`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Trap-level modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1206,7 +1206,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/corruptionspread`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to corruption spread.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1217,7 +1217,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/no_male`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Excludes male characters from this background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
@@ -1227,7 +1227,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/no_female`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Excludes female characters from this background.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Values:** `0` or `1`.
@@ -1237,7 +1237,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/loyalitylossondeath`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to loyalty loss on death.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1248,7 +1248,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/animal_friend`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Animal-friend interaction modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1259,7 +1259,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/civgroup_loyal`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Modifier to civilian-group loyalty.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
@@ -1270,7 +1270,7 @@ BACKGROUNDS
 
 ### `BACKGROUNDS/BACKGROUND/alt_impcreation`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Alternative IMP-creation flag for the background.
 - **Only used with:** ENABLE_BACKGROUNDS, ALTERNATIVE_IMP_CREATION.
 - **Values:** `0` or `1`.
