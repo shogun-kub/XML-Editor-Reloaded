@@ -52,37 +52,38 @@ MERCOPINIONS
 └── OPINION
     ├── uiIndex
     ├── zNickname
-    └── AnOpinion
+    └── AnOpinion   (repeated; attributes id and modifier)
 ```
 
 ## Fields
 
 ### `MERCOPINIONS/OPINION/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Profile identity for this opinion row.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Profile ID; the loader stores the row index as `UINT32`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc opinion table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (opinion loader); merc opinion table data.
+- **Confidence:** `source`
 
 ### `MERCOPINIONS/OPINION/zNickname`
 
 - **Type:** `String` (`String`)
-- **Description:** Nickname of the profile.
+- **Description:** Informational nickname of the profile. The loader reads the element but does not use it for gameplay.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** merc opinion table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (opinion loader ignores the value); merc opinion table data.
+- **Confidence:** `source`
 
 ### `MERCOPINIONS/OPINION/AnOpinion`
 
-- **Type:** `String` (`String`)
-- **Description:** Opinion text for the profile. It may contain several lines.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** merc opinion table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Type:** `Element` (repeated; attributes `id` and `modifier`)
+- **Description:** One opinion modifier for the profile. The element is empty; `id` selects the opinion slot (profile index) and `modifier` is the signed opinion delta.
+- **Numeric semantics:** The `modifier` attribute is a signed value: positive values improve the opinion, negative values worsen it, and `0` is neutral.
+- **Values:** Repeated `AnOpinion` elements; `id` `0..74`, `modifier` signed integer.
+- **Default:** absent means no opinion modifier for that slot.
+- **Source:** game code (`XML_Opinions.cpp` reads the `id` and `modifier` attributes); merc opinion table data.
+- **Confidence:** `source`
 
 ## Relations
 
@@ -90,7 +91,7 @@ MERCOPINIONS
 
 ## Localization
 
-`AnOpinion` is player-facing text.
+`AnOpinion` contains no display text; `zNickname` is informational, and the game builds opinion strings elsewhere.
 
 ## Versions
 
@@ -104,4 +105,4 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-The table stores opinion text only; the rules that choose which opinion is shown are in the dialogue code.
+The table stores numeric opinion modifiers only; the rules that choose which opinion is shown are in the dialogue code.
