@@ -78,21 +78,21 @@ CAMPAIGNSTATSEVENTS
 
 ### `CAMPAIGNSTATSEVENTS/EVENT/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the campaign-stats event. It is an array key and identifies the event type.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (campaign-stats loader); table data.
+- **Confidence:** `source`
 
 ### `CAMPAIGNSTATSEVENTS/EVENT/usCityTaken`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** City affected by this event, or `0` when the event is not tied to a city. It is a city reference into [Cities](Map/Cities.md).
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (campaign-stats loader); table data.
+- **Confidence:** `source`
 
 ### `CAMPAIGNSTATSEVENTS/EVENT/szText0`
 
