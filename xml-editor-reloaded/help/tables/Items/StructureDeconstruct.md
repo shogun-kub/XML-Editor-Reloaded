@@ -105,8 +105,8 @@ tileset name with the structure number deciding whether removal is allowed.
 - **Description:** Name of the structure intended for the player (the struct comment calls it the structure name, because tileset names are obscure). The loader stores it, but no gameplay or UI consumer of this field was found in this source tree.
 - **Values:** Free text; stored in a 20-byte buffer without appending a terminator, so longer text is truncated and may fill the buffer.
 - **Default:** Empty string when omitted.
-- **Source:** structure deconstruction table data; `STRUCTURE_DECONSTRUCT` comment.
-- **Confidence:** `inferred`
+- **Source:** game code (structure-deconstruct loader and `STRUCTURE_DECONSTRUCT` comment); table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetName`
 

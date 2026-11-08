@@ -69,58 +69,58 @@ StrategicMovementCosts
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/TravelRating`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Strategic travel cost of entering this sector.
-- **Numeric semantics:** higher = slower; negative values are not meaningful.
+- **Numeric semantics:** higher = slower; negative input is accepted by the parser but stored as `UINT8`, and values above 255 truncate.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/North`
 
 - **Type:** `String`
 - **Description:** Terrain category on the northern edge of the sector, such as `PLAINS`, `ROAD`, `TOWN` or `EDGEOFWORLD`. It is a category code.
-- **Values:** Free text.
+- **Values:** One of `TOWN`, `ROAD`, `PLAINS`, `SAND`, `SPARSE`, `DENSE`, `SWAMP`, `WATER`, `HILLS`, `GROUNDBARRIER`, `NS_RIVER`, `EW_RIVER`, `EDGEOFWORLD`, `TROPICS`, `FARMLAND`, `PLAINS_ROAD`, `SPARSE_ROAD`, `FARMLAND_ROAD`, `TROPICS_ROAD`, `DENSE_ROAD`, `COASTAL`, `HILLS_ROAD`, `COASTAL_ROAD`, `SAND_ROAD`, `SWAMP_ROAD`; unknown text triggers an assertion and leaves the parsed type undefined.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/East`
 
 - **Type:** `String`
 - **Description:** Terrain category on the eastern edge of the sector. It is a category code.
-- **Values:** Free text.
+- **Values:** One of `TOWN`, `ROAD`, `PLAINS`, `SAND`, `SPARSE`, `DENSE`, `SWAMP`, `WATER`, `HILLS`, `GROUNDBARRIER`, `NS_RIVER`, `EW_RIVER`, `EDGEOFWORLD`, `TROPICS`, `FARMLAND`, `PLAINS_ROAD`, `SPARSE_ROAD`, `FARMLAND_ROAD`, `TROPICS_ROAD`, `DENSE_ROAD`, `COASTAL`, `HILLS_ROAD`, `COASTAL_ROAD`, `SAND_ROAD`, `SWAMP_ROAD`; unknown text triggers an assertion and leaves the parsed type undefined.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/South`
 
 - **Type:** `String`
 - **Description:** Terrain category on the southern edge of the sector. It is a category code.
-- **Values:** Free text.
+- **Values:** One of `TOWN`, `ROAD`, `PLAINS`, `SAND`, `SPARSE`, `DENSE`, `SWAMP`, `WATER`, `HILLS`, `GROUNDBARRIER`, `NS_RIVER`, `EW_RIVER`, `EDGEOFWORLD`, `TROPICS`, `FARMLAND`, `PLAINS_ROAD`, `SPARSE_ROAD`, `FARMLAND_ROAD`, `TROPICS_ROAD`, `DENSE_ROAD`, `COASTAL`, `HILLS_ROAD`, `COASTAL_ROAD`, `SAND_ROAD`, `SWAMP_ROAD`; unknown text triggers an assertion and leaves the parsed type undefined.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/West`
 
 - **Type:** `String`
 - **Description:** Terrain category on the western edge of the sector. It is a category code.
-- **Values:** Free text.
+- **Values:** One of `TOWN`, `ROAD`, `PLAINS`, `SAND`, `SPARSE`, `DENSE`, `SWAMP`, `WATER`, `HILLS`, `GROUNDBARRIER`, `NS_RIVER`, `EW_RIVER`, `EDGEOFWORLD`, `TROPICS`, `FARMLAND`, `PLAINS_ROAD`, `SPARSE_ROAD`, `FARMLAND_ROAD`, `TROPICS_ROAD`, `DENSE_ROAD`, `COASTAL`, `HILLS_ROAD`, `COASTAL_ROAD`, `SAND_ROAD`, `SWAMP_ROAD`; unknown text triggers an assertion and leaves the parsed type undefined.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/Here`
 
 - **Type:** `String`
 - **Description:** Terrain category of the sector itself. It is a category code.
-- **Values:** Free text.
+- **Values:** One of `TOWN`, `ROAD`, `PLAINS`, `SAND`, `SPARSE`, `DENSE`, `SWAMP`, `WATER`, `HILLS`, `GROUNDBARRIER`, `NS_RIVER`, `EW_RIVER`, `EDGEOFWORLD`, `TROPICS`, `FARMLAND`, `PLAINS_ROAD`, `SPARSE_ROAD`, `FARMLAND_ROAD`, `TROPICS_ROAD`, `DENSE_ROAD`, `COASTAL`, `HILLS_ROAD`, `COASTAL_ROAD`, `SAND_ROAD`, `SWAMP_ROAD`; unknown text triggers an assertion and leaves the parsed type undefined.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ### `StrategicMovementCosts/SectorTraversal/Sector/BadSector`
 
@@ -128,8 +128,8 @@ StrategicMovementCosts
 - **Description:** If set, the sector is marked as bad or unreachable for strategic movement. It is a switch, not a cost.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (strategic movement-cost loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 

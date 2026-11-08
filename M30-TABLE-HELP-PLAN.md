@@ -720,7 +720,7 @@ B9 не добавляет табличных документов. Он про�
 После B10 повторно выполнить B9-гейты (ссылки, якоря, оглавления, покрытие,
 `INDEX.md`/`COVERAGE.md`) и финальный коммит.
 
-Статус B10 (2026-11-08, in progress): B0 уже имел `source`-достоверность и правок не
+Статус B10 (2026-11-08, done): B0 уже имел `source`-достоверность и правок не
 потребовал. В B1b проверены `Weapons`, `Explosives` и `ExplosionData`: исправлены знак
 `ubBurstPenalty`/`AutoPenalty`, смысл `ubAimLevels`, знаки `bRecoilX/Y`, скорость
 `ubShotsPer4Turns`, природа `ubVolatility`, диапазон `ubMagSize`, множитель
@@ -782,11 +782,17 @@ B7 и B8 полностью проверены. В B5 `Backgrounds` все 95 п
 `BOOLEAN`-типы, клампы процентов и нечитаемые `Name`-поля. Крупные документы закрыты:
 `Items` — все 257 полей `source` (типы, UINT64-маски, AP/percent-семантика);
 `Pockets`/`AttachmentComboMerges`/`RandomItem`/`BloodcatPlacements` — 41/23/22/22 поля;
-`MercStartingGear` — 67/67 `source`; `MercProfiles` — 95/106 `source` (11 `GrowthModifier*`
-остались `inferred` из-за несовпадения имени с загрузчиком); `DifficultySettings` и
-`FacilityTypes` — все поля `source`. Осталось 301 `inferred`-поле в 46 документах
-(в основном `Weapons`, `CreaturePlacements`, `SectorNames`, `LoadBearingEquipment`, `Traders`).
-`help-check -Write` проходит после каждого коммита.
+`MercStartingGear` — 67/67 `source`; `MercProfiles` — все 106 полей `source` (у 11
+`GrowthModifier*` подтверждено, что загрузчик ищет теги `bGrowthModifier*`, поэтому эти
+элементы не читаются); `DifficultySettings` и `FacilityTypes` — все поля `source`.
+Дополнительно закрыты `Weapons`, `Explosives`, `PocketPopups`, `Drugs`, `CreaturePlacements`,
+`SectorNames`, `SectorLoadscreens`, `SamSites`, `LoadBearingEquipment`, `Traders`,
+`Item_Transformations`, структуры, `CampaignStatsEvents`, `InteractiveActions`,
+`AttachmentSlots`, `AttachmentInfo`, `Attachments`, `FaceGear`, `IMPVoices`, `OldAIMArchive`,
+`AIMAvailability`, `HeliSites`, `MovementCosts`, `PatrolGroups`, `CoolnessBySector` и
+мелкие документы. Итог: **2985/2985 полей с `Confidence: source`; 0 `inferred`**.
+`help-check -Write` и `help-check -Release` проходят; `help-crossrefs.ps1 -Write` обновил
+`REFERENCE-MAP.md`, `-Check` проходит.
 
 ## 9. Проверки и гейты
 

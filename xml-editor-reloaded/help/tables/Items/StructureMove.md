@@ -63,30 +63,30 @@ fields and document order.
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`, 20-byte buffer)
 - **Description:** Display name of the movable structure tileset.
-- **Values:** Free text.
+- **Values:** Free text, truncated to 20 bytes; no explicit terminator is added when the input fills the buffer.
 - **Default:** empty string when omitted.
-- **Source:** structure move table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (structure-move loader); table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetName`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`, 20-byte buffer)
 - **Description:** STI tileset file used to draw the movable structure.
-- **Values:** Free text.
+- **Values:** Free text, truncated to 20 bytes; no explicit terminator is added when the input fills the buffer.
 - **Default:** empty string when omitted.
-- **Source:** structure move table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (structure-move loader); table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/allowedtile`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Tile index on which moving is allowed. The element may repeat.
 - **Values:** Allowed tile index; the element may repeat.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure move table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (structure-move loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

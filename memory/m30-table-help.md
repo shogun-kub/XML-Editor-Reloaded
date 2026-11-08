@@ -132,8 +132,14 @@ case-sensitive (`RECTANGLE`/`DIAMOND`/`ELLIPSE`), `Rectangle`/`Ellipse` не с�
 dailycost `UINT16`; `IMPPortraits`/`RPCFacesSmall` — `INT8`-координаты и `UINT16`-индексы;
 `MercAvailability` и `MercQuote` — `UINT8`/`UINT16`/`BOOLEAN`, `Name` не читается.
 `Items` — все 257 `source`; `Pockets`/`AttachmentComboMerges`/`RandomItem`/`BloodcatPlacements` —
-все поля; `MercStartingGear` 67/67; `MercProfiles` 95/106 (11 `GrowthModifier*` — `inferred`);
-`DifficultySettings`/`FacilityTypes` — все поля. Осталось 301 `inferred` в 46 документах.
-В `GLOSSARY.md`
-добавлены `recoil`, `aim level`, `burst penalty`, `action item`.
-**Дальше.** Продолжить B1/B3/B4/B5; после B10 — повторный B9-гейт и финальный коммит.
+все поля; `MercStartingGear` 67/67; `MercProfiles` — все 106 `source` (11 `GrowthModifier*`:
+подтверждено, что загрузчик ищет `bGrowthModifier*`, поэтому эти теги не читаются);
+`DifficultySettings`/`FacilityTypes` — все поля. Закрыты `Weapons`, `Explosives`,
+`PocketPopups`, `Drugs`, карта (`CreaturePlacements`, `SectorNames`, `SectorLoadscreens`,
+`SamSites`, `HeliSites`, `MovementCosts`, `CoolnessBySector`), `LoadBearingEquipment`,
+`Traders`, `Item_Transformations`, структуры, `CampaignStatsEvents`, `InteractiveActions`,
+`AttachmentSlots`, `AttachmentInfo`, `Attachments`, `FaceGear`, `IMPVoices`, `OldAIMArchive`,
+`AIMAvailability`, `PatrolGroups`, а также мелкие документы. Итог: **2985/2985 полей
+`source`, 0 `inferred`**. `help-check -Write`/`-Release` проходят; `REFERENCE-MAP.md`
+пересобран, `help-crossrefs.ps1 -Check` проходит.
+**Дальше.** B10 закрыт; M32 — русская локализация (`help/ru/`).

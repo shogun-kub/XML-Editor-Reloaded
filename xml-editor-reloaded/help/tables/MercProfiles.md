@@ -1172,8 +1172,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierStrength`
 
@@ -1182,8 +1182,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierAgility`
 
@@ -1192,8 +1192,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierDexterity`
 
@@ -1202,8 +1202,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierWisdom`
 
@@ -1212,8 +1212,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierMarksmanship`
 
@@ -1222,8 +1222,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierExplosive`
 
@@ -1232,8 +1232,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierLeadership`
 
@@ -1242,8 +1242,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierMedical`
 
@@ -1252,8 +1252,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierMechanical`
 
@@ -1262,8 +1262,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ### `MERCPROFILES/PROFILE/GrowthModifierExpLevel`
 
@@ -1272,8 +1272,8 @@ MERCPROFILES
 - **Numeric semantics:** Subpoints added to the per-point growth threshold: negative values lower it (faster growth), `0` is neutral, positive values raise it (slower growth). `fRegresses = TRUE` disables growth modifiers.
 - **Values:** `-32768..32767`; the shipped table uses `0`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (profile loader); merc profile table data.
-- **Confidence:** `inferred`
+- **Source:** game code (profile loader; the `bGrowthModifier*` tag comparison was verified against this table tag).
+- **Confidence:** `source`
 
 ## Relations
 

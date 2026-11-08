@@ -6,7 +6,7 @@ This map lists cross-document links from the table help documents. It is the qui
 reference for "which document explains the target of this field". The links in the
 table documents remain the source of truth; this page is derived from them.
 
-Source documents with links: **82** of 94. Distinct links: **225**.
+Source documents with links: **81** of 94. Distinct links: **222**.
 
 ## How to update
 
@@ -131,12 +131,6 @@ hand: add or fix the link in the table document, then regenerate.
 |---|---|---|
 | — | [MercProfiles](tables/MercProfiles.md) | Relations |
 
-### [tables/IMPVoices.md](tables/IMPVoices.md)
-
-| Source field | Target | Context |
-|---|---|---|
-| — | [MercProfiles](tables/MercProfiles.md) | Relations |
-
 ### [tables/Lookup.md](tables/Lookup.md)
 
 | Source field | Target | Context |
@@ -165,8 +159,6 @@ hand: add or fix the link in the table document, then regenerate.
 | — | [IMPVoices](tables/IMPVoices.md) | Relations |
 | — | [Map/Cities](tables/Map/Cities.md) | Relations |
 | — | [RPCFacesSmall](tables/RPCFacesSmall.md) | Relations |
-| [`MERCPROFILES/PROFILE/usVoiceIndex`](tables/MercProfiles.md#mercprofilesprofileusvoiceindex) | [IMPVoices](tables/IMPVoices.md) | Description |
-| [`MERCPROFILES/PROFILE/usVoiceIndex`](tables/MercProfiles.md#mercprofilesprofileusvoiceindex) | [IMPVoices](tables/IMPVoices.md) | Values |
 
 ### [tables/MercQuote.md](tables/MercQuote.md)
 
@@ -345,8 +337,8 @@ hand: add or fix the link in the table document, then regenerate.
 |---|---|---|
 | — | [Disease](tables/Disease.md) | Relations |
 | — | [Items/Items](tables/Items/Items.md) | Relations |
-| — | [Lookup](tables/Lookup.md#drugtype) | Relations |
-| [`DRUGSLIST/DRUG/uiIndex`](tables/Items/Drugs.md#drugslistdruguiindex) | [Items/Items](tables/Items/Items.md) | Values |
+| [`DRUGSLIST/DRUG/DISEASE_EFFECT/disease`](tables/Items/Drugs.md#drugslistdrugdisease_effectdisease) | [Disease](tables/Disease.md) | Values |
+| [`DRUGSLIST/DRUG/uiIndex`](tables/Items/Drugs.md#drugslistdruguiindex) | [Items/Items](tables/Items/Items.md) | Description |
 
 ### [tables/Items/ExplosionData.md](tables/Items/ExplosionData.md)
 
@@ -418,19 +410,11 @@ hand: add or fix the link in the table document, then regenerate.
 | — | [Lookup](tables/Lookup.md#separability) | Relations |
 | — | [SpreadPatterns](tables/SpreadPatterns.md) | Relations |
 | [`ITEMLIST/ITEM/AttachmentClass`](tables/Items/Items.md#itemlistitemattachmentclass) | [Lookup](tables/Lookup.md#attachmentclass) | Description |
-| [`ITEMLIST/ITEM/AttachmentClass`](tables/Items/Items.md#itemlistitemattachmentclass) | [Lookup](tables/Lookup.md#attachmentclass) | Values |
-| [`ITEMLIST/ITEM/AttachmentPoint`](tables/Items/Items.md#itemlistitemattachmentpoint) | [Lookup](tables/Lookup.md#attachmentpoint) | Values |
-| [`ITEMLIST/ITEM/AttachmentSystem`](tables/Items/Items.md#itemlistitemattachmentsystem) | [Lookup](tables/Lookup.md#attachmentsystem) | Description |
 | [`ITEMLIST/ITEM/AttachmentSystem`](tables/Items/Items.md#itemlistitemattachmentsystem) | [Lookup](tables/Lookup.md#attachmentsystem) | Values |
 | [`ITEMLIST/ITEM/AvailableAttachmentPoint`](tables/Items/Items.md#itemlistitemavailableattachmentpoint) | [Lookup](tables/Lookup.md#attachmentpoint) | Description |
-| [`ITEMLIST/ITEM/AvailableAttachmentPoint`](tables/Items/Items.md#itemlistitemavailableattachmentpoint) | [Lookup](tables/Lookup.md#attachmentpoint) | Values |
 | [`ITEMLIST/ITEM/clothestype`](tables/Items/Items.md#itemlistitemclothestype) | [Items/Clothes](tables/Items/Clothes.md) | Description |
-| [`ITEMLIST/ITEM/clothestype`](tables/Items/Items.md#itemlistitemclothestype) | [Items/Clothes](tables/Items/Clothes.md) | Values |
 | [`ITEMLIST/ITEM/DrugType`](tables/Items/Items.md#itemlistitemdrugtype) | [Lookup](tables/Lookup.md#drugtype) | Description |
-| [`ITEMLIST/ITEM/DrugType`](tables/Items/Items.md#itemlistitemdrugtype) | [Lookup](tables/Lookup.md#drugtype) | Values |
 | [`ITEMLIST/ITEM/FoodType`](tables/Items/Items.md#itemlistitemfoodtype) | [Items/Food](tables/Items/Food.md) | Description |
-| [`ITEMLIST/ITEM/FoodType`](tables/Items/Items.md#itemlistitemfoodtype) | [Items/Food](tables/Items/Food.md) | Values |
-| [`ITEMLIST/ITEM/Inseparable`](tables/Items/Items.md#itemlistiteminseparable) | [Lookup](tables/Lookup.md#separability) | Description |
 | [`ITEMLIST/ITEM/Inseparable`](tables/Items/Items.md#itemlistiteminseparable) | [Lookup](tables/Lookup.md#separability) | Values |
 | [`ITEMLIST/ITEM/nasAttachmentClass`](tables/Items/Items.md#itemlistitemnasattachmentclass) | [Lookup](tables/Lookup.md#attachmentsystem) | Description |
 | [`ITEMLIST/ITEM/nasLayoutClass`](tables/Items/Items.md#itemlistitemnaslayoutclass) | [Lookup](tables/Lookup.md#naslayoutclass) | Description |
@@ -438,7 +422,6 @@ hand: add or fix the link in the table document, then regenerate.
 | [`ITEMLIST/ITEM/ubCursor`](tables/Items/Items.md#itemlistitemubcursor) | [Lookup](tables/Lookup.md#cursor) | Description |
 | [`ITEMLIST/ITEM/ubCursor`](tables/Items/Items.md#itemlistitemubcursor) | [Lookup](tables/Lookup.md#cursor) | Values |
 | [`ITEMLIST/ITEM/usItemClass`](tables/Items/Items.md#itemlistitemusitemclass) | [Lookup](tables/Lookup.md#itemclass) | Description |
-| [`ITEMLIST/ITEM/usItemClass`](tables/Items/Items.md#itemlistitemusitemclass) | [Lookup](tables/Lookup.md#itemclass) | Values |
 
 ### [tables/Items/Launchables.md](tables/Items/Launchables.md)
 
@@ -486,7 +469,6 @@ hand: add or fix the link in the table document, then regenerate.
 | Source field | Target | Context |
 |---|---|---|
 | — | [Items/Pockets](tables/Items/Pockets.md) | Relations |
-| [`POCKETPOPUPS/POCKET/pIndex`](tables/Items/PocketPopups.md#pocketpopupspocketpindex) | [Items/Pockets](tables/Items/Pockets.md) | Values |
 
 ### [tables/Items/Pockets.md](tables/Items/Pockets.md)
 
@@ -502,6 +484,15 @@ hand: add or fix the link in the table document, then regenerate.
 |---|---|---|
 | — | [Items/Items](tables/Items/Items.md) | Relations |
 | [`RANDOMITEMLIST/RANDOMITEM/item1`](tables/Items/RandomItem.md#randomitemlistrandomitemitem1) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item10`](tables/Items/RandomItem.md#randomitemlistrandomitemitem10) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item2`](tables/Items/RandomItem.md#randomitemlistrandomitemitem2) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item3`](tables/Items/RandomItem.md#randomitemlistrandomitemitem3) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item4`](tables/Items/RandomItem.md#randomitemlistrandomitemitem4) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item5`](tables/Items/RandomItem.md#randomitemlistrandomitemitem5) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item6`](tables/Items/RandomItem.md#randomitemlistrandomitemitem6) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item7`](tables/Items/RandomItem.md#randomitemlistrandomitemitem7) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item8`](tables/Items/RandomItem.md#randomitemlistrandomitemitem8) | [Items/Items](tables/Items/Items.md) | Values |
+| [`RANDOMITEMLIST/RANDOMITEM/item9`](tables/Items/RandomItem.md#randomitemlistrandomitemitem9) | [Items/Items](tables/Items/Items.md) | Values |
 
 ### [tables/Items/StructureConstruct.md](tables/Items/StructureConstruct.md)
 
@@ -547,6 +538,7 @@ hand: add or fix the link in the table document, then regenerate.
 
 | Source field | Target | Context |
 |---|---|---|
+| — | [CivGroupNames](tables/CivGroupNames.md) | Relations |
 | — | [Map/SectorNames](tables/Map/SectorNames.md) | Relations |
 
 ### [tables/Map/Cities.md](tables/Map/Cities.md)
