@@ -109,7 +109,8 @@ stat/effect-типы и `moralemodifier`. B6: у `FacilityTypes` подтвер�
 (INI, обычно `1000`), но загрузчик кастует в `UINT8` (значения >255 обрезаются), а `usChance`
 не читается. B7: `ArmyComposition` — `INT8`-проценты с clamp `0..100` и популяции с clamp в `1`;
 `GarrisonGroups.Composition` — `UINT8`; `PatrolGroups.Size` — база ±1; `Traders` — флаги,
-clamp `1..10`, `addToCoolness` `0..10`, формула coolness. B8: `CampaignStatsEvents`
+clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors` — шесть обязательных
+блоков и закрытый case-sensitive список палитр; `EnemyAmmoDrops` — `UINT32`/`UINT8`. B8: `CampaignStatsEvents`
 `UINT16`/`UINT8`; `EnemyRank` `UINT16`/`BOOLEAN`/`CHAR16`, `ExpLevel` `1..9`. В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`. Остались непроверенные поля
 B1/B3/B4/B5/B7/B8.
