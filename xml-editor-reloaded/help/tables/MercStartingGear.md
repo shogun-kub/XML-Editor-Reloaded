@@ -16,7 +16,7 @@ sources:
   - Merc starting gear table data
   - Item metadata
 status: reviewed
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # MercStartingGear - starting equipment kits
@@ -102,7 +102,7 @@ updated: 2026-11-07
 
 ## Purpose
 
-`MercStartingGear.xml` defines each mercenary’s starting equipment. A mercenary can have several named `GEARKIT` blocks; each block lists the items, condition, quantity and drop flags for the kit.
+`MercStartingGear.xml` defines each mercenary’s starting equipment. A mercenary can have up to five named `GEARKIT` blocks (`NUM_MERCSTARTINGGEAR_KITS`); each block lists the items, condition, quantity and drop flags for the kit.
 
 ## Tables
 
@@ -191,649 +191,649 @@ MERCGEARLIST
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md).
-- **Values:** Profile ID `0..65535`; the loader stores this field as `UINT16`.
+- **Values:** Profile ID `0..254`; the loader stores it as `UINT16` and uses the low 8 bits as the gear-table row index, so values above `254` are out of range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (starting-gear loader); merc starting gear table data.
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
 - **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`
 
-- **Type:** `String` (`String`)
-- **Description:** Name of the starting-gear kit.
-- **Values:** Free text.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Name of the starting-gear kit. A mercenary can have up to five kits (`NUM_MERCSTARTINGGEAR_KITS`).
+- **Values:** Free text, up to 79 characters.
 - **Default:** empty string when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Price modifier applied to the kit.
-- **Numeric semantics:** Signed percentage modifier: `0` means no change, positive values increase the price, and negative values discount it. The UI accepts `-100..200`.
-- **Values:** `-100..200`.
+- **Description:** Percentage adjustment applied to the computed kit price.
+- **Numeric semantics:** The multiplier is `(mPriceMod + 100) / 100`: `0` = normal price, `50` = ×1.5, `-50` = ×0.5, `-100` = free, `100` = ×2. Values outside `-100..200` are ignored.
+- **Values:** `-100..200`; values outside this range are ignored.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (kit-price handling in `AimMembers.cpp`); merc starting gear table data.
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
 - **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`
 
 - **Type:** `Integer` (`INT16`)
-- **Description:** Absolute kit price; `-1` leaves the price unset.
-- **Numeric semantics:** `-1` means “not set”; non-negative values are money amounts, and higher values mean a more expensive kit.
-- **Values:** `-1..32767`; the UI treats values up to `32000` as valid.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (kit-price handling in `AimMembers.cpp`); merc starting gear table data.
+- **Description:** Absolute kit price. `-1` leaves the price to be computed from the kit's items; a value in `0..32000` overrides the item price and `mPriceMod`.
+- **Numeric semantics:** `-1` = not set; `0..32000` = fixed money amount; values above `32000` are ignored.
+- **Values:** `-1..32767`; the game accepts `-1` or `0..32000`.
+- **Default:** `-1` when omitted; the loader resets it to `-1` at the start of every `GEARKIT`.
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
 - **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting helmet.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the helmet slot (`HELMETPOS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetDrop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the helmet.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the helmet slot. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmetStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the helmet.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the helmet (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mVest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting vest.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the vest slot (`VESTPOS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestDrop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the vest.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the vest slot. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mVestStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the vest.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the vest (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mLeg`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting leggings.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the leg slot (`LEGPOS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegDrop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the leggings.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the leg slot. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mLegStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the leggings.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the leggings (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeapon`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the starting weapon.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the hand (weapon) slot (`HANDPOS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponDrop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop flag for the weapon.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the hand (weapon) slot. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mWeaponStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the weapon.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the weapon (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the big pocket 1 (`BIGPOCK1POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 0.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in big pocket 1 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 0.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in big pocket 1.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig0Drop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 0.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the big pocket 1. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the big pocket 2 (`BIGPOCK2POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 1.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in big pocket 2 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 1.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in big pocket 2.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig1Drop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 1.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the big pocket 2. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the big pocket 3 (`BIGPOCK3POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 2.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in big pocket 3 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 2.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in big pocket 3.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig2Drop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 2.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the big pocket 3. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV big slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the big pocket 4 (`BIGPOCK4POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV big slot 3.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in big pocket 4 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV big slot 3.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in big pocket 4.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mBig3Drop`
 
-- **Type:** `Boolean` (`Boolean`)
-- **Description:** Drop value for OIV big slot 3.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Drop flag for the big pocket 4. `0` marks the item undroppable for RPC/NPC profiles (index above 56); non-zero keeps it droppable.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 0.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 1 (`SMALLPOCK1POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 0.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 1 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall0Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 0.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 1.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 1.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 2 (`SMALLPOCK2POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 1.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 2 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall1Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 1.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 2.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 2.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 3 (`SMALLPOCK3POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 2.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 3 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall2Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 2.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 3.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 3.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 4 (`SMALLPOCK4POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 3.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 4 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall3Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 3.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 4.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 4.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 5 (`SMALLPOCK5POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 4.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 5 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall4Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 4.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 5.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 5.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 6 (`SMALLPOCK6POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 5.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 6 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall5Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 5.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 6.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 6.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 7 (`SMALLPOCK7POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 6.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 7 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall6Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 6.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 7.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID in OIV small slot 7.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Item ID placed in the small pocket 8 (`SMALLPOCK8POS`).
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Status`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Status value for OIV small slot 7.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Condition of the item in small pocket 8 (percent; `100` = new).
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mSmall7Quantity`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Quantity value for OIV small slot 7.
-- **Numeric semantics:** Higher values mean a larger quantity/count, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Stack size for the item in small pocket 8.
+- **Numeric semantics:** Count; higher values mean more items. Only the pocket slots have quantity fields; the helmet, vest, leg and hand slots always use `1`.
+- **Values:** Count; `0` is used when the slot is empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lVest`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV vest slot.
+- **Description:** Item ID in the NIV vest LBE slot (`VESTPOCKPOS`).
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lVestStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV vest slot item.
+- **Description:** Condition of the NIV vest LBE item (percent; `100` = new).
 - **Only used with:** NIV.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created; LBE stack size is always `1`.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lLeftThigh`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV left-thigh slot.
+- **Description:** Item ID in the NIV left-thigh LBE slot (`LTHIGHPOCKPOS`).
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lLeftThighStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV left-thigh item.
+- **Description:** Condition of the NIV left-thigh LBE item (percent; `100` = new).
 - **Only used with:** NIV.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created; LBE stack size is always `1`.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lRightThigh`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV right-thigh slot.
+- **Description:** Item ID in the NIV right-thigh LBE slot (`RTHIGHPOCKPOS`).
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lRightThighStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV right-thigh item.
+- **Description:** Condition of the NIV right-thigh LBE item (percent; `100` = new).
 - **Only used with:** NIV.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created; LBE stack size is always `1`.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV combat-pack slot.
+- **Description:** Item ID in the NIV combat-pack LBE slot (`CPACKPOCKPOS`).
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lCPackStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV combat-pack item.
+- **Description:** Condition of the NIV combat-pack LBE item (percent; `100` = new).
 - **Only used with:** NIV.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created; LBE stack size is always `1`.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPack`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Item ID of the NIV backpack slot.
+- **Description:** Item ID in the NIV backpack LBE slot (`BPACKPOCKPOS`).
 - **Only used with:** NIV.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Item ID; `0` means empty.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/lBPackStatus`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Condition/status of the NIV backpack item.
+- **Description:** Condition of the NIV backpack LBE item (percent; `100` = new).
 - **Only used with:** NIV.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Percentage; higher values mean better condition. The value is passed to the item's `objectStatus` when the soldier is created; LBE stack size is always `1`.
+- **Values:** `0..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/mName`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`)
 - **Description:** Mercenary name used by the starting-gear table.
-- **Values:** Free text.
+- **Values:** Free text, up to 79 characters.
 - **Default:** empty string when omitted.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting-gear table data.
+- **Confidence:** `source`
 
 ## Relations
 
@@ -852,9 +852,8 @@ v4 and v5 use the same field paths; values may differ.
 
 - Merc starting gear table data.
 - Item metadata.
-- Field types: XML element names and profile/table metadata.
-- Descriptions use the table schema comments where present; no code-verified formulas are claimed.
+- Game code: starting-gear XML loader, profile loader, soldier creation, item creation, AIM members screen.
 
 ## Open questions
 
-The drop and price semantics of `m*Drop`, `mPriceMod` and `mAbsolutePrice` depend on the starting-gear loader; the table only stores the values.
+None: the drop, status, quantity and price semantics are defined by the starting-gear loader, the profile loader and item creation.
