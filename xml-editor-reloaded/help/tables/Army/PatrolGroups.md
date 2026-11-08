@@ -67,23 +67,23 @@ PATROL_INFO
 
 ### `PATROL_INFO/PATROL/Priority`
 
-- **Type:** `Integer`
-- **Description:** Patrol priority.
-- **Numeric semantics:** higher = more important; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Integer` (`INT8`)
+- **Description:** Patrol priority: how important the patrol group is to the Queen.
+- **Numeric semantics:** higher = more important; more important patrols get more reinforcement/upgrade chances. The XML comment gives the intended range `0..100`.
+- **Values:** `0..100`; the loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table XML comment.
+- **Confidence:** `source`
 
 ### `PATROL_INFO/PATROL/Size`
 
-- **Type:** `Integer`
-- **Description:** Number of soldiers in the patrol.
-- **Numeric semantics:** higher = larger patrol; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Integer` (`INT8`)
+- **Description:** Base number of soldiers in the patrol. The actual group size is this value plus or minus one, then clamped to the INI group-size limits.
+- **Numeric semantics:** higher = larger patrol; the base value is varied by ±1 before clamping.
+- **Values:** Integer base size; the loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table XML comment.
+- **Confidence:** `source`
 
 ### `PATROL_INFO/PATROL/Waypoints/Sector1`
 

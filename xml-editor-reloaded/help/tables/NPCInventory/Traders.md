@@ -545,12 +545,13 @@ INVENTORYLIST
 
 ### `MERCHANTSLIST/MERCHANT/uiFlags`
 
-- **Type:** `Integer`
-- **Description:** Packed bitmask of merchant flags. Each bit enables a dealer behaviour; the integer is a bit field.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Flags` (`UINT32`)
+- **Description:** Packed bitmask of merchant flags. Each bit enables a dealer behaviour.
+- **Numeric semantics:** Bitmask; combine bits with OR. A larger number is not simply “more”.
+- **Values:** `0x08000000` only used items, `0x10000000` gives change, `0x20000000` accepts gifts, `0x40000000` some used items, `0x80000000` has no inventory.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`Arms Dealer Init.h` flag constants; merchant loader); table XML comment.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/iInitialCash`
 
@@ -584,43 +585,43 @@ INVENTORYLIST
 
 ### `MERCHANTSLIST/MERCHANT/minCoolness`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Minimum equipment coolness the merchant stocks.
-- **Numeric semantics:** higher = better stock; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** higher = better stock; the loader clamps the value to `1..10`.
+- **Values:** `1..10` after clamping.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (merchant loader); table data.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/maxCoolness`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Maximum equipment coolness the merchant can reach.
-- **Numeric semantics:** higher = better stock ceiling; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** higher = better stock ceiling; the loader clamps the value to `1..10`.
+- **Values:** `1..10` after clamping.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (merchant loader); table data.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/addToCoolness`
 
-- **Type:** `Integer`
-- **Description:** Amount added to the merchant’s coolness progression.
-- **Numeric semantics:** higher = faster progression; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Flat amount added to both ends of the merchant’s coolness range after the progress calculation.
+- **Numeric semantics:** higher = better stock; the loader accepts `0..10` and ignores out-of-range values.
+- **Values:** `0..10`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_TonyInventory.cpp` range check; `ArmsDealerInvInit.cpp` adds it to min/max); table data.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/coolnessProgressRate`
 
-- **Type:** `Integer`
-- **Description:** Rate at which the merchant advances toward maximum coolness.
-- **Numeric semantics:** higher = faster; negative values are not meaningful.
-- **Values:** Percentage or rate, as described.
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Percentage of the player’s progress used to calculate the merchant’s stock coolness.
+- **Numeric semantics:** higher = faster progression; the loader accepts `0..100`. The game computes `min = progress * rate / 100` and `max = min + 1`, then adds `addToCoolness`.
+- **Values:** `0..100` percent.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_TonyInventory.cpp` range check; `ArmsDealerInvInit.cpp` formula); table data.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dailyIncrement`
 
@@ -749,5 +750,5 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-- `uiFlags` is a packed bitmask whose individual bits are not described by the XML.
-- `coolnessProgressRate` and `addToCoolness` units are inferred from observed values; the exact progression formula is in game code.
+- No open question remains for `uiFlags`: the XML comment lists the five bits and the code uses the same constants.
+- No open question remains for `coolnessProgressRate`/`addToCoolness`: `min = progress * rate / 100`, `max = min + 1`, then `addToCoolness` is added to both.

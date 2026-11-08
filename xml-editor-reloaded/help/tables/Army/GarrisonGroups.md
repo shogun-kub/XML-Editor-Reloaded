@@ -67,12 +67,12 @@ GARRISON_INFO
 
 ### `GARRISON_INFO/GARRISON/Composition`
 
-- **Type:** `String`
-- **Description:** Army composition index assigned to this garrison. It references `ArmyComposition.Index`; it is an ID.
-- **Values:** Free text or a symbolic code.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Army composition index assigned to this garrison. It references `ArmyComposition.Index`; it is a numeric ID, not free text.
+- **Values:** `ArmyComposition.Index`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (garrison loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
