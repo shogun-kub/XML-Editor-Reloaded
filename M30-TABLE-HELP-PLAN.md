@@ -724,10 +724,23 @@ B9 не добавляет табличных документов. Он про�
 потребовал. В B1b проверены `Weapons`, `Explosives` и `ExplosionData`: исправлены знак
 `ubBurstPenalty`/`AutoPenalty`, смысл `ubAimLevels`, знаки `bRecoilX/Y`, скорость
 `ubShotsPer4Turns`, природа `ubVolatility`, диапазон `ubMagSize`, множитель
-`bIndoorModifier` и кадр `DamageKeyFrame`. В B1a проверены ключевые поля `Items`:
-`ItemSize`, `usSpotting` (загрузчик зажимает в `0..100`), `usPortionSize` (дефолт `100`),
-`usOverheatingCooldownFactor` (это количество градусов за тик, а не множитель) и единицы
-`ubWeight`. Остальные поля B1 и блоки B2–B8 ещё не пройдены.
+`bIndoorModifier` и кадр `DamageKeyFrame`; у ряда полей исправлены backing-типы. В B1a
+проверены ключевые поля `Items`: `ItemSize`, `usSpotting` (загрузчик зажимает в `0..100`),
+`usPortionSize` (дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик, не множитель),
+`ubWeight`, `usPrice`/`ubClassIndex`/`bSoundType`/`usHackingModifier`/`usBurialModifier`/
+`usAdministrationModifier` и др.; `usSpotting`, `usPortionSize` и `usPrice` получили
+`source`. В B2 уточнены `AttachmentSlots.uiSlotIndex` (`UINT32`), типы skill-check в
+`AttachmentInfo` и знак `bAttachmentSkillCheckMod`; исправлена формулировка AP-cost.
+В B3 `Food` получил реальные типы (`uiIndex` `UINT16`, food/drink points `INT32`),
+`bMoraleMod` описан как legacy-поле, которое загрузчик не читает; `FoodOpinion.uProfile`
+(`UINT8`) и перезапись строк; `Drugs` — `uiIndex` `UINT8`, disease size `INT32`, а
+`chance` `0`/`100`/omitted означают «всегда», `1..99` — процент. В B4 массово исправлены
+backing-типы `MercProfiles` (59 полей), `bHated` (`UINT8`), `bHatedTime` (`INT8`, часы),
+`bTownAttachment` (процент), цены `MercStartingGear`, а `MercOpinions` переописан как
+повторяющийся `AnOpinion` с атрибутами `id`/`modifier`. В B5 `Backgrounds` переведён на
+`INT16` для 92 value-полей и `UINT16` для `uiIndex`; у ключевых `DifficultySettings`
+исправлены `UINT16`/`UINT8`/`INT8`. Остались непроверенные поля B1/B3/B4/B5 и блоки B6–B8;
+`help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 

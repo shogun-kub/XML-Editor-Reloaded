@@ -95,11 +95,15 @@ merchant flags/coolness formula вынесены в `Open questions`.
 генератор — `util-scripts/help-crossrefs.ps1` (`-Write`/`-Check`). `help-check -Release`
 проходит; v4/v5 покрытие сверено.
 
-**B10 (2026-11-08, in progress).** B0 правок не потребовал. В B1b проверены `Weapons`,
-`Explosives`, `ExplosionData`: исправлены знаки burst/auto penalty, смысл `ubAimLevels`, знаки
-recoil, скорость `ubShotsPer4Turns`, `ubVolatility`, диапазон `ubMagSize`, `bIndoorModifier` и
-`DamageKeyFrame`. В B1a исправлены `ItemSize`, `usSpotting` (clamp `0..100`), `usPortionSize`
-(дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик) и единицы `ubWeight`. В
-`GLOSSARY.md` добавлены `recoil`, `aim level`, `burst penalty`. Остальные поля B1 и блоки B2–B8
-ещё не пройдены. **Дальше.** Продолжить B1 → B8; после B10 — повторный B9-гейт и финальный
-коммит.
+**B10 (2026-11-08, in progress).** B0 правок не потребовал. B1: исправлены знаки burst/auto
+penalty, `ubAimLevels`, recoil, `ubShotsPer4Turns`, `ubVolatility`, `ubMagSize`, `bIndoorModifier`,
+`DamageKeyFrame`; у `Items` — `ItemSize`, `usSpotting` (clamp `0..100`), `usPortionSize`
+(дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик), `ubWeight`, `usPrice`,
+`ubClassIndex`, `bSoundType`, hacking/burial/administration modifiers. B2: `uiSlotIndex` `UINT32`,
+skill-check типы и знак, AP-cost. B3: `Food` типы/`bMoraleMod` (не читается), `FoodOpinion`
+`UINT8` и перезапись, `Drugs` chance (`0`/`100`/omitted = всегда). B4: 59 backing-типов
+`MercProfiles`, `bHated`/`bHatedTime`/`bTownAttachment`, цены `MercStartingGear`,
+`MercOpinions` как repeated `AnOpinion` с атрибутами. B5: 92 value-типа `Backgrounds` → `INT16`,
+ключевые `DifficultySettings` → `UINT16`/`UINT8`/`INT8`. В `GLOSSARY.md` добавлены `recoil`,
+`aim level`, `burst penalty`. Остались непроверенные поля B1/B3/B4/B5 и блоки B6–B8.
+**Дальше.** Продолжить B1/B3/B4/B5 → B6–B8; после B10 — повторный B9-гейт и финальный коммит.
