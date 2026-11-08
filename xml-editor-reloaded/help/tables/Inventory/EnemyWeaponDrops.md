@@ -62,41 +62,41 @@ WEAPONDROPLIST
 
 ### `WEAPONDROPLIST/DROPITEM/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the drop rule. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-drop loader); table data.
+- **Confidence:** `source`
 
 ### `WEAPONDROPLIST/DROPITEM/ubWeaponType`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Weapon type selected by this drop rule. It is a category/reference ID.
 - **Values:** Identifier of the weapon type.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-drop loader); table data.
+- **Confidence:** `source`
 
 ### `WEAPONDROPLIST/DROPITEM/ubEnemyDropRate`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that an enemy soldier drops this category, in percent.
 - **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-drop loader); table data.
+- **Confidence:** `source`
 
 ### `WEAPONDROPLIST/DROPITEM/ubMilitiaDropRate`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a militia soldier drops this category, in percent.
 - **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (enemy-drop loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
