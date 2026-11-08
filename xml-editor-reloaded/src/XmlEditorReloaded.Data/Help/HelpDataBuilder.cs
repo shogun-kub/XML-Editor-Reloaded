@@ -6,14 +6,27 @@ using System.Text.RegularExpressions;
 namespace XmlEditorReloaded.Data.Help;
 
 /// <summary>
-/// Builds <c>help.json</c> from the Markdown table documents.
+/// Builds <c>help.json</c> from the Markdown table documents and top-level help pages.
 /// </summary>
 public static partial class HelpDataBuilder
 {
     private const int SupportedSchema = 1;
 
+    private static readonly string[] PageFiles =
+    [
+        "COVERAGE.md",
+        "EMAIL-TEXT.md",
+        "FORMULAS.md",
+        "GLOSSARY.md",
+        "INDEX.md",
+        "Localization.md",
+        "OPTIONS.md",
+        "SOURCES.md",
+    ];
+
     /// <summary>
-    /// Builds the serialized help data for every document below a tables directory.
+    /// Builds the serialized help data for every table document below a tables directory and for
+    /// the known top-level pages next to it.
     /// </summary>
     /// <param name="tablesDirectory">Absolute path of the <c>help/tables</c> directory.</param>
     /// <param name="language">Language code written to the generated data.</param>
@@ -59,7 +72,34 @@ public static partial class HelpDataBuilder
             }
         }
 
+        foreach (var pageFile in PageFiles)
+        {
+            var pagePath = Path.Combine(helpRoot, pageFile);
+            if (File.Exists(pagePath))
+            {
+                root.Pages[pageFile] = ParsePage(pagePath);
+            }
+        }
+
         return JsonSerializer.Serialize(root, HelpJsonOptions.Value) + "\n";
+    }
+
+    private static HelpJsonPage ParsePage(string path)
+    {
+        var text = File.ReadAllText(path)
+            .TrimStart('\uFEFF')
+            .Replace("\r\n", "\n")
+            .Replace('\r', '\n')
+            .Trim();
+        var title = text
+            .Split('\n')
+            .Select(static line => line.Trim())
+            .FirstOrDefault(static line => line.StartsWith("# ", StringComparison.Ordinal))?[2..].Trim();
+        return new HelpJsonPage
+        {
+            Title = string.IsNullOrWhiteSpace(title) ? Path.GetFileNameWithoutExtension(path) : title,
+            Text = text,
+        };
     }
 
     private static HelpJsonDocument ParseDocument(string file, string documentPath, string helpRoot)

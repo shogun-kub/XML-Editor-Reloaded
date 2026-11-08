@@ -67,23 +67,27 @@ verifies that the committed map is current.
 
 The application reads `src/XmlEditorReloaded.Data/Help/help.json`, which is generated from the
 Markdown documents and embedded into `XmlEditorReloaded.Data`. Regenerate it after changing a
-front matter block, a field entry, or a cross-document link:
+front matter block, a field entry, a cross-document link, or a top-level page such as
+`GLOSSARY.md`/`INDEX.md`:
 
 ```sh
 dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables
 ```
 
-The tool is deterministic: it sorts documents and table aliases, writes UTF-8 without a BOM,
-and uses LF line endings. Verify the committed file without rewriting it:
+The tool is deterministic: it sorts documents, table aliases, and standalone pages; writes
+UTF-8 without a BOM; and uses LF line endings. Verify the committed file without rewriting it:
 
 ```sh
 dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables --check
 ```
 
 `ITableHelpProvider` in Core resolves a dotted table name (including aliases and backup copies)
-to a `TableHelp`; field lookups accept either the full path or a unique leaf name. The generated
-data is validated by `XmlEditorReloaded.Data.Tests`, including document, table, and unique-field
-counts.
+to a `TableHelp`; field lookups accept either the full path or a unique leaf name. Standalone
+pages are returned by `GetDocument` and power **Help > Glossary** and **Help > Index**. The
+generated data is validated by `XmlEditorReloaded.Data.Tests`, including document, table,
+unique-field, and page counts. The application project fails the build with an explicit message
+when `Help/help.json` is missing; the generator project stays buildable so the file can be
+regenerated from the Markdown sources.
 
 ## Document format
 

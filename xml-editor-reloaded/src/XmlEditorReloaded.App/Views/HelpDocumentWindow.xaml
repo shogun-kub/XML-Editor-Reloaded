@@ -1,0 +1,51 @@
+<Window Style="{StaticResource {x:Type Window}}" x:Class="XmlEditorReloaded.App.Views.HelpDocumentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding Title}"
+        Icon="pack://application:,,,/XmlEditorReloaded.App;component/Assets/app.ico"
+        AutomationProperties.AutomationId="HelpDocumentWindow"
+        Width="980"
+        Height="720"
+        MinWidth="640"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Margin="0,0,0,8"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   TextWrapping="Wrap"
+                   AutomationProperties.AutomationId="HelpDocumentTitleText"
+                   Text="{Binding Title}" />
+
+        <TextBox Grid.Row="1"
+                 AutomationProperties.AutomationId="HelpDocumentText"
+                 IsReadOnly="True"
+                 IsReadOnlyCaretVisible="True"
+                 AcceptsReturn="True"
+                 TextWrapping="NoWrap"
+                 FontFamily="Consolas"
+                 HorizontalScrollBarVisibility="Auto"
+                 VerticalScrollBarVisibility="Auto"
+                 Text="{Binding Text, Mode=OneWay}" />
+
+        <Button Grid.Row="2"
+                Margin="0,8,0,0"
+                Padding="16,4"
+                MinWidth="90"
+                HorizontalAlignment="Right"
+                AutomationProperties.AutomationId="HelpDocumentCloseButton"
+                Content="{Binding CloseText}"
+                IsDefault="True"
+                Click="OnCloseClick" />
+    </Grid>
+</Window>

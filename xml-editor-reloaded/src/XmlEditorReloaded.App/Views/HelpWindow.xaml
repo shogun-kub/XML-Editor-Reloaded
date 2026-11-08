@@ -155,10 +155,26 @@
 
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock FontWeight="SemiBold"
-                               TextWrapping="Wrap"
-                               AutomationProperties.AutomationId="HelpTableTitleText"
-                               Text="{Binding TableTitle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.AutomationId="HelpTableTitleText"
+                                   Text="{Binding TableTitle}" />
+                        <Button Grid.Column="1"
+                                Margin="8,0,0,0"
+                                Padding="10,2"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="HelpOpenTableButton"
+                                Content="{Binding OpenTableText}"
+                                Command="{Binding OpenTableCommand}"
+                                Visibility="{Binding HasTable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
                     <TextBlock Margin="0,4,0,0"
                                TextWrapping="Wrap"
                                AutomationProperties.AutomationId="HelpSummaryText"
@@ -168,6 +184,24 @@
                                Foreground="{DynamicResource Theme.Text.Muted}"
                                AutomationProperties.AutomationId="HelpDocumentPathText"
                                Text="{Binding DocumentPath}" />
+
+                    <Border Margin="0,10,0,0"
+                            Padding="10"
+                            BorderBrush="{DynamicResource Theme.Border}"
+                            BorderThickness="1"
+                            Visibility="{Binding HasMissingField, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap"
+                                       AutomationProperties.AutomationId="HelpMissingFieldText"
+                                       Text="{Binding MissingFieldText}" />
+                            <Button Margin="0,6,0,0"
+                                    Padding="8,1"
+                                    HorizontalAlignment="Left"
+                                    AutomationProperties.AutomationId="HelpCoverageButton"
+                                    Content="{Binding CoverageLinkText}"
+                                    Command="{Binding OpenCoverageCommand}" />
+                        </StackPanel>
+                    </Border>
 
                     <Border Margin="0,10,0,0"
                             Padding="10"

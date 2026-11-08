@@ -167,7 +167,7 @@ The **Compare** button opens a dialog for choosing two directories. The comparis
 | Ctrl+W | close the tab |
 | F5 | reload the table |
 | F8 | validate the current table |
-| F1 | About |
+| F1 | context help for the active table and field |
 | Insert | add a record |
 | Ctrl+D | duplicate a record |
 | Delete | delete a record |
@@ -177,6 +177,11 @@ The **Compare** button opens a dialog for choosing two directories. The comparis
 | Ctrl+Shift+X | clear filters |
 | Ctrl+G | go to a filter value |
 | Ctrl+N | new item (item workspace) |
+
+`F1` and **Help > Context help** open the field reference for the active table and cell. The
+window searches all table help and follows related-document links; **Open table** opens the
+related table in the main window. **Help > Glossary** and **Help > Index** open the term list
+and the generated table index. **Help > About** remains available without a shortcut.
 
 ## 11. Integrity and recovery
 

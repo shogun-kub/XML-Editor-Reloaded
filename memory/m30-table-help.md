@@ -158,5 +158,15 @@ field-записей; `help-check -Release` остаётся зелёным. UI 
 описание из провайдера, в панели деталей есть кнопка «?». `IDialogService.ShowHelp`
 переиспользует одно окно. Тесты: `HelpViewModelTests`, `ColumnHeaderTooltip_*`,
 `OpenHelp`, Composition; всего 739 тестов. UI-smoke S105 (v4) пройден: F1, поле `uiIndex`,
-тултип, поиск `bRecoilX`, ссылка `AmmoStrings`, закрытие. Меню «глоссарий/индекс» и
-переход в основную таблицу — следующий срез M31.
+тултип, поиск `bRecoilX`, ссылка `AmmoStrings`, закрытие.
+
+**M31 (2026-11-08, завершён на dev).** Добавлены страницы верхнего уровня в `help.json`
+(`GLOSSARY.md`, `INDEX.md`, `COVERAGE.md`, `FORMULAS.md`, `SOURCES.md`, `OPTIONS.md`,
+`Localization.md`, `EMAIL-TEXT.md`), `ITableHelpProvider.GetDocument`, окно
+`HelpDocumentWindow` и пункты «Справка → Глоссарий/Индекс». В окне справки появились
+«Открыть таблицу» (переход в основную таблицу через `OpenEditorByNameAsync`) и сообщение
+«описание не добавлено» с кнопкой `COVERAGE.md` для неизвестного поля. App падает на
+сборке с понятным сообщением, если `Help/help.json` отсутствует; генератор остаётся
+собираемым для восстановления файла. Обновлены USER-GUIDE (EN/RU),
+S105, `help/README.md`, `PROJECT-STRUCTURE.md`. Тесты: **744** (App 279). S105 (v4)
+проверяет F1, поле, тултип, поиск, ссылку, открытие таблицы, глоссарий и индекс.

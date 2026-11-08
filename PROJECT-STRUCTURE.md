@@ -95,8 +95,8 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 
 SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
 persistence of application settings and per-table grid layouts, the file-backed operation log, and
-the embedded table/field help provider. `Help/help.json` is generated from `help/tables` by
-`XmlEditorReloaded.HelpTool` and embedded into this assembly.
+the embedded table/field help provider. `Help/help.json` is generated from `help/tables` and the
+top-level help pages by `XmlEditorReloaded.HelpTool` and embedded into this assembly.
 `Settings/AppPaths` resolves the application-data directory (`%AppData%\XmlEditorReloaded`) for the
 settings, layouts, metadata database and log, and honours the `XER_APP_DATA` environment variable,
 which the UI smoke uses to isolate each scenario.

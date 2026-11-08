@@ -20,6 +20,10 @@ public class HelpTests
         var tables = workspace.PathOf("help/tables");
         Directory.CreateDirectory(tables);
         File.WriteAllText(Path.Combine(tables, "Sample.md"), FixtureDocument, new UTF8Encoding(false));
+        File.WriteAllText(
+            workspace.PathOf("help/GLOSSARY.md"),
+            "# Glossary\n\n| English | Russian |\n|---|---|\n| field | поле |\n",
+            new UTF8Encoding(false));
 
         var json = HelpDataBuilder.BuildJson(tables);
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
@@ -27,7 +31,13 @@ public class HelpTests
 
         Assert.Equal(1, provider.DocumentCount);
         Assert.Equal(1, provider.TableCount);
+        Assert.Equal(1, provider.PageCount);
         Assert.Equal(2, provider.UniqueFieldCount);
+
+        var glossary = Assert.IsType<HelpDocument>(provider.GetDocument("GLOSSARY.md"));
+        Assert.Equal("Glossary", glossary.Title);
+        Assert.Contains("field", glossary.Text, StringComparison.Ordinal);
+        Assert.Null(provider.GetDocument("missing.md"));
 
         var table = Assert.IsType<TableHelp>(provider.GetTableHelp(TableName.Parse("Test.Sample")));
         Assert.Equal("Test - sample", table.Title);
@@ -78,6 +88,14 @@ public class HelpTests
         Assert.Equal(94, provider.DocumentCount);
         Assert.Equal(239, provider.TableCount);
         Assert.Equal(1614, provider.UniqueFieldCount);
+        Assert.Equal(8, provider.PageCount);
+
+        var glossary = Assert.IsType<HelpDocument>(provider.GetDocument("GLOSSARY.md"));
+        Assert.Equal("Glossary", glossary.Title);
+        Assert.Contains("approved Russian translations", glossary.Text, StringComparison.Ordinal);
+        var indexPage = Assert.IsType<HelpDocument>(provider.GetDocument("INDEX.md"));
+        Assert.Equal("Table help index", indexPage.Title);
+        Assert.Null(provider.GetDocument("missing.md"));
 
         var weapons = Assert.IsType<TableHelp>(provider.GetTableHelp(TableName.Parse("Items.Weapons")));
         Assert.Equal(48, weapons.Fields.Count);

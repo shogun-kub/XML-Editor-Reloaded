@@ -74,14 +74,14 @@ internal sealed class HelpScenario : SmokeScenario
         Ui.WaitUntil(
             () => help.FindById("HelpSearchResults") is not null,
             "результаты поиска по справке");
+        var resultCount = help.WaitById("HelpSearchResults").FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
+            .Count;
         context.Recorder.Check(
             "Поиск по справке нашёл поле Recoil",
-            help.WaitById("HelpSearchResults").FindAll(
-                    TreeScope.Descendants,
-                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem))
-                .Count > 0,
-            "список результатов пуст");
-
+            resultCount > 0,
+            $"результатов: {resultCount}");
         help.WaitById("HelpOpenSearchResultButton").InvokeButton();
         Ui.WaitUntil(
             () => help.WaitById("HelpFieldPathText").ReadName().Contains("Recoil", StringComparison.Ordinal),
@@ -100,12 +100,62 @@ internal sealed class HelpScenario : SmokeScenario
             help.WaitById("HelpTitleText").ReadName().Contains("AmmoStrings", StringComparison.Ordinal),
             help.WaitById("HelpTitleText").ReadName());
 
+        help.WaitById("HelpOpenTableButton").InvokeButton();
+        Ui.WaitUntil(
+            () => window.WaitById("TableTitle").ReadName().Contains("AmmoStrings", StringComparison.Ordinal),
+            "таблица AmmoStrings открыта в главном окне");
+        context.Recorder.Check(
+            "Кнопка открывает таблицу в главном окне",
+            window.WaitById("TableTitle").ReadName().Contains("AmmoStrings", StringComparison.Ordinal),
+            window.WaitById("TableTitle").ReadName());
+
         help.WaitById("HelpCloseButton").InvokeButton();
         Ui.WaitUntil(
             () => TryFindHelpWindow(context.App) is null,
             "окно справки закрыто");
         context.Recorder.Check("Справка закрывается, приложение остаётся", !context.App.HasExited, null);
+
+        ScenarioUi.OpenMenuItemDetached(context, "HelpMenu", "GlossaryMenuItem");
+        var glossary = Ui.WaitFor(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow"),
+            "окно глоссария",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Меню открывает глоссарий",
+            glossary.WaitById("HelpDocumentTitleText").ReadName() == "Glossary"
+                && glossary.WaitById("HelpDocumentText").ReadValue().Contains("field", StringComparison.Ordinal),
+            glossary.WaitById("HelpDocumentTitleText").ReadName());
+        glossary.WaitById("HelpDocumentCloseButton").InvokeButton();
+        Ui.WaitUntil(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow") is null,
+            "окно глоссария закрыто");
+
+        ScenarioUi.OpenMenuItemDetached(context, "HelpMenu", "IndexMenuItem");
+        var index = Ui.WaitFor(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow"),
+            "окно индекса",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Меню открывает индекс",
+            index.WaitById("HelpDocumentTitleText").ReadName() == "Table help index"
+                && index.WaitById("HelpDocumentText").ReadValue().Contains("AmmoStrings", StringComparison.Ordinal),
+            index.WaitById("HelpDocumentTitleText").ReadName());
+        index.WaitById("HelpDocumentCloseButton").InvokeButton();
+        Ui.WaitUntil(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow") is null,
+            "окно индекса закрыто");
     }
+
+    private static AutomationElement? TryFindDocumentWindow(UiApp app, string automationId) =>
+        AutomationElement.RootElement
+            .FindAll(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.ProcessIdProperty, app.ProcessId),
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window),
+                    new PropertyCondition(AutomationElement.AutomationIdProperty, automationId)))
+            .Cast<AutomationElement>()
+            .FirstOrDefault();
 
     private static AutomationElement? TryFindHelpWindow(UiApp app) =>
         AutomationElement.RootElement

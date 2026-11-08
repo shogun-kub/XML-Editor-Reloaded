@@ -55,6 +55,9 @@ public sealed partial class HelpViewModel : ObservableObject
     private string _statusText = string.Empty;
 
     [ObservableProperty]
+    private string _missingFieldText = string.Empty;
+
+    [ObservableProperty]
     private HelpFieldItemViewModel? _selectedField;
 
     [ObservableProperty]
@@ -92,6 +95,8 @@ public sealed partial class HelpViewModel : ObservableObject
         SectionsLabel = Strings.Get("HelpSectionsLabel");
         CloseText = Strings.Get("HelpClose");
         OpenResultText = Strings.Get("HelpOpenResult");
+        OpenTableText = Strings.Get("HelpOpenTable");
+        CoverageLinkText = Strings.Get("HelpCoverageLink");
         NoResultsText = Strings.Get("HelpNoResults");
         _emptyText = Strings.Get("HelpNoTable");
 
@@ -173,8 +178,27 @@ public sealed partial class HelpViewModel : ObservableObject
     /// <summary>Gets the open-result button text.</summary>
     public string OpenResultText { get; }
 
+    /// <summary>Gets the open-table button text.</summary>
+    public string OpenTableText { get; }
+
+    /// <summary>Gets the coverage-document link text.</summary>
+    public string CoverageLinkText { get; }
+
     /// <summary>Gets the empty-search result text.</summary>
     public string NoResultsText { get; }
+
+    /// <summary>Gets a value indicating whether a requested field has no help entry.</summary>
+    public bool HasMissingField => !string.IsNullOrEmpty(MissingFieldText);
+
+    /// <summary>
+    /// Occurs when the user asks to open the current table in the main window.
+    /// </summary>
+    public event Action<TableName>? TableOpenRequested;
+
+    /// <summary>
+    /// Occurs when the user asks to open the coverage document.
+    /// </summary>
+    public event Action? CoverageRequested;
 
     /// <summary>Gets a value indicating whether the current table has related links.</summary>
     public bool HasLinks => Links.Count > 0;
@@ -210,6 +234,7 @@ public sealed partial class HelpViewModel : ObservableObject
             DocumentPath = string.Empty;
             EmptyText = Strings.Format("HelpTableNotFoundFormat", table.Value);
             StatusText = EmptyText;
+            MissingFieldText = string.Empty;
             SelectedField = null;
             OnCollectionStateChanged();
             return;
@@ -247,7 +272,17 @@ public sealed partial class HelpViewModel : ObservableObject
         }
 
         var requested = fieldPath is null ? null : ResolveField(fieldPath);
-        SelectedField = requested ?? Fields.FirstOrDefault();
+        if (fieldPath is not null && requested is null)
+        {
+            MissingFieldText = Strings.Format("HelpFieldMissingFormat", fieldPath);
+            SelectedField = null;
+        }
+        else
+        {
+            MissingFieldText = string.Empty;
+            SelectedField = requested ?? Fields.FirstOrDefault();
+        }
+
         OnCollectionStateChanged();
     }
 
@@ -331,9 +366,37 @@ public sealed partial class HelpViewModel : ObservableObject
         ShowTable(help.Table);
     }
 
+    /// <summary>
+    /// Opens the current table in the main window.
+    /// </summary>
+    [RelayCommand]
+    private void OpenTable()
+    {
+        if (Table is { } table)
+        {
+            TableOpenRequested?.Invoke(table);
+        }
+    }
+
+    /// <summary>
+    /// Opens the coverage document that lists documented fields.
+    /// </summary>
+    [RelayCommand]
+    private void OpenCoverage() => CoverageRequested?.Invoke();
+
     partial void OnFieldFilterChanged(string value) => RebuildFields();
 
-    partial void OnSelectedFieldChanged(HelpFieldItemViewModel? value) => HasSelection = value is not null;
+    partial void OnMissingFieldTextChanged(string value) =>
+        OnPropertyChanged(nameof(HasMissingField));
+
+    partial void OnSelectedFieldChanged(HelpFieldItemViewModel? value)
+    {
+        HasSelection = value is not null;
+        if (value is not null)
+        {
+            MissingFieldText = string.Empty;
+        }
+    }
 
     partial void OnIsSearchModeChanged(bool value)
     {
@@ -383,6 +446,7 @@ public sealed partial class HelpViewModel : ObservableObject
         OnPropertyChanged(nameof(HasFields));
         OnPropertyChanged(nameof(HasLinks));
         OnPropertyChanged(nameof(HasSections));
+        OnPropertyChanged(nameof(HasMissingField));
         OnPropertyChanged(nameof(IsTableMode));
     }
 }

@@ -102,6 +102,12 @@
                           AutomationProperties.AutomationId="HelpContextMenuItem"
                           InputGestureText="{shortcuts:GestureText Action=Help}"
                           Command="{Binding OpenHelpCommand}" />
+                <MenuItem Header="{Binding HelpGlossaryText}"
+                          AutomationProperties.AutomationId="GlossaryMenuItem"
+                          Command="{Binding OpenGlossaryCommand}" />
+                <MenuItem Header="{Binding HelpIndexText}"
+                          AutomationProperties.AutomationId="IndexMenuItem"
+                          Command="{Binding OpenIndexCommand}" />
                 <Separator />
                 <MenuItem Header="{Binding AboutMenuText}"
                           AutomationProperties.AutomationId="AboutMenuItem"

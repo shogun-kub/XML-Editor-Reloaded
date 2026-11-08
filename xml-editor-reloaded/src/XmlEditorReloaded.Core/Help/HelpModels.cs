@@ -69,6 +69,14 @@ public sealed record HelpLink(string Field, string Target, string Kind);
 public sealed record HelpSection(string Heading, string Anchor, string Text);
 
 /// <summary>
+/// One standalone help page, such as the glossary or the table index.
+/// </summary>
+/// <param name="Path">Page path relative to the help root, for example <c>GLOSSARY.md</c>.</param>
+/// <param name="Title">Page title from its first level-one heading.</param>
+/// <param name="Text">Page body as Markdown.</param>
+public sealed record HelpDocument(string Path, string Title, string Text);
+
+/// <summary>
 /// One result of a help search.
 /// </summary>
 /// <param name="Table">Table family that owns the result.</param>

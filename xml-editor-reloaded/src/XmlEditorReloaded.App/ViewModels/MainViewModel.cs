@@ -161,6 +161,8 @@ public partial class MainViewModel : ObservableObject
         SettingsText = Strings.Get("SettingsButton");
         HelpMenuText = Strings.Get("MenuHelp");
         HelpContextText = Strings.Get("MenuHelpContext");
+        HelpGlossaryText = Strings.Get("MenuHelpGlossary");
+        HelpIndexText = Strings.Get("MenuHelpIndex");
         AboutMenuText = Strings.Get("MenuAbout");
         FileMenuText = Strings.Get("MenuFile");
         ExitMenuText = Strings.Get("MenuExit");
@@ -260,6 +262,16 @@ public partial class MainViewModel : ObservableObject
     /// Gets the Help &gt; Context help menu item text.
     /// </summary>
     public string HelpContextText { get; }
+
+    /// <summary>
+    /// Gets the Help &gt; Glossary menu item text.
+    /// </summary>
+    public string HelpGlossaryText { get; }
+
+    /// <summary>
+    /// Gets the Help &gt; Index menu item text.
+    /// </summary>
+    public string HelpIndexText { get; }
 
     /// <summary>
     /// Gets the Help &gt; About menu item text.
@@ -789,7 +801,46 @@ public partial class MainViewModel : ObservableObject
         var table = SelectedEditor?.TableName
             ?? SelectedTable?.Descriptor.TableName;
         var field = SelectedEditor is TableEditorViewModel editor ? editor.CurrentCellField : null;
-        _dialogService.ShowHelp(new HelpViewModel(_tableHelp, table, field));
+        var help = new HelpViewModel(_tableHelp, table, field);
+        help.TableOpenRequested += OnHelpTableOpenRequested;
+        help.CoverageRequested += () => OpenHelpDocument("COVERAGE.md");
+        _dialogService.ShowHelp(help);
+    }
+
+    /// <summary>
+    /// Opens the glossary page.
+    /// </summary>
+    [RelayCommand]
+    private void OpenGlossary() => OpenHelpDocument("GLOSSARY.md");
+
+    /// <summary>
+    /// Opens the table index page.
+    /// </summary>
+    [RelayCommand]
+    private void OpenIndex() => OpenHelpDocument("INDEX.md");
+
+    private void OpenHelpDocument(string documentPath)
+    {
+        var document = _tableHelp.GetDocument(documentPath);
+        if (document is null)
+        {
+            StatusText = Strings.Format("HelpDocumentNotFoundFormat", documentPath);
+            return;
+        }
+
+        _dialogService.ShowHelpDocument(new HelpDocumentViewModel(document));
+    }
+
+    private async void OnHelpTableOpenRequested(TableName table)
+    {
+        try
+        {
+            await OpenEditorByNameAsync(table).ConfigureAwait(true);
+        }
+        catch (Exception exception)
+        {
+            StatusText = Strings.Format("StatusError", exception.Message);
+        }
     }
 
     /// <summary>

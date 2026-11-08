@@ -33,6 +33,13 @@ public interface ITableHelpProvider
     FieldHelp? GetFieldHelp(TableName table, string fieldPath);
 
     /// <summary>
+    /// Gets a standalone help page, such as the glossary or the table index.
+    /// </summary>
+    /// <param name="documentPath">Page path relative to the help root, for example <c>GLOSSARY.md</c>.</param>
+    /// <returns>The page, or <see langword="null"/> when it is unknown.</returns>
+    HelpDocument? GetDocument(string documentPath);
+
+    /// <summary>
     /// Searches table titles, field paths, field descriptions, and source text.
     /// </summary>
     /// <param name="query">Case-insensitive search text.</param>

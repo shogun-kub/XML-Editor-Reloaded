@@ -20,6 +20,21 @@ internal sealed class HelpJsonRoot
 
     /// <summary>Gets or sets table aliases mapped to document paths.</summary>
     public SortedDictionary<string, string> Tables { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>Gets or sets standalone pages keyed by their path relative to the help root.</summary>
+    public SortedDictionary<string, HelpJsonPage> Pages { get; set; } = new(StringComparer.Ordinal);
+}
+
+/// <summary>
+/// One standalone help page in <c>help.json</c>.
+/// </summary>
+internal sealed class HelpJsonPage
+{
+    /// <summary>Gets or sets the page title.</summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the page body as Markdown.</summary>
+    public string Text { get; set; } = string.Empty;
 }
 
 /// <summary>

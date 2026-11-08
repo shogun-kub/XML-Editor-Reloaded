@@ -28,4 +28,9 @@
     <ProjectReference Include="..\XmlEditorReloaded.Xml\XmlEditorReloaded.Xml.csproj" />
   </ItemGroup>
 
+  <Target Name="EnsureHelpData" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\XmlEditorReloaded.Data\Help\help.json')"
+           Text="Help data 'src/XmlEditorReloaded.Data/Help/help.json' is missing. Run 'dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables' and rebuild." />
+  </Target>
+
 </Project>

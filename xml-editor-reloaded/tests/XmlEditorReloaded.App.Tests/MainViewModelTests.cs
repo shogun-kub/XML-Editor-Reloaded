@@ -1045,6 +1045,46 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// The Help &gt; Glossary command opens the glossary page through the dialog service.
+    /// </summary>
+    [Fact]
+    public async Task OpenGlossary_ShowsGlossaryDocument()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenGlossaryCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+        Assert.Equal("GLOSSARY.md", dialog.LastHelpDocumentViewModel.Document.Path);
+        Assert.Contains("Glossary", dialog.LastHelpDocumentViewModel.Title, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The Help &gt; Index command opens the generated table index page.
+    /// </summary>
+    [Fact]
+    public async Task OpenIndex_ShowsIndexDocument()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenIndexCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+        Assert.Equal("INDEX.md", dialog.LastHelpDocumentViewModel.Document.Path);
+        Assert.Contains("index", dialog.LastHelpDocumentViewModel.Title, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Removing the active directory activates the remaining valid directory, removes the path from the
     /// selector, and persists the shortened list; the folder itself is kept on disk.
     /// </summary>
@@ -1439,6 +1479,11 @@ public class MainViewModelTests
         public HelpViewModel? LastHelpViewModel { get; private set; }
 
         public void ShowHelp(HelpViewModel viewModel) => LastHelpViewModel = viewModel;
+
+        public HelpDocumentViewModel? LastHelpDocumentViewModel { get; private set; }
+
+        public void ShowHelpDocument(HelpDocumentViewModel viewModel) =>
+            LastHelpDocumentViewModel = viewModel;
 
         public string? LastUnsavedChangesMessage { get; private set; }
 

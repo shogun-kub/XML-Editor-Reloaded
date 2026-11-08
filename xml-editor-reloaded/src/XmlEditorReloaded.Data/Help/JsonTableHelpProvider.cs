@@ -13,6 +13,7 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
     private const string ResourceName = "XmlEditorReloaded.Data.Help.help.json";
     private readonly IReadOnlyDictionary<string, TableHelp> _documents;
     private readonly IReadOnlyDictionary<string, string> _tableDocuments;
+    private readonly IReadOnlyDictionary<string, HelpDocument> _pages;
 
     /// <summary>
     /// Initializes a provider from the embedded help data.
@@ -101,8 +102,13 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
 
         _documents = documents;
         _tableDocuments = tableDocuments;
+        _pages = root.Pages.ToDictionary(
+            static pair => pair.Key,
+            static pair => new HelpDocument(pair.Key, pair.Value.Title, pair.Value.Text),
+            StringComparer.Ordinal);
         DocumentCount = documents.Count;
         TableCount = tableDocuments.Count;
+        PageCount = _pages.Count;
         UniqueFieldCount = documents.Values.Sum(static document => document.Fields.Count);
     }
 
@@ -115,6 +121,11 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
     /// Gets the number of distinct dotted table names, including aliases and backups.
     /// </summary>
     public int TableCount { get; }
+
+    /// <summary>
+    /// Gets the number of standalone help pages.
+    /// </summary>
+    public int PageCount { get; }
 
     /// <summary>
     /// Gets the number of unique field entries across all documents.
@@ -130,6 +141,14 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
         _tableDocuments.TryGetValue(table.Value, out var document)
             ? _documents[document]
             : null;
+
+    /// <inheritdoc />
+    public HelpDocument? GetDocument(string documentPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentPath);
+        var normalized = documentPath.Replace('\\', '/').TrimStart('/');
+        return _pages.TryGetValue(normalized, out var page) ? page : null;
+    }
 
     /// <inheritdoc />
     public TableHelp? GetTableHelpByDocument(string documentPath) =>

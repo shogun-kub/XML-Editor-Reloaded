@@ -98,6 +98,60 @@ public class HelpViewModelTests
     }
 
     /// <summary>
+    /// An undocumented field reports the missing description instead of silently selecting another field.
+    /// </summary>
+    [Fact]
+    public void ShowTable_UnknownField_ReportsMissingDescription()
+    {
+        var viewModel = new HelpViewModel(
+            new JsonTableHelpProvider(),
+            TableName.Parse("Items.Weapons"),
+            "FutureField");
+
+        Assert.True(viewModel.HasTable);
+        Assert.True(viewModel.HasMissingField);
+        Assert.False(viewModel.HasSelection);
+        Assert.Null(viewModel.SelectedField);
+        Assert.Contains("FutureField", viewModel.MissingFieldText, StringComparison.Ordinal);
+        Assert.Contains("COVERAGE.md", viewModel.MissingFieldText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The open-table command reports the currently displayed table to the shell.
+    /// </summary>
+    [Fact]
+    public void OpenTableCommand_ReportsCurrentTable()
+    {
+        var viewModel = new HelpViewModel(
+            new JsonTableHelpProvider(),
+            TableName.Parse("Items.Weapons"),
+            "uiIndex");
+        TableName? requested = null;
+        viewModel.TableOpenRequested += table => requested = table;
+
+        viewModel.OpenTableCommand.Execute(null);
+
+        Assert.Equal("Items.Weapons", requested?.Value);
+    }
+
+    /// <summary>
+    /// The coverage command asks the shell to open the coverage document.
+    /// </summary>
+    [Fact]
+    public void OpenCoverageCommand_ReportsRequest()
+    {
+        var viewModel = new HelpViewModel(
+            new JsonTableHelpProvider(),
+            TableName.Parse("Items.Weapons"));
+        var requested = false;
+        viewModel.CoverageRequested += () => requested = true;
+
+        viewModel.OpenCoverageCommand.Execute(null);
+
+        Assert.True(requested);
+    }
+
+    /// <summary>
     /// Without a selected table the window shows an instruction instead of an empty field list.
     /// </summary>
     [Fact]

@@ -89,6 +89,14 @@ public class CompositionTests
                 Assert.IsType<HelpViewModel>(helpWindow.DataContext);
                 helpWindow.Close();
 
+                var helpProvider = provider.GetRequiredService<ITableHelpProvider>();
+                var glossary = helpProvider.GetDocument("GLOSSARY.md");
+                Assert.NotNull(glossary);
+                var documentWindow = new global::XmlEditorReloaded.App.Views.HelpDocumentWindow(
+                    new HelpDocumentViewModel(glossary));
+                Assert.IsType<HelpDocumentViewModel>(documentWindow.DataContext);
+                documentWindow.Close();
+
                 var externalWindow = new global::XmlEditorReloaded.App.Views.ExternalChangeWindow(
                     "File changed",
                     "Save");
