@@ -23,6 +23,7 @@ entry. The English column is the source of truth; the Russian column is a contro
 | inferred | выведено | — |
 | unknown | неизвестно | — |
 | item | предмет | — |
+| action item | предмет действия | map interactable; `ACTION_ITEM_*` codes in `Action Items.h` |
 | item class | класс предмета | — |
 | attachment | вложение | — |
 | LBE (load-bearing equipment) | разгрузка | not "носимое снаряжение" |

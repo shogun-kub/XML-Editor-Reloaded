@@ -117,7 +117,9 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 `EnemyRank` `UINT16`/`BOOLEAN`/`CHAR16`, `ExpLevel` `1..9`; `EnemyNames.Sector` — `A1..P16`
 с проверкой диапазона; `BriefingRoom.Hidden` инвертирован (`0` = скрыто, non-zero = видимо);
 `History` — `UINT16`/`CHAR16`; `LoadScreenHints` — category-биты, `item` не читается,
-рабочий элемент — `items`. В `GLOSSARY.md`
-добавлены `recoil`, `aim level`, `burst penalty`. Остались непроверенные поля
+рабочий элемент — `items`; `LayoutMainMenu` — поля изображения только при `uiIndex > 0`,
+поля меню только при `uiIndex = 0`, `Description` не читается; `ActionItems` — `ActionID`
+`UINT8`, `Blow_up`/`BombItem` только при `ActionID = 3`. В `GLOSSARY.md`
+добавлены `recoil`, `aim level`, `burst penalty`, `action item`. Остались непроверенные поля
 B1/B3/B4/B5 и часть B7/B8.
 **Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.
