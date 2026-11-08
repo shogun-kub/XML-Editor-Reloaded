@@ -777,7 +777,10 @@ case-sensitive список палитр; у пяти enemy-drop таблиц у
 B7 и B8 полностью проверены. В B5 `Backgrounds` все 95 полей подтверждены по загрузчику
 и переведены в `source`; в B4 у `MercProfiles` исправлены `uiIndex` (`UINT32`) и строковые
 поля (`CHAR16`); в B1 у `Items.AttachToPointAPCost` подтверждён `UINT8` и AP-семантика.
-Остались непроверенные поля B1/B3/B4/B5. `help-check -Write` проходит после каждого коммита.
+Также проверены `RandomStats` (16), `MilitiaIndividual` (15), `IMPPortraits` (12),
+`RPCFacesSmall` (7), `MercAvailability` (10) и `MercQuote` (9): исправлены `UINT16`/`INT8`/
+`BOOLEAN`-типы, клампы процентов и нечитаемые `Name`-поля. Остались непроверенные поля
+B1/B3/B4/B5. `help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 

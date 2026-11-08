@@ -127,7 +127,10 @@ case-sensitive (`RECTANGLE`/`DIAMOND`/`ELLIPSE`), `Rectangle`/`Ellipse` не с�
 не читается; `Vehicles` — `uiIndex`/`SeatIndex` `UINT8`, `MvtTypes`/вместимость/звуки `INT32`,
 броня `INT16`, `Pilot` `INT8`, смещения сидений `INT8`; `Email*` — `uiIndex` `UINT8`/`UINT16`,
 строки `CHAR16`. B7/B8 завершены. `Backgrounds` — все 95 полей `source`; `MercProfiles.uiIndex` `UINT32`,
-`zName`/`zNickname` `CHAR16`; `Items.AttachToPointAPCost` `UINT8` (AP). Остались B1/B3/B4/B5.
+`zName`/`zNickname` `CHAR16`; `Items.AttachToPointAPCost` `UINT8` (AP); `RandomStats` — `UINT16`/`INT8`/`BOOLEAN`, `Name`
+не читается; `MilitiaIndividual` — проценты `UINT8` с clamp `0..100`, имена `CHAR16`,
+dailycost `UINT16`; `IMPPortraits`/`RPCFacesSmall` — `INT8`-координаты и `UINT16`-индексы;
+`MercAvailability` и `MercQuote` — `UINT8`/`UINT16`/`BOOLEAN`, `Name` не читается. Остались B1/B3/B4/B5.
 В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`, `action item`.
 **Дальше.** Продолжить B1/B3/B4/B5; после B10 — повторный B9-гейт и финальный коммит.
