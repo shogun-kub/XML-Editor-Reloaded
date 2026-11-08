@@ -36,6 +36,7 @@ public sealed class ShortcutCatalogTests
     [InlineData(ShortcutCatalog.SaveAll, "Shift")]
     [InlineData(ShortcutCatalog.Settings, ",")]
     [InlineData(ShortcutCatalog.Reload, "F5")]
+    [InlineData(ShortcutCatalog.Help, "F1")]
     [InlineData(ShortcutCatalog.DeleteRow, "Delete")]
     public void Gesture_text_is_readable(string action, string expected)
     {

@@ -102,6 +102,16 @@ public interface IDialogService
     }
 
     /// <summary>
+    /// Shows or reuses the modeless context-help window.
+    /// </summary>
+    /// <param name="viewModel">Help content to display.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="viewModel"/> is null.</exception>
+    void ShowHelp(HelpViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+    }
+
+    /// <summary>
     /// Shows the read-only data-set window with the validation report and the global search.
     /// </summary>
     /// <param name="viewModel">Data-set view model; it loads the table list and starts validation itself.</param>

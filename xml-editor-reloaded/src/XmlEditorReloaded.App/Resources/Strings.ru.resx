@@ -2143,4 +2143,87 @@
   <data name="LookupInUseChangeFormat" xml:space="preserve">
     <value>Нельзя изменить ID {0}: значение используется ({1}). Первое: {2}.</value>
   </data>
-</root>
+  <data name="MenuHelpContext" xml:space="preserve">
+    <value>_Контекстная справка</value>
+  </data>
+  <data name="HelpWindowTitle" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="HelpSearchLabel" xml:space="preserve">
+    <value>Поиск по справке</value>
+  </data>
+  <data name="HelpSearchButton" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="HelpClearSearch" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="HelpFieldFilterLabel" xml:space="preserve">
+    <value>Фильтр полей</value>
+  </data>
+  <data name="HelpFieldsLabel" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="HelpSummaryLabel" xml:space="preserve">
+    <value>Кратко</value>
+  </data>
+  <data name="HelpTableLabel" xml:space="preserve">
+    <value>Таблица</value>
+  </data>
+  <data name="HelpDocumentLabel" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="HelpTypeLabel" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="HelpDescriptionLabel" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="HelpNumericLabel" xml:space="preserve">
+    <value>Числовая семантика</value>
+  </data>
+  <data name="HelpOnlyUsedWithLabel" xml:space="preserve">
+    <value>Используется только с</value>
+  </data>
+  <data name="HelpValuesLabel" xml:space="preserve">
+    <value>Значения</value>
+  </data>
+  <data name="HelpDefaultLabel" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="HelpSourceLabel" xml:space="preserve">
+    <value>Источник</value>
+  </data>
+  <data name="HelpConfidenceLabel" xml:space="preserve">
+    <value>Достоверность</value>
+  </data>
+  <data name="HelpLinksLabel" xml:space="preserve">
+    <value>Связанная справка</value>
+  </data>
+  <data name="HelpSectionsLabel" xml:space="preserve">
+    <value>Дополнительно</value>
+  </data>
+  <data name="HelpClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="HelpOpenResult" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="HelpNoResults" xml:space="preserve">
+    <value>Ничего не найдено.</value>
+  </data>
+  <data name="HelpNoTable" xml:space="preserve">
+    <value>Откройте таблицу и нажмите F1, чтобы увидеть справку по полям.</value>
+  </data>
+  <data name="HelpTableNotFoundFormat" xml:space="preserve">
+    <value>Справка для таблицы «{0}» не найдена.</value>
+  </data>
+  <data name="HelpTableAliasesFormat" xml:space="preserve">
+    <value>{0} (+{1} алиасов)</value>
+  </data>
+  <data name="HelpSearchCountFormat" xml:space="preserve">
+    <value>Найдено: {0}.</value>
+  </data>
+  <data name="HelpLinkUnavailableFormat" xml:space="preserve">
+    <value>Документ справки «{0}» не является таблицей.</value>
+  </data></root>

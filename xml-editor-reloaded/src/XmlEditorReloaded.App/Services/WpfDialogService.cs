@@ -10,6 +10,8 @@ namespace XmlEditorReloaded.App.Services;
 /// </summary>
 public sealed class WpfDialogService : IDialogService
 {
+    private Views.HelpWindow? _helpWindow;
+
     /// <inheritdoc />
     public string? PickFolder(string title, string? initialDirectory = null)
     {
@@ -115,6 +117,28 @@ public sealed class WpfDialogService : IDialogService
         }
 
         window.ShowDialog();
+    }
+
+    /// <inheritdoc />
+    public void ShowHelp(ViewModels.HelpViewModel viewModel)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+        if (_helpWindow is { IsLoaded: true } existing)
+        {
+            existing.DataContext = viewModel;
+            existing.Title = viewModel.Title;
+            existing.Activate();
+            return;
+        }
+
+        _helpWindow = new Views.HelpWindow(viewModel);
+        if (System.Windows.Application.Current?.MainWindow is { } owner)
+        {
+            _helpWindow.Owner = owner;
+        }
+
+        _helpWindow.Closed += (_, _) => _helpWindow = null;
+        _helpWindow.Show();
     }
 
     /// <inheritdoc />

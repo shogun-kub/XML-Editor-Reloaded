@@ -43,6 +43,9 @@ internal static class NativeInput
         /// <summary>Home key.</summary>
         Home = 0x24,
 
+        /// <summary>F1 key.</summary>
+        F1 = 0x70,
+
         /// <summary>F2 key.</summary>
         F2 = 0x71,
 
@@ -415,6 +418,30 @@ internal static class NativeInput
     }
 
     /// <summary>
+    /// Sends a single virtual key directly to the top-level window through <c>WM_KEYDOWN</c> and
+    /// <c>WM_KEYUP</c>. Use this when a global hotkey or a foreground race prevents <c>SendInput</c>
+    /// from reaching the application under test; the application still receives a normal WPF key event.
+    /// </summary>
+    /// <param name="owner">Element inside the window that must receive the key.</param>
+    /// <param name="key">Virtual key to press.</param>
+    public static void PressWindowMessage(
+        System.Windows.Automation.AutomationElement owner,
+        VirtualKey key)
+    {
+        var windowHandle = TopLevelWindow(owner);
+        if (windowHandle == IntPtr.Zero)
+        {
+            PressIn(owner, key);
+            return;
+        }
+
+        Activate(windowHandle);
+        PostMessage(windowHandle, 0x0100, (IntPtr)(int)key, IntPtr.Zero);
+        Thread.Sleep(30);
+        PostMessage(windowHandle, 0x0101, (IntPtr)(int)key, IntPtr.Zero);
+    }
+
+    /// <summary>
     /// Sends a single virtual key, optionally with Control and/or Shift held.
     /// </summary>
     /// <param name="key">Virtual key to press.</param>
@@ -763,6 +790,10 @@ internal static class NativeInput
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern uint SendInput(uint count, [In] Input[] inputs, int size);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]

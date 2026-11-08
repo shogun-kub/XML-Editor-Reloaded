@@ -132,6 +132,12 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
             : null;
 
     /// <inheritdoc />
+    public TableHelp? GetTableHelpByDocument(string documentPath) =>
+        documentPath is not null && _documents.TryGetValue(documentPath, out var help)
+            ? help
+            : null;
+
+    /// <inheritdoc />
     public FieldHelp? GetFieldHelp(TableName table, string fieldPath)
     {
         if (string.IsNullOrWhiteSpace(fieldPath)

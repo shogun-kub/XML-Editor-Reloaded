@@ -46,6 +46,7 @@ public sealed partial class ItemWorkspaceViewModel :
     private readonly IDataSetSession _session;
     private readonly IDialogService _dialogService;
     private readonly IItemImageService _itemImages;
+    private readonly ITableHelpProvider? _tableHelp;
     private readonly TableDescriptor _descriptor;
     private readonly Dictionary<TableName, FieldSourceSet> _fieldSources = new();
     private readonly Dictionary<TableRowViewModel, TableName> _rowOwners = new();
@@ -165,13 +166,15 @@ public sealed partial class ItemWorkspaceViewModel :
     /// <param name="languageCode">Optional language overlay code.</param>
     /// <param name="dialogService">Dialog service used for confirmations and the bit editor.</param>
     /// <param name="itemImages">Item image service used by the previews.</param>
+    /// <param name="tableHelp">Optional table help used by embedded grid tooltips.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required service or descriptor is null.</exception>
     public ItemWorkspaceViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode,
         IDialogService dialogService,
-        IItemImageService itemImages)
+        IItemImageService itemImages,
+        ITableHelpProvider? tableHelp = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -183,6 +186,7 @@ public sealed partial class ItemWorkspaceViewModel :
         _languageCode = languageCode;
         _dialogService = dialogService;
         _itemImages = itemImages;
+        _tableHelp = tableHelp;
 
         Title = descriptor.TableName.Value.Split('.').Last();
         _statusText = Strings.Get("EditorLoading");
@@ -1896,7 +1900,8 @@ public sealed partial class ItemWorkspaceViewModel :
                 member.Workspace.Descriptor,
                 member.Workspace.Language?.Code,
                 _dialogService,
-                _itemImages)
+                _itemImages,
+                tableHelp: _tableHelp)
             {
                 IsEmbedded = true,
                 ShowDetails = false,

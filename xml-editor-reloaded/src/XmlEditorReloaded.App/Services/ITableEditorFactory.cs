@@ -1,3 +1,4 @@
+using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Xml.Lookups;
@@ -72,6 +73,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
     private readonly IItemImageService _itemImages;
     private readonly ITableLayoutStore _layoutStore;
     private readonly LookupUsageService? _lookupUsage;
+    private readonly ITableHelpProvider? _tableHelp;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableEditorFactory"/> class.
@@ -80,12 +82,14 @@ public sealed class TableEditorFactory : ITableEditorFactory
     /// <param name="itemImages">Item image service used by the detail panel.</param>
     /// <param name="layoutStore">Per-table layout store used by generic grid tabs.</param>
     /// <param name="lookupUsage">Optional scanner used to protect referenced lookup values.</param>
+    /// <param name="tableHelp">Optional table help used for column header tooltips.</param>
     /// <exception cref="ArgumentNullException">Thrown when a dependency is null.</exception>
     public TableEditorFactory(
         IDialogService dialogService,
         IItemImageService itemImages,
         ITableLayoutStore layoutStore,
-        LookupUsageService? lookupUsage = null)
+        LookupUsageService? lookupUsage = null,
+        ITableHelpProvider? tableHelp = null)
     {
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(itemImages);
@@ -94,6 +98,7 @@ public sealed class TableEditorFactory : ITableEditorFactory
         _itemImages = itemImages;
         _layoutStore = layoutStore;
         _lookupUsage = lookupUsage;
+        _tableHelp = tableHelp;
     }
 
     /// <inheritdoc />
@@ -101,14 +106,14 @@ public sealed class TableEditorFactory : ITableEditorFactory
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>
-        new(session, descriptor, languageCode, _dialogService, _itemImages, _layoutStore, lookupUsage: _lookupUsage);
+        new(session, descriptor, languageCode, _dialogService, _itemImages, _layoutStore, lookupUsage: _lookupUsage, tableHelp: _tableHelp);
 
     /// <inheritdoc />
     public ViewModels.ItemWorkspaceViewModel CreateItemWorkspace(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode) =>
-        new(session, descriptor, languageCode, _dialogService, _itemImages);
+        new(session, descriptor, languageCode, _dialogService, _itemImages, tableHelp: _tableHelp);
 
     /// <inheritdoc />
     public ViewModels.MercGearWorkspaceViewModel CreateMercGearWorkspace(

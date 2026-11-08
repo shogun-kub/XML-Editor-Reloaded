@@ -10,6 +10,7 @@ using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
+using XmlEditorReloaded.Data.Help;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
 using XmlEditorReloaded.Xml.Copy;
@@ -25,6 +26,8 @@ namespace XmlEditorReloaded.App.Tests;
 /// </summary>
 public class MainViewModelTests
 {
+    private static readonly JsonTableHelpProvider SharedTableHelp = new();
+
     /// <summary>
     /// Initialization loads a real catalog and selecting a table produces a record count.
     /// </summary>
@@ -80,7 +83,8 @@ public class MainViewModelTests
             new FakeSettingsDialogService(),
             new FakeTableLayoutStore(),
             new DatasetValidator(),
-            new DatasetSearchService());
+            new DatasetSearchService(),
+            SharedTableHelp);
 
         await viewModel.InitializeAsync();
 
@@ -143,7 +147,8 @@ public class MainViewModelTests
             new FakeSettingsDialogService(),
             new FakeTableLayoutStore(),
             new DatasetValidator(),
-            new DatasetSearchService())
+            new DatasetSearchService(),
+            SharedTableHelp)
         {
             DataDirectory = data13,
         };
@@ -1021,6 +1026,25 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// The Help &gt; Context help command opens the help window through the dialog service.
+    /// </summary>
+    [Fact]
+    public async Task OpenHelp_ShowsHelpThroughDialogService()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenHelpCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpViewModel);
+        Assert.False(dialog.LastHelpViewModel.HasTable);
+    }
+
+    /// <summary>
     /// Removing the active directory activates the remaining valid directory, removes the path from the
     /// selector, and persists the shortened list; the folder itself is kept on disk.
     /// </summary>
@@ -1266,7 +1290,8 @@ public class MainViewModelTests
             settingsDialog ?? new FakeSettingsDialogService(),
             layoutStore ?? new FakeTableLayoutStore(),
             new DatasetValidator(provider),
-            new DatasetSearchService(provider));
+            new DatasetSearchService(provider),
+            SharedTableHelp);
 
     private static string CreateCursorData(TestWorkspace workspace)
     {
@@ -1410,6 +1435,10 @@ public class MainViewModelTests
         public int AboutShown { get; private set; }
 
         public void ShowAbout() => AboutShown++;
+
+        public HelpViewModel? LastHelpViewModel { get; private set; }
+
+        public void ShowHelp(HelpViewModel viewModel) => LastHelpViewModel = viewModel;
 
         public string? LastUnsavedChangesMessage { get; private set; }
 

@@ -82,6 +82,13 @@ public class CompositionTests
                 Assert.IsType<AboutViewModel>(aboutWindow.DataContext);
                 aboutWindow.Close();
 
+                var helpWindow = new global::XmlEditorReloaded.App.Views.HelpWindow(
+                    new HelpViewModel(
+                        provider.GetRequiredService<ITableHelpProvider>(),
+                        XmlEditorReloaded.Core.Metadata.TableName.Parse("Items.Weapons")));
+                Assert.IsType<HelpViewModel>(helpWindow.DataContext);
+                helpWindow.Close();
+
                 var externalWindow = new global::XmlEditorReloaded.App.Views.ExternalChangeWindow(
                     "File changed",
                     "Save");

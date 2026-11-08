@@ -38,6 +38,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ITableLayoutStore _layoutStore;
     private readonly DatasetValidator _datasetValidator;
     private readonly DatasetSearchService _datasetSearch;
+    private readonly ITableHelpProvider _tableHelp;
     private AppSettings _settings = AppSettings.Default;
     private bool _settingsLoaded;
     private IDataSetSession? _dataSet;
@@ -105,6 +106,7 @@ public partial class MainViewModel : ObservableObject
     /// <param name="layoutStore">Stored grid layouts, reset from the settings dialog.</param>
     /// <param name="datasetValidator">Validator used by the data-set window.</param>
     /// <param name="datasetSearch">Search used by the data-set window.</param>
+    /// <param name="tableHelp">Table and field help used by the context-help window and column tooltips.</param>
     public MainViewModel(
         IDataSetSessionFactory sessionFactory,
         ITableEditorFactory editorFactory,
@@ -116,7 +118,8 @@ public partial class MainViewModel : ObservableObject
         ISettingsDialogService settingsDialog,
         ITableLayoutStore layoutStore,
         DatasetValidator datasetValidator,
-        DatasetSearchService datasetSearch)
+        DatasetSearchService datasetSearch,
+        ITableHelpProvider tableHelp)
     {
         ArgumentNullException.ThrowIfNull(sessionFactory);
         ArgumentNullException.ThrowIfNull(editorFactory);
@@ -129,6 +132,7 @@ public partial class MainViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(layoutStore);
         ArgumentNullException.ThrowIfNull(datasetValidator);
         ArgumentNullException.ThrowIfNull(datasetSearch);
+        ArgumentNullException.ThrowIfNull(tableHelp);
 
         _sessionFactory = sessionFactory;
         _editorFactory = editorFactory;
@@ -141,6 +145,7 @@ public partial class MainViewModel : ObservableObject
         _layoutStore = layoutStore;
         _datasetValidator = datasetValidator;
         _datasetSearch = datasetSearch;
+        _tableHelp = tableHelp;
 
         Editors.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasEditors));
 
@@ -155,6 +160,7 @@ public partial class MainViewModel : ObservableObject
         CopyText = Strings.Get("CopyButton");
         SettingsText = Strings.Get("SettingsButton");
         HelpMenuText = Strings.Get("MenuHelp");
+        HelpContextText = Strings.Get("MenuHelpContext");
         AboutMenuText = Strings.Get("MenuAbout");
         FileMenuText = Strings.Get("MenuFile");
         ExitMenuText = Strings.Get("MenuExit");
@@ -249,6 +255,11 @@ public partial class MainViewModel : ObservableObject
     /// Gets the Help menu header.
     /// </summary>
     public string HelpMenuText { get; }
+
+    /// <summary>
+    /// Gets the Help &gt; Context help menu item text.
+    /// </summary>
+    public string HelpContextText { get; }
 
     /// <summary>
     /// Gets the Help &gt; About menu item text.
@@ -768,6 +779,18 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     [RelayCommand]
     private void OpenAbout() => _dialogService.ShowAbout();
+
+    /// <summary>
+    /// Opens the modeless context help for the active table and cell.
+    /// </summary>
+    [RelayCommand]
+    private void OpenHelp()
+    {
+        var table = SelectedEditor?.TableName
+            ?? SelectedTable?.Descriptor.TableName;
+        var field = SelectedEditor is TableEditorViewModel editor ? editor.CurrentCellField : null;
+        _dialogService.ShowHelp(new HelpViewModel(_tableHelp, table, field));
+    }
 
     /// <summary>
     /// Opens the bulk edit dialog of the active table editor. The command is disabled when the active

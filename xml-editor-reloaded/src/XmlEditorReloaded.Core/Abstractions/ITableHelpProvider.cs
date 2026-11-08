@@ -16,6 +16,13 @@ public interface ITableHelpProvider
     TableHelp? GetTableHelp(TableName table);
 
     /// <summary>
+    /// Gets help by its document path relative to the help root, for example <c>tables/Items/Weapons.md</c>.
+    /// </summary>
+    /// <param name="documentPath">Document path used by cross-document links.</param>
+    /// <returns>Help for the document, or <see langword="null"/> when it is unknown.</returns>
+    TableHelp? GetTableHelpByDocument(string documentPath);
+
+    /// <summary>
     /// Gets help for one field.
     /// </summary>
     /// <param name="table">Dotted table name that owns the field.</param>

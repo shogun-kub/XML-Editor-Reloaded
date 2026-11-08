@@ -110,6 +110,7 @@ public partial class TableView : UserControl
                     ToolTip = column.HeaderTooltip,
                     FontWeight = column.IsKey ? FontWeights.Bold : FontWeights.Normal,
                 };
+                AutomationProperties.SetHelpText(header, column.HeaderTooltip);
 
                 DataGridColumn gridColumn;
                 if (column.IsBoolean)
@@ -511,6 +512,18 @@ public partial class TableView : UserControl
     /// </summary>
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.F1)
+        {
+            if (Window.GetWindow(this)?.DataContext is MainViewModel main
+                && main.OpenHelpCommand.CanExecute(null))
+            {
+                main.OpenHelpCommand.Execute(null);
+            }
+
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
         {
             SearchBox.Focus();

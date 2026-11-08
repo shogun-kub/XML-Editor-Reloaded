@@ -34,6 +34,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     private readonly IItemImageService _itemImages;
     private readonly ITableLayoutStore? _layoutStore;
     private readonly LookupUsageService? _lookupUsage;
+    private readonly ITableHelpProvider? _tableHelp;
     private string? _languageCode;
     private readonly IDialogService _dialogService;
     private readonly List<TableRowViewModel> _allRows = new();
@@ -160,6 +161,10 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     /// Optional lookup usage scanner used to protect used values and to show "where used"; when omitted,
     /// the editor skips the usage check.
     /// </param>
+    /// <param name="tableHelp">
+    /// Optional table-help provider used for column header tooltips; when omitted, headers fall back to
+    /// the schema tooltip or the XML field name.
+    /// </param>
     public TableEditorViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
@@ -168,7 +173,8 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IItemImageService itemImages,
         ITableLayoutStore? layoutStore = null,
         TimeSpan? statusAutoResetDelay = null,
-        LookupUsageService? lookupUsage = null)
+        LookupUsageService? lookupUsage = null,
+        ITableHelpProvider? tableHelp = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -182,6 +188,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         _itemImages = itemImages;
         _layoutStore = layoutStore;
         _lookupUsage = lookupUsage;
+        _tableHelp = tableHelp;
         _statusAutoResetDelay = statusAutoResetDelay ?? TimeSpan.FromSeconds(3);
 
         DetailImages = new[]
@@ -2209,7 +2216,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             {
                 _lookupByField.TryGetValue(column.XmlFieldName, out var lookup);
                 _relationByField.TryGetValue(column.XmlFieldName, out var relation);
-                _allColumns.Add(new TableColumnViewModel(column, OnColumnVisibilityChanged, lookup, relation));
+                var help = _tableHelp?.GetFieldHelp(Descriptor.TableName, column.XmlFieldName);
+                _allColumns.Add(new TableColumnViewModel(
+                    column,
+                    OnColumnVisibilityChanged,
+                    lookup,
+                    relation,
+                    help?.Description));
             }
         }
 
