@@ -76,8 +76,8 @@ FOODOPINIONSLIST
 - **Only used with:** Food system.
 - **Values:** Food row index in [Food](Food.md).
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food opinion table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food/food-opinion loader); table data.
+- **Confidence:** `source`
 
 ### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/MoraleMod`
 
@@ -87,8 +87,8 @@ FOODOPINIONSLIST
 - **Numeric semantics:** Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
 - **Values:** Morale modifier for this profile and food.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food opinion table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food/food-opinion loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

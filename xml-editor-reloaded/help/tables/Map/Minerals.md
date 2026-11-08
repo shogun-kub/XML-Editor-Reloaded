@@ -60,30 +60,30 @@ MINERALS
 
 ### `MINERALS/TYPE/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the mineral type. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (minerals loader); map table data.
+- **Confidence:** `source`
 
 ### `MINERALS/TYPE/sNameType`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Facility label used for this mineral type, for example `Mine`.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (minerals loader); map table data.
+- **Confidence:** `source`
 
 ### `MINERALS/TYPE/sMineral`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the mineral, for example `Silver` or `Gold`.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (minerals loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 

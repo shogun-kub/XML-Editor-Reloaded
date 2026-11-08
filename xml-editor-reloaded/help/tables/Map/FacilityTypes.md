@@ -566,8 +566,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/bBaseEffect`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Base result of the drunkenness event. The current code only tests whether the result is non-zero, then applies one of the listed `drugitem` entries, or alcohol when the list is empty.
-- **Numeric semantics:** Any non-zero value enables the event; the sign and magnitude do not change the effect.
+- **Description:** Base result of the drunkenness event. The current code only tests whether the final result is non-zero, then applies one of the listed `drugitem` entries, or alcohol when the list is empty.
+- **Numeric semantics:** A non-zero result enables the event; the sign and magnitude of the value do not change the effect.
 - **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** `0` when omitted.
 - **Source:** game code (facility type loader; facility risk result); map table data.

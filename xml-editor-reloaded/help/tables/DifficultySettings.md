@@ -358,7 +358,7 @@ DIFFICULTY_SETTINGS
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Starting army alertness: the percentage chance that an enemy group spots an adjacent player or militia group.
 - **Numeric semantics:** Higher values mean a higher spotting chance; values above `100` make the check always succeed.
-- **Values:** `0..4294967295`; the table comment describes it as a starting alert chance.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
 - **Source:** game code (difficulty loader; strategic AI spotting checks); difficulty table data.
 - **Confidence:** `source`
@@ -368,7 +368,7 @@ DIFFICULTY_SETTINGS
 - **Type:** `Integer` (`UINT32`)
 - **Description:** Amount subtracted from the army alertness percentage each time a spot check succeeds. The table comment recommends `1..100` and a practical range of `20..60`.
 - **Numeric semantics:** Higher values mean alertness falls faster after a successful spot; negative values are not meaningful.
-- **Values:** `0..4294967295`; the table comment gives no hard limit.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
 - **Source:** game code (difficulty loader; strategic AI spotting checks); difficulty table data.
 - **Confidence:** `source`

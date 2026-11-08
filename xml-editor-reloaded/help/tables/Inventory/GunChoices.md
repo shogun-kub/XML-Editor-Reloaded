@@ -218,12 +218,11 @@ ENEMYGUNCHOICESLIST
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/name`
 
 - **Type:** `String`
-- **Description:** Label of the choice group, for example a coolness percentage or rank.
-- **Values:** Free text or a symbolic code.
+- **Description:** Group label stored in the table, but the loader does not read this element; it is informational/ignored.
+- **Values:** Free text; ignored at load time.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
-
+- **Source:** game code (choice-table loader); table data.
+- **Confidence:** `source`
 ### `ENEMYGUNCHOICESLIST/ENEMYGUNCHOICES/ubChoices`
 
 - **Type:** `Integer` (`UINT8`)

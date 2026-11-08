@@ -114,8 +114,8 @@ FOODSLIST
 - **Numeric semantics:** Higher values mean faster decay, and negative values are not meaningful.
 - **Values:** Decimal decay rate; the unit is defined by the food system.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food loader); table data.
+- **Confidence:** `source`
 
 ### `FOODSLIST/FOOD/bMoraleMod`
 

@@ -14,9 +14,10 @@ record: POCKET
 key: pIndex
 sources:
   - Pocket popup table data
+  - Game code (pocket-popup loader and popup definition)
   - Item metadata
 status: reviewed
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # PocketPopups - NIV pocket menus
@@ -49,7 +50,7 @@ updated: 2026-11-07
 
 | Table | File | Notes |
 |---|---|---|
-| `PocketPopups` | `Items/PocketPopups.xml` | v4 and v5 have the same field paths; values differ. |
+| `PocketPopups` | `Items/PocketPopups.xml` | v4 and v5 have the same field paths and, in the reference data, the same values. |
 
 ## Structure
 
@@ -77,104 +78,97 @@ POCKETPOPUPS
 
 ### `POCKETPOPUPS/POCKET/pIndex`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Pocket index that owns this popup definition.
-- **Only used with:** NIV.
-- **Values:** Pocket index; it should match a row in [Pockets](Pockets.md).
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Pocket type that owns this popup definition. It is the key of the runtime `LBEPocketPopup` map, which the interface looks up with the pocket type returned for the slot; that value is also the `pIndex` of the corresponding `Pockets` row.
+- **Values:** `0..255`; the loader casts the parsed value to `UINT8`. Shipped values are pocket-type IDs `1..22`.
+- **Default:** `0` in the first record; a later record keeps the previous pocket ID when the element is omitted, because the parser does not reset the current ID per `POCKET`.
+- **Source:** game code (pocket-popup loader; pocket-type lookup); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/pName`
 
 - **Type:** `String` (`String`)
-- **Description:** Display name of the pocket popup.
-- **Only used with:** NIV.
+- **Description:** Pocket name present in the data. The pocket-popup loader does not read it, so it has no effect on the popup; the pocket display name used by the inventory comes from `Pockets`.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (pocket-popup loader); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/popup/generator/id`
 
 - **Type:** `String` (`String`)
-- **Description:** Generator that builds the top-level popup contents.
-- **Only used with:** NIV.
-- **Values:** Generator key registered by the inventory popup system; examples are `addWeapons`, `addAmmo`, `addGrenades`, `addKits`, `addMisc`, `addFaceGear`, `addWeaponGroups`, `addRifleGrenades` and `addRocketAmmo`.
-- **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Generator that builds the top-level popup contents. The element may repeat, and each occurrence adds a generator to the popup. Unknown names silently map to no generator.
+- **Values:** A generator name accepted by the loader: `dummy`, `addArmor`, `addLBE`, `addWeapons`, `addWeaponGroups`, `addGrenades`, `addBombs`, `addFaceGear`, `addAmmo`, `addRifleGrenades`, `addRocketAmmo`, `addMisc` or `addKits`; any other value (including `none`) adds nothing.
+- **Default:** empty string when omitted; no generator is added.
+- **Source:** game code (pocket-popup loader and generator registry); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/popup/subMenu/name`
 
 - **Type:** `String` (`String`)
-- **Description:** Label of a submenu in the popup.
-- **Only used with:** NIV.
-- **Values:** Display label of a submenu inside the pocket popup.
+- **Description:** Label of a submenu in the popup. The loader stores it in a 128-wide-character buffer (longer text is truncated) and applies it to the submenu option.
+- **Values:** Free text; the label is displayed in the popup.
 - **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (pocket-popup loader; submenu renaming); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/popup/subMenu/generator/id`
 
 - **Type:** `String` (`String`)
-- **Description:** Generator that builds the submenu contents.
-- **Only used with:** NIV.
-- **Values:** Generator key for the submenu contents.
-- **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Generator that builds the submenu contents. It uses the same name registry as the top-level generator, and unknown names add nothing.
+- **Values:** Same generator names as `popup/generator/id`.
+- **Default:** empty string when omitted; no generator is added.
+- **Source:** game code (pocket-popup loader and generator registry); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/popup/subMenu/subMenu/name`
 
 - **Type:** `String` (`String`)
-- **Description:** Label of a nested submenu.
-- **Only used with:** NIV.
-- **Values:** Display label of a nested submenu.
+- **Description:** Label of a nested submenu. Submenus may nest; the loader tracks up to `POPUP_MAX_SUB_POPUPS` (`24`) levels.
+- **Values:** Free text; the label is displayed in the nested popup.
 - **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (pocket-popup loader; nested submenu renaming); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/popup/subMenu/subMenu/generator/id`
 
 - **Type:** `String` (`String`)
-- **Description:** Generator that builds the nested submenu contents.
-- **Only used with:** NIV.
-- **Values:** Generator key for the nested submenu contents.
-- **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Generator that builds the nested submenu contents. It uses the same name registry as the top-level generator, and unknown names add nothing.
+- **Values:** Same generator names as `popup/generator/id`.
+- **Default:** empty string when omitted; no generator is added.
+- **Source:** game code (pocket-popup loader and generator registry); pocket popup table data.
+- **Confidence:** `source`
 
 ### `POCKETPOPUPS/POCKET/generator/id`
 
 - **Type:** `String` (`String`)
-- **Description:** Generator used when the pocket has a direct generator instead of a `popup` wrapper.
-- **Only used with:** NIV.
-- **Values:** Generator key used when the popup is attached directly to the pocket without a `popup` wrapper.
-- **Default:** empty string when omitted.
-- **Source:** pocket popup table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** A generator placed directly under `POCKET` instead of inside a `popup` wrapper. The loader only reads `generator` under `popup` or `subMenu`, so this element is ignored and creates no popup; the shipped data nevertheless contains such elements (for example `pIndex` `13`, `14`, `20` and `21`).
+- **Values:** Any generator name; the loader does not consume it in this position.
+- **Default:** empty string when omitted; no effect.
+- **Source:** game code (pocket-popup loader); pocket popup table data.
+- **Confidence:** `source`
 
 ## Relations
 
-- `pIndex` refers to [Pockets](Pockets.md).
+- `pIndex` is the pocket type used as the `LBEPocketPopup` key and corresponds to a `Pockets` row `pIndex`.
 - Generator IDs are keys in the inventory popup system, not item IDs.
 
 ## Localization
 
-`pName` and submenu `name` elements are display labels; generator IDs are code keys and are not translated.
+Submenu `name` elements are display labels and are translated. Generator IDs are code keys and are not translated. `pName` is not read by the loader.
 
 ## Versions
 
-v4 and v5 use the same field paths; values may differ.
+v4 and v5 use the same field paths, and the reference files contain the same values.
 
 ## Sources
 
 - Pocket popup table data.
+- Game code (pocket-popup loader, generator registry and popup definition).
 - Item metadata.
 - Field types and limits: item metadata.
-- Descriptions use XML element names, lookup values and the table schema comments; entries marked `inferred` do not claim a code-verified formula.
+- Descriptions use the game code and XML element names; entries marked `inferred` do not claim a code-verified formula.
 
 ## Open questions
 
-The complete generator registry is not part of the table; the examples are the generator keys seen in the schema examples.
+The shipped data contains direct `POCKET/generator` elements that the loader ignores. The source does not document whether this is a data error or a feature that was never completed; the table cannot make those pockets use a generator without a `popup` wrapper.
