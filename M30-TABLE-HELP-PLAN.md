@@ -517,7 +517,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2–B6 одобрены; B7–B8 подготовлены (draft) и ждут ревью.
+B2–B7 одобрены; B8 подготовлен (draft) и ждёт ревью.
 
 ### B1. Items: ядро
 
@@ -623,14 +623,14 @@ chances 0–1000, enum-коды, matrix IDs) вынесены в `Open questions
 **`Traders.md` — один документ:** `Merchants` (20 полей) + 80 инвентарей дилеров
 (3 поля), таблица «файл → дилер», два раздела структуры. Backup-папка — только алиас.
 
-Статус B7 (2026-11-08, draft): созданы 14 документов, 117 таблиц, 238 уникальных путей
+Статус B7 (2026-11-08, reviewed): созданы 14 документов, 117 таблиц, 238 уникальных путей
 (1469 табличных путей). `ArmyComposition` — 7, `GarrisonGroups` — 2, `PatrolGroups` — 6,
 `UniformColors` — 12; `SoldierProfiles` объединяет 6 файлов по 8 полей; пять drop-документов
 по 4 поля; `GunChoices` — 13 таблиц (7 живых + 6 backup-алиасов), `ItemChoices` — 7 таблиц,
 `IMPItemChoices` — 54 поля. `Traders` — 81 таблица: `Merchants` (20 полей) + 80 инвентарей
 (3 поля), с таблицей «файл → дилер». `help-check -Write` проходит (2873/2985 путей).
-Документы в `draft`; backup-папка помечена как алиас, а точные merchant flags/coolness
-formula — в `Open questions`.
+Одобрены пользователем 2026-11-08, документы переведены в `reviewed`; backup-папка помечена
+как алиас, а точные merchant flags/coolness formula — в `Open questions`.
 
 ### B8. Laptop, UI и прочее
 
@@ -646,7 +646,7 @@ formula — в `Open questions`.
 `EnemyNames`/`EnemyRank` — по 4, `RandomTeams` — 1, `Sounds`/`BurstSounds` — один общий
 документ по 1 полю, `HiddenNames` — 3, `CivGroupNames` — 6, `SquadNames` — 2,
 `SpreadPatterns` — 7, `Vehicles` — 23. `help-check -Write` проходит (2985/2985 путей,
-239/239 таблиц). Документы в `draft`; нужно ревью B7–B8.
+239/239 таблиц). Документы в `draft`; нужно ревью B8.
 
 ### B9. Сквозная проверка (не блок документов)
 

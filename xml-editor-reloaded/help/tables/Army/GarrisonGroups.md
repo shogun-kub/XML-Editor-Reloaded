@@ -15,7 +15,7 @@ key: Sector
 sources:
   - Table data
   - Field names, XML comments and observed values
-status: draft
+status: reviewed
 updated: 2026-11-08
 ---
 
