@@ -62,39 +62,39 @@ CLOTHESLIST
 
 ### `CLOTHESLIST/CLOTHES/uiIndex`
 
-- **Type:** `Integer` (`UINT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the clothing row and identity of the XML record.
-- **Values:** Non-negative integer; unique within the file.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** clothes table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Clothes.cpp`); table data.
+- **Confidence:** `source`
 
 ### `CLOTHESLIST/CLOTHES/szName`
 
 - **Type:** `String` (`String`)
-- **Description:** Display name of the clothing variant.
-- **Values:** Free text.
+- **Description:** Clothing name stored in the table, but the loader explicitly ignores this element; it is informational only.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** clothes table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Clothes.cpp`); table data.
+- **Confidence:** `source`
 
 ### `CLOTHESLIST/CLOTHES/Vest`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`)
 - **Description:** Vest palette key used by the clothing renderer. An empty element means no vest override.
-- **Values:** Vest palette key, for example `YELLOWVEST`. An empty element means no vest override.
+- **Values:** Palette key, for example `YELLOWVEST` / `GREENPANTS`; empty means no override for that layer.
 - **Default:** empty element means no override for that clothing layer.
-- **Source:** clothes table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Clothes.cpp`); table data.
+- **Confidence:** `source`
 
 ### `CLOTHESLIST/CLOTHES/Pants`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`)
 - **Description:** Pants palette key used by the clothing renderer. An empty element means no pants override.
-- **Values:** Pants palette key, for example `GREENPANTS`. An empty element means no pants override.
+- **Values:** Palette key, for example `YELLOWVEST` / `GREENPANTS`; empty means no override for that layer.
 - **Default:** empty element means no override for that clothing layer.
-- **Source:** clothes table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Clothes.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
