@@ -121,7 +121,10 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 поля меню только при `uiIndex = 0`, `Description` не читается; `ActionItems` — `ActionID`
 `UINT8`, `Blow_up`/`BombItem` только при `ActionID = 3`; `RandomTeams.id` — `INT8`-профиль
 наёмника, `HiddenNames.description` не читается, `CivGroupNames.Loyalty = 0` отключает
-штраф, `Enabled` включает показ имени группы. В `GLOSSARY.md`
+штраф, `Enabled` включает показ имени группы; `SquadNames.uiIndex` игнорируется (порядок =
+слот, опция `USE_XML_SQUADNAMES`); `Sounds` — ID по позиции, `CHAR8` до 255; `SpreadPatterns.method`
+case-sensitive (`RECTANGLE`/`DIAMOND`/`ELLIPSE`), `Rectangle`/`Ellipse` не совпадают, `DESC`
+не читается. В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`, `action item`. Остались непроверенные поля
 B1/B3/B4/B5 и часть B7/B8.
 **Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.
