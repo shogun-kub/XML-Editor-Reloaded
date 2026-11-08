@@ -64,48 +64,50 @@ ACTION_ITEM_LIST
 
 ### `ACTION_ITEM_LIST/ACTION_ITEM/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the action item. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (action-item loader); table data.
+- **Confidence:** `source`
 
 ### `ACTION_ITEM_LIST/ACTION_ITEM/Name`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the action, such as `Klaxon Mine` or `Open Door`.
-- **Values:** Free text or a symbolic code.
+- **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (action-item loader); table data.
+- **Confidence:** `source`
 
 ### `ACTION_ITEM_LIST/ACTION_ITEM/ActionID`
 
-- **Type:** `Integer`
-- **Description:** Action-type code executed by this entry. It is an enum code.
-- **Values:** Integer; see the description for its scale.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Action-type code executed by this entry. It is an enum code from `Action Items.h` (`ACTION_ITEM_*`).
+- **Values:** `1..255`; `1` = open door, `2` = close door, `3` = blow up (`ACTION_ITEM_BLOW_UP`), and the remaining values select the other action types.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`Action Items.h`, action-item loader); table data.
+- **Confidence:** `source`
 
 ### `ACTION_ITEM_LIST/ACTION_ITEM/Blow_up`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`UINT8`)
+- **Only used with:** `ActionID = 3` (`ACTION_ITEM_BLOW_UP`); otherwise the loader stores `0`.
 - **Description:** If set, the action is an explosion/demolition action. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (action-item loader); table data.
+- **Confidence:** `source`
 
 ### `ACTION_ITEM_LIST/ACTION_ITEM/BombItem`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
+- **Only used with:** `ActionID = 3` (`ACTION_ITEM_BLOW_UP`); otherwise the loader stores `0`.
 - **Description:** Item ID used as the bomb/explosive for this action. It is an item reference.
-- **Values:** Integer; see the description for its scale.
+- **Values:** Item ID; the loader stores this field as `UINT16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (action-item loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
