@@ -742,8 +742,13 @@ backing-типы `MercProfiles` (59 полей), `bHated` (`UINT8`), `bHatedTime
 исправлены `UINT16`/`UINT8`/`INT8`; в `Disease` исправлены `uiIndex`, stat/effect-типы и
 `moralemodifier`. В B6 у `FacilityTypes` подтверждена семантика `ubChance` (делитель INI,
 обычно `1000`), но загрузчик кастует значение в `UINT8` — значения выше `255` обрезаются;
-`usChance` в текущем загрузчике вообще не читается. Остались непроверенные поля
-B1/B3/B4/B5/B6 и блоки B7–B8; `help-check -Write` проходит после каждого коммита.
+`usChance` в текущем загрузчике вообще не читается. В B7 у `ArmyComposition` подтверждены
+`INT8`-проценты с clamp `0..100` и `INT8`-популяции с clamp в `1`; `GarrisonGroups.Composition`
+оказался числовым `UINT8`, а не строкой; `PatrolGroups.Size` — базовый размер с разбросом ±1;
+у `Traders` расшифрованы `uiFlags`, clamp `min/maxCoolness` `1..10`, `addToCoolness` `0..10`
+и формула `coolnessProgressRate`. В B8 у `CampaignStatsEvents` уточнены `UINT16`/`UINT8`;
+`EnemyRank` получил `UINT16`/`BOOLEAN`/`CHAR16` и диапазон `ExpLevel` `1..9`. Остались
+непроверенные поля B1/B3/B4/B5/B7/B8; `help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 
