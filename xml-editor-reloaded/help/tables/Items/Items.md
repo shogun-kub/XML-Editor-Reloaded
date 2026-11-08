@@ -825,8 +825,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/ubWeight`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item weight in the game's weight units; used by carry strength and backpack capacity.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Item weight in the game's weight units; used by carry strength and backpack capacity. Two units are approximately one kilogram (roughly one unit per pound).
+- **Numeric semantics:** Higher values mean a heavier item; negative values are not meaningful.
 - **Values:** `0..32000`; code validation limit (integer).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -844,12 +844,12 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/ItemSize`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Inventory size class (`0..99`). It drives pocket packing and item-size limits. In NIV, an item whose size equals `OLD_INVENTORY_ITEM_NUMBER` (default `99`) is treated as an OIV-only item and is not available.
 - **Values:** `0..99`; `99` means the item does not fit a normal pocket.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/ItemSizeBonus`
 
@@ -1067,12 +1067,12 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usOverheatingCooldownFactor`
 
 - **Type:** `Decimal`
-- **Description:** Overheating cooldown factor.
-- **Numeric semantics:** `100` is neutral; higher values cool the weapon faster, lower values cool it more slowly, and negative values are not meaningful.
-- **Values:** `100` = neutral; higher values cool faster.
-- **Default:** `100`.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Description:** Temperature units removed per cooldown tick (roughly every turn or five seconds), before attachment and global modifiers.
+- **Numeric semantics:** Higher values cool the weapon faster; `0` means no cooling, and negative values are not meaningful.
+- **Values:** Decimal amount; `100` is the common value in shipped data.
+- **Default:** `0` when omitted; the loader starts from zero. `100` is a data value, not a code default.
+- **Source:** game code (cooldown calculation); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/overheatTemperatureModificator`
 
@@ -1536,13 +1536,13 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/usSpotting`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Spotting modifier.
-- **Numeric semantics:** Positive values improve spotting, negative values reduce it.
-- **Values:** `-100..100`; code validation limit (integer).
+- **Numeric semantics:** Higher values improve spotting; `0` is neutral. The loader clamps the stored value to `0..100`, so negative input becomes `0` rather than a penalty.
+- **Values:** `0..100`; the loader clamps to this range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/sBackpackWeightModifier`
 
@@ -1678,11 +1678,11 @@ Fields marked `source` are verified against the table and lookup data.
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Portion size for food or drink items.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** Integer value; no narrower validation limit is recorded.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values mean a larger portion; negative values are not meaningful.
+- **Values:** Integer value; the loader stores it in one byte.
+- **Default:** `100` when the element is omitted; the loader sets this before parsing.
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/usAdministrationModifier`
 
