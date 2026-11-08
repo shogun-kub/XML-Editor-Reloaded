@@ -703,31 +703,31 @@ INVENTORYLIST
 
 ### `INVENTORYLIST/INVENTORY/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the inventory row. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Confidence:** `source`
 
 ### `INVENTORYLIST/INVENTORY/sItemIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Item ID stocked by the dealer. It is an item reference; `0` means no item.
-- **Values:** Integer; see the description for its scale.
+- **Values:** Item ID; the loader stores this field as `INT16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Confidence:** `source`
 
 ### `INVENTORYLIST/INVENTORY/ubOptimalNumber`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Target stock quantity for the item.
 - **Numeric semantics:** higher = more stock; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

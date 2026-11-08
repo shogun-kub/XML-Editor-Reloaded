@@ -90,12 +90,12 @@ PROFILES
 
 ### `PROFILES/PROFILE/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Profile index within the file. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/szName`
 
@@ -108,57 +108,57 @@ PROFILES
 
 ### `PROFILES/PROFILE/uiBodyType`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Body-type graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiHair`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Hair graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiSkin`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Skin graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiTrait1`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** First skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiTrait2`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Second skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiTrait3`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Third skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
