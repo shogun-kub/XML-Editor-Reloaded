@@ -720,6 +720,15 @@ B9 не добавляет табличных документов. Он про�
 После B10 повторно выполнить B9-гейты (ссылки, якоря, оглавления, покрытие,
 `INDEX.md`/`COVERAGE.md`) и финальный коммит.
 
+Статус B10 (2026-11-08, in progress): B0 уже имел `source`-достоверность и правок не
+потребовал. В B1b проверены `Weapons`, `Explosives` и `ExplosionData`: исправлены знак
+`ubBurstPenalty`/`AutoPenalty`, смысл `ubAimLevels`, знаки `bRecoilX/Y`, скорость
+`ubShotsPer4Turns`, природа `ubVolatility`, диапазон `ubMagSize`, множитель
+`bIndoorModifier` и кадр `DamageKeyFrame`. В B1a проверены ключевые поля `Items`:
+`ItemSize`, `usSpotting` (загрузчик зажимает в `0..100`), `usPortionSize` (дефолт `100`),
+`usOverheatingCooldownFactor` (это количество градусов за тик, а не множитель) и единицы
+`ubWeight`. Остальные поля B1 и блоки B2–B8 ещё не пройдены.
+
 ## 9. Проверки и гейты
 
 ### 9.1. `help-inventory.ps1`

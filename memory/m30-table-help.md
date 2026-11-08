@@ -93,5 +93,12 @@ merchant flags/coolness formula вынесены в `Open questions`.
 документах (было 123/40); устаревшие «future» ссылки заменены; 12 самодостаточных документов
 оставлены без cross-links; `calibre`/`defence` унифицированы. Карта — `help/REFERENCE-MAP.md`,
 генератор — `util-scripts/help-crossrefs.ps1` (`-Write`/`-Check`). `help-check -Release`
-проходит; v4/v5 покрытие сверено. **Дальше.** B10 — сверка неподтверждённых описаний по коду
-той же нарезкой B0–B8; после B10 — повторный B9-гейт и финальный коммит.
+проходит; v4/v5 покрытие сверено.
+
+**B10 (2026-11-08, in progress).** B0 правок не потребовал. В B1b проверены `Weapons`,
+`Explosives`, `ExplosionData`: исправлены знаки burst/auto penalty, смысл `ubAimLevels`, знаки
+recoil, скорость `ubShotsPer4Turns`, `ubVolatility`, диапазон `ubMagSize`, `bIndoorModifier` и
+`DamageKeyFrame`. В B1a исправлены `ItemSize`, `usSpotting` (clamp `0..100`), `usPortionSize`
+(дефолт `100`), `usOverheatingCooldownFactor` (градусы за тик) и единицы `ubWeight`. Остальные
+поля B1 и блоки B2–B8 ещё не пройдены. **Дальше.** Продолжить B1 → B8; после B10 — повторный
+B9-гейт и финальный коммит.
