@@ -111,8 +111,11 @@ stat/effect-типы и `moralemodifier`. B6: у `FacilityTypes` подтвер�
 `GarrisonGroups.Composition` — `UINT8`; `PatrolGroups.Size` — база ±1; `Traders` — флаги,
 clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors` — шесть обязательных
 блоков и закрытый case-sensitive список палитр; пять enemy-drop таблиц — `UINT32`/`UINT8`,
-`EnemyMiscDrops.usItemClass` — bitmask `ItemClass`. B8: `CampaignStatsEvents`
-`UINT16`/`UINT8`; `EnemyRank` `UINT16`/`BOOLEAN`/`CHAR16`, `ExpLevel` `1..9`. В `GLOSSARY.md`
+`EnemyMiscDrops.usItemClass` — bitmask `ItemClass`; choice-таблицы — `bItemNo*` `INT16`,
+`ubChoices`/`ubNumItems` `UINT8`, `uiIndex` `UINT32`; `SoldierProfiles` `UINT16`/`UINT8`;
+`Traders` inventory `UINT32`/`INT16`/`UINT8`. B8: `CampaignStatsEvents` `UINT16`/`UINT8`;
+`EnemyRank` `UINT16`/`BOOLEAN`/`CHAR16`, `ExpLevel` `1..9`; `EnemyNames.Sector` — `A1..P16`
+с проверкой диапазона. В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`. Остались непроверенные поля
-B1/B3/B4/B5/B7/B8.
+B1/B3/B4/B5 и часть B7/B8.
 **Дальше.** Продолжить B1/B3/B4/B5/B7/B8; после B10 — повторный B9-гейт и финальный коммит.

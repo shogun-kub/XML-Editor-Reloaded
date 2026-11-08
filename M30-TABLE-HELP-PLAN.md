@@ -748,10 +748,13 @@ backing-типы `MercProfiles` (59 полей), `bHated` (`UINT8`), `bHatedTime
 у `Traders` расшифрованы `uiFlags`, clamp `min/maxCoolness` `1..10`, `addToCoolness` `0..10`
 и формула `coolnessProgressRate`; `UniformColors` — обязательные шесть блоков и закрытый
 case-sensitive список палитр; у пяти enemy-drop таблиц уточнены `UINT32`/`UINT8`, а
-`EnemyMiscDrops.usItemClass` описан как bitmask `ItemClass`. В B8 у
-`CampaignStatsEvents` уточнены `UINT16`/`UINT8`;
-`EnemyRank` получил `UINT16`/`BOOLEAN`/`CHAR16` и диапазон `ExpLevel` `1..9`. Остались
-непроверенные поля B1/B3/B4/B5/B7/B8; `help-check -Write` проходит после каждого коммита.
+`EnemyMiscDrops.usItemClass` описан как bitmask `ItemClass`; в трёх choice-таблицах
+`bItemNo*` оказались `INT16`, `ubChoices`/`ubNumItems` — `UINT8`, `uiIndex` — `UINT32`;
+`SoldierProfiles` получил `UINT16`/`UINT8`; в `Traders` уточнены типы inventory-полей.
+В B8 у `CampaignStatsEvents` уточнены `UINT16`/`UINT8`; `EnemyRank` получил
+`UINT16`/`BOOLEAN`/`CHAR16` и диапазон `ExpLevel` `1..9`; `EnemyNames.Sector` описан как
+`A1..P16` с проверкой диапазона загрузчиком. Остались непроверенные поля B1/B3/B4/B5 и
+часть B7/B8; `help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 
