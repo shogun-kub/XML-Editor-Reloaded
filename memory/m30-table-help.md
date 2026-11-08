@@ -104,6 +104,9 @@ skill-check типы и знак, AP-cost. B3: `Food` типы/`bMoraleMod` (н�
 `UINT8` и перезапись, `Drugs` chance (`0`/`100`/omitted = всегда). B4: 59 backing-типов
 `MercProfiles`, `bHated`/`bHatedTime`/`bTownAttachment`, цены `MercStartingGear`,
 `MercOpinions` как repeated `AnOpinion` с атрибутами. B5: 92 value-типа `Backgrounds` → `INT16`,
-ключевые `DifficultySettings` → `UINT16`/`UINT8`/`INT8`. В `GLOSSARY.md` добавлены `recoil`,
-`aim level`, `burst penalty`. Остались непроверенные поля B1/B3/B4/B5 и блоки B6–B8.
+ключевые `DifficultySettings` → `UINT16`/`UINT8`/`INT8`; в `Disease` исправлены `uiIndex`,
+stat/effect-типы и `moralemodifier`. B6: у `FacilityTypes` подтверждён делитель `ubChance`
+(INI, обычно `1000`), но загрузчик кастует в `UINT8` (значения >255 обрезаются), а `usChance`
+не читается. В `GLOSSARY.md` добавлены `recoil`, `aim level`, `burst penalty`. Остались
+непроверенные поля B1/B3/B4/B5/B6 и блоки B7–B8.
 **Дальше.** Продолжить B1/B3/B4/B5 → B6–B8; после B10 — повторный B9-гейт и финальный коммит.

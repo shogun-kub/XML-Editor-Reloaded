@@ -739,8 +739,11 @@ backing-типы `MercProfiles` (59 полей), `bHated` (`UINT8`), `bHatedTime
 `bTownAttachment` (процент), цены `MercStartingGear`, а `MercOpinions` переописан как
 повторяющийся `AnOpinion` с атрибутами `id`/`modifier`. В B5 `Backgrounds` переведён на
 `INT16` для 92 value-полей и `UINT16` для `uiIndex`; у ключевых `DifficultySettings`
-исправлены `UINT16`/`UINT8`/`INT8`. Остались непроверенные поля B1/B3/B4/B5 и блоки B6–B8;
-`help-check -Write` проходит после каждого коммита.
+исправлены `UINT16`/`UINT8`/`INT8`; в `Disease` исправлены `uiIndex`, stat/effect-типы и
+`moralemodifier`. В B6 у `FacilityTypes` подтверждена семантика `ubChance` (делитель INI,
+обычно `1000`), но загрузчик кастует значение в `UINT8` — значения выше `255` обрезаются;
+`usChance` в текущем загрузчике вообще не читается. Остались непроверенные поля
+B1/B3/B4/B5/B6 и блоки B7–B8; `help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 
