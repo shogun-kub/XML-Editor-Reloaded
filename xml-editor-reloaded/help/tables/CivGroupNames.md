@@ -66,57 +66,57 @@ CIV_GROUP_NAMES
 
 ### `CIV_GROUP_NAMES/NAME/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the civilian group. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_CivGroupNames.cpp`); table data.
+- **Confidence:** `source`
 
 ### `CIV_GROUP_NAMES/NAME/Enabled`
 
-- **Type:** `Boolean`
-- **Description:** If set, the civilian group is enabled. It is a switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, civilians of this group display `szGroup` as their name in tactical view; `0` keeps the default civilian label. The effect is visible only when the `INDIVIDUAL_CIVILIAN_NAMES` game setting is enabled.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_CivGroupNames.cpp`, `Interface.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `CIV_GROUP_NAMES/NAME/szGroup`
 
-- **Type:** `String`
-- **Description:** Display name of the civilian group.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR16`)
+- **Description:** Display name of the civilian group used when `Enabled` is set.
+- **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_CivGroupNames.cpp`); table data.
+- **Confidence:** `source`
 
 ### `CIV_GROUP_NAMES/NAME/AddToBattle`
 
-- **Type:** `Boolean`
-- **Description:** If set, members of this group can join a battle. It is a switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, all members of this group are counted when a battle with that group occurs.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_CivGroupNames.cpp`, `Overhead.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `CIV_GROUP_NAMES/NAME/Loyalty`
 
-- **Type:** `Boolean`
-- **Description:** If set, the group is treated as loyal to the player. It is a switch.
-- **Values:** `0` or `1`.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, killing a member of this group can cause a town-loyalty/morale penalty; `0` suppresses that penalty for the group.
+- **Values:** `0` or `1`; `0` = no loyalty/morale penalty for killing group members.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`Strategic Town Loyalty.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `CIV_GROUP_NAMES/NAME/fCanBeCaptured`
 
-- **Type:** `Boolean`
-- **Description:** If set, members of this group can be captured. It is a switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, hostile members of this group can be captured and interrogated.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_CivGroupNames.cpp`, `Soldier Control.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ## Relations
 

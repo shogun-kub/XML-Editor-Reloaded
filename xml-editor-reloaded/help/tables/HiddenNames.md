@@ -60,30 +60,30 @@ HIDDENNAMES
 
 ### `HIDDENNAMES/NAME/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the hidden-name entry. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_HiddenNames.cpp`); table data.
+- **Confidence:** `source`
 
 ### `HIDDENNAMES/NAME/description`
 
 - **Type:** `String`
-- **Description:** Display description/name for the hidden entry.
-- **Values:** Free text or a symbolic code.
+- **Description:** Text label stored in the table, but it is not read by the current loader; only `uiIndex` and `Hidden` are parsed.
+- **Values:** Free text; ignored at load time.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_HiddenNames.cpp`); table data.
+- **Confidence:** `source`
 
 ### `HIDDENNAMES/NAME/Hidden`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the name is hidden from normal display. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_HiddenNames.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

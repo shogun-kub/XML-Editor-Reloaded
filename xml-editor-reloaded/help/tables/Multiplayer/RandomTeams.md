@@ -56,12 +56,12 @@ mp_teams
 
 ### `mp_teams/team/id`
 
-- **Type:** `Integer`
-- **Description:** Team ID in the random-team list. It is an identifier; the element may repeat for several teams.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Mercenary profile index of one member of the enclosing `<team>`. Each `<team>` may contain several `<id>` elements, and the optional `name` attribute on `<team>` is not used by the game.
+- **Values:** `-128..127`; the XML comment states that the value must match the selected mercenary's index in ProEdit.
+- **Default:** Absent; a team with no `<id>` elements has no member entry.
+- **Source:** game code (`MPXmlTeams.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ## Relations
 
