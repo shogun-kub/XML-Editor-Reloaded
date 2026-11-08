@@ -58,32 +58,35 @@ EMAIL_MERC_AVAILABLE
 
 ## Fields
 
+
 ### `EMAIL_MERC_AVAILABLE/EMAIL/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the e-mail template. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
 
 ### `EMAIL_MERC_AVAILABLE/EMAIL/Subject`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Subject line of the generated e-mail, used as literal text. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
 
 ### `EMAIL_MERC_AVAILABLE/EMAIL/Message`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Body of the generated e-mail. `±` marks a line break in the stored message. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

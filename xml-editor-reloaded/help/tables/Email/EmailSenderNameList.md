@@ -56,23 +56,25 @@ SENDER_LIST
 
 ## Fields
 
+
 ### `SENDER_LIST/NAME/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the sender-name entry. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
 
 ### `SENDER_LIST/NAME/Name`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name used as an e-mail sender, used verbatim. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
