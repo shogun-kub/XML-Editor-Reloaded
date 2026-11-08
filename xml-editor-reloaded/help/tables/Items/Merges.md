@@ -69,56 +69,56 @@ MERGELIST
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of the first input item in the merge.
-- **Values:** Item ID of the first input.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (merge loader); table data.
+- **Confidence:** `source`
 
 ### `MERGELIST/MERGE/secondItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID of the second input item in the merge.
-- **Values:** Item ID of the second input.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (merge loader); table data.
+- **Confidence:** `source`
 
 ### `MERGELIST/MERGE/firstResultingItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID produced in the first result slot.
-- **Values:** Item ID of the first result.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (merge loader); table data.
+- **Confidence:** `source`
 
 ### `MERGELIST/MERGE/secondResultingItemIndex`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Item ID produced in the second result slot; `0` means no second result.
-- **Values:** Item ID of the second result; `0` means the merge produces only one item.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (merge loader); table data.
+- **Confidence:** `source`
 
 ### `MERGELIST/MERGE/mergeType`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Merge/use type that selects the action, skill check and result handling.
-- **Values:** IDs from `Lookup.MergeType`: `0` Destruction, `1` Combine, `2` Treat Armour, `3` Explosive (Hard), `4` Easy, `5` Electronic, `6` Use Item, `7` Use Item (Hard), `8` Swap Barrel, `9` Explosive (Easy), `10` Mechanical (Easy), `11` Mechanical (Hard), `12` Tripwire Roll, `13` Use (Drain Status), `14` Cannibalize, `15` Lose 10 percent.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
+- **Source:** game code (merge loader); table data.
 - **Confidence:** `source`
 
 ### `MERGELIST/MERGE/APCost`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** AP cost of the merge.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** AP cost; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Action-point cost; the loader rescales it with `DynamicAdjustAPConstants`, so the stored value differs when `AP_MAXIMUM` is not `100`.
+- **Values:** `0..65535` after rescaling; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merge table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (merge loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
