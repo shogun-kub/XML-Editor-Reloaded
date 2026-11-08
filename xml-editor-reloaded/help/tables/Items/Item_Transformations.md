@@ -14,9 +14,9 @@ record: TRANSFORM
 key: usItem
 sources:
   - Item transformation table data
-  - Item metadata
+  - Game code (transformation loader, transformation record and item transformation logic)
 status: reviewed
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # Item_Transformations - item transformations
@@ -50,7 +50,7 @@ updated: 2026-11-07
 
 ## Purpose
 
-`Item_Transformations.xml` defines a transformation menu for an item: AP and BP costs, up to ten result items, and the menu/tooltip text shown to the player.
+`Item_Transformations.xml` defines a transformation menu for an item: AP and breath-point (BP) costs, up to ten result items, and the menu/tooltip text shown to the player.
 
 ## Tables
 
@@ -85,143 +85,146 @@ TRANSFORMATIONS_LIST
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID of the item being transformed.
-- **Values:** Item ID of the item being transformed.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID of the item being transformed. The record itself is stored at `Transform[N]` where `N` is the row's document position, not at `usItem`, so this field only links the row to its item. Several rows may name the same item, and each matching row becomes one entry in the menu. Rows past `MAXITEMS` are dropped.
+- **Numeric semantics:** Parsed through an `INT16`, so a literal above `32767` arrives negative and is then stored unchanged in a `UINT16`. A missing element leaves the pre-set `-1` (`65535`), which is the sentinel that stops every menu and lookup scan — a row without `usItem` therefore hides the rest of the table.
+- **Values:** Item ID; `0` and negative values also trip a debug assertion (`Entry #N missing proper <usItem> tag`).
+- **Default:** `65535` (`0xFFFF`) when omitted, which is not the same as `0`.
+- **Source:** game code (the transformation loader; the menu and lookup stop at `65535`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult1`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 1. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Item ID of the first result; `0` leaves the slot empty.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in the first result slot. Slots are filled in document order: the loader accepts any element name containing `usResult` and writes each value into the next slot, so the trailing digit is ignored and a `usResult2` placed before `usResult1` would land in slot 1. `0` leaves the slot empty; the same item may appear in several slots.
+- **Numeric semantics:** Only slots above `0` produce items, and a positive value that names a random-item entry is resolved to a concrete item first.
+- **Values:** Item ID; `0` leaves the slot empty. The game reads exactly 10 slots (`MAX_NUM_TRANSFORMATION_RESULTS`), while the loader does not bound its counter, so an eleventh `usResult*` element would be written past the array.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`; 10 result slots).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult2`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 2. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 2. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult3`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 3. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 3. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult4`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 4. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 4. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult5`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 5. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 5. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult6`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 6. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 6. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult7`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 7. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 7. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult8`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 8. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 8. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult9`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 9. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 9. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usResult10`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID produced in result slot 10. Zero leaves the slot empty; the same item may appear in several slots.
-- **Values:** Integer; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID produced in result slot 10, the last of the ten slots. Like every `usResult*` element it is placed by document order, not by its digit. Zero leaves the slot empty; the same item may appear in several slots.
+- **Values:** Item ID; `0` leaves the slot empty.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; `TransformObject`; 10 result slots).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/usAPCost`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** AP cost of the transformation.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** AP cost; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Action-point cost of the transformation. The loader rescales the value with `DynamicAdjustAPConstants`, i.e. `value * AP_MAXIMUM / 100` rounded, so the cost follows the AP system in the AP/BP constants file; `AP_MAXIMUM` defaults to `100`, which leaves the value unchanged.
+- **Numeric semantics:** AP. It is charged only in turn-based combat — in real time the AP part is zeroed — and the menu appends `(N AP)` to the row when the cost is above `0` and combat is turn-based.
+- **Values:** AP; `0` makes the transformation free in action points.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; the AP-constant adjustment; the point checks; the menu).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/iBPCost`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Blueprint/creation-point cost of the transformation.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Blueprint/creation-point cost; no narrower range is declared by the field metadata.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`) — it is not a `UINT16`.
+- **Description:** Breath-point cost of the transformation, not a blueprint or creation-point cost. A positive value is breath lost and a negative value is breath gained.
+- **Numeric semantics:** BP (breath). `EnoughPoints` checks only the AP part, so the breath change is applied by `DeductPoints` without a sufficiency test; robots and vehicles skip it.
+- **Values:** Breath points; positive = cost, negative = gain.
+- **Default:** `0` when omitted.
+- **Source:** game code (the transformation loader; the breath-point deduction, whose comment reads “iBPCost > 0 - breath loss, iBPCost < 0 - breath gain”).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/szMenuRowText`
 
-- **Type:** `String` (`String`)
-- **Description:** Text shown in the transformation menu row. It is a short action label, not a full sentence.
-- **Values:** Free text.
+- **Type:** `String` — stored as a 50-character wide string.
+- **Description:** Label of the transformation menu row. The loader converts the UTF-8 text into a fixed `CHAR16[50]` buffer and forces the last position to `'\0'`, so about 49 characters fit and longer text cannot be stored.
+- **Values:** Free text; a short action label rather than a full sentence.
 - **Default:** empty string when omitted.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (the transformation loader; the transformation record).
+- **Confidence:** `source`
 
 ### `TRANSFORMATIONS_LIST/TRANSFORM/szTooltipText`
 
-- **Type:** `String` (`String`)
-- **Description:** Tooltip shown for the transformation menu row.
+- **Type:** `String` — stored as a 300-character wide string.
+- **Description:** Tooltip shown for the transformation menu row, read into a fixed `CHAR16[300]` buffer.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** item transformation table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (the transformation loader; the transformation record).
+- **Confidence:** `source`
 
 ## Relations
 
 - `usItem` and `usResult1..10` point to [Items](Items.md).
+- A row is found by scanning the loaded `Transform` array for a matching `usItem`; the first row whose `usItem` is `65535` stops the scan, and every matching row becomes an entry in the menu.
 - The menu and tooltip strings are presentation data; the action itself is defined by the costs and results.
 
 ## Localization
@@ -235,10 +238,11 @@ v4 and v5 use the same field paths; values may differ.
 ## Sources
 
 - Item transformation table data.
-- Item metadata.
-- Field types and limits: item metadata.
-- Descriptions use XML element names, lookup values and legacy field labels; entries marked `inferred` do not claim a code-verified formula.
+- Game code: the transformation loader, the transformation record structure, the item transformation routine, the transformation menu and lookup, and the AP/BP handling.
+- Field types are the storage types of the game structure; the editor's generic `Integer` kind does not distinguish the unsigned widths used above.
 
 ## Open questions
 
-The unit of `iBPCost` and the exact menu ordering are not stated by the table.
+- No open question remains for `iBPCost`: it is the breath-point cost, positive for breath lost and negative for breath gained.
+- No open question remains for the menu order: entries follow the document order of the `<TRANSFORM>` rows, and each row matching the item ID becomes one entry.
+- Not established here: whether any tool validates `usAPCost` against the `AP_MAXIMUM` rescale; the table always stores the pre-scale value.

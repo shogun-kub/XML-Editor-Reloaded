@@ -16,7 +16,7 @@ sources:
   - Structure deconstruction table data
   - Item metadata
 status: reviewed
-updated: 2026-11-07
+updated: 2026-11-08
 ---
 
 # StructureDeconstruct - deconstructable structures
@@ -64,84 +64,88 @@ STRUCTURESLIST
     └── allowedtile
 ```
 
-`STRUCTURESLIST` has no stable per-row key; a structure row is identified by its tile-set
-fields and document order.
+`STRUCTURESLIST` has no key element. The loader stores rows in document order; a row is
+selected by the held deconstruction item (`usDeconstructItem`) and then checked against the
+tileset name and allowed structure number, or, for automatic fortification removal, by the
+tileset name with the structure number deciding whether removal is allowed.
 
 ## Fields
 
 ### `STRUCTURESLIST/STRUCTURE/usDeconstructItem`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID used to deconstruct the structure.
-- **Values:** Item ID used to deconstruct the structure.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID required to deconstruct the structure. A value of `0` matches no real item, so it disables item-based deconstruction for the row.
+- **Values:** Item ID; `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `0` when omitted; an empty element is parsed as `0`.
+- **Source:** game code (structure-deconstruct loader; deconstruction item matching); structure deconstruction table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/usItemToCreate`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Item ID created when the structure is deconstructed.
-- **Values:** Item ID created by deconstruction.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Item ID created when the structure is deconstructed. The item is created only when both this field and `usCreatedItemStatus` are non-zero.
+- **Values:** Item ID; `0..65535`; the loader stores this field as `UINT16`.
+- **Default:** `0` when omitted (no item is created); an empty element is parsed as `0`.
+- **Source:** game code (structure-deconstruct loader; deconstruction result); structure deconstruction table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/usCreatedItemStatus`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Status of the created item. It uses the same status units as item condition.
-- **Numeric semantics:** Higher values mean better reliability/condition; negative values are outside the normal range.
-- **Values:** Status of the created item, in the same status units as item condition.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Condition given to the created item, in item-status (condition) percent. A value of `0` means no item is created; a non-zero value is passed to item creation as the starting condition.
+- **Numeric semantics:** Percentage points of item condition on the `objectStatus` scale. The item-creation call guards against zero with `max(1, status)`, but the stored value is an unsigned byte, so a non-zero value is already at least `1`.
+- **Values:** `0..255`; the loader stores this field as `UINT8`, and the item code treats it as a condition percentage (`0..100` is the normal range).
+- **Default:** `0` when omitted (no item is created); an empty element is parsed as `0`.
+- **Source:** game code (structure-deconstruct loader; item creation on deconstruction); structure deconstruction table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetDisplayName`
 
-- **Type:** `String` (`String`)
-- **Description:** Display name of the structure tileset.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** structure deconstruction table data; field metadata.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Name of the structure intended for the player (the struct comment calls it the structure name, because tileset names are obscure). The loader stores it, but no gameplay or UI consumer of this field was found in this source tree.
+- **Values:** Free text; stored in a 20-byte buffer without appending a terminator, so longer text is truncated and may fill the buffer.
+- **Default:** Empty string when omitted.
+- **Source:** structure deconstruction table data; `STRUCTURE_DECONSTRUCT` comment.
 - **Confidence:** `inferred`
 
 ### `STRUCTURESLIST/STRUCTURE/szTileSetName`
 
-- **Type:** `String` (`String`)
-- **Description:** STI tileset file used to draw the structure.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Type:** `String` (`CHAR8`)
+- **Description:** Tileset file name of the structure. It is matched case-insensitively against the tileset's tile-surface file names, comparing the first 11 characters.
+- **Values:** Free text such as `sandbag.sti`; stored in a 20-byte buffer without appending a terminator, so longer text is truncated.
+- **Default:** Empty string when omitted; an empty name matches no tileset.
+- **Source:** game code (structure-deconstruct loader; tileset matching); structure deconstruction table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/dCreationCost`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Deconstruction cost. The unit is defined by the construction system; it is a decimal value.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Decimal deconstruction cost.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Cost of removing one structure, expressed in fortification work (progress) points. The cost is summed into the sector's maximum fortification progress for a removal plan and is subtracted as each structure is removed. It is not a money value.
+- **Numeric semantics:** Fractional progress points; higher values mean more work. The loader stores the parsed value without clamping or rejecting it.
+- **Values:** Decimal (no code range).
+- **Default:** `0` when omitted; an empty element is parsed as `0`.
+- **Source:** game code (structure-deconstruct loader; fortification progress accounting and consumption); structure deconstruction table data.
+- **Confidence:** `source`
 
 ### `STRUCTURESLIST/STRUCTURE/allowedtile`
 
-- **Type:** `Integer` (`UINT16`)
-- **Description:** Tile index on which deconstruction is allowed. The element may repeat.
-- **Values:** Allowed tile index; the element may repeat.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** structure deconstruction table data; field metadata.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Structure number that may be removed by this row. The game compares it with the structure's `usStructureNumber`, truncated to `UINT8`, after the tileset name matches; the element may repeat, and any matching entry allows removal.
+- **Numeric semantics:** Structure number (`usStructureNumber`) within the tileset; `0..255`.
+- **Values:** `0..255`; the element may repeat.
+- **Default:** Empty list when omitted (no structure is removable by the row); an empty element adds entry `0`.
+- **Source:** game code (structure-deconstruct loader; deconstruction tile matching); structure deconstruction table data.
+- **Confidence:** `source`
 
 ## Relations
 
 - `usDeconstructItem` and `usItemToCreate` point to [Items](Items.md).
-- The tileset columns refer to STI assets, not to item rows.
+- The tileset columns refer to structures in the named tileset, not to item rows.
 
 ## Localization
 
-`szTileSetDisplayName` is the player-facing tileset name; `szTileSetName` is an asset key.
+`szTileSetDisplayName` is intended as the player-facing structure name, but no consumer was
+found in this source tree; `szTileSetName` is an asset key.
 
 ## Versions
 
@@ -150,10 +154,11 @@ v4 and v5 use the same field paths; values may differ.
 ## Sources
 
 - Structure deconstruction table data.
-- Item metadata.
-- Field types and limits: item metadata.
-- Descriptions use XML element names, lookup values and legacy field labels; entries marked `inferred` do not claim a code-verified formula.
+- Game code: structure-deconstruct loader, deconstruction item matching, item creation, fortification progress accounting.
+- Defaults from the `STRUCTURE_DECONSTRUCT` record.
+- Descriptions cover the values the code reads, stores and uses; every field in this document is backed by the loader.
 
 ## Open questions
 
-The unit of `dCreationCost` and the exact status rounding for the created item are defined outside the table.
+- Whether `szTileSetDisplayName` is used by any UI outside this source tree is unknown; no read of it was found in the shipped code.
+- The number of construction points generated per assignment work tick, and therefore the practical balance of `dCreationCost` values, is defined by the assignment system outside this table.

@@ -254,7 +254,8 @@ record: MERCHANT + INVENTORY
 key: uiIndex
 sources:
   - Table data
-  - Field names, XML comments and observed values
+  - Game code (merchant and inventory loaders, dealer structures and inventory logic)
+  - Field names and XML comments
 status: reviewed
 updated: 2026-11-08
 ---
@@ -299,7 +300,9 @@ updated: 2026-11-08
 
 ## Purpose
 
-`Merchants.xml` defines dealer identity, cash, buy/sell multipliers, coolness progression, daily restock, delivery delays and availability flags. Each `*Inventory.xml` file lists the items and target quantities for one dealer. The 80 dealer inventories are mapped to dealers by name in the file→dealer table; `AdditionalDealer_N` files are generic dealers. The backup gun-choice folder is documented as an alias, not as a live merchant inventory.
+`Merchants.xml` defines dealer identity, cash, buy/sell multipliers, coolness progression, daily restock, delivery delays and availability flags. Each `*Inventory.xml` file lists the items and target quantities for one dealer. The 80 dealer inventories are bound to dealers in the game's initialisation code, by one fixed filename per `ARMS_DEALER_*` value plus `AdditionalDealer_N` for the additional dealers, so a file's dealer follows from its name and not from any value inside it. Slots `0..19` are the named shopkeepers in enum order and slots `20..79` are the additional-dealer slots used by town shops and generic dealers; the shipped table fills slots up to `68`, and the array is zero-filled, so the remaining slots keep zero merchant data.
+
+The inventory loader also understands an older `<CONTROL>` block that sets the same merchant fields for the dealer it belongs to. No shipped `*Inventory.xml` contains one; because the inventory files are parsed after `Merchants.xml`, such a block would overwrite that dealer's merchant values.
 
 ## Tables
 
@@ -509,230 +512,236 @@ INVENTORYLIST
 
 ### `MERCHANTSLIST/MERCHANT/uiIndex`
 
-- **Type:** `Integer`
-- **Description:** Index of the merchant. It is an array key and is referenced by the dealer inventory selection.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Slot of the merchant in the game's `armsDealerInfo` array. The loader writes the record to `armsDealerInfo[uiIndex]`, and that slot number is also the `ARMS_DEALER_*` value that selects the dealer's `*Inventory.xml` file.
+- **Values:** `0..79` (`NUM_ARMS_DEALERS` is 80); a record with a larger `uiIndex` is silently dropped.
+- **Default:** `0` when omitted, so a record without an index overwrites slot 0.
+- **Source:** game code (the merchant loader; the dealer enum and its count).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/szName`
 
 - **Type:** `String`
-- **Description:** Display name of the merchant, for example `Tony` or `additional dealer 3`.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Description:** Informational label for the row, for example `Tony` or `additional dealer 3`. The loader reads the element and discards it — the parser branch for `szName` is marked “not needed, but it's there for informational purposes” — and the structure's comments say the name is “used in xml, not used ingame”. The game shows a shopkeeper's name from the NPC profile.
+- **Values:** Free text; it does not reach the game state.
+- **Default:** Absent; it has no effect.
+- **Source:** game code (the merchant loader's `szName` branch and the field comment).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/ubShopKeeperID`
 
-- **Type:** `Integer`
-- **Description:** NPC profile ID of the shopkeeper. It is a profile reference; `255` is used by generic additional dealers.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** NPC profile ID of the shopkeeper, from the `NPCIDs` enum that the XML comment quotes.
+- **Numeric semantics:** A profile reference, not an index into this table. The shipped table uses `255` for generic additional dealers and `200` for the town-shop rows.
+- **Values:** `0..255`. The `Merchants.xml` loader stores the value without a range check; the `NUM_PROFILES` check exists only in the legacy `CONTROL` block of `*Inventory.xml`.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the inventory loader for the legacy check); table data.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/ubTypeOfArmsDealer`
 
-- **Type:** `Integer`
-- **Description:** Dealer type code used by the shop system. It selects the dealer category/behaviour; it is an enum.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`) — an enum, not a free number.
+- **Description:** Dealer behaviour: `0` buys and sells, `1` sells only, `2` buys only, `3` repairs.
+- **Numeric semantics:** The loader clamps the value with `min(ARMS_DEALER_REPAIRS, value)`, so only `0..3` survive; a larger value, and also a negative one (it wraps through the `UINT8` cast), becomes `3`.
+- **Values:** `0..3` after clamping.
+- **Default:** `0` when omitted, which means “buys and sells”.
+- **Source:** game code (the merchant-loader clamp and the dealer-type enum); table XML comment.
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/uiFlags`
 
 - **Type:** `Flags` (`UINT32`)
 - **Description:** Packed bitmask of merchant flags. Each bit enables a dealer behaviour.
-- **Numeric semantics:** Bitmask; combine bits with OR. A larger number is not simply “more”.
-- **Values:** `0x08000000` only used items, `0x10000000` gives change, `0x20000000` accepts gifts, `0x40000000` some used items, `0x80000000` has no inventory.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`Arms Dealer Init.h` flag constants; merchant loader); table XML comment.
+- **Numeric semantics:** Bitmask; combine bits with OR. A larger number is not simply “more”. Parsed with a base-0 conversion, so the shipped decimal values and `0x` hexadecimal forms are both accepted.
+- **Values:** `0x08000000` only used items, `0x10000000` gives change, `0x20000000` accepts gifts, `0x40000000` some used items, `0x80000000` has no inventory. The dealer structure defines further item-class bits, but `Merchants.xml` is not where they are normally set.
+- **Default:** `0` when omitted, i.e. no flags.
+- **Source:** game code (the merchant flag constants and the merchant loader); table XML comment.
 - **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/iInitialCash`
 
-- **Type:** `Integer`
-- **Description:** Starting cash of the merchant, in money.
-- **Numeric semantics:** higher = richer; negative = debt.
+- **Type:** `Integer` (`INT32`)
+- **Description:** Cash the merchant starts with. The game also resets a dealer's cash to this amount when the dealer is re-initialised.
+- **Numeric semantics:** Money, in whole units; higher = richer. There is no clamp in the `Merchants.xml` loader (the legacy `CONTROL` block limits its `<INITIAL>` to `0..1000000`), and a negative value is stored but not meaningful.
 - **Values:** Money.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Default:** `0` when omitted, because each record is zero-filled before parsing.
+- **Source:** game code (the merchant loader; the dealer initialisation).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dBuyModifier`
 
-- **Type:** `Decimal`
-- **Description:** Multiplier applied when the merchant buys from the player. `0.75` pays 75% of value and `1.0` pays full value.
-- **Numeric semantics:** higher = better price for the player; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Decimal` (`FLOAT`) — a 32-bit float in game code.
+- **Description:** Multiplier applied when the merchant buys from the player; `0.75` pays 75% of value and `1.0` pays full value. For a repair dealer (`ubTypeOfArmsDealer` `3`) the same storage holds `dRepairSpeed` and scales repair time instead.
+- **Numeric semantics:** The loader clamps the value to `0.1..5.0` (`min(5.0f, max(0.1f, value))`), so an out-of-range entry is pulled to the nearest bound rather than rejected. Higher = better price for the player.
+- **Values:** `0.1..5.0` after clamping.
+- **Default:** `0` when omitted — outside the clamped range, so a merchant without this element would pay nothing; write it explicitly.
+- **Source:** game code (the merchant loader; the dealer-structure union).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dSellModifier`
 
-- **Type:** `Decimal`
-- **Description:** Multiplier applied when the merchant sells to the player. `1.25` charges 125% of value and `1.0` charges full value.
-- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Decimal` (`FLOAT`) — a 32-bit float in game code.
+- **Description:** Multiplier applied when the merchant sells to the player; `1.25` charges 125% of value and `1.0` charges full value. For a repair dealer (`ubTypeOfArmsDealer` `3`) the same storage holds `dRepairCost` and scales the price charged for repairs.
+- **Numeric semantics:** Clamped by the loader to `0.1..5.0`; higher = more expensive.
+- **Values:** `0.1..5.0` after clamping.
+- **Default:** `0` when omitted — outside the clamped range; write it explicitly.
+- **Source:** game code (the merchant loader; the dealer-structure union).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/minCoolness`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Minimum equipment coolness the merchant stocks.
-- **Numeric semantics:** higher = better stock; the loader clamps the value to `1..10`.
-- **Values:** `1..10` after clamping.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (merchant loader); table data.
+- **Description:** Lower bound applied to the merchant's computed minimum stock coolness.
+- **Numeric semantics:** The loader clamps a present value to `1..10` (`min(10, max(1, value))`), although the structure's comment still says `0-10`. The value then acts as `max(minCoolness, min(9, computedMin))`.
+- **Values:** `1..10` when present.
+- **Default:** `0` when omitted, which is below the clamp range and leaves the computed minimum unbounded from below.
+- **Source:** game code (the merchant loader clamp; the coolness calculation).
 - **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/maxCoolness`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Maximum equipment coolness the merchant can reach.
-- **Numeric semantics:** higher = better stock ceiling; the loader clamps the value to `1..10`.
-- **Values:** `1..10` after clamping.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (merchant loader); table data.
+- **Description:** Upper bound applied to the merchant's computed maximum stock coolness.
+- **Numeric semantics:** Clamped to `1..10` when present, then used as `min(maxCoolness, computedMax)`; the game afterwards forces the maximum to be at least the minimum plus one.
+- **Values:** `1..10` when present.
+- **Default:** `0` when omitted, which is below the clamp range and lets the computed maximum stand.
+- **Source:** game code (the merchant loader clamp; the coolness calculation).
 - **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/addToCoolness`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Flat amount added to both ends of the merchant’s coolness range after the progress calculation.
-- **Numeric semantics:** higher = better stock; the loader accepts `0..10` and ignores out-of-range values.
-- **Values:** `0..10`.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`XML_TonyInventory.cpp` range check; `ArmsDealerInvInit.cpp` adds it to min/max); table data.
+- **Description:** Flat amount added to both ends of the merchant's computed coolness range, together with the Rebel Command merchant bonus.
+- **Numeric semantics:** Higher = better stock sooner. The `Merchants.xml` loader stores any `UINT32` without a range check; the `0..10` limit is applied only to `<COOLADD>` in the legacy `CONTROL` block of `*Inventory.xml`.
+- **Values:** `0..10` by intent; the shipped table uses `0` and `1`.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the coolness calculation; the inventory loader for the legacy check).
 - **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/coolnessProgressRate`
 
 - **Type:** `Integer` (`UINT32`)
-- **Description:** Percentage of the player’s progress used to calculate the merchant’s stock coolness.
-- **Numeric semantics:** higher = faster progression; the loader accepts `0..100`. The game computes `min = progress * rate / 100` and `max = min + 1`, then adds `addToCoolness`.
-- **Values:** `0..100` percent.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`XML_TonyInventory.cpp` range check; `ArmsDealerInvInit.cpp` formula); table data.
+- **Description:** Percentage of the player's progress that sets the merchant's stock coolness. The game computes `min = progress * rate / 100` and `max = min + 1`, adds `addToCoolness` (plus the Rebel Command bonus) to both, bounds the minimum by `minCoolness` and `9`, and bounds the maximum by `maxCoolness` with a forced `max >= min + 1`.
+- **Numeric semantics:** Percent; higher = faster progression. The `Merchants.xml` loader applies no range check — the `0..100` check belongs to `<PROGRESSRATE>` in the legacy `CONTROL` block — so a value above `100` pushes coolness past the player's progress range.
+- **Values:** `0..100` percent by intent.
+- **Default:** `0` when omitted, which makes both ends depend only on `addToCoolness`.
+- **Source:** game code (the coolness formula; the merchant loader; the inventory loader for the legacy check).
 - **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dailyIncrement`
 
-- **Type:** `Decimal`
-- **Description:** Cash added to the merchant’s available money each day.
-- **Numeric semantics:** higher = more daily cash; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`) — an integer amount, not a decimal.
+- **Description:** Cash added each day after the retained share: `cash = cash * dailyRetained / 100 + dailyIncrement`, then capped at `dailyMaximum`.
+- **Numeric semantics:** Money, in whole units; higher = more daily cash. No clamp in the `Merchants.xml` loader (the legacy `CONTROL` block limits `<INCREMENT>` to `0..1000000`).
+- **Values:** Money.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the daily cash reset).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dailyMaximum`
 
-- **Type:** `Decimal`
-- **Description:** Maximum cash the merchant can accumulate from daily increments.
-- **Numeric semantics:** higher = larger cap; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`) — an integer amount, not a decimal.
+- **Description:** Ceiling for the cash the merchant accumulates: after the daily update the cash is lowered to this value when it is higher.
+- **Numeric semantics:** Money; higher = larger cap. A cap of `0` therefore empties the dealer's cash on every daily reset.
+- **Values:** Money.
+- **Default:** `0` when omitted, so an omitted value caps the dealer at zero cash.
+- **Source:** game code (the merchant loader; the daily cash reset).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/dailyRetained`
 
-- **Type:** `Decimal`
-- **Description:** Cash retained by the merchant after a daily reset.
-- **Numeric semantics:** higher = more retained; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`) — an integer percentage, not a decimal despite the `d` prefix.
+- **Description:** Share of the current cash the merchant keeps on the daily reset, in percent, before `dailyIncrement` is added and `dailyMaximum` is applied.
+- **Numeric semantics:** Percent: `100` keeps everything, `0` keeps nothing. No clamp in the `Merchants.xml` loader (the legacy `CONTROL` block limits `<RETAINED>` to `0..100`).
+- **Values:** `0..100` percent.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the daily cash reset).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/daysDelayMin`
 
-- **Type:** `Decimal`
-- **Description:** Minimum delivery delay in days for this merchant.
-- **Numeric semantics:** higher = slower; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`) — whole days, not a decimal.
+- **Description:** Lower bound of the delivery delay for reordered items; the delay is `daysDelayMin + Random(daysDelayMax - daysDelayMin)` days.
+- **Numeric semantics:** Days; the structure's comment intends `1..10`, but the `Merchants.xml` loader does not check it (the legacy `CONTROL` block limits `<REORDERMINIMUM>` to `1..10`).
+- **Values:** `1..10` by intent.
+- **Default:** `0` when omitted, which with an omitted maximum yields a `0`-day delay.
+- **Source:** game code (the merchant loader; the reorder delay).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/daysDelayMax`
 
-- **Type:** `Decimal`
-- **Description:** Maximum delivery delay in days for this merchant.
-- **Numeric semantics:** higher = slower; negative values are not meaningful.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`) — whole days, not a decimal.
+- **Description:** Upper bound of the delivery delay: the game picks `daysDelayMin + Random(daysDelayMax - daysDelayMin)`.
+- **Numeric semantics:** Days; keep it at or above `daysDelayMin`, because the difference is computed in unsigned arithmetic and a smaller maximum wraps to a huge random range. No clamp in the `Merchants.xml` loader (the legacy `CONTROL` block limits `<REORDERMAXIMUM>` to `1..10`).
+- **Values:** `1..10` by intent, `>= daysDelayMin`.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the reorder delay).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/useBRSetting`
 
-- **Type:** `Boolean`
-- **Description:** If set, the merchant uses the Bobby Ray setting for its stock/behaviour. It is a switch.
-- **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Boolean` (a `bool` in game code).
+- **Description:** If set, the merchant uses Bobby Ray's quality setting for its stock. When `ubBobbyRayQuality` is better than `BR_GOOD`, the merchant's maximum coolness is raised by `quality - 1`, plus one more for used items — the same treatment Bobby Ray's own shop receives.
+- **Numeric semantics:** A switch: the loader parses an integer with `atol`, so any non-zero value becomes true and `0` becomes false.
+- **Values:** `0` or `1` in the shipped table.
+- **Default:** `0` (false) when omitted.
+- **Source:** game code (the merchant loader; the suitability check).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/allInventoryAlwaysAvailable`
 
-- **Type:** `Boolean`
-- **Description:** If set, the merchant’s whole inventory is always available instead of being gated by coolness/progress. It is a switch.
-- **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Boolean` (a `bool` in game code).
+- **Description:** If set, every item counts as fully suitable for this dealer (`ITEM_SUITABILITY_HIGH`) regardless of coolness or player progress, so the whole catalogue is available instead of being gated by progression. Bobby Ray's is exempt from this shortcut.
+- **Numeric semantics:** A switch: any non-zero value is true.
+- **Values:** `0` or `1` in the shipped table.
+- **Default:** `0` (false) when omitted.
+- **Source:** game code (the merchant loader; the suitability check).
+- **Confidence:** `source`
 
 ### `MERCHANTSLIST/MERCHANT/nonprofile_loyaltyrequired`
 
-- **Type:** `Integer`
-- **Description:** Local loyalty required for a non-profile dealer.
-- **Numeric semantics:** higher = stricter; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Town loyalty a non-profile dealer in a city requires before he will trade with the player.
+- **Numeric semantics:** A loyalty rating, compared against `gTownLoyalty[].ubRating`; higher = stricter, `0` = no requirement.
+- **Values:** `0..255`.
+- **Default:** `0` when omitted.
+- **Source:** game code (the merchant loader; the loyalty check).
+- **Confidence:** `source`
 
 ### `INVENTORYLIST/INVENTORY/uiIndex`
 
-- **Type:** `Integer` (`UINT32`)
-- **Description:** Index of the inventory row. It is an array key.
-- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
-- **Default:** Required; identifies the record.
-- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Type:** `Integer` (`UINT32`) — the loader stores this field as `UINT32`.
+- **Description:** Slot of the row in the dealer's inventory array. The game scans that array in slot order, so this is the row's position, not just a label.
+- **Values:** `0..16000` (`uiIndex < MAXITEMS`, and `MAXITEMS` is 16001); a row with a larger index is silently dropped.
+- **Default:** `0` when omitted, so a row without an index overwrites slot 0.
+- **Source:** game code (the inventory loader; the item-count constant).
 - **Confidence:** `source`
 
 ### `INVENTORYLIST/INVENTORY/sItemIndex`
 
-- **Type:** `Integer` (`INT16`)
-- **Description:** Item ID stocked by the dealer. It is an item reference; `0` means no item.
-- **Values:** Item ID; the loader stores this field as `INT16`.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Type:** `Integer` (`INT16`) — the loader stores this field as `INT16`.
+- **Description:** Item ID stocked by the dealer. `0` is the list terminator (`LAST_DEALER_ITEM`), so the game stops reading at the first row whose `sItemIndex` is `0`; rows stored in higher slots than that first zero are never seen.
+- **Values:** Item IDs; `0` ends the list and is also the “no item” value.
+- **Default:** `0` when omitted, which ends the list at that row.
+- **Source:** game code (the inventory loader; the inventory lookup).
 - **Confidence:** `source`
 
 ### `INVENTORYLIST/INVENTORY/ubOptimalNumber`
 
-- **Type:** `Integer` (`UINT8`)
-- **Description:** Target stock quantity for the item.
-- **Numeric semantics:** higher = more stock; negative values are not meaningful.
-- **Values:** `0..255`; the loader stores this field as `UINT8`.
-- **Default:** Absent; the game default applies.
-- **Source:** game code (`XML_TonyInventory.cpp`); table data.
+- **Type:** `Integer` (`UINT8`) — the loader stores this field as `UINT8`.
+- **Description:** Number of the item the dealer aims to keep; the game calls the lookup `GetMaxItemAmount` and uses it as the initial and maximum supply for the item.
+- **Numeric semantics:** `0` = no stock. The lookup returns the value through an `INT8`, so a value in `128..255` comes back negative and fails the game's `> 0` stock checks; keep the value at `127` or below.
+- **Values:** `0..127` usable; the field itself stores `0..255`.
+- **Default:** `0` when omitted.
+- **Source:** game code (the inventory loader; the inventory lookup and its callers).
 - **Confidence:** `source`
 
 ## Relations
 
-- Dealer inventories are separate files; the `Merchants` row identifies the dealer by `ubShopKeeperID` and `szName`.
-- `sItemIndex` references [Items](../Items/Items.md).
+- Dealer inventories are separate files, bound to dealers by the fixed filenames in the game's initialisation code; the `Merchants` row at the matching `uiIndex` supplies that dealer's merchant data.
+- `sItemIndex` references [Items](../Items/Items.md), and a file's rows are read in `uiIndex` order until `sItemIndex` reaches `0`.
+- `ubShopKeeperID` references the NPC profile table; `szName` is informational and is not read by the game.
+- A repair dealer (`ubTypeOfArmsDealer` `3`) reuses `dBuyModifier`/`dSellModifier` as repair-speed and repair-price multipliers.
 
 ## Localization
 
@@ -744,11 +753,13 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Sources
 
-- Table data.
-- Field names, XML comments and observed values.
-- Descriptions are inferred from names and observed values; no runtime formula is claimed.
+- Table data: `Merchants.xml` and the 80 dealer inventory files.
+- Game code: the merchant loader, the inventory loader (including its legacy `CONTROL` block), the dealer structure and flag constants, the daily cash reset, the reorder delay, the coolness and suitability logic, the inventory scan, and the initialisation code that binds each file to a dealer.
+- Field names and XML comments, including the `NPCIDs`, `ubTypeOfArmsDealer` and `uiFlags` lists quoted at the top of `Merchants.xml`.
+- Every field above cites the code that reads it; no formula is claimed beyond those lines.
 
 ## Open questions
 
-- No open question remains for `uiFlags`: the XML comment lists the five bits and the code uses the same constants.
-- No open question remains for `coolnessProgressRate`/`addToCoolness`: `min = progress * rate / 100`, `max = min + 1`, then `addToCoolness` is added to both.
+- `uiFlags`: no open question remains — the XML comment lists the five behaviour bits and the dealer structure defines the same constants; the additional item-class bits are usually supplied by the legacy `CONTROL` block.
+- Coolness: no open question remains — `min = progress * rate / 100`, `max = min + 1`, `addToCoolness` (plus the Rebel Command merchant bonus) is added to both, the minimum is bounded by `minCoolness` and `9`, and the maximum by `maxCoolness` with a forced `max >= min + 1`.
+- Not established here: whether a `<CONTROL>` block in an `*Inventory.xml` is meant to replace `Merchants.xml` for its dealer. The files are parsed after `Merchants.xml`, so such a block would overwrite the dealer's values, but no shipped file contains one.
