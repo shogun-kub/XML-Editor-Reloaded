@@ -63,6 +63,28 @@ edit them by hand.
 the table documents. Add or fix the link in the source document, then regenerate; `-Check`
 verifies that the committed map is current.
 
+## Embedded application data
+
+The application reads `src/XmlEditorReloaded.Data/Help/help.json`, which is generated from the
+Markdown documents and embedded into `XmlEditorReloaded.Data`. Regenerate it after changing a
+front matter block, a field entry, or a cross-document link:
+
+```sh
+dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables
+```
+
+The tool is deterministic: it sorts documents and table aliases, writes UTF-8 without a BOM,
+and uses LF line endings. Verify the committed file without rewriting it:
+
+```sh
+dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables --check
+```
+
+`ITableHelpProvider` in Core resolves a dotted table name (including aliases and backup copies)
+to a `TableHelp`; field lookups accept either the full path or a unique leaf name. The generated
+data is validated by `XmlEditorReloaded.Data.Tests`, including document, table, and unique-field
+counts.
+
 ## Document format
 
 Each table document starts with YAML front matter:

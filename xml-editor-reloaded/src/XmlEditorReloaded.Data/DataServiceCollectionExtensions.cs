@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Data.Catalog;
+using XmlEditorReloaded.Data.Help;
 using XmlEditorReloaded.Data.Localization;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
@@ -47,6 +48,7 @@ public static class DataServiceCollectionExtensions
 
         services.TryAddSingleton<ISettingsStore>(_ => new JsonSettingsStore());
         services.TryAddSingleton<ITableLayoutStore>(_ => new JsonLayoutStore());
+        services.TryAddSingleton<ITableHelpProvider, JsonTableHelpProvider>();
 
         return services;
     }

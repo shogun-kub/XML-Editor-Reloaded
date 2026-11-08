@@ -59,6 +59,8 @@ xml-editor-reloaded/
 │   ├── XmlEditorReloaded.Data/
 │   ├── XmlEditorReloaded.Imaging/
 │   └── XmlEditorReloaded.App/
+├── tools/
+│   └── XmlEditorReloaded.HelpTool/   # Generates and checks the embedded help.json
 └── tests/
     ├── XmlEditorReloaded.Core.Tests/
     ├── XmlEditorReloaded.Xml.Tests/
@@ -77,7 +79,7 @@ abstractions, lookup and validation primitives, imaging contracts, settings, fil
 contracts, the standard `OperationResult` (`error_code`, `error_text`, `data`), and the process-wide
 operation log facade.
 
-Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Imaging`, `Layout`, `Localization`,
+Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Help`, `Imaging`, `Layout`, `Localization`,
 `Metadata`, `Validation`. No file writing, SQLite, or WPF; the diagnostics helper only reads file
 metadata to explain access failures.
 
@@ -92,12 +94,14 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 ### XmlEditorReloaded.Data (`net10.0`)
 
 SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
-persistence of application settings and per-table grid layouts, and the file-backed operation log.
+persistence of application settings and per-table grid layouts, the file-backed operation log, and
+the embedded table/field help provider. `Help/help.json` is generated from `help/tables` by
+`XmlEditorReloaded.HelpTool` and embedded into this assembly.
 `Settings/AppPaths` resolves the application-data directory (`%AppData%\XmlEditorReloaded`) for the
 settings, layouts, metadata database and log, and honours the `XER_APP_DATA` environment variable,
 which the UI smoke uses to isolate each scenario.
 
-Folders: `Catalog`, `Diagnostics`, `Localization`, `Metadata`, `Settings`.
+Folders: `Catalog`, `Diagnostics`, `Help`, `Localization`, `Metadata`, `Settings`.
 
 ### XmlEditorReloaded.Imaging (`net10.0`)
 
@@ -114,6 +118,11 @@ image viewer, settings, and RESX localization (English and Russian).
 Folders: `Assets`, `Behaviors`, `Imaging`, `Resources`, `Services`, `Shortcuts`, `Themes`,
 `ViewModels`, `Views`. All UI strings come from RESX. `Assets/app.ico` is both the executable icon
 and the window icon resource.
+
+### XmlEditorReloaded.HelpTool (`net10.0`, console)
+
+Generates the deterministic `src/XmlEditorReloaded.Data/Help/help.json` from `help/tables`, or
+verifies it with `--check`. It is a build-time tool, not shipped with the application.
 
 ### Test projects
 

@@ -143,3 +143,11 @@ dailycost `UINT16`; `IMPPortraits`/`RPCFacesSmall` — `INT8`-координат
 `source`, 0 `inferred`**. `help-check -Write`/`-Release` проходят; `REFERENCE-MAP.md`
 пересобран, `help-crossrefs.ps1 -Check` проходит.
 **Дальше.** B10 закрыт; M32 — русская локализация (`help/ru/`).
+
+**M31.1 (2026-11-08, done).** В Core добавлены `ITableHelpProvider`, `TableHelp`, `FieldHelp`,
+`HelpLink`, `HelpSection`, `HelpSearchResult`. `tools/XmlEditorReloaded.HelpTool` детерминированно
+собирает `src/XmlEditorReloaded.Data/Help/help.json` из `help/tables` (`--check` для проверки).
+`JsonTableHelpProvider` читает встроенный ресурс, разрешает алиасы таблиц и full/leaf-пути,
+ищет по заголовкам/полям/описаниям. Данные: 94 документа, 239 таблиц, 1614 уникальных
+field-записей; `help-check -Release` остаётся зелёным. UI (`HelpWindow`, `F1`, тултипы, S105)
+не начат. Тесты — `XmlEditorReloaded.Data.Tests/HelpTests.cs`; полный прогон 730 тестов зелёный.

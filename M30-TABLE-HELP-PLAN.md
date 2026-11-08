@@ -929,6 +929,13 @@ public interface ITableHelpProvider
 - Сборка без `help/` (если ресурс не сгенерирован) должна падать с понятной ошибкой,
   а не молча показывать пустую справку.
 
+Статус M31.1 (2026-11-08): добавлены `ITableHelpProvider` и модели в Core; генератор
+`tools/XmlEditorReloaded.HelpTool` собирает `src/XmlEditorReloaded.Data/Help/help.json`
+из `help/tables`; `JsonTableHelpProvider` читает встроенный ресурс, разрешает алиасы таблиц
+и leaf-имена полей, поддерживает поиск. Данные: 94 документа, 239 таблиц, 1614 уникальных
+field-записей; `--check` подтверждает актуальность. Тесты — в `XmlEditorReloaded.Data.Tests`.
+UI (`HelpWindow`, `F1`, тултипы, S105) ещё не начат.
+
 ## 11. M32 — русская версия
 
 Предпосылки: английские документы M30 в статусе `reviewed`/`verified`; `GLOSSARY.md`
