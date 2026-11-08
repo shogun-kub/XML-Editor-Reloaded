@@ -55,12 +55,13 @@ ALT_SECTORS_LIST
 
 ### `ALT_SECTORS_LIST/ROW`
 
-- **Type:** `String`
-- **Description:** One row of the alternate-sector matrix. The row attribute is the map row (`A`..`P`); the 16 space-separated values are the alternate sector group for columns 1..16. `0` means no alternate sector. The values are IDs, so larger values do not mean “more” alternate.
-- **Values:** 16 space-separated indexes; `0` = none.
+- **Type:** `String` (`CHAR8`)
+- **Description:** One row of the alternate-sector matrix. The row is taken from the `y` attribute (letter `A`..`P` or a number); the element text is read as a whitespace-separated sequence of numeric values, one per column, and written into the row starting at column 1. `0` means no alternate sector.
+- **Numeric semantics:** Values are alternate-sector IDs, so larger is not “more”; `0` = none.
+- **Values:** Up to 16 numeric values per row; the loader does not validate the count.
 - **Default:** Required; one row of the map.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (alternate-sector loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 

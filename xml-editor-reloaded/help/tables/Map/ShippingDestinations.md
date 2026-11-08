@@ -66,57 +66,57 @@ DESTINATIONLIST
 
 ### `DESTINATIONLIST/DESTINATION/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the shipping destination. It is an array key and is referenced by `DeliveryMethods`.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ### `DESTINATIONLIST/DESTINATION/name`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the destination, such as `Drassen` or `London`.
-- **Values:** Free text.
+- **Values:** Free text, truncated to `MAX_DEST_NAME_LENGTH`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ### `DESTINATIONLIST/DESTINATION/ubMapX`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Map column of a local destination. Lower values are farther west; absent for foreign destinations.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ### `DESTINATIONLIST/DESTINATION/ubMapY`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Map row of a local destination. Lower values are farther north; absent for foreign destinations.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ### `DESTINATIONLIST/DESTINATION/ubMapZ`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Map level of a local destination; `0` is the surface. It is a level.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ### `DESTINATIONLIST/DESTINATION/sGridNo`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Map grid number where a local shipment arrives. It is a grid identifier.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; map grid number.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (shipping-destinations loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 
