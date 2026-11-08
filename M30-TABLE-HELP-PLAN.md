@@ -747,7 +747,8 @@ backing-типы `MercProfiles` (59 полей), `bHated` (`UINT8`), `bHatedTime
 оказался числовым `UINT8`, а не строкой; `PatrolGroups.Size` — базовый размер с разбросом ±1;
 у `Traders` расшифрованы `uiFlags`, clamp `min/maxCoolness` `1..10`, `addToCoolness` `0..10`
 и формула `coolnessProgressRate`; `UniformColors` — обязательные шесть блоков и закрытый
-case-sensitive список палитр; у `EnemyAmmoDrops` уточнены `UINT32`/`UINT8`. В B8 у
+case-sensitive список палитр; у пяти enemy-drop таблиц уточнены `UINT32`/`UINT8`, а
+`EnemyMiscDrops.usItemClass` описан как bitmask `ItemClass`. В B8 у
 `CampaignStatsEvents` уточнены `UINT16`/`UINT8`;
 `EnemyRank` получил `UINT16`/`BOOLEAN`/`CHAR16` и диапазон `ExpLevel` `1..9`. Остались
 непроверенные поля B1/B3/B4/B5/B7/B8; `help-check -Write` проходит после каждого коммита.
