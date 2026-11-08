@@ -140,50 +140,50 @@ ExtraItems
 
 ### `ExtraItems/Item/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Item ID placed in the sector. It is an item reference.
-- **Values:** Integer; see the description for its scale.
+- **Values:** Item ID `> 0`; values `0` are skipped by the loader.
 - **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (extra-items loader); map table data.
+- **Confidence:** `source`
 
 ### `ExtraItems/Item/quantity`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Number of items placed.
 - **Numeric semantics:** higher = more items; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `1..4294967295`; zero quantity is skipped.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (extra-items loader); map table data.
+- **Confidence:** `source`
 
 ### `ExtraItems/Item/condition`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Condition of the placed item, in percent.
-- **Numeric semantics:** higher = better condition; negative values are not meaningful.
-- **Values:** Percentage `0..100`.
+- **Numeric semantics:** Percentage; the loader places the item only when condition is `1..100`, and skips the record otherwise.
+- **Values:** `1..100`; other values cause the record to be skipped.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (extra-items loader); map table data.
+- **Confidence:** `source`
 
 ### `ExtraItems/Item/gridno`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Map grid number where the item is placed. It is a grid identifier.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; map grid number.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (extra-items loader); map table data.
+- **Confidence:** `source`
 
 ### `ExtraItems/Item/visible`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`UINT32`)
 - **Description:** If set, the item is visible on the map from the start. It is a switch.
-- **Values:** `0` or `1`.
+- **Values:** `0` or `1`; passed as the item-pool visibility flag.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (extra-items loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 

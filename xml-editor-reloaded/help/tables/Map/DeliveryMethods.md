@@ -37,6 +37,11 @@ updated: 2026-11-08
 - [Versions](#versions)
 - [Sources](#sources)
 - [Open questions](#open-questions)
+- [Relations](#relations)
+- [Localization](#localization)
+- [Versions](#versions)
+- [Sources](#sources)
+- [Open questions](#open-questions)
 
 ## Purpose
 
@@ -66,50 +71,80 @@ DELIVERYMETHODTABLE
 
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/uiIndex`
 
-- **Type:** `Integer`
-- **Description:** Index of the delivery method. It is an array key.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Delivery-method index stored in the XML, but the loader does not read it: methods are stored in document order and the element is ignored.
+- **Values:** Integer; changing it does not reorder the stored methods.
+- **Default:** Required; identifies the record.
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
 
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/description`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Player-facing name of the delivery method, such as `Overnight express`.
-- **Values:** Free text.
+- **Values:** Free text, truncated to `MAX_DELIVERYMETHOD_DESC_LENGTH`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
 
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/uiDestinationIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the shipping destination this price and delay applies to. It is an ID.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; destination ID.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
 
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/usDestinationFee`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Delivery fee to this destination, in money.
 - **Numeric semantics:** higher = more expensive; negative values are not meaningful.
-- **Values:** Money.
+- **Values:** `0..65535` money.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
 
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/bDaysAhead`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Number of days the shipment takes to arrive.
+- **Numeric semantics:** higher = slower; the loader stores this field as `INT8`.
+- **Values:** `-128..127` days.
+- **Default:** Absent; the game default applies.
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
+## Relations
+
+- `uiDestinationIndex` references [ShippingDestinations](ShippingDestinations.md) `uiIndex`; the destination name is defined there.
+
+## Localization
+
+Display names, tooltips and descriptions are localized through language overlays; numeric IDs, sector codes and matrix values are not.
+
+## Versions
+
+v4 and v5 use the same field paths; values may differ.
+
+## Sources
+
+- Map table data.
+- Field names, XML comments and observed values.
+- Descriptions are based on the field names and observed table values; no runtime formula is claimed.
+
+## Open questions
+
+- The exact formula or enum mapping for fields marked as inferred is not stated by the table data.
+`
+
+- **Type:** `Integer` (`INT8`)
 - **Description:** Number of days the shipment takes to arrive.
 - **Numeric semantics:** higher = slower; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `-128..127` days; the loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (delivery-methods loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 
