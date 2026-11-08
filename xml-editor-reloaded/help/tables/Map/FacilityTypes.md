@@ -91,7 +91,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`FacilityTypes.xml` defines facility types and the assignments that can be performed there. A facility has a name, staff limits and optional PMC entry point; each assignment has a type, tooltip, staff limit, performance, cost, fatigue/sleep values and optional morale, loyalty, drunkenness and injury effects. Facilities can also define production lines that turn inputs into items at an hourly cost and loyalty requirement. Chance fields use a 0–1000 scale in the data (`500` = 50%, `700` = 70%).
+`FacilityTypes.xml` defines facility types and the assignments that can be performed there. A facility has a name, staff limits and optional PMC entry point; each assignment has a type, tooltip, staff limit, performance, cost, fatigue/sleep values and optional morale, loyalty, drunkenness and injury effects. Facilities can also define production lines that turn inputs into items at an hourly cost and loyalty requirement. Chance fields are expressed against the INI-defined hourly denominator (normally `1000`, so `500` = 50%), but the loader stores `ubChance` through a `UINT8` cast: values above `255` truncate, and the shipped `usChance` element has no loader case at all.
 
 ## Tables
 
@@ -483,23 +483,23 @@ FACILITYTYPES
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/ubChance`
 
-- **Type:** `Integer`
-- **Description:** Chance that the assignment changes morale, in chance units (the table uses a 0–1000 scale, so `500` = 50% and `700` = 70%).
-- **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage or chance units as described; `0` disables the effect.
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Chance that the assignment changes morale, in units of the INI-defined hourly risk denominator (normally `1000`, so `500` = 50%). The loader stores the value in one byte, so XML values above `255` are truncated.
+- **Numeric semantics:** higher = more likely; `0` disables the effect, and negative values are not meaningful.
+- **Values:** Intended `0..1000`; effective stored range `0..255` because of the loader cast. Shipped data uses values up to `500`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`FacilityRiskType.usChance` comment; `XML_FacilityTypes.cpp` stores `(UINT8)`).
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/usChance`
 
-- **Type:** `Integer`
-- **Description:** Alternative morale-change chance for the assignment.
-- **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage or chance units as described; `0` disables the effect.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT16` in the shipped data)
+- **Description:** Alternative morale-change chance present in shipped `FacilityTypes.xml`, but the current loader has no `usChance` case. It is not read and has no gameplay effect.
+- **Numeric semantics:** Intended chance units, but no loader path applies this element.
+- **Values:** `0..1000` in the data; ignored by the current loader.
+- **Default:** Absent; ignored either way.
+- **Source:** game code (`XML_FacilityTypes.cpp` handles `ubChance`, not `usChance`); map table data.
+- **Confidence:** `source`
 
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/bBaseEffect`
 
@@ -726,5 +726,5 @@ v4 and v5 use the same field paths; values may differ.
 ## Open questions
 
 - Which facility UI surface uses `szFacilityShortName` instead of `szFacilityName` is not confirmed; this needs a code/UI check.
-- The 0–1000 chance interpretation, the `100` baseline for performance and the exact scale of `sCantinaFoodModifier` are inferred from the observed values, not stated by an XML comment.
+- The `100` baseline for performance and the exact scale of `sCantinaFoodModifier` are inferred from observed values, not stated by an XML comment. The chance denominator is confirmed by `FacilityRiskType.usChance`; the `UINT8` truncation and the ignored `usChance` element are loader facts.
 - `pmcentrypoint` and the severe-injury/assignment formulas are implemented by the game code, not by additional fields.

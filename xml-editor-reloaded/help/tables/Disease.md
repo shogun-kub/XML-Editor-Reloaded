@@ -151,7 +151,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of this disease in the `Disease` array. It is an array key; indexes must be unique and non-negative.
 - **Only used with:** DISEASE.
 - **Values:** Integer disease value; no narrower range is declared by the field metadata.
@@ -512,7 +512,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffStatAGI`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Percentage change to effective Agility at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** `+10` means +10% effective Agility, `-10` means -10%, and `0` is neutral.
@@ -523,7 +523,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffStatDEX`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Percentage change to effective Dexterity at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** `+10` means +10% effective Dexterity, `-10` means -10%, and `0` is neutral.
@@ -534,7 +534,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffStatSTR`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Percentage change to effective Strength at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** `+10` means +10% effective Strength, `-10` means -10%, and `0` is neutral.
@@ -545,7 +545,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffStatWIS`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Percentage change to effective Wisdom at full infection. The game applies it to the effective-stat calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** `+10` means +10% effective Wisdom, `-10` means -10%, and `0` is neutral.
@@ -556,7 +556,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffStatEXP`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Change to effective experience level at full infection, in levels. The game adds it to the effective-level calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values raise the effective level, negative values lower it, and `0` is neutral.
@@ -567,7 +567,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffAP`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Action-point change at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values add AP, negative values subtract AP, and `0` is neutral.
@@ -578,7 +578,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/usMaxBreath`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Percentage by which maximum breath is lowered at full infection. The actual reduction is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** higher values reduce breath more; `20` means -20% at full, and negative values are not meaningful.
@@ -589,7 +589,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sEffCarryStrength`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Percentage change to carrying strength at full infection. The game applies it to the carry-strength calculation, scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** `+10` means +10% carrying strength, `-10` means -10%, and `0` is neutral.
@@ -600,7 +600,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sLifeRegenHundreds`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Hourly life-regeneration change at full infection, in hundredths of a life point. The actual change is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values heal, negative values drain life, and `0` is neutral; `-600` means -6 HP per hour at full.
@@ -611,7 +611,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sNeedToSleep`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Sleep-need change at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values increase the need for sleep, negative values reduce it, and `0` is neutral.
@@ -622,7 +622,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sDrinkModifier`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Percentage change to water consumption at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values increase water use, negative values reduce it, and `0` is neutral.
@@ -633,7 +633,7 @@ DISEASESLIST
 
 ### `DISEASESLIST/DISEASE/sFoodModifier`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Percentage change to food consumption at full infection. The actual change is scaled by current disease points divided by `sInfectionPtsFull`.
 - **Only used with:** DISEASE.
 - **Numeric semantics:** positive values increase food use, negative values reduce it, and `0` is neutral.
