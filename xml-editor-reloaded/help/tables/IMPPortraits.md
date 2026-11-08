@@ -77,12 +77,12 @@ IMPPORTRAITSLIST
 
 ### `IMPPORTRAITSLIST/IMP/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** IMP portrait row identity.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/PortraitId`
 
@@ -90,57 +90,57 @@ IMPPORTRAITSLIST
 - **Description:** Portrait ID used by the IMP portrait list.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/bSex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Sex of the portrait.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/usEyesX`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** X coordinate of the eyes.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed portrait coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/usEyesY`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Y coordinate of the eyes.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed portrait coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/usMouthX`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** X coordinate of the mouth.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed portrait coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/usMouthY`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Y coordinate of the mouth.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed portrait coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/DefaultSkin`
 
@@ -148,8 +148,8 @@ IMPPORTRAITSLIST
 - **Description:** Default skin palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/DefaultHair`
 
@@ -157,8 +157,8 @@ IMPPORTRAITSLIST
 - **Description:** Default hair palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/DefaultShirt`
 
@@ -166,8 +166,8 @@ IMPPORTRAITSLIST
 - **Description:** Default shirt palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/DefaultPants`
 
@@ -175,8 +175,8 @@ IMPPORTRAITSLIST
 - **Description:** Default pants palette index.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ### `IMPPORTRAITSLIST/IMP/DefaultBigBody`
 
@@ -184,8 +184,8 @@ IMPPORTRAITSLIST
 - **Description:** Default big-body type.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** imp portrait table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_IMPPortraits.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

@@ -67,70 +67,70 @@ SMALLFACE
 
 ### `SMALLFACE/FACE/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Small-face row identity.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/Name`
 
 - **Type:** `String` (`String`)
-- **Description:** RPC name for the small face.
-- **Values:** Free text.
+- **Description:** RPC name stored in the table, but the loader does not read this element; it is ignored.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/FaceIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Face index in the portrait tables.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/EyesX`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** X coordinate of the eyes on the small face.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed face coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/EyesY`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Y coordinate of the eyes on the small face.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed face coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/MouthX`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** X coordinate of the mouth on the small face.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed face coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SMALLFACE/FACE/MouthY`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Y coordinate of the mouth on the small face.
 - **Numeric semantics:** Coordinate; larger X/Y values move right/down in the map or portrait, and negative coordinates are outside the valid range.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `-128..127`; signed face coordinate.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** rpc small-face table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RPCFacesSmall.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

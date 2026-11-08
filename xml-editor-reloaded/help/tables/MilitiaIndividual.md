@@ -87,164 +87,164 @@ document order; `key: none` records that fact.
 
 ### `MILITIAORIGINDATA/ORIGINDATA/male_forename`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Male forename pool used by the random militia generator.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
+- **Values:** Free text name, truncated to 29 characters; repeated elements form a pool.
 - **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/male_surname`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Male surname pool.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
+- **Values:** Free text name, truncated to 29 characters; repeated elements form a pool.
 - **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/female_forename`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Female forename pool.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
+- **Values:** Free text name, truncated to 29 characters; repeated elements form a pool.
 - **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/female_surname`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR16`)
 - **Description:** Female surname pool.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Values:** Free text name.
+- **Values:** Free text name, truncated to 29 characters; repeated elements form a pool.
 - **Default:** empty string when omitted.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGMALE`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets the regular-male body type.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_BIGMALE`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets the big-male body type; body-type chances should sum to 100.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_STOCKYMALE`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets the stocky-male body type.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_bodytype_REGFEMALE`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets the regular-female body type.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_PINKSKIN`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets pink skin.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_TANSKIN`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets tan skin.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_DARKSKIN`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets dark skin.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/chance_skin_BLACKSKIN`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a new militia gets black skin; skin chances should sum to 100.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance; body/skin chances should sum to 100.
+- **Numeric semantics:** Percentage `0..100`; the loader clamps lower values to `0` and higher values to `100`.
+- **Values:** `0..100` after clamping; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_green`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Daily wage of a green militia.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer daily wage.
+- **Numeric semantics:** Daily wage in money; higher values mean a larger wage, and negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_regular`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Daily wage of a regular militia.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer daily wage.
+- **Numeric semantics:** Daily wage in money; higher values mean a larger wage, and negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ### `MILITIAORIGINDATA/ORIGINDATA/dailycost_elite`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Daily wage of an elite militia.
 - **Only used with:** INDIVIDUAL_MILITIA.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer daily wage.
+- **Numeric semantics:** Daily wage in money; higher values mean a larger wage, and negative values are not meaningful.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** militia individual table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_MilitiaIndividual.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

@@ -86,164 +86,164 @@ RANDOM_STATS
 
 ### `RANDOM_STATS/PROFILE/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Profile identity.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** Integer base attribute value.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/Name`
 
-- **Type:** `String` (`String`)
-- **Description:** Profile name.
+- **Type:** `String`
+- **Description:** Profile-name text stored in the table, but the loader does not read this element; it is ignored.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
-- **Values:** Profile name.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/Enabled`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, random stats are enabled for this profile.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/BaseAttribute`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Base attribute used to build random stats; only used when `MERCS_RANDOM_STATS` is 3.
 - **Only used with:** MERCS_RANDOM_STATS 3.
 - **Numeric semantics:** Higher values mean a higher base attribute used to build the random stat; negative values are outside the normal range.
-- **Values:** Integer base attribute value.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomExpLevel`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize experience level.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomLife`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize life.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomAgility`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize agility.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomDexterity`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize dexterity.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomStrength`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize strength.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomLeadership`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize leadership.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomWisdom`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize wisdom.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomMarksmanship`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize marksmanship.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomMechanical`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize mechanical skill.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomExplosive`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize explosives skill.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomMedical`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize medical skill.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `RANDOM_STATS/PROFILE/RandomScientific`
 
-- **Type:** `Boolean` (`Boolean`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Randomize scientific skill.
 - **Only used with:** MERCS_RANDOM_STATS 2 or 3.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted.
-- **Source:** random stats table data; table metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_RandomStats.cpp`, `RANDOM_STATS_VALUES`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
