@@ -517,7 +517,7 @@ B0 оставил `Lookup.md` одним документом; остальны�
 `help-check -Write` проходит, все 239 файлов v5 парсятся; 28 таблиц / 78 полей;
 `Lookup.md` оставлен одним документом (23 справочника, 8 flag, 15 sequence); добавлен
 `FORMULAS.md`; `F1` закреплён за справкой, About — в меню без клавиши. B1a/B1b одобрены;
-B2–B5 одобрены; B6–B8 подготовлены (draft) и ждут ревью.
+B2–B6 одобрены; B7–B8 подготовлены (draft) и ждут ревью.
 
 ### B1. Items: ядро
 
@@ -607,13 +607,13 @@ Row counts и наблюдаемые диапазоны не добавлены;
 `CreaturePlacements` (21), `AltSectors` (матрица), `CoolnessBySector` (матрица),
 `ExtraItems` (20 файлов, 5 полей). `Cities`/`Facilities` уже в B0.
 
-Статус B6 (2026-11-08, draft): созданы 15 документов, 34 таблицы, 180 уникальных путей
+Статус B6 (2026-11-08, reviewed): созданы 15 документов, 34 таблицы, 180 уникальных путей
 (179 содержательных полей + пустой маркер `ASSIGNMENT/CONDITIONS`; 20 файлов `ExtraItems`
 дают 100 табличных путей). `FacilityTypes` описывает 55 путей, включая вложенные
 `ASSIGNMENT`, `CONDITIONS` и `PRODUCTIONLINE`; `SectorNames` — 21, `BloodcatPlacements` — 22,
-`CreaturePlacements` — 21. `help-check -Write` проходит (1404/2985 путей). Документы в `draft`;
-нужно ревью пользователя. Неясные масштабы (facility chances 0–1000, enum-коды, matrix IDs)
-вынесены в `Open questions`.
+`CreaturePlacements` — 21. `help-check -Write` проходит (1404/2985 путей). Одобрены
+пользователем 2026-11-08, документы переведены в `reviewed`. Неясные масштабы (facility
+chances 0–1000, enum-коды, matrix IDs) вынесены в `Open questions`.
 
 ### B7. Армия, ИИ и инвентари
 
@@ -646,7 +646,7 @@ formula — в `Open questions`.
 `EnemyNames`/`EnemyRank` — по 4, `RandomTeams` — 1, `Sounds`/`BurstSounds` — один общий
 документ по 1 полю, `HiddenNames` — 3, `CivGroupNames` — 6, `SquadNames` — 2,
 `SpreadPatterns` — 7, `Vehicles` — 23. `help-check -Write` проходит (2985/2985 путей,
-239/239 таблиц). Документы в `draft`; нужно ревью B6–B8.
+239/239 таблиц). Документы в `draft`; нужно ревью B7–B8.
 
 ### B9. Сквозная проверка (не блок документов)
 

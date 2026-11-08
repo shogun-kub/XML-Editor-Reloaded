@@ -16,7 +16,7 @@ sources:
   - Map table data
   - Field names, XML comments and observed values
   - Facility and assignment terminology from the map UI
-status: draft
+status: reviewed
 updated: 2026-11-08
 ---
 

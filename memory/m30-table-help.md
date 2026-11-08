@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5 approved 2026-11-08, B6–B8 draft; ninety-four documents, 239 tables, 2985 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5/B6 approved 2026-11-08, B7–B8 draft; ninety-four documents, 239 tables, 2985 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -63,7 +63,7 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 `DISEASE_SEVERE_LIMITATIONS`), RandomStats — `MERCS_RANDOM_STATS`, Militia —
 `INDIVIDUAL_MILITIA`, NCTH-константы — `NCTH`; `Backgrounds` — `ENABLE_BACKGROUNDS`. Одобрены пользователем 2026-11-08, переведены в `reviewed`.
 
-**B6 (2026-11-08, draft).** 15 документов, 34 таблицы, 180 уникальных путей:
+**B6 (2026-11-08, reviewed).** 15 документов, 34 таблицы, 180 уникальных путей:
 `FacilityTypes` (55, включая пустой `ASSIGNMENT/CONDITIONS`), `SectorNames` (21),
 `SectorLoadscreens` (9), `MovementCosts` (7), `HeliSites` (7), `SamSites` (8),
 `DeliveryMethods` (5), `Minerals` (3), `ShippingDestinations` (6), `InteractiveActions` (9),
@@ -71,6 +71,7 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 `CoolnessBySector` (1 matrix field), `ExtraItems` (20 файлов, 5 полей). `help-check -Write`
 проходит (1404/2985); 20 файлов ExtraItems дают 100 табличных путей. Facility chances
 интерпретированы как шкала 0–1000 (`500` = 50%) и это вынесено в Open questions.
+Одобрены пользователем 2026-11-08, документы переведены в `reviewed`.
 
 **B7 (2026-11-08, draft).** 14 документов, 117 таблиц, 238 уникальных путей (1469 табличных
 путей): четыре армейских документа, `SoldierProfiles` (6 файлов, 8 полей), пять drop-документов
@@ -86,5 +87,5 @@ Backup-папка — алиас; точные merchant flags/coolness formula �
 `Sounds`/`BurstSounds` — общий документ по 1 полю, `HiddenNames` — 3, `CivGroupNames` — 6,
 `SquadNames` — 2, `SpreadPatterns` — 7, `Vehicles` — 23. Документы в `draft`.
 
-**Дальше.** Ревью B6–B8, затем B9 — сквозная проверка, INDEX/COVERAGE, терминология и
+**Дальше.** Ревью B7–B8, затем B9 — сквозная проверка, INDEX/COVERAGE, терминология и
 выборочная сверка по коду.
