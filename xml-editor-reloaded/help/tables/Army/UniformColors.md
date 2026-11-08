@@ -47,7 +47,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`UniformColors.xml` assigns a vest and pants colour to each enemy and militia rank. The values are symbolic colour names consumed by the soldier-rendering code.
+`UniformColors.xml` assigns a vest and pants colour to each enemy and militia rank. All six uniform blocks are mandatory; the loader throws an error if any is missing. Values must be one of the case-sensitive palette names listed in the XML comment, not arbitrary text.
 
 ## Tables
 
@@ -85,109 +85,109 @@ UNIFORMS
 
 - **Type:** `String`
 - **Description:** Vest colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/ENEMY_ADMIN/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/ENEMY_TROOP/Vest`
 
 - **Type:** `String`
 - **Description:** Vest colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/ENEMY_TROOP/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/ENEMY_ELITE/Vest`
 
 - **Type:** `String`
 - **Description:** Vest colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/ENEMY_ELITE/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_ROOKIE/Vest`
 
 - **Type:** `String`
 - **Description:** Vest colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_ROOKIE/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_REGULAR/Vest`
 
 - **Type:** `String`
 - **Description:** Vest colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_REGULAR/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_ELITE/Vest`
 
 - **Type:** `String`
 - **Description:** Vest colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ### `UNIFORMS/MILITIA_ELITE/Pants`
 
 - **Type:** `String`
 - **Description:** Pants colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Case-sensitive palette name from the XML comment: vest `YELLOWVEST`, `BLACKSHIRT`, `REDVEST`, `GREENVEST`, `JEANVEST`, `BLUEVEST`, `greyVEST`, `GYELLOWSHIRT`, `WHITEVEST`, `PURPLESHIRT` or `BROWNVEST`; pants `GREENPANTS`, `BLACKPANTS`, `BEIGEPANTS`, `TANPANTS`, `JEANPANTS` or `BLUEPANTS`. Free text is not valid.
+- **Default:** Required; all six uniform blocks must define both `Vest` and `Pants`.
+- **Source:** game code (uniform-colour loader); table data and XML comment.
+- **Confidence:** `source`
 
 ## Relations
 

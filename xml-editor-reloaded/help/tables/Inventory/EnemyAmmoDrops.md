@@ -62,41 +62,41 @@ AMMODROPLIST
 
 ### `AMMODROPLIST/DROPITEM/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the drop rule. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (ammo-drop loader); table data.
+- **Confidence:** `source`
 
 ### `AMMODROPLIST/DROPITEM/uiType`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Ammo type selected by this drop rule. It is a category/reference ID.
-- **Values:** Identifier of the ammo type.
+- **Values:** Ammo-type ID; the loader stores this field as `UINT32`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (ammo-drop loader); table data.
+- **Confidence:** `source`
 
 ### `AMMODROPLIST/DROPITEM/ubEnemyDropRate`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that an enemy soldier drops this category, in percent.
 - **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage `0..100`.
+- **Values:** Percentage `0..100`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (ammo-drop loader); table data.
+- **Confidence:** `source`
 
 ### `AMMODROPLIST/DROPITEM/ubMilitiaDropRate`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Chance that a militia soldier drops this category, in percent.
 - **Numeric semantics:** higher = more likely; negative values are not meaningful.
-- **Values:** Percentage `0..100`.
+- **Values:** Percentage `0..100`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (ammo-drop loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
