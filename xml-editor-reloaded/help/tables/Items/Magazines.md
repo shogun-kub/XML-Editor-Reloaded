@@ -83,7 +83,7 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 ### `MAGAZINELIST/MAGAZINE/ubCalibre`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Caliber group of the ammo. The game uses it together with `ubMagSize` and
+- **Description:** Calibre group of the ammo. The game uses it together with `ubMagSize` and
   `ubAmmoType` to find a matching magazine for a weapon and to name the calibre in the UI.
   It indexes the `AmmoStrings` list, which is filled in file order by the calibre loader
   (the `uiIndex` element is not read by that loader).
@@ -145,7 +145,7 @@ The field entries above define the inputs; they do not repeat the formulas.
 
 ## Localization
 
-No strings in this table. Caliber names are in `AmmoStrings`, which the game's language
+No strings in this table. Calibre names are in `AmmoStrings`, which the game's language
 files provide; the table itself is not covered by `Russian.*` overlays.
 
 ## Versions
