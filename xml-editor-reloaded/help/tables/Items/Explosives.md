@@ -233,43 +233,43 @@ No table-level global option is documented for this table. Its fields are read i
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragDamage`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Damage of each fragment.
 - **Numeric semantics:** Higher values mean more damage; negative values are not meaningful.
-- **Values:** `0..250`.
+- **Values:** `0..250`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive loader); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubFragRange`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Maximum travel range of fragments.
 - **Numeric semantics:** Higher values mean a longer range/radius, and negative values are not meaningful.
-- **Values:** `0..250`.
+- **Values:** `0..250`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive loader); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubHorizontalDegree`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Horizontal spread of the fragment cone, in degrees.
 - **Numeric semantics:** Angle in degrees; higher values mean a wider angle, and negative values are not meaningful.
-- **Values:** `0..360`.
+- **Values:** `0..360`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive loader); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVerticalDegree`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Vertical spread of the fragment cone, in degrees.
 - **Numeric semantics:** Angle in degrees; higher values mean a wider angle, and negative values are not meaningful.
-- **Values:** `0..360`.
+- **Values:** `0..360`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive loader); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`
 

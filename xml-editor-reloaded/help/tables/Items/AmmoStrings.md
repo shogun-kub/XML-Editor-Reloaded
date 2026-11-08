@@ -81,8 +81,8 @@ No table-level global option is documented for this table. Its fields are read i
 - **Description:** Main display label for the calibre. It is technical text, not a translated sentence.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** ammo string table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (AmmoStrings loader); ammo string table data.
+- **Confidence:** `source`
 
 ### `AMMOLIST/AMMO/BRCaliber`
 
@@ -90,8 +90,8 @@ No table-level global option is documented for this table. Its fields are read i
 - **Description:** Calibre label used by Bobby Ray’s gun shop.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** ammo string table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (AmmoStrings loader); ammo string table data.
+- **Confidence:** `source`
 
 ### `AMMOLIST/AMMO/NWSSCaliber`
 
@@ -99,8 +99,8 @@ No table-level global option is documented for this table. Its fields are read i
 - **Description:** Alternate calibre spelling used by the NWS sound path. v4 records do not contain this element.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** ammo string table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (AmmoStrings loader); ammo string table data.
+- **Confidence:** `source`
 
 ## Relations
 

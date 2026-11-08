@@ -94,39 +94,39 @@ No table-level global option is documented for this table. Its fields are read i
 
 ### `EXPDATALIST/EXPDATA/TransKeyFrame`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Animation frame at which the transparency key is applied.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Frame index; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion data loader); explosion data table.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/DamageKeyFrame`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Animation frame at which the blast begins to apply damage.
 - **Values:** Frame index; `0` is the first frame. No damage scale is implied by the frame number.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** game code (explosion animation); explosion data table.
+- **Source:** game code (explosion data loader); explosion data table.
 - **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/ExplosionSoundID`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`INT32`)
 - **Description:** Primary sound ID played for the explosion.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Integer; the loader stores this field as `INT32`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion data loader); explosion data table.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/AltExplosionSoundID`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`INT32`)
 - **Description:** Alternate sound ID used when the explosion needs a variant.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Integer; the loader stores this field as `INT32`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion data loader); explosion data table.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/BlastFilename`
 
@@ -139,13 +139,13 @@ No table-level global option is documented for this table. Its fields are read i
 
 ### `EXPDATALIST/EXPDATA/BlastSpeed`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Playback speed of the blast animation.
 - **Numeric semantics:** Higher values mean a faster speed; negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Integer; the loader stores this field in a signed byte.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion data loader); explosion data table.
+- **Confidence:** `source`
 
 ## Relations
 

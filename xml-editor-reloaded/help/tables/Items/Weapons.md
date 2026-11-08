@@ -272,10 +272,10 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/bAccuracy`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Old Chance to Hit (OCTH) accuracy value. `nAccuracy` is the NCTH counterpart.
 - **Only used with:** OCTH.
-- **Numeric semantics:** Higher values represent a weapon that is harder to control; lower values are easier, and negative values are not meaningful.
+- **Numeric semantics:** Higher values make the weapon more accurate; lower values make it less accurate, and negative values act as an accuracy penalty.
 - **Values:** `-100..100`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
@@ -283,10 +283,10 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/ubMagSize`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Magazine capacity used when the weapon is loaded. It describes the weapon’s magazine, not the magazine item row.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** `0..65000`.
+- **Numeric semantics:** Higher values mean a larger capacity; negative values are not meaningful.
+- **Values:** `0..65000`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -343,48 +343,48 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/sSound`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Sound ID played for a normal shot.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Sound ID; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/sBurstSound`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Sound ID played for a burst.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Sound ID; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/sSilencedBurstSound`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Sound ID played for a burst from a silenced weapon.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Sound ID; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/sReloadSound`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Sound ID played while reloading.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Sound ID; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/sLocknLoadSound`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Sound ID played when a round is chambered or the weapon is readied.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Sound ID; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/SilencedSound`
 
@@ -397,30 +397,30 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/bBurstAP`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** AP cost of a burst.
 - **Numeric semantics:** Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
 ### `WEAPONLIST/WEAPON/bAutofireShotsPerFiveAP`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Number of autofire shots per five AP. It is a rate value, not a magazine capacity.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Higher values mean a faster autofire rate; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
 
 ### `WEAPONLIST/WEAPON/APsToReload`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** AP cost of a normal reload.
 - **Numeric semantics:** Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -436,10 +436,10 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/MaxDistForMessyDeath`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Distance limit for the messy-death gore effect. Beyond this distance the ordinary death animation is used.
 - **Numeric semantics:** Higher values mean a longer distance, and negative values are not meaningful.
-- **Values:** `0..500`.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -474,10 +474,10 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/APsToReloadManually`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** AP cost of a manual reload, used when the weapon is reloaded one round at a time.
 - **Numeric semantics:** Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.
 - **Confidence:** `inferred`
@@ -493,10 +493,10 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/nAccuracy`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** New Chance to Hit (NCTH) accuracy value. `bAccuracy` is the OCTH counterpart.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Higher values represent a weapon that is harder to control; lower values are easier, and negative values are not meaningful.
+- **Numeric semantics:** Higher values make the weapon more accurate; lower values make it less accurate, and negative values act as an accuracy penalty.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** weapon table data; field metadata.

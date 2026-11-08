@@ -777,12 +777,12 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/ubClassIndex`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the class-specific record selected by `usItemClass`: an armour row, magazine row, weapon row, explosive row, and so on.
 - **Values:** Integer value; no narrower validation limit is recorded.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/ubCursor`
 
@@ -795,12 +795,12 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/bSoundType`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Sound family used when the item is handled or fired.
 - **Values:** `0` = default sound family; the full enum is the source constant set.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 **Inventory, graphics and economy.** Graphics, weight, size, price and Bobby Ray stock.
 
@@ -862,13 +862,13 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/usPrice`
 
-- **Type:** `Integer` (`UINT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Base purchase price. Bobby Ray prices and some trade calculations derive from it.
 - **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** `0..1000000`; code validation limit (integer).
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/ubCoolness`
 
@@ -1003,7 +1003,7 @@ Fields marked `source` are verified against the table and lookup data.
 - **Type:** `Decimal`
 - **Description:** NCTH scope magnification factor.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Higher values mean stronger magnification; `0` means no magnification, and negative values are not meaningful.
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1014,7 +1014,7 @@ Fields marked `source` are verified against the table and lookup data.
 - **Type:** `Decimal`
 - **Description:** NCTH laser projection factor.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Higher values mean stronger projection; `0` means no projection, and negative values are not meaningful.
 - **Values:** `0..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1025,7 +1025,7 @@ Fields marked `source` are verified against the table and lookup data.
 - **Type:** `Decimal`
 - **Description:** Horizontal recoil modifier added to the weapon's base recoil.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Signed horizontal modifier: positive values shift the kick right, negative values shift it left; a larger magnitude is harder to control.
 - **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1036,7 +1036,7 @@ Fields marked `source` are verified against the table and lookup data.
 - **Type:** `Decimal`
 - **Description:** Vertical recoil modifier added to the weapon's base recoil.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Signed vertical modifier: positive values shift the kick up, negative values shift it down; a larger magnitude is harder to control.
 - **Values:** `-20..20`; code validation limit (decimal).
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
@@ -1566,13 +1566,13 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/PercentTunnelVision`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Percentage of tunnel vision imposed by the item.
-- **Numeric semantics:** Percentage; higher values mean a stronger effect, and negative values reduce the effect below the baseline.
-- **Values:** `-100..100`; code validation limit (integer).
+- **Numeric semantics:** Higher values mean a stronger tunnel-vision effect; `0` means no effect, and negative values are not meaningful.
+- **Values:** `0..100`; a percentage. The loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 **Attachment system, utility and transport.** Attachment mode, kits, skills, transport progress and default attachments.
 
@@ -1617,23 +1617,23 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/usHackingModifier`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Hacking bonus.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
-- **Values:** Integer value; no narrower validation limit is recorded.
+- **Numeric semantics:** Higher values mean a stronger bonus; `0` means no bonus. The loader clamps the stored value to `0..100`, so negative input is not meaningful.
+- **Values:** `0..100`; the loader clamps to this range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/usBurialModifier`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Burial modifier.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
-- **Values:** Integer value; no narrower validation limit is recorded.
+- **Numeric semantics:** Higher values mean a stronger burial effect; `0` means no modifier. The loader clamps the stored value to `0..100`, so negative input is not meaningful.
+- **Values:** `0..100`; the loader clamps to this range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/DamageChance`
 
@@ -1676,23 +1676,23 @@ Fields marked `source` are verified against the table and lookup data.
 
 ### `ITEMLIST/ITEM/usPortionSize`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Portion size for food or drink items.
 - **Numeric semantics:** Higher values mean a larger portion; negative values are not meaningful.
-- **Values:** Integer value; the loader stores it in one byte.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `100` when the element is omitted; the loader sets this before parsing.
 - **Source:** game code (item loader); item table data.
 - **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/usAdministrationModifier`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Administration modifier for strategic actions.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
-- **Values:** Integer value; no narrower validation limit is recorded.
+- **Numeric semantics:** Higher values mean a stronger administration effect; `0` means no modifier, and negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** item table data; item property metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (item loader); item table data.
+- **Confidence:** `source`
 
 ### `ITEMLIST/ITEM/LockPickModifier`
 
