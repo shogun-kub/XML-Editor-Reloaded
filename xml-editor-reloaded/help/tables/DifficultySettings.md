@@ -525,61 +525,61 @@ DIFFICULTY_SETTINGS
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorJ9B2NumCreatures`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Creature count for the J9 B2 feeding zone: `2 + 2 * value + Random(2)`. These underground parameters are only read when no `initunderground.lua` script provides the setup.
-- **Numeric semantics:** Higher values mean more starting creatures; negative values are not meaningful.
-- **Values:** `0..255`; the loader stores this field as `UINT8`.
-- **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
-- **Source:** game code (difficulty loader; underground sector initialisation); difficulty table data.
+- **Description:** Intended creature count for the J9 B2 feeding zone, `2 + 2 * value + Random(2)`. The hardcoded underground setup that reads it is unreachable in this build: the Lua `initunderground.lua` path returns before it, and the shipped script sets the counts from its own tables. The value therefore has no effect.
+- **Numeric semantics:** Higher values would mean more starting creatures, but the value is not applied in this build.
+- **Values:** `0..255`; the loader stores this field as `UINT8`, but no reachable code consumes it.
+- **Default:** No effect in this build.
+- **Source:** game code (difficulty loader; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorK4B1NumTroops`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Enemy soldier count for K4 B1: `6 + 2 * value + Random(3)`. These underground parameters are only read when no `initunderground.lua` script provides the setup.
-- **Numeric semantics:** Higher values mean more starting enemy soldiers; negative values are not meaningful.
-- **Values:** `0..255`; the loader stores this field as `UINT8`.
-- **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
-- **Source:** game code (difficulty loader; underground sector initialisation); difficulty table data.
+- **Description:** Intended enemy soldier count for K4 B1, `6 + 2 * value + Random(3)`. The hardcoded underground setup that reads it is unreachable in this build: the Lua `initunderground.lua` path returns before it, and the shipped script sets the counts from its own tables. The value therefore has no effect.
+- **Numeric semantics:** Higher values would mean more starting enemy soldiers, but the value is not applied in this build.
+- **Values:** `0..255`; the loader stores this field as `UINT8`, but no reachable code consumes it.
+- **Default:** No effect in this build.
+- **Source:** game code (difficulty loader; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorK4B1NumElites`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Intended elite count for K4 B1, `4 + value + Random(2)`. The difficulty loader's read list names `SectorK4B2NumElites` instead of this element and the matching assignment case is for `SectorK4B1NumElites`, so a shipped `SectorK4B1NumElites` element is skipped and the value always stays `0`.
-- **Numeric semantics:** Higher values would mean more starting elites; negative values are not meaningful.
+- **Description:** Intended elite count for K4 B1, `4 + value + Random(2)`. Two defects make it ineffective: the loader's read list names `SectorK4B2NumElites` instead of this element, so a shipped `SectorK4B1NumElites` element is skipped, and the hardcoded underground setup that would apply it is unreachable because the Lua `initunderground.lua` path returns before it. The value stays `0` and has no effect.
+- **Numeric semantics:** Higher values would mean more starting elites, but the value is neither read nor applied in this build.
 - **Values:** `0..255`; the loader stores this field as `UINT8`, but the element is not read in the shipped loader.
-- **Default:** Always `0` with the shipped loader, even when the element is present.
-- **Source:** game code (difficulty loader read list and element handlers); difficulty table data.
+- **Default:** Always `0` with the shipped loader, and no effect in this build.
+- **Source:** game code (difficulty loader read list; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorO3B1NumTroops`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Enemy soldier count for O3 B1: `6 + 2 * value + Random(3)`. These underground parameters are only read when no `initunderground.lua` script provides the setup.
-- **Numeric semantics:** Higher values mean more starting enemy soldiers; negative values are not meaningful.
-- **Values:** `0..255`; the loader stores this field as `UINT8`.
-- **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
-- **Source:** game code (difficulty loader; underground sector initialisation); difficulty table data.
+- **Description:** Intended enemy soldier count for O3 B1, `6 + 2 * value + Random(3)`. The hardcoded underground setup that reads it is unreachable in this build: the Lua `initunderground.lua` path returns before it, and the shipped script sets the counts from its own tables. The value therefore has no effect.
+- **Numeric semantics:** Higher values would mean more starting enemy soldiers, but the value is not applied in this build.
+- **Values:** `0..255`; the loader stores this field as `UINT8`, but no reachable code consumes it.
+- **Default:** No effect in this build.
+- **Source:** game code (difficulty loader; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorO3B1NumElites`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Intended elite count for O3 B1, `4 + value + Random(2)`. The difficulty loader's read list names `SectorO3B2NumElites` instead of this element and the matching assignment case is for `SectorO3B1NumElites`, so a shipped `SectorO3B1NumElites` element is skipped and the value always stays `0`.
-- **Numeric semantics:** Higher values would mean more starting elites; negative values are not meaningful.
+- **Description:** Intended elite count for O3 B1, `4 + value + Random(2)`. Two defects make it ineffective: the loader's read list names `SectorO3B2NumElites` instead of this element, so a shipped `SectorO3B1NumElites` element is skipped, and the hardcoded underground setup that would apply it is unreachable because the Lua `initunderground.lua` path returns before it. The value stays `0` and has no effect.
+- **Numeric semantics:** Higher values would mean more starting elites, but the value is neither read nor applied in this build.
 - **Values:** `0..255`; the loader stores this field as `UINT8`, but the element is not read in the shipped loader.
-- **Default:** Always `0` with the shipped loader, even when the element is present.
-- **Source:** game code (difficulty loader read list and element handlers); difficulty table data.
+- **Default:** Always `0` with the shipped loader, and no effect in this build.
+- **Source:** game code (difficulty loader read list; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/SectorP3B1NumElites`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Elite count for P3 B1. The game adds `Random(3)` on Novice, `Random(5)` on Experienced, `Random(6)` on Expert and nothing on Insane. These underground parameters are only read when no `initunderground.lua` script provides the setup.
-- **Numeric semantics:** Higher values mean more starting elites; negative values are not meaningful.
-- **Values:** `0..255`; the loader stores this field as `UINT8`.
-- **Default:** `0` in the first record; a later record keeps the previous record's value when the element is omitted.
-- **Source:** game code (difficulty loader; underground sector initialisation); difficulty table data.
+- **Description:** Intended elite count for P3 B1: the game would add `Random(3)` on Novice, `Random(5)` on Experienced, `Random(6)` on Expert and nothing on Insane. The hardcoded underground setup that reads it is unreachable in this build: the Lua `initunderground.lua` path returns before it, and the shipped script sets the counts from its own tables. The value therefore has no effect.
+- **Numeric semantics:** Higher values would mean more starting elites, but the value is not applied in this build.
+- **Values:** `0..255`; the loader stores this field as `UINT8`, but no reachable code consumes it.
+- **Default:** No effect in this build.
+- **Source:** game code (difficulty loader; unreachable hardcoded underground initialisation); difficulty table data.
 - **Confidence:** `source`
 
 ### `DIFFICULTY_SETTINGS/DIFFICULTY/StrategicAiActionWakeQueen`
@@ -920,5 +920,6 @@ v4 and v5 use the same field paths; values may differ.
 
 - `BloodcatAmbushSectors` is loaded into a boolean that no other code reads; the table comment only says `?`. Its intended behaviour is unknown.
 - `CreaturePopulationModifier` is loaded and saved but not used by any population formula in this build; whether it was meant to feed the spreading chance is unknown.
-- The loaders accept only `SectorK4B2NumElites`/`SectorO3B2NumElites` in the read list while the shipped data and the assignment cases use `SectorK4B1NumElites`/`SectorO3B1NumElites`; whether a mod should rename the elements or the loader is the intended fix is unknown.
+- The seven `Sector*` fields are dead in this build: `BuildUndergroundSectorInfoList` always returns after the `initunderground.lua` path, so the hardcoded setup that reads them never runs. Whether that fallback was meant to remain reachable is unknown.
+- The loader's read list uses `SectorK4B2NumElites`/`SectorO3B2NumElites` while the shipped data and the assignment cases use `SectorK4B1NumElites`/`SectorO3B1NumElites`; whether the names were meant to match is unknown.
 - The exact interaction between difficulty levels and the hardcoded four-level logic is outside this table; the comment warns that new entries must not be created.

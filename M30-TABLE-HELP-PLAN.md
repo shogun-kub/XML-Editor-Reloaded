@@ -779,8 +779,14 @@ B7 и B8 полностью проверены. В B5 `Backgrounds` все 95 п
 поля (`CHAR16`); в B1 у `Items.AttachToPointAPCost` подтверждён `UINT8` и AP-семантика.
 Также проверены `RandomStats` (16), `MilitiaIndividual` (15), `IMPPortraits` (12),
 `RPCFacesSmall` (7), `MercAvailability` (10) и `MercQuote` (9): исправлены `UINT16`/`INT8`/
-`BOOLEAN`-типы, клампы процентов и нечитаемые `Name`-поля. Остались непроверенные поля
-B1/B3/B4/B5. `help-check -Write` проходит после каждого коммита.
+`BOOLEAN`-типы, клампы процентов и нечитаемые `Name`-поля. Крупные документы закрыты:
+`Items` — все 257 полей `source` (типы, UINT64-маски, AP/percent-семантика);
+`Pockets`/`AttachmentComboMerges`/`RandomItem`/`BloodcatPlacements` — 41/23/22/22 поля;
+`MercStartingGear` — 67/67 `source`; `MercProfiles` — 95/106 `source` (11 `GrowthModifier*`
+остались `inferred` из-за несовпадения имени с загрузчиком); `DifficultySettings` и
+`FacilityTypes` — все поля `source`. Осталось 301 `inferred`-поле в 46 документах
+(в основном `Weapons`, `CreaturePlacements`, `SectorNames`, `LoadBearingEquipment`, `Traders`).
+`help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 

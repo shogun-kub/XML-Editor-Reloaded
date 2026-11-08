@@ -595,8 +595,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/bBaseEffect`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Base injury result. Only negative results are applied, as direct damage plus bleeding; a positive value triggers nothing.
-- **Numeric semantics:** More negative values cause more damage; `0` and positive values are ignored.
+- **Description:** Base injury result. Only a negative final result is applied, as direct damage plus bleeding; a positive final result does nothing.
+- **Numeric semantics:** More negative base values cause more damage; a positive base value does not heal, and `0` can still produce damage through `ubRange`.
 - **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** `0` when omitted.
 - **Source:** game code (facility type loader; facility risk result); map table data.
