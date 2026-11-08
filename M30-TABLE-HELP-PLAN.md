@@ -666,7 +666,8 @@ B9 не добавляет табличных документов. Он про�
 - **аудит cross-references**:
   1. собрать поля-ссылки (`*Item*`, `*Class*`, `*Index`, `*Type*`, `*Sound*`, `*Profile*`,
      `*Sector*`, `*City*`, `*Mine*`, `*Trader*` и аналогичные) и определить тип их цели;
-  2. составить матрицу «источник → целевая таблица/поле»;
+  2. составить матрицу «источник → целевая таблица/поле» и закрепить её в
+     `help/REFERENCE-MAP.md`;
   3. проверить, есть ли в документе-источнике ссылка на целевой раздел или поле;
   4. добавить отсутствующие ссылки в `Relations` и/или в `Description`, не дублируя там
      длинное объяснение целевого поля;
@@ -674,21 +675,24 @@ B9 не добавляет табличных документов. Он про�
      раздел, а не на дубль;
 - сверка терминов с `GLOSSARY.md`, включая запрещённые варианты и единообразие написания
   (`armour`, `mercenary`, `sector`, `item class` и т.п.);
-- генерация `INDEX.md`/`COVERAGE.md`;
+- генерация `INDEX.md`/`COVERAGE.md` и `REFERENCE-MAP.md`;
 - проверка, что `References/` не изменялись (хеши до/после);
 - коммит `M30: finish English help QA`.
 
-Матрица cross-references — рабочий артефакт в `.tmp/help/`, в git не попадает; результат
-аудита — ссылки, добавленные в документы.
+`help/REFERENCE-MAP.md` — коммитируемая производная карта: `help-crossrefs.ps1 -Write`
+собирает её из ссылок в табличных документах, `-Check` проверяет актуальность. Редактировать
+карту вручную не нужно; источник истины — ссылка в документе.
 
-Статус B9 (2026-11-08, done для английского канона): 237 cross-document links в 82 из 94
-документов (было 123 в 40); устаревшие ссылки на «future» документы заменены ссылками;
-связаны Items, AmmoTypes, Magazines, Army, Map, Inventory, Email и производные. 12 документов
-остались без cross-links, потому что они самодостаточны (DifficultySettings, таблицы имён,
-UI-layout, Clothes, InteractiveActions, RandomTeams). Термины `calibre` и `defence` приведены
-к единому написанию. `help-check -Release` проходит: v5 Data-1.13 — 239/239 таблиц и
-2985/2985 путей; v4 Data-1.13 — 238/238 и 2983/2983; `EmailSenderNameList` лежит в v4 `Base`
-и покрыт своим документом. `INDEX.md`/`COVERAGE.md` перегенерированы; изменений вне `help/` нет.
+Статус B9 (2026-11-08, done для английского канона): 225 уникальных cross-document links в
+82 из 94 документов (было 123 в 40); устаревшие ссылки на «future» документы заменены
+ссылками; связаны Items, AmmoTypes, Magazines, Army, Map, Inventory, Email и производные.
+12 документов остались без cross-links, потому что они самодостаточны (DifficultySettings,
+таблицы имён, UI-layout, Clothes, InteractiveActions, RandomTeams). Карта закреплена в
+`help/REFERENCE-MAP.md`, генератор — `util-scripts/help-crossrefs.ps1`. Термины `calibre` и
+`defence` приведены к единому написанию. `help-check -Release` проходит: v5 Data-1.13 —
+239/239 таблиц и 2985/2985 путей; v4 Data-1.13 — 238/238 и 2983/2983; `EmailSenderNameList`
+лежит в v4 `Base` и покрыт своим документом. `INDEX.md`/`COVERAGE.md` перегенерированы;
+изменений вне `help/` нет.
 
 ### B10. Сверка описаний по коду (блоки B0–B8)
 
@@ -744,6 +748,8 @@ UI-layout, Clothes, InteractiveActions, RandomTeams). Термины `calibre` �
 9. Генерирует `INDEX.md`, `COVERAGE.md` и разделы `Contents` (`-Write`).
 10. Полноту cross-references не проверяет: валидируется только разрешимость уже добавленных
     ссылок. Матрица связей и добавление недостающих ссылок — отдельная задача B9.
+11. `REFERENCE-MAP.md` генерируется и проверяется отдельно:
+    `util-scripts/help-crossrefs.ps1 -Write` / `-Check`.
 
 Коды выхода: 0 — чисто; 1 — пробелы/ошибки. В CI — отдельный шаг после сборки
 (документы не влияют на `dotnet build`).
