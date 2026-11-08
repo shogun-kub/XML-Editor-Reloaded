@@ -37,7 +37,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`EmailSenderNameList.xml` is the list of display names used by the e-mail system. The index selects a sender name; the text is localized.
+`EmailSenderNameList.xml` is the list of display names used by generic `Emails.xml` mail. The index selects a sender name; the text is used verbatim. See [Email text formatting](../../EMAIL-TEXT.md).
 
 ## Tables
 
@@ -68,7 +68,7 @@ SENDER_LIST
 ### `SENDER_LIST/NAME/Name`
 
 - **Type:** `String`
-- **Description:** Display name used as an e-mail sender. It is display text.
+- **Description:** Display name used as an e-mail sender, used verbatim. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -76,7 +76,7 @@ SENDER_LIST
 
 ## Relations
 
-- This table is part of the strategic army and inventory data; references are described in the field notes.
+- The `Sender` field in `Emails.xml` references a `uiIndex` in this table.
 
 ## Localization
 
@@ -94,4 +94,4 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-- The exact formula or enum mapping for inferred fields is not stated by the table data.
+- None. The names are literal display text; see [Email text formatting](../../EMAIL-TEXT.md).

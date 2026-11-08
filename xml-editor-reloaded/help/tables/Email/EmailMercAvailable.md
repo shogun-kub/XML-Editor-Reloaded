@@ -38,7 +38,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`EmailMercAvailable.xml` contains the generated e-mail sent when an AIM mercenary becomes available again. Each row has a subject and a message; `±` in the message marks a line break.
+`EmailMercAvailable.xml` contains the generated e-mail sent when an AIM mercenary becomes available again. Each row has a subject and a message. Both are literal display text; this table does not substitute placeholders. See [Email text formatting](../../EMAIL-TEXT.md).
 
 ## Tables
 
@@ -70,7 +70,7 @@ EMAIL_MERC_AVAILABLE
 ### `EMAIL_MERC_AVAILABLE/EMAIL/Subject`
 
 - **Type:** `String`
-- **Description:** Subject line of the generated e-mail. It is display text and may contain placeholders.
+- **Description:** Subject line of the generated e-mail, used as literal text. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -79,7 +79,7 @@ EMAIL_MERC_AVAILABLE
 ### `EMAIL_MERC_AVAILABLE/EMAIL/Message`
 
 - **Type:** `String`
-- **Description:** Body of the generated e-mail. It is display text; `±` marks a line break in the stored message.
+- **Description:** Body of the generated e-mail. `±` marks a line break in the stored message. See [Email text formatting](../../EMAIL-TEXT.md).
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -88,6 +88,7 @@ EMAIL_MERC_AVAILABLE
 ## Relations
 
 - The template is selected by its `uiIndex` when the corresponding game event fires.
+- The sender display name comes from `MercProfiles.zNickname` for the same profile index; it is not stored in this table.
 
 ## Localization
 
@@ -105,4 +106,4 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-- The exact formula or enum mapping for inferred fields is not stated by the table data.
+- None. The subject and message are used literally; see [Email text formatting](../../EMAIL-TEXT.md).
