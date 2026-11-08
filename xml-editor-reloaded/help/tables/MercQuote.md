@@ -71,84 +71,84 @@ QARRAY
 
 ### `QARRAY/PROFILE/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Profile identity for this quote row.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/Name`
 
 - **Type:** `String` (`String`)
-- **Description:** Profile name used by the quote table.
-- **Values:** Free text.
+- **Description:** Mercenary name stored in the table, but the loader does not read this element; it is ignored.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpHeadShotOnly`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for a head-shot-only situation.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpTeamSpecific`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for team-specific dialogue.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpGenderCode`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Gender code used when selecting the quote.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpGotGunOrUsedGun`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for getting or using a gun.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpPassingDislike`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for passing a disliked character.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpWitnessQueenBugDeath`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for witnessing the queen bug’s death.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ### `QARRAY/PROFILE/QuoteExpWitnessDeidrannaDeath`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** Quote event index for witnessing Deidranna’s death.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc quote table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Qarray.cpp`, `QARRAY_VALUES`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
