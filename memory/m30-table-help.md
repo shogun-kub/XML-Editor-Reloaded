@@ -1,6 +1,6 @@
 ---
 name: m30-table-help
-description: M30 TableData help — B0/B1a/B1b/B2/B3/B4/B5/B6/B7 approved 2026-11-08, B8 draft; ninety-four documents, 239 tables, 2985 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
+description: M30 TableData help — B0–B8 approved 2026-11-08; all ninety-four documents reviewed, 239 tables, 2985 field paths, help-check tooling, clean table names, table_ids and option-gated fields.
 metadata:
   node_type: memory
   type: project
@@ -81,12 +81,12 @@ NCTH/OCTH разведены в `Weapons`; `AmmoTypes` опирается на s
 пользователем 2026-11-08, документы переведены в `reviewed`. Backup-папка — алиас; точные
 merchant flags/coolness formula вынесены в `Open questions`.
 
-**B8 (2026-11-08, draft).** 18 табличных документов + обновлённый `help/Localization.md`;
+**B8 (2026-11-08, reviewed).** 18 табличных документов + обновлённый `help/Localization.md`;
 19 таблиц, 112 путей, полное покрытие `2985/2985` и `239/239`. `Email` — 3 документа,
 `BriefingRoom` — 8, `History` — 2, `CampaignStatsEvents` — 12, `LoadScreenHints` — 12,
 `LayoutMainMenu` — 13, `ActionItems` — 5, `EnemyNames`/`EnemyRank` — по 4, `RandomTeams` — 1,
 `Sounds`/`BurstSounds` — общий документ по 1 полю, `HiddenNames` — 3, `CivGroupNames` — 6,
-`SquadNames` — 2, `SpreadPatterns` — 7, `Vehicles` — 23. Документы в `draft`.
+`SquadNames` — 2, `SpreadPatterns` — 7, `Vehicles` — 23. Одобрены пользователем
+2026-11-08, документы переведены в `reviewed`; `help-check -Release` проходит.
 
-**Дальше.** Ревью B8, затем B9 — сквозная проверка, INDEX/COVERAGE, терминология и
-выборочная сверка по коду.
+**Дальше.** B9 — сквозная проверка, INDEX/COVERAGE, терминология и выборочная сверка по коду.
