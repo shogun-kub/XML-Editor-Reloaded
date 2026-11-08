@@ -70,79 +70,81 @@ BRIEFINGROOM
 
 ### `BRIEFINGROOM/DATA/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the briefing-room entry. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/Name`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the mission/briefing.
-- **Values:** Free text or a symbolic code.
+- **Values:** Free text.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/Hidden`
 
-- **Type:** `Boolean`
-- **Description:** If set, the briefing entry is hidden from the player. It is a switch.
-- **Values:** `0` or `1`.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** Visibility switch with inverted meaning in the loader: `0` hides the briefing entry, any non-zero value makes it visible.
+- **Numeric semantics:** Boolean; `0` = hidden, non-zero = visible.
+- **Values:** `0` or `1` in the shipped table.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/MaxPages`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Maximum number of text pages shown for this briefing.
 - **Numeric semantics:** higher = more pages; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/MaxImages`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Maximum number of images shown for this briefing.
-- **Numeric semantics:** higher = more images; negative values are not meaningful.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** higher = more images; the loader stores this field as signed `INT32`.
+- **Values:** `-2147483648..2147483647`; the intended range is non-negative.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/ImagePositionX`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Horizontal screen position of the briefing image, in pixels.
 - **Numeric semantics:** increasing = right, decreasing = left.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/ImagePositionY`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Vertical screen position of the briefing image, in pixels.
 - **Numeric semantics:** increasing = down, decreasing = up.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..4294967295`; the loader stores this field as `UINT32`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ### `BRIEFINGROOM/DATA/NextMission`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Index of the next briefing entry, or `-1` when there is no next mission. It is a reference.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** `-1` = no next mission; non-negative = index of the next briefing entry.
+- **Values:** Briefing index or `-1`; the loader stores this field as `INT32`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (briefing-room loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
