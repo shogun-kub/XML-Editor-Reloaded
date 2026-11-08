@@ -774,8 +774,10 @@ case-sensitive список палитр; у пяти enemy-drop таблиц у
 `uiIndex`/`SeatIndex` `UINT8`, `MvtTypes`/`SeatingCapacities`/sound IDs `INT32`,
 `VehicleArmourType` `INT16`, `Pilot` `INT8`, координаты сидений `INT8`, `Rotation`/`Compartment`
 `UINT8`, строки `CHAR16`. В `Email*` подтверждены `uiIndex` `UINT8`/`UINT16` и строки `CHAR16`.
-B7 и B8 полностью проверены; остались непроверенные поля B1/B3/B4/B5.
-`help-check -Write` проходит после каждого коммита.
+B7 и B8 полностью проверены. В B5 `Backgrounds` все 95 полей подтверждены по загрузчику
+и переведены в `source`; в B4 у `MercProfiles` исправлены `uiIndex` (`UINT32`) и строковые
+поля (`CHAR16`); в B1 у `Items.AttachToPointAPCost` подтверждён `UINT8` и AP-семантика.
+Остались непроверенные поля B1/B3/B4/B5. `help-check -Write` проходит после каждого коммита.
 
 ## 9. Проверки и гейты
 

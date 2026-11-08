@@ -126,6 +126,8 @@ clamp `1..10`, `addToCoolness` `0..10`, формула coolness; `UniformColors`
 case-sensitive (`RECTANGLE`/`DIAMOND`/`ELLIPSE`), `Rectangle`/`Ellipse` не совпадают, `DESC`
 не читается; `Vehicles` — `uiIndex`/`SeatIndex` `UINT8`, `MvtTypes`/вместимость/звуки `INT32`,
 броня `INT16`, `Pilot` `INT8`, смещения сидений `INT8`; `Email*` — `uiIndex` `UINT8`/`UINT16`,
-строки `CHAR16`. B7/B8 завершены, остались B1/B3/B4/B5. В `GLOSSARY.md`
+строки `CHAR16`. B7/B8 завершены. `Backgrounds` — все 95 полей `source`; `MercProfiles.uiIndex` `UINT32`,
+`zName`/`zNickname` `CHAR16`; `Items.AttachToPointAPCost` `UINT8` (AP). Остались B1/B3/B4/B5.
+В `GLOSSARY.md`
 добавлены `recoil`, `aim level`, `burst penalty`, `action item`.
 **Дальше.** Продолжить B1/B3/B4/B5; после B10 — повторный B9-гейт и финальный коммит.
