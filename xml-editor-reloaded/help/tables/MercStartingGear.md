@@ -189,12 +189,12 @@ MERCGEARLIST
 
 ### `MERCGEARLIST/MERCGEAR/mIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Mercenary profile ID; it points to [MercProfiles](MercProfiles.md).
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Profile ID `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (starting-gear loader); merc starting gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mGearKitName`
 
@@ -207,23 +207,23 @@ MERCGEARLIST
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mPriceMod`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Price modifier applied to the kit.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** Signed percentage modifier: `0` means no change, positive values increase the price, and negative values discount it. The UI accepts `-100..200`.
+- **Values:** `-100..200`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (kit-price handling in `AimMembers.cpp`); merc starting gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mAbsolutePrice`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`INT16`)
 - **Description:** Absolute kit price; `-1` leaves the price unset.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Numeric semantics:** `-1` means “not set”; non-negative values are money amounts, and higher values mean a more expensive kit.
+- **Values:** `-1..32767`; the UI treats values up to `32000` as valid.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** merc starting gear table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (kit-price handling in `AimMembers.cpp`); merc starting gear table data.
+- **Confidence:** `source`
 
 ### `MERCGEARLIST/MERCGEAR/GEARKIT/mHelmet`
 
