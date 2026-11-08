@@ -213,12 +213,12 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/ubShotsPer4Turns`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Rate-of-fire value expressed as shots per four turns. The game derives the actual AP cost from this value and the weapon’s AP settings; it is not a direct “shots per turn” counter.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
+- **Description:** Mechanical rate of fire expressed as shots per four turns. The game derives the AP cost from this value and the weapon’s AP settings; it is not a direct “shots per turn” counter.
+- **Numeric semantics:** Higher values mean a faster mechanical rate of fire (more shots per four turns); lower values mean a slower rate, and negative values are not meaningful.
 - **Values:** Decimal number.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader and AP calculation); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/ubShotsPerBurst`
 
@@ -234,11 +234,11 @@ WEAPONLIST
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Accuracy penalty applied to burst fire.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Higher values mean a stronger penalty (worse accuracy) for each shot after the first; `0` means no burst penalty. Negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader and burst accuracy); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/ubBulletSpeed`
 
@@ -446,13 +446,13 @@ WEAPONLIST
 
 ### `WEAPONLIST/WEAPON/AutoPenalty`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Accuracy penalty applied to autofire.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Numeric semantics:** Higher values mean a stronger penalty (worse accuracy); `0` means no autofire penalty. Negative values are not meaningful.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader and autofire accuracy); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/NoSemiAuto`
 
@@ -505,35 +505,35 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/bRecoilX`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Horizontal recoil value used by NCTH.
+- **Description:** Horizontal recoil deviation used by NCTH.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Higher values represent a weapon that is harder to control; lower values are easier, and negative values are not meaningful.
-- **Values:** `-20..20`.
+- **Numeric semantics:** Signed horizontal deviation: positive values kick right, negative values kick left; a larger magnitude is harder to control.
+- **Values:** Signed integer; observed values are in the `-20..20` range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`GetRecoil`); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/bRecoilY`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Vertical recoil value used by NCTH.
+- **Description:** Vertical recoil deviation used by NCTH.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Higher values represent a weapon that is harder to control; lower values are easier, and negative values are not meaningful.
-- **Values:** `-20..20`.
+- **Numeric semantics:** Signed vertical deviation: positive values kick up, negative values kick down; a larger magnitude is harder to control.
+- **Values:** Signed integer; observed values are in the `-20..20` range.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`GetRecoil`); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/ubAimLevels`
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Number of aim levels available to the weapon in NCTH.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Higher values represent a weapon that is harder to control; lower values are easier, and negative values are not meaningful.
-- **Values:** `0..8`.
+- **Numeric semantics:** Higher values allow more aiming levels (finer aim); `0` lets the game choose the level count from the weapon type. Negative values are not meaningful.
+- **Values:** `0..8`; `0` means automatic.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** weapon table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (weapon loader and aiming-level selection); weapon table data.
+- **Confidence:** `source`
 
 ### `WEAPONLIST/WEAPON/ubRecoilDelay`
 

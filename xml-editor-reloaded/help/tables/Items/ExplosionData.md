@@ -105,11 +105,10 @@ No table-level global option is documented for this table. Its fields are read i
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Animation frame at which the blast begins to apply damage.
-- **Numeric semantics:** Higher values mean more damage; negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Values:** Frame index; `0` is the first frame. No damage scale is implied by the frame number.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion animation); explosion data table.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/ExplosionSoundID`
 

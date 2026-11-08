@@ -157,12 +157,12 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVolatility`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Volatility rating of the explosive. It expresses how sensitive the explosive is in the explosion model.
-- **Numeric semantics:** Higher values mean a larger volatility/angle, and negative values are not meaningful.
-- **Values:** Integer; no narrower range is declared by the field metadata.
+- **Description:** Base chance of an accidental explosion when the explosive is damaged or shocked.
+- **Numeric semantics:** Higher values mean a higher accidental-explosion chance; `0` means the explosive is not volatile. Negative values are not meaningful.
+- **Values:** Integer percentage; observed values are `0`, `1`, `2` and `10`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive chain-reaction check); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/ubAnimationID`
 
@@ -197,11 +197,11 @@ No table-level global option is documented for this table. Its fields are read i
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Magazine capacity used by NAS explosive items. It is not the blast radius.
-- **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
-- **Values:** `0..65000`.
+- **Numeric semantics:** Higher values mean a larger capacity; negative values are not meaningful.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosive loader); explosive table data.
+- **Confidence:** `source`
 
 ### `EXPLOSIVELIST/EXPLOSIVE/fExplodeOnImpact`
 
@@ -274,12 +274,12 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPLOSIVELIST/EXPLOSIVE/bIndoorModifier`
 
 - **Type:** `Decimal` (`FLOAT`)
-- **Description:** Multiplier applied to the explosion when it occurs indoors. `1.0` leaves the blast unchanged. v4 records do not contain this element.
-- **Numeric semantics:** Signed modifier; higher values mean a stronger positive effect, and negative values apply the opposite effect (a penalty or reduction).
+- **Description:** Multiplier applied to damage and stun when the explosion occurs indoors. `0` leaves the blast unchanged. v4 records do not contain this element.
+- **Numeric semantics:** Higher values increase the indoor blast; `0` is neutral, and negative values reduce it. `-1` removes the full indoor contribution.
 - **Values:** `-1..10`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** explosive table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion damage calculation); explosive table data.
+- **Confidence:** `source`
 
 ## Relations
 
