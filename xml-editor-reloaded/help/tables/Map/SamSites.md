@@ -13,8 +13,8 @@ root: SAM_INFO
 record: SAMLIST/SAM
 key: samIndex
 sources:
-  - Map table data
-  - Field names, XML comments and observed values
+  - Game code (SAM-site loader and SAM coverage code)
+  - Map table data and XML comments
 status: reviewed
 updated: 2026-11-08
 ---
@@ -43,7 +43,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`SamSites.xml` defines SAM installations and the matrix of sectors they cover. Each SAM has a sector, direction and two grid positions; the coverage matrix maps each column to a SAM index.
+`SamSites.xml` defines SAM installations and the matrix of sectors they cover. Each SAM has a sector, hidden flag, terminal orientation and two terminal grid positions. The coverage matrix holds one row per map row; each cell is a bitmask of the SAMs covering that sector, not a single SAM index.
 
 ## Tables
 
@@ -73,79 +73,79 @@ SAM_INFO
 
 ### `SAM_INFO/SAMLIST/SAM/samIndex`
 
-- **Type:** `Integer`
-- **Description:** Index of the SAM site. It is an array key.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`UINT32`)
+- **Description:** Unique 1-based SAM-site index used as the array key (stored internally at `samIndex - 1`). `NUMBER_OF_SAMS` is set to the highest index read; indices `1..4` also have hardcoded Meanwhile/Skyrider roles.
+- **Values:** `1..50` (`MAX_NUMBER_OF_SAMS`); `0` is reserved for 'no SAM coverage' and is rejected as a site index.
+- **Default:** Required; identifies the record.
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samSector/x`
 
-- **Type:** `Integer`
-- **Description:** Map column of the SAM sector. Lower values are farther west; it is a coordinate.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT16`)
+- **Description:** Map column (`x`) of the SAM sector: `1` = west edge, `16` = east edge. Used with `y` to build the sector ID.
+- **Values:** `1..16`.
+- **Default:** Absent; `0` (invalid sector).
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samSector/y`
 
-- **Type:** `Integer`
-- **Description:** Map row of the SAM sector. Lower values are farther north; it is a coordinate.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT16`)
+- **Description:** Map row (`y`) of the SAM sector: `1` = north edge (`A`), `16` = south edge (`P`).
+- **Values:** `1..16`.
+- **Default:** Absent; `0` (invalid sector).
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samHidden`
 
-- **Type:** `Boolean`
-- **Description:** If set, the SAM site is hidden until discovered.
-- **Values:** `0` or `1`.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If nonzero, the SAM site is hidden at the start of a new game (`fSamSiteFoundOrig` is set to `!samHidden`). Changing it in an existing save has no effect; the table comment requires a new game.
+- **Values:** `0` or `1`; any nonzero value hides the site.
+- **Default:** Absent; `0` (visible).
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samOrientation`
 
-- **Type:** `Integer`
-- **Description:** Facing direction of the SAM site, as a direction code. It is an orientation code.
-- **Values:** Direction code; observed values `3` and `4`.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT8`)
+- **Description:** Orientation of the SAM control terminal if it is repaired: `3` for `/` (from the middle to the lower left) and `4` for `\` (from the middle to the lower right). Any other value is forced to `3`.
+- **Values:** `3` or `4`; other values are read as `3`.
+- **Default:** Absent; `3`.
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samGridNoA`
 
-- **Type:** `Integer`
-- **Description:** First map grid position of the SAM installation. It is a grid identifier.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`)
+- **Description:** Grid number of the lower terminal tile on the tactical map (the A tile in the table comment's A/B diagram).
+- **Values:** Tactical grid number below `MAX_ALLOWED_WORLD_MAX`; values at or above it are replaced with `0`.
+- **Default:** Absent; `0`.
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAMLIST/SAM/samGridNoB`
 
-- **Type:** `Integer`
-- **Description:** Second map grid position of the SAM installation. It is a grid identifier.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Integer` (`INT32`)
+- **Description:** Grid number of the upper terminal tile (the B tile); `samGridNoA` is always lower on screen than `samGridNoB`.
+- **Values:** Tactical grid number below `MAX_ALLOWED_WORLD_MAX`; values at or above it are replaced with `1`.
+- **Default:** Absent; `1`.
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ### `SAM_INFO/SAM_CONTROLLED_SECTORS/MAP_ROW`
 
-- **Type:** `String`
-- **Description:** One row of the SAM coverage matrix. Values are SAM-site indexes, or `0` for no coverage; positions are columns, not quantities.
-- **Values:** Space-separated indexes, one per map column; `0` = no SAM.
-- **Default:** Required; one row of the map.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `String` (`CHAR8`)
+- **Description:** One row of the SAM coverage matrix. The `row` attribute selects the map row (`00`..`17`); the element text is a whitespace-separated list of 18 column cells. Each cell is a bitmask: bit 0 = SAM 1, bit 1 = SAM 2, bit 2 = SAM 3, and so on, so `5` means SAM 1 and SAM 3; `0` = no coverage.
+- **Values:** 18 cells, one per column `0..17`; rows and columns `0` and `17` are world borders and are not read by the coverage checks.
+- **Default:** Required; rows with a missing `row` attribute or `row >= 18` are skipped. A non-numeric value is parsed as `0`.
+- **Source:** game code (SAM-site loader and coverage code); table data and XML comments.
+- **Confidence:** `source`
 
 ## Relations
 
-- `samSector/x` and `samSector/y` identify a sector named in [SectorNames](SectorNames.md); the coverage matrix uses the same map columns.
+- `samSector/x` and `samSector/y` identify a sector named in [SectorNames](SectorNames.md); the coverage matrix is indexed by map row and column, and each cell is a bitmask of SAM indexes.
 
 ## Localization
 
@@ -157,10 +157,13 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Sources
 
-- Map table data.
-- Field names, XML comments and observed values.
-- Descriptions are based on the field names and observed table values; no runtime formula is claimed.
+- Game code: SAM-site loader, coverage matrix and sector helpers.
+- Map table data and XML comments.
+- Field types follow the loader/local structure and runtime arrays; descriptions follow the code that consumes each value.
 
 ## Open questions
 
-- The exact formula or enum mapping for fields marked as inferred is not stated by the table data.
+- The coverage matrix is a bitmask (`1 << (samIndex - 1)`), not a list of SAM indexes; shipped values include combinations such as `5`, `6`, `9`, `12` and `13`.
+- `samIndex` 1..4 have hardcoded roles in the Meanwhile/Skyrider dialogue and retreat logic; changing them can break those scenes.
+- The loader stores matrix rows/columns `0` and `17` even though the coverage checks only read `1..16`; whether a non-zero border value has any effect is unknown.
+- The matrix parser has no column-count check; a row with more than 18 cells would write past the row array.
