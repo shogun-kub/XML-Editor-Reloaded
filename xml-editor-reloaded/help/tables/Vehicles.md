@@ -101,213 +101,213 @@ VEHICLES
 
 ### `VEHICLES/VEHICLE/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the vehicle. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/Name`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Internal/display name of the vehicle.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/LongName`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Long display name shown in detailed UI; may be empty.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/ShortName`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Short display name for the vehicle; may be empty.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/MvtTypes`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Movement-type code for the vehicle. It is an enum/bit field.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/StiFaceIcon`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR8`)
 - **Description:** STI face icon path for the vehicle. It is a file reference.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SeatingCapacities`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Number of seats in the vehicle.
 - **Numeric semantics:** higher = more seats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/EnterVehicleSndID`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Sound ID played when entering the vehicle. It is a sound reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/MoveVehicleSndID`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Sound ID played when the vehicle moves. It is a sound reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/VehicleArmourType`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Armour type/item ID used by the vehicle. It is a reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/Neutral`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the vehicle is neutral rather than owned by a faction. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/VehicleEnabled`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the vehicle is enabled in the game. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/Pilot`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
 - **Description:** Profile ID of the default pilot, or `-1` when there is no pilot. It is a reference.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `-128..127`; `-1` means no pilot. The loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/SeatIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the seat within the vehicle. It is a seat key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/SeatName`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Display name of the seat, such as `Driver` or `Passenger`.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/Driver`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, this seat is the driver’s seat. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/Rotation`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Facing/rotation code for the seat occupant. It is an orientation code.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/OffsetX`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
 - **Description:** Horizontal offset of the seat position in pixels.
-- **Numeric semantics:** increasing = right, decreasing = left.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** increasing = right, decreasing = left; negative values are allowed.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/OffsetY`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT8`)
 - **Description:** Vertical offset of the seat position in pixels.
-- **Numeric semantics:** increasing = down, decreasing = up.
-- **Values:** Integer; see the description for its scale.
+- **Numeric semantics:** increasing = down, decreasing = up; negative values are allowed.
+- **Values:** `-128..127`; the loader stores this field as `INT8`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/Compartment`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Compartment/area code for the seat. It is an enum/reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/BlockedShots`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, shots from this seat are blocked. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/BlockedView`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the occupant’s view from this seat is blocked. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ### `VEHICLES/VEHICLE/SEAT/Hidden`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the seat/occupant is hidden in the vehicle UI. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Vehicles.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
