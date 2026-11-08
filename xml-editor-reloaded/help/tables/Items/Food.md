@@ -66,45 +66,45 @@ FOODSLIST
 
 ### `FOODSLIST/FOOD/uiIndex`
 
-- **Type:** `Integer` (`UINT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the food row and identity of the XML record.
 - **Only used with:** Food system.
 - **Values:** Non-negative index; unique within the file. It is referenced by the item row through the food type.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food loader); food table data.
+- **Confidence:** `source`
 
 ### `FOODSLIST/FOOD/szName`
 
 - **Type:** `String` (`String`)
-- **Description:** Display name of the food or drink.
+- **Description:** Informational label for the food or drink. The current food loader reads the element but does not use it for gameplay or display lookup.
 - **Only used with:** Food system.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food loader ignores the value); food table data.
+- **Confidence:** `source`
 
 ### `FOODSLIST/FOOD/bFoodPoints`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT32`)
 - **Description:** Food points supplied when the item is consumed.
 - **Only used with:** Food system.
 - **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Food points supplied by the item; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food loader); food table data.
+- **Confidence:** `source`
 
 ### `FOODSLIST/FOOD/bDrinkPoints`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT32`)
 - **Description:** Drink points supplied when the item is consumed.
 - **Only used with:** Food system.
 - **Numeric semantics:** Higher values mean a larger quantity; negative values are not meaningful.
 - **Values:** Drink points supplied by the item; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food loader); food table data.
+- **Confidence:** `source`
 
 ### `FOODSLIST/FOOD/usDecayRate`
 
@@ -120,13 +120,13 @@ FOODSLIST
 ### `FOODSLIST/FOOD/bMoraleMod`
 
 - **Type:** `Integer` (`INT8`)
-- **Description:** Morale change applied when the item is consumed.
+- **Description:** Legacy morale value present in `Food.xml`. The current food loader does not read this element; food morale is driven by the `FoodMoraleMods` thresholds instead.
 - **Only used with:** Food system.
-- **Numeric semantics:** Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
-- **Values:** Morale change applied when the food is consumed.
-- **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food table data; field metadata.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Signed legacy value; it has no effect through the current loader.
+- **Values:** Integer; retained for compatibility with existing XML.
+- **Default:** `0` when omitted.
+- **Source:** game code (the food loader has no `bMoraleMod` case); food table data.
+- **Confidence:** `source`
 
 ## Relations
 

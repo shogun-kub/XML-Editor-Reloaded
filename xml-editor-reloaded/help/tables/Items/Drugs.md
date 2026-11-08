@@ -91,12 +91,12 @@ DRUGSLIST
 
 ### `DRUGSLIST/DRUG/uiIndex`
 
-- **Type:** `Integer` (`UINT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Index of the drug row and identity of the XML record.
-- **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the schema comment allows up to 100 drugs.
+- **Values:** Non-negative index; unique within the file. It is referenced by `DrugType` in [Items](Items.md); the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (drug loader); drug table data.
+- **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/szName`
 
@@ -148,12 +148,12 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DRUG_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this effect is applied when the drug is consumed. If omitted, the effect is applied without a chance roll.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance that this effect is applied when the drug is consumed; the loader default applies when omitted.
-- **Default:** absent: the effect applies without a chance roll.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Chance that this effect is applied when the drug is consumed. `0` and `100` both mean the effect always applies; values `1..99` are a percentage.
+- **Numeric semantics:** Higher values up to `99` mean a greater chance; `0` is a legacy always-apply shortcut, and negative values are outside the valid range.
+- **Values:** `0..100`; `0` and `100` both apply unconditionally.
+- **Default:** `100` when omitted; the loader initializes every effect block to `100`.
+- **Source:** game code (`Drugs And Alcohol.cpp` chance check; drug loader); drug table data.
+- **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/disease`
 
@@ -167,25 +167,25 @@ DRUGSLIST
 
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/size`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT32`)
 - **Description:** Disease points added.
 - **Only used with:** Disease system.
 - **Numeric semantics:** Positive values increase the disease, negative values cure it.
 - **Values:** Disease points added; positive increases the disease, negative cures it.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (drug loader); drug table data.
+- **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disease effect is applied. If omitted, the effect is applied without a chance roll.
+- **Description:** Chance that this disease effect is applied. `0` and `100` both mean the effect always applies; values `1..99` are a percentage.
 - **Only used with:** Disease system.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance that this disease effect is applied.
-- **Default:** absent: the effect applies without a chance roll.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Numeric semantics:** Higher values up to `99` mean a greater chance; `0` is a legacy always-apply shortcut, and negative values are outside the valid range.
+- **Values:** `0..100`; `0` and `100` both apply unconditionally.
+- **Default:** `100` when omitted; the loader initializes every effect block to `100`.
+- **Source:** game code (`Drugs And Alcohol.cpp` chance check; drug loader); drug table data.
+- **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/disability`
 
@@ -209,12 +209,12 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/DISABILITY_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this disability is applied. If omitted, the effect is applied without a chance roll.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance that this disability is applied.
-- **Default:** absent: the effect applies without a chance roll.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Chance that this disability is applied. `0` and `100` both mean the effect always applies; values `1..99` are a percentage.
+- **Numeric semantics:** Higher values up to `99` mean a greater chance; `0` is a legacy always-apply shortcut, and negative values are outside the valid range.
+- **Values:** `0..100`; `0` and `100` both apply unconditionally.
+- **Default:** `100` when omitted; the loader initializes every effect block to `100`.
+- **Source:** game code (`Drugs And Alcohol.cpp` chance check; drug loader); drug table data.
+- **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/personality`
 
@@ -238,12 +238,12 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/PERSONALITY_EFFECT/chance`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Chance that this personality effect is applied. If omitted, the effect is applied without a chance roll.
-- **Numeric semantics:** Higher values mean a greater chance; negative values are outside the valid chance range.
-- **Values:** Percentage chance that this personality effect is applied.
-- **Default:** absent: the effect applies without a chance roll.
-- **Source:** drug table data; field metadata.
-- **Confidence:** `inferred`
+- **Description:** Chance that this personality effect is applied. `0` and `100` both mean the effect always applies; values `1..99` are a percentage.
+- **Numeric semantics:** Higher values up to `99` mean a greater chance; `0` is a legacy always-apply shortcut, and negative values are outside the valid range.
+- **Values:** `0..100`; `0` and `100` both apply unconditionally.
+- **Default:** `100` when omitted; the loader initializes every effect block to `100`.
+- **Source:** game code (`Drugs And Alcohol.cpp` chance check; drug loader); drug table data.
+- **Confidence:** `source`
 
 ## Relations
 

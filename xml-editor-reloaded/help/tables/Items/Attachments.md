@@ -83,7 +83,7 @@ ATTACHMENTLIST
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item.
-- **Numeric semantics:** Amount of money or cost; higher values mean a larger amount, and negative values are not meaningful.
+- **Numeric semantics:** Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** attachment table data; field metadata.

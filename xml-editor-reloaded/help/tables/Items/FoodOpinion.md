@@ -61,13 +61,13 @@ FOODOPINIONSLIST
 
 ### `FOODOPINIONSLIST/FOODOPINION/uProfile`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Profile whose food preference is described by this row.
 - **Only used with:** Food system.
-- **Values:** Profile ID; the same profile can have several `PROFILE_OPINION` rows.
+- **Values:** Profile ID; the loader stores one entry per profile, so a later row for the same profile overwrites the earlier one.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** food opinion table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (food-opinion loader); food opinion table data.
+- **Confidence:** `source`
 
 ### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`
 
@@ -112,4 +112,4 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-The table stores one direction per profile; the UI may merge preferences from several rows.
+No open question remains for row merging: the loader writes `FoodOpinions[profile]`, so later rows for the same profile replace earlier rows rather than accumulating opinions.

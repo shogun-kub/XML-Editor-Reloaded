@@ -93,7 +93,7 @@ ATTACHMENTINFOLIST
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheck`
 
-- **Type:** `Integer` (`UINT8`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Skill check used when attaching the item. `None` disables the check.
 - **Values:** IDs from `Lookup.SkillCheckType`: `0` None, `1` Lockpick, `2` Elec. Lockpick, `3` Attach Timed Detonator, `4` Attach Remote Detonator, `5` Plant Timed Bomb, `6` Plant Remote Bomb, `7` Open With Crowbar, `8` Smash Door, `9` Disarm Trap, `10` Unjam Gun, `11` Notice Dart, `12` Lie to Queen, `13` Attach Special Item, `14` Attach Special Elec. Item, `15` Disarm Elec. Trap.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -102,13 +102,13 @@ ATTACHMENTINFOLIST
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheckMod`
 
-- **Type:** `Integer` (`INT16`)
+- **Type:** `Integer` (`INT8`)
 - **Description:** Modifier added to the selected attachment skill check.
-- **Numeric semantics:** Signed modifier added to the skill check: positive values make the check easier, negative values make it harder.
-- **Values:** Integer modifier added to the selected skill check.
+- **Numeric semantics:** Signed modifier added directly to the skill value: positive values make the check easier, negative values make it harder.
+- **Values:** Integer modifier added to the selected skill check; the loader stores it as `INT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (`SkillCheck`, `iChance = iSkill + bChanceMod`); attachment info table data.
+- **Confidence:** `source`
 
 ## Relations
 
@@ -134,4 +134,4 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
-The sign convention of `bAttachmentSkillCheckMod` depends on the skill-check implementation; the table only stores the integer modifier.
+No open question remains for `bAttachmentSkillCheckMod`: the skill-check code adds the modifier directly to the skill value, so positive values help and negative values hinder.

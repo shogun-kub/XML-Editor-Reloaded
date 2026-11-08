@@ -73,13 +73,13 @@ ATTACHMENTSLOTLIST
 
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/uiSlotIndex`
 
-- **Type:** `Integer` (`UINT16`)
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Identity of the attachment slot. Slots are referenced by the NAS attachment layout and by the slot presentation code.
 - **Only used with:** NAS.
-- **Values:** Non-negative slot index; unique within the file.
+- **Values:** Non-negative slot index; unique within the file. The loader stores this field as `UINT32`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment slot table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment-slot loader); attachment slot table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTSLOTLIST/ATTACHMENTSLOT/szSlotName`
 
