@@ -47,7 +47,7 @@ updated: 2026-11-08
 
 ## Purpose
 
-`LoadScreenHints.xml` stores the tips shown during loading. Each hint has text and one or more category switches; the game selects hints from the enabled categories.
+`LoadScreenHints.xml` stores the tips shown during loading. Each hint has text and one or more category switches; the game selects hints from the enabled categories. The legacy `item` element occurs in shipped data but is ignored by the current loader; `items` is the element that sets the item-category flag.
 
 ## Tables
 
@@ -78,111 +78,111 @@ LOADSCREENHINTS
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the loading-screen hint. It is an array key.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/szName`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Hint text shown on the loading screen. Despite the `szName` name, this is the full display sentence.
-- **Values:** Free text or a symbolic code.
+- **Values:** Free text, up to 190 characters.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/lore`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `lore` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0001` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/weapons`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `weapons` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0002` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/item`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `item` category and can be selected when that category is enabled. It is a category switch.
+- **Description:** Not read by the current loader; only `items` sets the item-category bit. Kept as a data field for compatibility.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/items`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `items` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0004` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/keybind`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `keybind` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0008` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/food`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `food` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0010` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/zombie`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `zombie` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0020` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/overheat`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `overheat` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0040` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/ncth`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `ncth` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0080` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ### `LOADSCREENHINTS/LOADSCREENHINT/covertops`
 
-- **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `covertops` category and can be selected when that category is enabled. It is a category switch.
+- **Type:** `Boolean` (`BOOLEAN`)
+- **Description:** If set, ORs the `0x0100` category bit into the hint's internal flags.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (load-screen hint loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

@@ -58,21 +58,21 @@ STRINGS
 
 ### `STRINGS/TEXT/uiIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the history string. It is the event ID used by the history log.
-- **Values:** Integer; see the description for its scale.
+- **Values:** `0..65535`; the loader stores this field as `UINT16`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_History.cpp`); table data.
+- **Confidence:** `source`
 
 ### `STRINGS/TEXT/sHistory`
 
-- **Type:** `String`
+- **Type:** `String` (`CHAR16`)
 - **Description:** Text written to the history log for this event. `%s` placeholders are filled with mercenary, town or mine names by the game.
-- **Values:** Free text or a symbolic code.
+- **Values:** Free text with optional `%s` placeholders.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_History.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
