@@ -56,7 +56,8 @@ COOLNESS_BY_SECTOR
 ### `COOLNESS_BY_SECTOR/MAP_ROW`
 
 - **Type:** `String`
-- **Description:** One row of the sector-coolness matrix. The row attribute is the map row (`01`..`16`); the 16 values are the coolness levels for columns 1..16. Higher values mean higher coolness (better equipment access); `0` means no coolness. Numeric semantics: higher = higher coolness; negative values are not meaningful.
+- **Description:** One row of the sector-coolness matrix. The row attribute is the map row (`01`.`16`); the 16 values are the coolness levels for columns 1.16.
+- **Numeric semantics:** higher = higher coolness; negative values are not meaningful.
 - **Values:** 16 space-separated coolness levels; observed range `1..20`.
 - **Default:** Required; one row of the map.
 - **Source:** map table data; field names, XML comments and observed values.

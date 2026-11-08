@@ -88,7 +88,8 @@ SPREADPATTERNLIST
 ### `SPREADPATTERNLIST/SPREADPATTERN/xspread`
 
 - **Type:** `Decimal`
-- **Description:** Maximum horizontal random spread, in radians. Larger values widen the pellet cloud; negative values are made positive on load. Numeric semantics: higher = wider spread; negative = absolute value.
+- **Description:** Maximum horizontal random spread, in radians.
+- **Numeric semantics:** higher = wider spread; negative = absolute value.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -97,7 +98,8 @@ SPREADPATTERNLIST
 ### `SPREADPATTERNLIST/SPREADPATTERN/yspread`
 
 - **Type:** `Decimal`
-- **Description:** Maximum vertical random spread, in radians. Larger values widen the pellet cloud; negative values are made positive on load. Numeric semantics: higher = wider spread; negative = absolute value.
+- **Description:** Maximum vertical random spread, in radians.
+- **Numeric semantics:** higher = wider spread; negative = absolute value.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -106,7 +108,7 @@ SPREADPATTERNLIST
 ### `SPREADPATTERNLIST/SPREADPATTERN/method`
 
 - **Type:** `String`
-- **Description:** Distribution shape for random pellets: `Rectangle`, `Diamond` or `Ellipse`. It is an enum, not a magnitude.
+- **Description:** Distribution shape for random pellets: `Rectangle`, `Diamond` or `Ellipse`. It is an enum.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -115,7 +117,7 @@ SPREADPATTERNLIST
 ### `SPREADPATTERNLIST/SPREADPATTERN/p/x`
 
 - **Type:** `Decimal`
-- **Description:** Horizontal angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed, not a magnitude.
+- **Description:** Horizontal angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -124,7 +126,7 @@ SPREADPATTERNLIST
 ### `SPREADPATTERNLIST/SPREADPATTERN/p/y`
 
 - **Type:** `Decimal`
-- **Description:** Vertical angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed, not a magnitude.
+- **Description:** Vertical angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

@@ -528,7 +528,7 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/ubShopKeeperID`
 
 - **Type:** `Integer`
-- **Description:** NPC profile ID of the shopkeeper. It is a profile reference, not a quantity; `255` is used by generic additional dealers.
+- **Description:** NPC profile ID of the shopkeeper. It is a profile reference; `255` is used by generic additional dealers.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -537,7 +537,7 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/ubTypeOfArmsDealer`
 
 - **Type:** `Integer`
-- **Description:** Dealer type code used by the shop system. It selects the dealer category/behaviour; it is an enum, not a magnitude.
+- **Description:** Dealer type code used by the shop system. It selects the dealer category/behaviour; it is an enum.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -546,7 +546,7 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/uiFlags`
 
 - **Type:** `Integer`
-- **Description:** Packed bitmask of merchant flags. Each bit enables a dealer behaviour; the integer is a bit field, not a count.
+- **Description:** Packed bitmask of merchant flags. Each bit enables a dealer behaviour; the integer is a bit field.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -555,7 +555,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/iInitialCash`
 
 - **Type:** `Integer`
-- **Description:** Starting cash of the merchant, in money. Higher values give the dealer more buying power; negative values are not meaningful. Numeric semantics: higher = richer; negative = debt.
+- **Description:** Starting cash of the merchant, in money.
+- **Numeric semantics:** higher = richer; negative = debt.
 - **Values:** Money.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -564,7 +565,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/dBuyModifier`
 
 - **Type:** `Decimal`
-- **Description:** Multiplier applied when the merchant buys from the player. `0.75` pays 75% of value, `1.0` pays full value, and higher values pay more. Numeric semantics: higher = better price for the player; negative values are not meaningful.
+- **Description:** Multiplier applied when the merchant buys from the player. `0.75` pays 75% of value and `1.0` pays full value.
+- **Numeric semantics:** higher = better price for the player; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -573,7 +575,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/dSellModifier`
 
 - **Type:** `Decimal`
-- **Description:** Multiplier applied when the merchant sells to the player. `1.25` charges 125% of value, `1.0` charges full value, and higher values are more expensive. Numeric semantics: higher = more expensive; negative values are not meaningful.
+- **Description:** Multiplier applied when the merchant sells to the player. `1.25` charges 125% of value and `1.0` charges full value.
+- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -582,7 +585,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/minCoolness`
 
 - **Type:** `Integer`
-- **Description:** Minimum equipment coolness the merchant stocks. Higher values mean better minimum stock; `0` means no minimum. Numeric semantics: higher = better stock; negative values are not meaningful.
+- **Description:** Minimum equipment coolness the merchant stocks.
+- **Numeric semantics:** higher = better stock; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -591,7 +595,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/maxCoolness`
 
 - **Type:** `Integer`
-- **Description:** Maximum equipment coolness the merchant can reach. Higher values allow better stock; it should not be below `minCoolness`. Numeric semantics: higher = better stock ceiling; negative values are not meaningful.
+- **Description:** Maximum equipment coolness the merchant can reach.
+- **Numeric semantics:** higher = better stock ceiling; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -600,7 +605,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/addToCoolness`
 
 - **Type:** `Integer`
-- **Description:** Amount added to the merchant’s coolness progression. Higher values advance stock quality faster; `0` disables the bonus. Numeric semantics: higher = faster progression; negative values are not meaningful.
+- **Description:** Amount added to the merchant’s coolness progression.
+- **Numeric semantics:** higher = faster progression; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -609,7 +615,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/coolnessProgressRate`
 
 - **Type:** `Integer`
-- **Description:** Rate at which the merchant advances toward maximum coolness. Higher values reach the maximum faster; the exact unit is table-defined. Numeric semantics: higher = faster; negative values are not meaningful.
+- **Description:** Rate at which the merchant advances toward maximum coolness.
+- **Numeric semantics:** higher = faster; negative values are not meaningful.
 - **Values:** Percentage or rate, as described.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -618,7 +625,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/dailyIncrement`
 
 - **Type:** `Decimal`
-- **Description:** Cash added to the merchant’s available money each day. Higher values restock cash faster; `0` adds nothing. Numeric semantics: higher = more daily cash; negative values are not meaningful.
+- **Description:** Cash added to the merchant’s available money each day.
+- **Numeric semantics:** higher = more daily cash; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -627,7 +635,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/dailyMaximum`
 
 - **Type:** `Decimal`
-- **Description:** Maximum cash the merchant can accumulate from daily increments. Higher values allow a larger reserve; `0` means no daily accumulation. Numeric semantics: higher = larger cap; negative values are not meaningful.
+- **Description:** Maximum cash the merchant can accumulate from daily increments.
+- **Numeric semantics:** higher = larger cap; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -636,7 +645,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/dailyRetained`
 
 - **Type:** `Decimal`
-- **Description:** Cash retained by the merchant after a daily reset. Higher values keep more money; `0` retains nothing. Numeric semantics: higher = more retained; negative values are not meaningful.
+- **Description:** Cash retained by the merchant after a daily reset.
+- **Numeric semantics:** higher = more retained; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -645,7 +655,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/daysDelayMin`
 
 - **Type:** `Decimal`
-- **Description:** Minimum delivery delay in days for this merchant. Higher values make deliveries slower; `0` means no delay. Numeric semantics: higher = slower; negative values are not meaningful.
+- **Description:** Minimum delivery delay in days for this merchant.
+- **Numeric semantics:** higher = slower; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -654,7 +665,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/daysDelayMax`
 
 - **Type:** `Decimal`
-- **Description:** Maximum delivery delay in days for this merchant. Higher values make the worst case slower; it should not be below `daysDelayMin`. Numeric semantics: higher = slower; negative values are not meaningful.
+- **Description:** Maximum delivery delay in days for this merchant.
+- **Numeric semantics:** higher = slower; negative values are not meaningful.
 - **Values:** Decimal multiplier.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -663,7 +675,7 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/useBRSetting`
 
 - **Type:** `Boolean`
-- **Description:** If set, the merchant uses the Bobby Ray setting for its stock/behaviour. It is a switch, not a quantity.
+- **Description:** If set, the merchant uses the Bobby Ray setting for its stock/behaviour. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -681,7 +693,8 @@ INVENTORYLIST
 ### `MERCHANTSLIST/MERCHANT/nonprofile_loyaltyrequired`
 
 - **Type:** `Integer`
-- **Description:** Local loyalty required for a non-profile dealer. Higher values require a more loyal town; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Local loyalty required for a non-profile dealer.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -690,7 +703,7 @@ INVENTORYLIST
 ### `INVENTORYLIST/INVENTORY/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the inventory row. It is an array key, not a magnitude.
+- **Description:** Index of the inventory row. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -699,7 +712,7 @@ INVENTORYLIST
 ### `INVENTORYLIST/INVENTORY/sItemIndex`
 
 - **Type:** `Integer`
-- **Description:** Item ID stocked by the dealer. It is an item reference, not a quantity; `0` means no item.
+- **Description:** Item ID stocked by the dealer. It is an item reference; `0` means no item.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -708,7 +721,8 @@ INVENTORYLIST
 ### `INVENTORYLIST/INVENTORY/ubOptimalNumber`
 
 - **Type:** `Integer`
-- **Description:** Target stock quantity for the item. Higher values mean more copies; `0` means the item is not stocked. Numeric semantics: higher = more stock; negative values are not meaningful.
+- **Description:** Target stock quantity for the item.
+- **Numeric semantics:** higher = more stock; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

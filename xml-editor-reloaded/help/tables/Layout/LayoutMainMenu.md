@@ -153,7 +153,8 @@ MAINMENU
 ### `MAINMENU/IMAGE/ImagePositionX`
 
 - **Type:** `Integer`
-- **Description:** Horizontal image position in pixels. Higher values move it right; negative values move it left. Numeric semantics: increasing = right, decreasing = left.
+- **Description:** Horizontal image position in pixels.
+- **Numeric semantics:** increasing = right, decreasing = left.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -162,7 +163,8 @@ MAINMENU
 ### `MAINMENU/IMAGE/ImagePositionY`
 
 - **Type:** `Integer`
-- **Description:** Vertical image position in pixels. Higher values move it down; negative values move it up. Numeric semantics: increasing = down, decreasing = up.
+- **Description:** Vertical image position in pixels.
+- **Numeric semantics:** increasing = down, decreasing = up.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -171,7 +173,8 @@ MAINMENU
 ### `MAINMENU/IMAGE/MainMenuX`
 
 - **Type:** `Integer`
-- **Description:** Horizontal position of the menu buttons in pixels. Higher values move them right. Numeric semantics: increasing = right; negative values are not meaningful.
+- **Description:** Horizontal position of the menu buttons in pixels.
+- **Numeric semantics:** increasing = right; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -180,7 +183,8 @@ MAINMENU
 ### `MAINMENU/IMAGE/MainMenuY`
 
 - **Type:** `Integer`
-- **Description:** Vertical position of the first menu button in pixels. Higher values move it down. Numeric semantics: increasing = down; negative values are not meaningful.
+- **Description:** Vertical position of the first menu button in pixels.
+- **Numeric semantics:** increasing = down; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -189,7 +193,8 @@ MAINMENU
 ### `MAINMENU/IMAGE/MainMenuYSpace`
 
 - **Type:** `Integer`
-- **Description:** Vertical spacing between menu buttons in pixels. Higher values spread the buttons farther apart. Numeric semantics: higher = more spacing; negative values are not meaningful.
+- **Description:** Vertical spacing between menu buttons in pixels.
+- **Numeric semantics:** higher = more spacing; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

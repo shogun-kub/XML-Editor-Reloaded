@@ -103,7 +103,7 @@ DESTINATIONLIST
 ### `DESTINATIONLIST/DESTINATION/ubMapZ`
 
 - **Type:** `Integer`
-- **Description:** Map level of a local destination; `0` is the surface. It is a level, not a magnitude.
+- **Description:** Map level of a local destination; `0` is the surface. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -112,7 +112,7 @@ DESTINATIONLIST
 ### `DESTINATIONLIST/DESTINATION/sGridNo`
 
 - **Type:** `Integer`
-- **Description:** Map grid number where a local shipment arrives. It is a grid identifier, not a magnitude.
+- **Description:** Map grid number where a local shipment arrives. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

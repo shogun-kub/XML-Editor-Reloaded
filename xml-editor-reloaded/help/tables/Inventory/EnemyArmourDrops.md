@@ -63,7 +63,7 @@ ARMOURDROPLIST
 ### `ARMOURDROPLIST/DROPITEM/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the drop rule. It is an array key, not a magnitude.
+- **Description:** Index of the drop rule. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -72,7 +72,7 @@ ARMOURDROPLIST
 ### `ARMOURDROPLIST/DROPITEM/ubArmourClass`
 
 - **Type:** `Integer`
-- **Description:** Armour class selected by this drop rule. It is a category/reference ID, not a quantity.
+- **Description:** Armour class selected by this drop rule. It is a category/reference ID.
 - **Values:** Identifier of the armour class.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -81,7 +81,8 @@ ARMOURDROPLIST
 ### `ARMOURDROPLIST/DROPITEM/ubEnemyDropRate`
 
 - **Type:** `Integer`
-- **Description:** Chance that an enemy soldier drops this category, in percent. Higher values make drops more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that an enemy soldier drops this category, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -90,7 +91,8 @@ ARMOURDROPLIST
 ### `ARMOURDROPLIST/DROPITEM/ubMilitiaDropRate`
 
 - **Type:** `Integer`
-- **Description:** Chance that a militia soldier drops this category, in percent. Higher values make drops more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that a militia soldier drops this category, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

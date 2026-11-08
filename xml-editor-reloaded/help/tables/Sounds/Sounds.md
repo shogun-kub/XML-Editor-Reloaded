@@ -60,7 +60,7 @@ SOUNDLIST
 ### `SOUNDLIST/SOUND`
 
 - **Type:** `String`
-- **Description:** Path to a sound file, relative to the game data directory. The position in the list is the sound ID; the element may repeat, and the order is significant. It is a file reference, not a magnitude.
+- **Description:** Path to a sound file, relative to the game data directory. The position in the list is the sound ID; the element may repeat, and the order is significant. It is a file reference.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

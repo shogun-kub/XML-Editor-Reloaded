@@ -67,7 +67,7 @@ DELIVERYMETHODTABLE
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the delivery method. It is an array key, not a magnitude.
+- **Description:** Index of the delivery method. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -85,7 +85,7 @@ DELIVERYMETHODTABLE
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/uiDestinationIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the shipping destination this price and delay applies to. It is an ID, not a magnitude.
+- **Description:** Index of the shipping destination this price and delay applies to. It is an ID.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -94,7 +94,8 @@ DELIVERYMETHODTABLE
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/usDestinationFee`
 
 - **Type:** `Integer`
-- **Description:** Delivery fee to this destination, in money. Higher values cost more; `0` is free. Numeric semantics: higher = more expensive; negative values are not meaningful.
+- **Description:** Delivery fee to this destination, in money.
+- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
 - **Values:** Money.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -103,7 +104,8 @@ DELIVERYMETHODTABLE
 ### `DELIVERYMETHODTABLE/DELIVERYMETHOD/DESTINATIONDELIVERYINFOTABLE/DESTINATIONDELIVERYINFO/bDaysAhead`
 
 - **Type:** `Integer`
-- **Description:** Number of days the shipment takes to arrive. Higher values mean a longer delay. Numeric semantics: higher = slower; negative values are not meaningful.
+- **Description:** Number of days the shipment takes to arrive.
+- **Numeric semantics:** higher = slower; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

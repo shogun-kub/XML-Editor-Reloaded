@@ -106,7 +106,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/Index`
 
 - **Type:** `Integer`
-- **Description:** Index of the creature placement record. It is an array key, not a magnitude.
+- **Description:** Index of the creature placement record. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -115,7 +115,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/ATTACKSOURCE/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector from which the creatures begin their attack. It is a map coordinate, not a magnitude.
+- **Description:** Sector from which the creatures begin their attack. It is a map coordinate.
 - **Values:** Free text.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -124,7 +124,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/ATTACKSOURCE/GridNo`
 
 - **Type:** `Integer`
-- **Description:** Map grid number of the attack origin. It is a grid identifier, not a magnitude.
+- **Description:** Map grid number of the attack origin. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -133,7 +133,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/ALTERNATEMAP/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector of the alternate map used by this placement. It is a map coordinate, not a magnitude.
+- **Description:** Sector of the alternate map used by this placement. It is a map coordinate.
 - **Values:** Free text.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -142,7 +142,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/ALTERNATEMAP/SectorZ`
 
 - **Type:** `Integer`
-- **Description:** Underground level of the alternate map; `0` is the surface. It is a level, not a magnitude.
+- **Description:** Underground level of the alternate map; `0` is the surface. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -151,7 +151,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/WARPTOSECTOR/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector the creatures warp to. It is a map coordinate, not a magnitude.
+- **Description:** Sector the creatures warp to. It is a map coordinate.
 - **Values:** Free text.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -160,7 +160,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/WARPTOSECTOR/SectorZ`
 
 - **Type:** `Integer`
-- **Description:** Underground level of the warp destination; `0` is the surface. It is a level, not a magnitude.
+- **Description:** Underground level of the warp destination; `0` is the surface. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -169,7 +169,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/WARPTOSECTOR/GridNo`
 
 - **Type:** `Integer`
-- **Description:** Map grid number of the warp destination. It is a grid identifier, not a magnitude.
+- **Description:** Map grid number of the warp destination. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -178,7 +178,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/CREATURESECTOR/QUEENSECTOR/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector containing the queen’s lair. It is a map coordinate, not a magnitude.
+- **Description:** Sector containing the queen’s lair. It is a map coordinate.
 - **Values:** Free text.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -187,7 +187,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/CREATURESECTOR/QUEENSECTOR/SectorZ`
 
 - **Type:** `Integer`
-- **Description:** Underground level of the queen’s lair; `0` is the surface. It is a level, not a magnitude.
+- **Description:** Underground level of the queen’s lair; `0` is the surface. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -196,7 +196,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/CREATURESECTOR/HABITATSECTOR/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector of one creature habitat. It is a map coordinate, not a magnitude.
+- **Description:** Sector of one creature habitat. It is a map coordinate.
 - **Values:** Free text.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -205,7 +205,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/CREATURESECTOR/HABITATSECTOR/SectorZ`
 
 - **Type:** `Integer`
-- **Description:** Underground level of the habitat; `0` is the surface. It is a level, not a magnitude.
+- **Description:** Underground level of the habitat; `0` is the surface. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -214,7 +214,7 @@ CREATURE_INFO
 ### `CREATURE_INFO/PLACEMENT_LIST/PLACEMENT/CREATURESECTOR/HABITATSECTOR/Composition`
 
 - **Type:** `Integer`
-- **Description:** Composition index used by this habitat. It references `CompIndex`; it is an ID, not a quantity.
+- **Description:** Composition index used by this habitat. It references `CompIndex`; it is an ID.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -232,7 +232,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/AdultFemalePercent`
 
 - **Type:** `Integer`
-- **Description:** Share of adult females in this composition, in percent. Higher values make adult females more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of adult females in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -241,7 +242,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/AdultMalePercent`
 
 - **Type:** `Integer`
-- **Description:** Share of adult males in this composition, in percent. Higher values make adult males more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of adult males in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -250,7 +252,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/YoungFemalePercent`
 
 - **Type:** `Integer`
-- **Description:** Share of young females in this composition, in percent. Higher values make young females more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of young females in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -259,7 +262,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/YoungMalePercent`
 
 - **Type:** `Integer`
-- **Description:** Share of young males in this composition, in percent. Higher values make young males more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of young males in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -268,7 +272,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/InfantPercent`
 
 - **Type:** `Integer`
-- **Description:** Share of infants in this composition, in percent. Higher values make infants more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of infants in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -277,7 +282,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/LarvaePercent`
 
 - **Type:** `Integer`
-- **Description:** Share of larvae in this composition, in percent. Higher values make larvae more common; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of larvae in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -286,7 +292,8 @@ CREATURE_INFO
 ### `CREATURE_INFO/COMPOSITION_LIST/COMPOSITION/MaxPopulation`
 
 - **Type:** `Integer`
-- **Description:** Maximum population this composition may reach. Higher values allow a larger colony; `0` means no population. Numeric semantics: higher = larger colony; negative values are not meaningful.
+- **Description:** Maximum population this composition may reach.
+- **Numeric semantics:** higher = larger colony; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

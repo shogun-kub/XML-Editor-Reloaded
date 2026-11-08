@@ -65,7 +65,7 @@ ACTION_ITEM_LIST
 ### `ACTION_ITEM_LIST/ACTION_ITEM/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the action item. It is an array key, not a magnitude.
+- **Description:** Index of the action item. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -83,7 +83,7 @@ ACTION_ITEM_LIST
 ### `ACTION_ITEM_LIST/ACTION_ITEM/ActionID`
 
 - **Type:** `Integer`
-- **Description:** Action-type code executed by this entry. It is an enum code, not a magnitude.
+- **Description:** Action-type code executed by this entry. It is an enum code.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -101,7 +101,7 @@ ACTION_ITEM_LIST
 ### `ACTION_ITEM_LIST/ACTION_ITEM/BombItem`
 
 - **Type:** `Integer`
-- **Description:** Item ID used as the bomb/explosive for this action. It is an item reference, not a quantity.
+- **Description:** Item ID used as the bomb/explosive for this action. It is an item reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

@@ -102,7 +102,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the vehicle. It is an array key, not a magnitude.
+- **Description:** Index of the vehicle. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -129,7 +129,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/ShortName`
 
 - **Type:** `String`
-- **Description:** Short display name used where space is limited; may be empty.
+- **Description:** Short display name for the vehicle; may be empty.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -138,7 +138,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/MvtTypes`
 
 - **Type:** `Integer`
-- **Description:** Movement-type code for the vehicle. It is an enum/bit field, not a quantity.
+- **Description:** Movement-type code for the vehicle. It is an enum/bit field.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -147,7 +147,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/StiFaceIcon`
 
 - **Type:** `String`
-- **Description:** STI face icon path for the vehicle. It is a file reference, not a magnitude.
+- **Description:** STI face icon path for the vehicle. It is a file reference.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -156,7 +156,8 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SeatingCapacities`
 
 - **Type:** `Integer`
-- **Description:** Number of seats in the vehicle. Higher values allow more passengers. Numeric semantics: higher = more seats; negative values are not meaningful.
+- **Description:** Number of seats in the vehicle.
+- **Numeric semantics:** higher = more seats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -165,7 +166,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/EnterVehicleSndID`
 
 - **Type:** `Integer`
-- **Description:** Sound ID played when entering the vehicle. It is a sound reference, not a magnitude.
+- **Description:** Sound ID played when entering the vehicle. It is a sound reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -174,7 +175,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/MoveVehicleSndID`
 
 - **Type:** `Integer`
-- **Description:** Sound ID played when the vehicle moves. It is a sound reference, not a magnitude.
+- **Description:** Sound ID played when the vehicle moves. It is a sound reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -183,7 +184,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/VehicleArmourType`
 
 - **Type:** `Integer`
-- **Description:** Armour type/item ID used by the vehicle. It is a reference, not a quantity.
+- **Description:** Armour type/item ID used by the vehicle. It is a reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -210,7 +211,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/Pilot`
 
 - **Type:** `Integer`
-- **Description:** Profile ID of the default pilot, or `-1` when there is no pilot. It is a reference, not a magnitude.
+- **Description:** Profile ID of the default pilot, or `-1` when there is no pilot. It is a reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -219,7 +220,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SEAT/SeatIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the seat within the vehicle. It is a seat key, not a magnitude.
+- **Description:** Index of the seat within the vehicle. It is a seat key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -246,7 +247,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SEAT/Rotation`
 
 - **Type:** `Integer`
-- **Description:** Facing/rotation code for the seat occupant. It is an orientation code, not a magnitude.
+- **Description:** Facing/rotation code for the seat occupant. It is an orientation code.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -255,7 +256,8 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SEAT/OffsetX`
 
 - **Type:** `Integer`
-- **Description:** Horizontal offset of the seat position in pixels. Higher values move it right; negative values move it left. Numeric semantics: increasing = right, decreasing = left.
+- **Description:** Horizontal offset of the seat position in pixels.
+- **Numeric semantics:** increasing = right, decreasing = left.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -264,7 +266,8 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SEAT/OffsetY`
 
 - **Type:** `Integer`
-- **Description:** Vertical offset of the seat position in pixels. Higher values move it down; negative values move it up. Numeric semantics: increasing = down, decreasing = up.
+- **Description:** Vertical offset of the seat position in pixels.
+- **Numeric semantics:** increasing = down, decreasing = up.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -273,7 +276,7 @@ VEHICLES
 ### `VEHICLES/VEHICLE/SEAT/Compartment`
 
 - **Type:** `Integer`
-- **Description:** Compartment/area code for the seat. It is an enum/reference, not a magnitude.
+- **Description:** Compartment/area code for the seat. It is an enum/reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -326,4 +329,5 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
+- Which UI surface uses `ShortName` instead of `Name`/`LongName` is not confirmed; this needs a code/UI check.
 - The exact formula or enum mapping for inferred fields is not stated by the table data.

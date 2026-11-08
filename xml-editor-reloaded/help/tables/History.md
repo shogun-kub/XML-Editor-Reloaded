@@ -59,7 +59,7 @@ STRINGS
 ### `STRINGS/TEXT/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the history string. It is the event ID used by the history log, not a magnitude.
+- **Description:** Index of the history string. It is the event ID used by the history log.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.

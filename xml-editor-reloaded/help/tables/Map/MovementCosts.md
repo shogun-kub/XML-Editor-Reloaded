@@ -70,7 +70,8 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/TravelRating`
 
 - **Type:** `Integer`
-- **Description:** Strategic travel cost of entering this sector. Higher values make travel slower or more expensive; `0` is used for bad or unreachable sectors. Numeric semantics: higher = slower; negative values are not meaningful.
+- **Description:** Strategic travel cost of entering this sector.
+- **Numeric semantics:** higher = slower; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -79,7 +80,7 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/North`
 
 - **Type:** `String`
-- **Description:** Terrain category on the northern edge of the sector, such as `PLAINS`, `ROAD`, `TOWN` or `EDGEOFWORLD`. It is a category code, not a magnitude.
+- **Description:** Terrain category on the northern edge of the sector, such as `PLAINS`, `ROAD`, `TOWN` or `EDGEOFWORLD`. It is a category code.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -88,7 +89,7 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/East`
 
 - **Type:** `String`
-- **Description:** Terrain category on the eastern edge of the sector. It is a category code, not a magnitude.
+- **Description:** Terrain category on the eastern edge of the sector. It is a category code.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -97,7 +98,7 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/South`
 
 - **Type:** `String`
-- **Description:** Terrain category on the southern edge of the sector. It is a category code, not a magnitude.
+- **Description:** Terrain category on the southern edge of the sector. It is a category code.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -106,7 +107,7 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/West`
 
 - **Type:** `String`
-- **Description:** Terrain category on the western edge of the sector. It is a category code, not a magnitude.
+- **Description:** Terrain category on the western edge of the sector. It is a category code.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -115,7 +116,7 @@ StrategicMovementCosts
 ### `StrategicMovementCosts/SectorTraversal/Sector/Here`
 
 - **Type:** `String`
-- **Description:** Terrain category of the sector itself. It is a category code, not a magnitude.
+- **Description:** Terrain category of the sector itself. It is a category code.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

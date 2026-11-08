@@ -73,7 +73,7 @@ LOADSCREENS
 ### `LOADSCREENS/SECTOR/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the loading-screen record. It is an array key, not a magnitude.
+- **Description:** Index of the loading-screen record. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -82,7 +82,7 @@ LOADSCREENS
 ### `LOADSCREENS/SECTOR/szLocation`
 
 - **Type:** `String`
-- **Description:** Sector code this screen belongs to, or `START` for the landing zone. It is a map label, not a number.
+- **Description:** Sector code this screen belongs to, or `START` for the landing zone. It is a map label.
 - **Values:** Sector code or `START`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

@@ -173,7 +173,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ubIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the facility type. It is an array key and is referenced by placed facilities; it is not a magnitude.
+- **Description:** Index of the facility type. It is an array key and is referenced by placed facilities.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -191,7 +191,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/szFacilityShortName`
 
 - **Type:** `String`
-- **Description:** Short display name used where the map UI has less room.
+- **Description:** Short display name for the facility.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -200,7 +200,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ubTotalStaffLimit`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of mercenaries that can work in the facility across all its assignments. Higher values allow more staff; `0` means no staff. Numeric semantics: higher = more staff; negative values are not meaningful.
+- **Description:** Maximum number of mercenaries that can work in the facility across all its assignments.
+- **Numeric semantics:** higher = more staff; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -209,7 +210,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ubMilitiaTrainersAllowed`
 
 - **Type:** `Integer`
-- **Description:** Number of militia trainers the facility can support. Higher values allow more trainers; `0` disables militia training here. Numeric semantics: higher = more trainers; negative values are not meaningful.
+- **Description:** Number of militia trainers the facility can support.
+- **Numeric semantics:** higher = more trainers; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -227,7 +229,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubAssignmentType`
 
 - **Type:** `String`
-- **Description:** Assignment type code, such as `DOCTOR`, `REST` or `REPAIR_ITEMS`. It is an enum key, not a quantity; each code selects the assignment logic and UI text.
+- **Description:** Assignment type code, such as `DOCTOR`, `REST` or `REPAIR_ITEMS`. It is an enum key; each code selects the assignment logic and UI text.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -245,7 +247,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubStaffLimit`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of mercenaries assigned to this particular assignment. Higher values allow more workers; it cannot usefully exceed `ubTotalStaffLimit`. Numeric semantics: higher = more workers; negative values are not meaningful.
+- **Description:** Maximum number of mercenaries assigned to this particular assignment.
+- **Numeric semantics:** higher = more workers; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -254,7 +257,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usPerformance`
 
 - **Type:** `Integer`
-- **Description:** Performance factor of the assignment. `100` is normal speed/efficiency; higher values make the assignment more effective, and `200` is twice the normal rate. Numeric semantics: higher = more effective; negative values are not meaningful.
+- **Description:** Performance factor of the assignment. `100` is normal speed/efficiency.
+- **Numeric semantics:** `100` = normal, `200` = twice normal; higher values are more effective, and negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -263,7 +267,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usKitDegrade`
 
 - **Type:** `Integer`
-- **Description:** How quickly the assignment wears out its medical or repair kit. Higher values consume kit condition faster; `0` means no kit wear. Numeric semantics: higher = faster wear; negative values are not meaningful.
+- **Description:** How quickly the assignment wears out its medical or repair kit.
+- **Numeric semantics:** higher = faster wear; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -272,7 +277,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/sCostPerHour`
 
 - **Type:** `Integer`
-- **Description:** Hourly cost of running this assignment, in money. Higher values cost more; `0` is free. Numeric semantics: higher = more expensive; negative values are not meaningful.
+- **Description:** Hourly cost of running this assignment, in money.
+- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
 - **Values:** Money or points per hour, as named.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -281,7 +287,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usSleep`
 
 - **Type:** `Integer`
-- **Description:** Sleep or rest quality provided by this assignment. Higher values restore more rest; `0` provides no rest benefit. Numeric semantics: higher = better rest; negative values are not meaningful.
+- **Description:** Sleep or rest quality provided by this assignment.
+- **Numeric semantics:** higher = better rest; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -290,7 +297,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usFatigue`
 
 - **Type:** `Integer`
-- **Description:** Fatigue factor of the assignment. Higher values tire the mercenary faster; lower values are gentler. Numeric semantics: higher = more fatigue; negative values are not meaningful.
+- **Description:** Fatigue factor of the assignment.
+- **Numeric semantics:** higher = more fatigue; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -299,7 +307,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/usPrisonBaseLimit`
 
 - **Type:** `Integer`
-- **Description:** Base prisoner capacity for a prison assignment. Higher values hold more prisoners; `0` means no prisoners. Numeric semantics: higher = more capacity; negative values are not meaningful.
+- **Description:** Base prisoner capacity for a prison assignment.
+- **Numeric semantics:** higher = more capacity; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -308,7 +317,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/sCantinaFoodModifier`
 
 - **Type:** `Integer`
-- **Description:** Relative food and drink modifier for a cantina assignment. Positive values strengthen the cantina effect, negative values weaken it, and `0` is neutral. Numeric semantics: higher positive values are stronger; the table uses values such as `500`, so this is not a plain percentage.
+- **Description:** Relative food and drink modifier for a cantina assignment.
+- **Numeric semantics:** higher positive values strengthen the effect, negative values weaken it, and `0` is neutral; the table uses values such as `500`, so this is not a plain percentage.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -317,7 +327,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/fCountEnemiesInWild`
 
 - **Type:** `Boolean`
-- **Description:** If set, this assignment counts enemy activity in the wilderness around the facility. It is a switch, not a chance.
+- **Description:** If set, this assignment counts enemy activity in the wilderness around the facility. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -335,7 +345,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/ubDetectEnemiesImmediate`
 
 - **Type:** `Integer`
-- **Description:** Immediate enemy-detection strength for the assignment. Higher values reveal activity farther away; it is a strength/level, not a count of enemies. Numeric semantics: higher = wider detection; negative values are not meaningful.
+- **Description:** Immediate enemy-detection strength for the assignment. It is a strength/level, not a count of enemies.
+- **Numeric semantics:** higher = wider detection; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -353,7 +364,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumAgility`
 
 - **Type:** `Integer`
-- **Description:** Minimum Agility a mercenary needs for this assignment. Higher values require a better mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Agility a mercenary needs for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -362,7 +374,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumDexterity`
 
 - **Type:** `Integer`
-- **Description:** Minimum Dexterity required for this assignment. Higher values require a better mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Dexterity required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -371,7 +384,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumExplosives`
 
 - **Type:** `Integer`
-- **Description:** Minimum Explosives skill required for this assignment. Higher values require a better mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Explosives skill required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -380,7 +394,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumHealth`
 
 - **Type:** `Integer`
-- **Description:** Minimum Health required for this assignment. Higher values require a healthier mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Health required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -389,7 +404,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLeadership`
 
 - **Type:** `Integer`
-- **Description:** Minimum Leadership required for this assignment. Higher values require a better leader; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Leadership required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -398,7 +414,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLevel`
 
 - **Type:** `Integer`
-- **Description:** Minimum experience level required for this assignment. Higher values require a more experienced mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum experience level required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -407,7 +424,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumLoyaltyHere`
 
 - **Type:** `Integer`
-- **Description:** Minimum local loyalty required for this assignment. Higher values require a more loyal town; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum local loyalty required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -416,7 +434,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumMechanical`
 
 - **Type:** `Integer`
-- **Description:** Minimum Mechanical skill required for this assignment. Higher values require a better mechanic; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Mechanical skill required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -425,7 +444,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumMedical`
 
 - **Type:** `Integer`
-- **Description:** Minimum Medical skill required for this assignment. Higher values require a better doctor; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Medical skill required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -434,7 +454,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumStrength`
 
 - **Type:** `Integer`
-- **Description:** Minimum Strength required for this assignment. Higher values require a stronger mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Strength required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -443,7 +464,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/ubMinimumWisdom`
 
 - **Type:** `Integer`
-- **Description:** Minimum Wisdom required for this assignment. Higher values require a wiser mercenary; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum Wisdom required for this assignment.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -452,7 +474,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/CONDITIONS/usPerformance`
 
 - **Type:** `Integer`
-- **Description:** Performance factor used when this assignment’s conditions are present. Higher values make the assignment more effective; `100` is normal. Numeric semantics: higher = more effective; negative values are not meaningful.
+- **Description:** Performance factor used when this assignment’s conditions are present.
+- **Numeric semantics:** `100` = normal; higher values are more effective, and negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -461,7 +484,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/ubChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that the assignment changes morale, in chance units (the table uses a 0–1000 scale, so `500` = 50% and `700` = 70%). Higher values make a morale change more likely; `0` disables it. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that the assignment changes morale, in chance units (the table uses a 0–1000 scale, so `500` = 50% and `700` = 70%).
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage or chance units as described; `0` disables the effect.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -470,7 +494,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/usChance`
 
 - **Type:** `Integer`
-- **Description:** Alternative morale-change chance for the assignment. Higher values make a morale change more likely; it is the same kind of chance weight as `ubChance`. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Alternative morale-change chance for the assignment.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage or chance units as described; `0` disables the effect.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -479,7 +504,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/bBaseEffect`
 
 - **Type:** `Integer`
-- **Description:** Base morale change when the morale event fires. Positive values raise morale, negative values lower it, and `0` is neutral. Numeric semantics: positive = better morale; negative = worse.
+- **Description:** Base morale change when the morale event fires.
+- **Numeric semantics:** positive = better morale; negative = worse.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -488,7 +514,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/MORALE/ubRange`
 
 - **Type:** `Integer`
-- **Description:** Random spread added to the morale effect. Higher values allow a wider result around the base; `0` gives a fixed result. Numeric semantics: higher = more variation; negative values are not meaningful.
+- **Description:** Random spread added to the morale effect.
+- **Numeric semantics:** higher = more variation; negative values are not meaningful.
 - **Values:** Non-negative integer.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -497,7 +524,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/ubChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that the assignment changes local loyalty, in chance units (the table uses a 0–1000 scale, so `40` = 4%). Higher values make a loyalty change more likely; `0` disables it. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that the assignment changes local loyalty, in chance units (the table uses a 0–1000 scale, so `40` = 4%).
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage or chance units as described; `0` disables the effect.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -506,7 +534,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/bBaseEffect`
 
 - **Type:** `Integer`
-- **Description:** Base local-loyalty change when the event fires. Positive values raise loyalty, negative values lower it, and `0` is neutral. Numeric semantics: positive = better loyalty; negative = worse.
+- **Description:** Base local-loyalty change when the event fires.
+- **Numeric semantics:** positive = better loyalty; negative = worse.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -515,7 +544,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/LOYALTY_LOCAL/ubRange`
 
 - **Type:** `Integer`
-- **Description:** Random spread added to the local-loyalty effect. Higher values allow a wider result; `0` gives a fixed result. Numeric semantics: higher = more variation; negative values are not meaningful.
+- **Description:** Random spread added to the local-loyalty effect.
+- **Numeric semantics:** higher = more variation; negative values are not meaningful.
 - **Values:** Non-negative integer.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -524,7 +554,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/ubChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that a mercenary gets drunk on this assignment, in chance units (the table uses a 0–1000 scale, so `500` = 50%). Higher values make drunkenness more likely; `0` disables it. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that a mercenary gets drunk on this assignment, in chance units (the table uses a 0–1000 scale, so `500` = 50%).
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage or chance units as described; `0` disables the effect.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -533,7 +564,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/bBaseEffect`
 
 - **Type:** `Integer`
-- **Description:** Base drunkenness effect. Positive values increase the effect, negative values reduce it, and `0` is neutral. Numeric semantics: higher = stronger effect; negative = opposite effect.
+- **Description:** Base drunkenness effect.
+- **Numeric semantics:** higher = stronger effect; negative = opposite effect.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -542,7 +574,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/ubRange`
 
 - **Type:** `Integer`
-- **Description:** Random spread added to the drunkenness effect. Higher values allow a wider result; `0` gives a fixed result. Numeric semantics: higher = more variation; negative values are not meaningful.
+- **Description:** Random spread added to the drunkenness effect.
+- **Numeric semantics:** higher = more variation; negative values are not meaningful.
 - **Values:** Non-negative integer.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -551,7 +584,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/DRUNK/drugitems/drugitem`
 
 - **Type:** `Integer`
-- **Description:** Item ID of a drug or drink that can be consumed during this assignment. It is an item reference, not a quantity; the element may repeat to offer several items.
+- **Description:** Item ID of a drug or drink that can be consumed during this assignment. It is an item reference; the element may repeat to offer several items.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -560,7 +593,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/bBaseEffect`
 
 - **Type:** `Integer`
-- **Description:** Base injury effect of the assignment. Negative values cause injury, positive values heal or protect, and `0` is neutral. Numeric semantics: positive = safer; negative = more dangerous.
+- **Description:** Base injury effect of the assignment.
+- **Numeric semantics:** positive = safer; negative = more dangerous.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -569,7 +603,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/ubChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that the assignment causes an injury, in chance units (the table uses a 0–1000 scale, so `50` = 5%). Higher values make injury more likely; `0` disables it. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that the assignment causes an injury, in chance units (the table uses a 0–1000 scale, so `50` = 5%).
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage or chance units as described; `0` disables the effect.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -578,7 +613,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/ASSIGNMENT/INJURY/ubRange`
 
 - **Type:** `Integer`
-- **Description:** Random spread added to the injury effect. Higher values allow a wider result; `0` gives a fixed result. Numeric semantics: higher = more variation; negative values are not meaningful.
+- **Description:** Random spread added to the injury effect.
+- **Numeric semantics:** higher = more variation; negative values are not meaningful.
 - **Values:** Non-negative integer.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -587,7 +623,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/requires_staff`
 
 - **Type:** `Boolean`
-- **Description:** If set, the production line only runs while staff are assigned. It is a switch, not a quantity.
+- **Description:** If set, the production line only runs while staff are assigned. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -596,7 +632,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sGridNo_Creation`
 
 - **Type:** `Integer`
-- **Description:** Map grid number where the produced item appears. It is a grid identifier, not a magnitude.
+- **Description:** Map grid number where the produced item appears. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -605,7 +641,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sHourlyCost`
 
 - **Type:** `Integer`
-- **Description:** Hourly cost of running this production line, in money. Higher values cost more; `0` is free. Numeric semantics: higher = more expensive; negative values are not meaningful.
+- **Description:** Hourly cost of running this production line, in money.
+- **Numeric semantics:** higher = more expensive; negative values are not meaningful.
 - **Values:** Money or points per hour, as named.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -614,7 +651,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/sMinutesRequired`
 
 - **Type:** `Integer`
-- **Description:** Minutes needed to produce one batch. Higher values make production slower; `0` is immediate. Numeric semantics: higher = slower; negative values are not meaningful.
+- **Description:** Minutes needed to produce one batch.
+- **Numeric semantics:** higher = slower; negative values are not meaningful.
 - **Values:** Minutes.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -641,7 +679,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usItemToCreate`
 
 - **Type:** `Integer`
-- **Description:** Item ID produced by this line. It is an item reference, not a quantity.
+- **Description:** Item ID produced by this line. It is an item reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -650,7 +688,7 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usOptional_ItemUsedUp`
 
 - **Type:** `Integer`
-- **Description:** Item ID consumed by each production run, or `0` when nothing is consumed. It is an item reference, not a quantity.
+- **Description:** Item ID consumed by each production run, or `0` when nothing is consumed. It is an item reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -659,7 +697,8 @@ FACILITYTYPES
 ### `FACILITYTYPES/FACILITYTYPE/PRODUCTIONLINE/usOptional_LoyaltyRequired`
 
 - **Type:** `Integer`
-- **Description:** Minimum local loyalty needed to run this production line. Higher values require a more loyal town; `0` means no requirement. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Minimum local loyalty needed to run this production line.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -686,5 +725,6 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
+- Which facility UI surface uses `szFacilityShortName` instead of `szFacilityName` is not confirmed; this needs a code/UI check.
 - The 0–1000 chance interpretation, the `100` baseline for performance and the exact scale of `sCantinaFoodModifier` are inferred from the observed values, not stated by an XML comment.
 - `pmcentrypoint` and the severe-injury/assignment formulas are implemented by the game code, not by additional fields.

@@ -91,7 +91,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Profile index within the file. It is an array key, not a magnitude.
+- **Description:** Profile index within the file. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -109,7 +109,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiBodyType`
 
 - **Type:** `Integer`
-- **Description:** Body-type graphic ID used by this profile. It is a graphics reference, not a magnitude.
+- **Description:** Body-type graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -118,7 +118,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiHair`
 
 - **Type:** `Integer`
-- **Description:** Hair graphic ID used by this profile. It is a graphics reference, not a magnitude.
+- **Description:** Hair graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -127,7 +127,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiSkin`
 
 - **Type:** `Integer`
-- **Description:** Skin graphic ID used by this profile. It is a graphics reference, not a magnitude.
+- **Description:** Skin graphic ID used by this profile. It is a graphics reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -136,7 +136,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiTrait1`
 
 - **Type:** `Integer`
-- **Description:** First skill-trait ID for the template. It is an enum/reference, not a magnitude; `0` means no trait.
+- **Description:** First skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -145,7 +145,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiTrait2`
 
 - **Type:** `Integer`
-- **Description:** Second skill-trait ID for the template. It is an enum/reference, not a magnitude; `0` means no trait.
+- **Description:** Second skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -154,7 +154,7 @@ PROFILES
 ### `PROFILES/PROFILE/uiTrait3`
 
 - **Type:** `Integer`
-- **Description:** Third skill-trait ID for the template. It is an enum/reference, not a magnitude; `0` means no trait.
+- **Description:** Third skill-trait ID for the template. It is an enum/reference; `0` means no trait.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

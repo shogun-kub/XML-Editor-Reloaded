@@ -79,7 +79,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the loading-screen hint. It is an array key, not a magnitude.
+- **Description:** Index of the loading-screen hint. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -97,7 +97,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/lore`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `lore` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `lore` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -106,7 +106,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/weapons`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `weapons` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `weapons` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -115,7 +115,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/item`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `item` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `item` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -124,7 +124,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/items`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `items` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `items` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -133,7 +133,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/keybind`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `keybind` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `keybind` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -142,7 +142,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/food`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `food` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `food` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -151,7 +151,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/zombie`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `zombie` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `zombie` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -160,7 +160,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/overheat`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `overheat` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `overheat` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -169,7 +169,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/ncth`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `ncth` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `ncth` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -178,7 +178,7 @@ LOADSCREENHINTS
 ### `LOADSCREENHINTS/LOADSCREENHINT/covertops`
 
 - **Type:** `Boolean`
-- **Description:** If set, this hint belongs to the `covertops` category and can be selected when that category is enabled. It is a category switch, not a count.
+- **Description:** If set, this hint belongs to the `covertops` category and can be selected when that category is enabled. It is a category switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

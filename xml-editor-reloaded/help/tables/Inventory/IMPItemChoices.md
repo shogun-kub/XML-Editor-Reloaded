@@ -163,7 +163,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the IMP item-choice group. It is an array key, not a magnitude.
+- **Description:** Index of the IMP item-choice group. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -181,7 +181,8 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/ubChoices`
 
 - **Type:** `Integer`
-- **Description:** Number of valid item slots in the group. Higher values mean more choices; `0` means none. Numeric semantics: higher = more choices; negative values are not meaningful.
+- **Description:** Number of valid item slots in the group.
+- **Numeric semantics:** higher = more choices; negative values are not meaningful.
 - **Values:** Count `0..50`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -190,7 +191,8 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/ubNumItems`
 
 - **Type:** `Integer`
-- **Description:** Number of items the IMP may take from this group. Higher values allow more items; `0` allows none. Numeric semantics: higher = more items; negative values are not meaningful.
+- **Description:** Number of items the IMP may take from this group.
+- **Numeric semantics:** higher = more items; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -199,7 +201,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo1`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 1. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 1. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -208,7 +210,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo2`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 2. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 2. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -217,7 +219,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo3`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 3. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 3. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -226,7 +228,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo4`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 4. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 4. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -235,7 +237,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo5`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 5. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 5. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -244,7 +246,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo6`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 6. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 6. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -253,7 +255,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo7`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 7. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 7. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -262,7 +264,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo8`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 8. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 8. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -271,7 +273,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo9`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 9. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 9. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -280,7 +282,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo10`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 10. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 10. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -289,7 +291,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo11`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 11. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 11. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -298,7 +300,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo12`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 12. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 12. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -307,7 +309,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo13`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 13. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 13. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -316,7 +318,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo14`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 14. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 14. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -325,7 +327,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo15`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 15. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 15. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -334,7 +336,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo16`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 16. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 16. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -343,7 +345,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo17`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 17. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 17. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -352,7 +354,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo18`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 18. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 18. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -361,7 +363,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo19`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 19. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 19. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -370,7 +372,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo20`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 20. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 20. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -379,7 +381,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo21`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 21. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 21. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -388,7 +390,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo22`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 22. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 22. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -397,7 +399,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo23`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 23. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 23. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -406,7 +408,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo24`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 24. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 24. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -415,7 +417,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo25`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 25. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 25. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -424,7 +426,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo26`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 26. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 26. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -433,7 +435,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo27`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 27. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 27. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -442,7 +444,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo28`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 28. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 28. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -451,7 +453,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo29`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 29. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 29. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -460,7 +462,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo30`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 30. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 30. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -469,7 +471,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo31`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 31. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 31. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -478,7 +480,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo32`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 32. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 32. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -487,7 +489,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo33`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 33. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 33. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -496,7 +498,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo34`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 34. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 34. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -505,7 +507,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo35`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 35. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 35. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -514,7 +516,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo36`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 36. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 36. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -523,7 +525,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo37`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 37. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 37. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -532,7 +534,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo38`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 38. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 38. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -541,7 +543,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo39`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 39. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 39. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -550,7 +552,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo40`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 40. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 40. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -559,7 +561,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo41`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 41. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 41. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -568,7 +570,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo42`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 42. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 42. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -577,7 +579,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo43`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 43. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 43. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -586,7 +588,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo44`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 44. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 44. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -595,7 +597,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo45`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 45. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 45. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -604,7 +606,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo46`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 46. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 46. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -613,7 +615,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo47`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 47. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 47. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -622,7 +624,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo48`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 48. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 48. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -631,7 +633,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo49`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 49. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 49. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -640,7 +642,7 @@ IMPITEMCHOICESLIST
 ### `IMPITEMCHOICESLIST/IMPITEMCHOICES/bItemNo50`
 
 - **Type:** `Integer`
-- **Description:** Item ID in IMP slot 50. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in IMP slot 50. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

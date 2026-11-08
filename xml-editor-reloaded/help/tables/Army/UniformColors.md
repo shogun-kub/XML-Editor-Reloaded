@@ -84,7 +84,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_ADMIN/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -93,7 +93,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_ADMIN/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the ENEMY_ADMIN uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -102,7 +102,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_TROOP/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -111,7 +111,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_TROOP/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the ENEMY_TROOP uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -120,7 +120,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_ELITE/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -129,7 +129,7 @@ UNIFORMS
 ### `UNIFORMS/ENEMY_ELITE/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the ENEMY_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -138,7 +138,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_ROOKIE/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -147,7 +147,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_ROOKIE/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the MILITIA_ROOKIE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -156,7 +156,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_REGULAR/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -165,7 +165,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_REGULAR/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the MILITIA_REGULAR uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -174,7 +174,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_ELITE/Vest`
 
 - **Type:** `String`
-- **Description:** Vest colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Vest colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -183,7 +183,7 @@ UNIFORMS
 ### `UNIFORMS/MILITIA_ELITE/Pants`
 
 - **Type:** `String`
-- **Description:** Pants colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics, not a number or a quantity.
+- **Description:** Pants colour code for the MILITIA_ELITE uniform. It is a symbolic colour constant used by the soldier graphics.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

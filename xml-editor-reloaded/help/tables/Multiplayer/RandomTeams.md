@@ -57,7 +57,7 @@ mp_teams
 ### `mp_teams/team/id`
 
 - **Type:** `Integer`
-- **Description:** Team ID in the random-team list. It is an identifier, not a magnitude; the element may repeat for several teams.
+- **Description:** Team ID in the random-team list. It is an identifier; the element may repeat for several teams.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

@@ -71,7 +71,7 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the briefing-room entry. It is an array key, not a magnitude.
+- **Description:** Index of the briefing-room entry. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -98,7 +98,8 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/MaxPages`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of text pages shown for this briefing. Higher values allow more pages; `0` means no pages. Numeric semantics: higher = more pages; negative values are not meaningful.
+- **Description:** Maximum number of text pages shown for this briefing.
+- **Numeric semantics:** higher = more pages; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -107,7 +108,8 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/MaxImages`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of images shown for this briefing. Higher values allow more images; `0` means no images. Numeric semantics: higher = more images; negative values are not meaningful.
+- **Description:** Maximum number of images shown for this briefing.
+- **Numeric semantics:** higher = more images; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -116,7 +118,8 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/ImagePositionX`
 
 - **Type:** `Integer`
-- **Description:** Horizontal screen position of the briefing image, in pixels. Higher values move it right; negative values move it left. Numeric semantics: increasing = right, decreasing = left.
+- **Description:** Horizontal screen position of the briefing image, in pixels.
+- **Numeric semantics:** increasing = right, decreasing = left.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -125,7 +128,8 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/ImagePositionY`
 
 - **Type:** `Integer`
-- **Description:** Vertical screen position of the briefing image, in pixels. Higher values move it down; negative values move it up. Numeric semantics: increasing = down, decreasing = up.
+- **Description:** Vertical screen position of the briefing image, in pixels.
+- **Numeric semantics:** increasing = down, decreasing = up.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -134,7 +138,7 @@ BRIEFINGROOM
 ### `BRIEFINGROOM/DATA/NextMission`
 
 - **Type:** `Integer`
-- **Description:** Index of the next briefing entry, or `-1` when there is no next mission. It is a reference, not a quantity.
+- **Description:** Index of the next briefing entry, or `-1` when there is no next mission. It is a reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

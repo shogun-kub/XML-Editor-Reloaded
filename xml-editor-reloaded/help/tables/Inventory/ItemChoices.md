@@ -185,7 +185,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the item-choice group. It is an array key, not a magnitude.
+- **Description:** Index of the item-choice group. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -203,7 +203,8 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/ubChoices`
 
 - **Type:** `Integer`
-- **Description:** Number of valid item slots in this group. Higher values mean more choices; `0` means none. Numeric semantics: higher = more choices; negative values are not meaningful.
+- **Description:** Number of valid item slots in this group.
+- **Numeric semantics:** higher = more choices; negative values are not meaningful.
 - **Values:** Count `0..50`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -212,7 +213,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo1`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 1. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 1. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -221,7 +222,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo2`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 2. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 2. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -230,7 +231,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo3`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 3. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 3. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -239,7 +240,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo4`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 4. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 4. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -248,7 +249,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo5`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 5. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 5. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -257,7 +258,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo6`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 6. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 6. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -266,7 +267,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo7`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 7. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 7. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -275,7 +276,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo8`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 8. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 8. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -284,7 +285,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo9`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 9. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 9. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -293,7 +294,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo10`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 10. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 10. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -302,7 +303,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo11`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 11. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 11. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -311,7 +312,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo12`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 12. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 12. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -320,7 +321,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo13`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 13. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 13. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -329,7 +330,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo14`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 14. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 14. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -338,7 +339,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo15`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 15. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 15. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -347,7 +348,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo16`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 16. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 16. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -356,7 +357,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo17`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 17. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 17. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -365,7 +366,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo18`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 18. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 18. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -374,7 +375,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo19`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 19. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 19. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -383,7 +384,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo20`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 20. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 20. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -392,7 +393,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo21`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 21. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 21. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -401,7 +402,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo22`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 22. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 22. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -410,7 +411,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo23`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 23. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 23. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -419,7 +420,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo24`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 24. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 24. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -428,7 +429,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo25`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 25. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 25. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -437,7 +438,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo26`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 26. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 26. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -446,7 +447,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo27`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 27. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 27. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -455,7 +456,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo28`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 28. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 28. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -464,7 +465,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo29`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 29. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 29. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -473,7 +474,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo30`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 30. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 30. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -482,7 +483,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo31`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 31. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 31. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -491,7 +492,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo32`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 32. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 32. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -500,7 +501,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo33`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 33. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 33. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -509,7 +510,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo34`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 34. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 34. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -518,7 +519,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo35`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 35. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 35. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -527,7 +528,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo36`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 36. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 36. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -536,7 +537,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo37`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 37. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 37. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -545,7 +546,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo38`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 38. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 38. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -554,7 +555,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo39`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 39. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 39. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -563,7 +564,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo40`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 40. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 40. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -572,7 +573,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo41`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 41. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 41. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -581,7 +582,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo42`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 42. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 42. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -590,7 +591,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo43`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 43. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 43. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -599,7 +600,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo44`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 44. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 44. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -608,7 +609,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo45`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 45. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 45. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -617,7 +618,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo46`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 46. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 46. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -626,7 +627,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo47`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 47. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 47. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -635,7 +636,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo48`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 48. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 48. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -644,7 +645,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo49`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 49. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 49. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -653,7 +654,7 @@ ENEMYITEMCHOICESLIST
 ### `ENEMYITEMCHOICESLIST/ENEMYITEMCHOICES/bItemNo50`
 
 - **Type:** `Integer`
-- **Description:** Item ID in slot 50. `0` means the slot is empty; other values reference an item ID. It is an identifier, not a magnitude.
+- **Description:** Item ID in slot 50. `0` means the slot is empty; other values reference an item ID. It is an identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

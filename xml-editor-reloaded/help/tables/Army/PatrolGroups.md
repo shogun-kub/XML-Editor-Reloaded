@@ -68,7 +68,8 @@ PATROL_INFO
 ### `PATROL_INFO/PATROL/Priority`
 
 - **Type:** `Integer`
-- **Description:** Patrol priority. Higher values make the patrol more important when the army allocates groups; `0` is the lowest priority. Numeric semantics: higher = more important; negative values are not meaningful.
+- **Description:** Patrol priority.
+- **Numeric semantics:** higher = more important; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -77,7 +78,8 @@ PATROL_INFO
 ### `PATROL_INFO/PATROL/Size`
 
 - **Type:** `Integer`
-- **Description:** Number of soldiers in the patrol. Higher values mean a larger patrol; `0` means no soldiers. Numeric semantics: higher = larger patrol; negative values are not meaningful.
+- **Description:** Number of soldiers in the patrol.
+- **Numeric semantics:** higher = larger patrol; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

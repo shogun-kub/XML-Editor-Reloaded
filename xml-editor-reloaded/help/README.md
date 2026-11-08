@@ -118,16 +118,42 @@ duplicated or reordered field, as well as a key that is not first.
 
 ### Numeric fields
 
-A measurable `Integer`, `Decimal`, `Float`, `UINT8` or `Flags` field describes its numeric
-meaning in the `Description`, prefixed with `Numeric semantics:`. The sentence says what a
-larger value means relative to a smaller one, and what negative values mean.
+A measurable `Integer`, `Decimal`, `Float`, `UINT8` or `Flags` field has its numeric meaning
+in a **separate bullet**, immediately after `Description` (and after `Only used with`, when
+present):
 
-Do **not** add this to identifiers, indexes, references, enum/class codes or 0/1 switches.
-Those values have no more/less meaning; they are normally non-negative, and a documented
-sentinel belongs in `Values`. Booleans and strings are exempt.
+```markdown
+- **Description:** Item coolness: how early the item appears in enemy loadouts and shops.
+- **Numeric semantics:** Higher values appear earlier; negative values are not meaningful.
+```
+
+The `Numeric semantics` bullet says what a larger value means relative to a smaller one, what
+a smaller value means, and what negative values mean. Do **not** repeat that direction in
+`Description`. A concrete example such as `100` = normal or `-600` = -6 HP/hour may stay in
+either line when it helps understanding, but the general more/less rule belongs only in
+`Numeric semantics`.
+
+Do **not** add `Numeric semantics` to identifiers, indexes, references, enum/class codes or
+0/1 switches. Those values have no more/less meaning; they are normally non-negative, and a
+documented sentinel belongs in `Values`. Booleans and strings are exempt.
 
 If the direction or negative-value meaning cannot be verified, write `Numeric semantics: Not
 confirmed; see Open questions.` and add the field to `## Open questions`.
+
+### Descriptions
+
+`Description` explains what the field is and what it affects. Keep it free of repeated
+more/less rules and of blanket disclaimers. Use the form "It is X, not Y" only when the field
+can be confused with another field in the same table, or when its type and name genuinely do
+not make the meaning clear. For example, `ubAssignmentType` is simply "assignment type
+identifier"; it does not need "not a quantity". A field such as `ubDetectEnemiesImmediate` may
+keep a disambiguation because an integer could plausibly mean enemy count, radius or a switch.
+
+### UI locations
+
+Do not claim that a field is shown "where the UI has room" or on a specific screen unless the
+location is verified from code or a screenshot. If the exact surface is unknown, describe the
+field neutrally and add the question to `## Open questions`.
 
 A field is a level-3 heading with its full path from the document root, followed by a list:
 

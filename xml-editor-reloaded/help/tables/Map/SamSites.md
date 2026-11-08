@@ -74,7 +74,7 @@ SAM_INFO
 ### `SAM_INFO/SAMLIST/SAM/samIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the SAM site. It is an array key, not a magnitude.
+- **Description:** Index of the SAM site. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -110,7 +110,7 @@ SAM_INFO
 ### `SAM_INFO/SAMLIST/SAM/samOrientation`
 
 - **Type:** `Integer`
-- **Description:** Facing direction of the SAM site, as a direction code. It is an orientation code, not a magnitude.
+- **Description:** Facing direction of the SAM site, as a direction code. It is an orientation code.
 - **Values:** Direction code; observed values `3` and `4`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -119,7 +119,7 @@ SAM_INFO
 ### `SAM_INFO/SAMLIST/SAM/samGridNoA`
 
 - **Type:** `Integer`
-- **Description:** First map grid position of the SAM installation. It is a grid identifier, not a magnitude.
+- **Description:** First map grid position of the SAM installation. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -128,7 +128,7 @@ SAM_INFO
 ### `SAM_INFO/SAMLIST/SAM/samGridNoB`
 
 - **Type:** `Integer`
-- **Description:** Second map grid position of the SAM installation. It is a grid identifier, not a magnitude.
+- **Description:** Second map grid position of the SAM installation. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

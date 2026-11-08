@@ -88,7 +88,7 @@ CAMPAIGNSTATSEVENTS
 ### `CAMPAIGNSTATSEVENTS/EVENT/usCityTaken`
 
 - **Type:** `Integer`
-- **Description:** City affected by this event, or `0` when the event is not tied to a city. It is a city reference, not a quantity.
+- **Description:** City affected by this event, or `0` when the event is not tied to a city. It is a city reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

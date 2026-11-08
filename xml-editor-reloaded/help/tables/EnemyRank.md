@@ -63,7 +63,7 @@ ENEMY_RANK
 ### `ENEMY_RANK/RANK/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the enemy rank. It is an array key, not a magnitude.
+- **Description:** Index of the enemy rank. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -81,7 +81,8 @@ ENEMY_RANK
 ### `ENEMY_RANK/RANK/ExpLevel`
 
 - **Type:** `Integer`
-- **Description:** Experience level associated with this rank. Higher values mean a more experienced rank. Numeric semantics: higher = more experienced; negative values are not meaningful.
+- **Description:** Experience level associated with this rank.
+- **Numeric semantics:** higher = more experienced; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

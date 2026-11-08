@@ -63,7 +63,7 @@ ENEMY_NAMES
 ### `ENEMY_NAMES/NAME/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the enemy-name entry. It is an array key, not a magnitude.
+- **Description:** Index of the enemy-name entry. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -81,7 +81,7 @@ ENEMY_NAMES
 ### `ENEMY_NAMES/NAME/Sector`
 
 - **Type:** `String`
-- **Description:** Sector code where the custom enemy group name applies. It is a map coordinate, not a magnitude.
+- **Description:** Sector code where the custom enemy group name applies. It is a map coordinate.
 - **Values:** Free text or a symbolic code.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.

@@ -97,7 +97,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector code in `A1`..`P16` form. It identifies the row and column this record describes; it is a map coordinate, not a magnitude.
+- **Description:** Sector code in `A1`..`P16` form. It identifies the row and column this record describes; it is a map coordinate.
 - **Values:** `A1`..`P16`.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -115,7 +115,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/szDetailedUnexploredName`
 
 - **Type:** `String`
-- **Description:** Longer display name shown while the sector is unexplored, when the UI has room for a detailed label.
+- **Description:** Longer display name used while the sector is unexplored.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -133,7 +133,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/szDetailedExploredName`
 
 - **Type:** `String`
-- **Description:** Longer display name shown after the sector has been explored, for detailed map labels.
+- **Description:** Longer display name used after the sector has been explored.
 - **Values:** Free text.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -142,7 +142,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/sWaterType`
 
 - **Type:** `Integer`
-- **Description:** Water category of the sector. It is a small code, not a quantity: `0` is dry, while `1`..`3` are water categories used by the map code.
+- **Description:** Water category of the sector. It is a small code: `0` is dry, while `1`..`3` are water categories used by the map code.
 - **Values:** Small category code; `0` = dry.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -151,7 +151,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/usNaturalDirt`
 
 - **Type:** `Integer`
-- **Description:** Natural dirt level of the sector. Higher values mean dirtier ground; it feeds terrain and camouflage calculations. Numeric semantics: higher = dirtier; negative values are not meaningful.
+- **Description:** Natural dirt level of the sector.
+- **Numeric semantics:** higher = dirtier; negative values are not meaningful.
 - **Values:** Non-negative dirt level; observed values range from `100` to `1000`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -160,7 +161,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/usCivilianPopulation`
 
 - **Type:** `Integer`
-- **Description:** Number of civilians living in the sector. Higher values mean a larger civilian population. Numeric semantics: higher = more civilians; negative values are not meaningful.
+- **Description:** Number of civilians living in the sector.
+- **Numeric semantics:** higher = more civilians; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -169,7 +171,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/rainchance`
 
 - **Type:** `Integer`
-- **Description:** Chance of rain in the sector, in percent. Higher values make rain more frequent; `0` disables it. Numeric semantics: higher = more rain; negative values are not meaningful.
+- **Description:** Chance of rain in the sector, in percent.
+- **Numeric semantics:** higher = more rain; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -178,7 +181,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/sandstormchance`
 
 - **Type:** `Integer`
-- **Description:** Chance of a sandstorm in the sector, in percent. Higher values make sandstorms more frequent; `0` disables them. Numeric semantics: higher = more sandstorms; negative values are not meaningful.
+- **Description:** Chance of a sandstorm in the sector, in percent.
+- **Numeric semantics:** higher = more sandstorms; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -187,7 +191,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/snowchance`
 
 - **Type:** `Integer`
-- **Description:** Chance of snow in the sector, in percent. Higher values make snow more frequent; `0` disables it. Numeric semantics: higher = more snow; negative values are not meaningful.
+- **Description:** Chance of snow in the sector, in percent.
+- **Numeric semantics:** higher = more snow; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -196,7 +201,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/snakechance`
 
 - **Type:** `Integer`
-- **Description:** Chance that a snake encounter occurs in the sector, in percent. Higher values make encounters more likely; `0` disables them. Numeric semantics: higher = more encounters; negative values are not meaningful.
+- **Description:** Chance that a snake encounter occurs in the sector, in percent.
+- **Numeric semantics:** higher = more encounters; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -205,7 +211,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/numsnakes`
 
 - **Type:** `Integer`
-- **Description:** Number of snakes spawned for a snake encounter. Higher values mean more snakes. Numeric semantics: higher = more snakes; negative values are not meaningful.
+- **Description:** Number of snakes spawned for a snake encounter.
+- **Numeric semantics:** higher = more snakes; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -214,7 +221,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/bloodcatraidpossible`
 
 - **Type:** `Boolean`
-- **Description:** If set, bloodcats can raid this sector. It is a switch, not a chance; the chance is separate.
+- **Description:** If set, bloodcats can raid this sector. It is a switch; the chance is separate.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -223,7 +230,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/zombieraidpossible`
 
 - **Type:** `Boolean`
-- **Description:** If set, zombies can raid this sector. It is a switch, not a chance.
+- **Description:** If set, zombies can raid this sector. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -232,7 +239,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/banditraidpossible`
 
 - **Type:** `Boolean`
-- **Description:** If set, bandits can raid this sector. It is a switch, not a chance.
+- **Description:** If set, bandits can raid this sector. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -241,7 +248,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/maxworkers`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of mine workers the sector can support. Higher values allow more workers; `0` means no mine workforce. Numeric semantics: higher = more workers; negative values are not meaningful.
+- **Description:** Maximum number of mine workers the sector can support.
+- **Numeric semantics:** higher = more workers; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -250,7 +258,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/wealth`
 
 - **Type:** `Integer`
-- **Description:** Relative wealth of the sector. Higher values mean a richer sector; it is a balance value, not a count of money. Numeric semantics: higher = richer; negative values are not meaningful.
+- **Description:** Relative wealth of the sector.
+- **Numeric semantics:** higher = richer; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -259,7 +268,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/usCurfewValue`
 
 - **Type:** `Integer`
-- **Description:** Curfew level for the sector. Higher values mean a stricter curfew; it is a level, not a percentage. Numeric semantics: higher = stricter; negative values are not meaningful.
+- **Description:** Curfew level for the sector.
+- **Numeric semantics:** higher = stricter; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -268,7 +278,8 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/sRadioScanModifier`
 
 - **Type:** `Integer`
-- **Description:** Multiplier applied to radio scanning in the sector. Higher values make the scan stronger; `1` is normal and `2` doubles the effect. Numeric semantics: higher = stronger; negative values are not meaningful.
+- **Description:** Multiplier applied to radio scanning in the sector.
+- **Numeric semantics:** higher = stronger; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -277,7 +288,7 @@ SECTOR_NAMES
 ### `SECTOR_NAMES/SECTOR/usPrisonRoomNumber`
 
 - **Type:** `Integer`
-- **Description:** Room number used for prisoners in this sector. It is a map room identifier, not a magnitude; `0` means no prison room.
+- **Description:** Room number used for prisoners in this sector. It is a map room identifier; `0` means no prison room.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -303,4 +314,5 @@ v4 and v5 use the same field paths; values may differ.
 
 ## Open questions
 
+- Which UI surface uses the short vs detailed sector names (strategic-map tooltip, sector panel or another screen) is not confirmed; this needs a code/UI check.
 - The exact formula or enum mapping for fields marked as inferred is not stated by the table data.

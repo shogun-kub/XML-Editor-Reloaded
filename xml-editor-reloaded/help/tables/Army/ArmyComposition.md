@@ -69,7 +69,7 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/Index`
 
 - **Type:** `Integer`
-- **Description:** Index of the army composition. It is an array key used by garrisons and patrols; it is not a magnitude.
+- **Description:** Index of the army composition. It is an array key used by garrisons and patrols.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -78,7 +78,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/Priority`
 
 - **Type:** `Integer`
-- **Description:** Priority of this composition relative to the others. Higher values make the group more important when the army fills sectors; `0` is the lowest priority. Numeric semantics: higher = more important; negative values are not meaningful.
+- **Description:** Priority of this composition relative to the others.
+- **Numeric semantics:** higher = more important; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -87,7 +88,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/ElitePercentage`
 
 - **Type:** `Integer`
-- **Description:** Share of elite soldiers in this composition, in percent. Higher values mean more elites; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of elite soldiers in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -96,7 +98,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/TroopPercentage`
 
 - **Type:** `Integer`
-- **Description:** Share of regular troop soldiers in this composition, in percent. Higher values mean more regulars; `0` excludes them. Numeric semantics: higher = larger share; negative values are not meaningful.
+- **Description:** Share of regular troop soldiers in this composition, in percent.
+- **Numeric semantics:** higher = larger share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -105,7 +108,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/AdminPercentage`
 
 - **Type:** `Integer`
-- **Description:** Share or weight of administration soldiers in this composition, in percent. Higher values add more admin personnel; it is a separate share from the elite/troop split. Numeric semantics: higher = larger admin share; negative values are not meaningful.
+- **Description:** Share or weight of administration soldiers in this composition, in percent.
+- **Numeric semantics:** higher = larger admin share; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -114,7 +118,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/StartPopulation`
 
 - **Type:** `Integer`
-- **Description:** Number of soldiers in the composition at campaign start. Higher values start with a larger group; `0` starts empty. Numeric semantics: higher = more soldiers; negative values are not meaningful.
+- **Description:** Number of soldiers in the composition at campaign start.
+- **Numeric semantics:** higher = more soldiers; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -123,7 +128,8 @@ COMPOSITION_INFO
 ### `COMPOSITION_INFO/COMPOSITION/DesiredPopulation`
 
 - **Type:** `Integer`
-- **Description:** Target number of soldiers the composition tries to maintain. Higher values aim for a larger group; `0` means no target. Numeric semantics: higher = larger target; negative values are not meaningful.
+- **Description:** Target number of soldiers the composition tries to maintain.
+- **Numeric semantics:** higher = larger target; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

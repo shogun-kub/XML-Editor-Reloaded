@@ -141,7 +141,7 @@ ExtraItems
 ### `ExtraItems/Item/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Item ID placed in the sector. It is an item reference, not a quantity.
+- **Description:** Item ID placed in the sector. It is an item reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -150,7 +150,8 @@ ExtraItems
 ### `ExtraItems/Item/quantity`
 
 - **Type:** `Integer`
-- **Description:** Number of items placed. Higher values mean more copies; `0` places none. Numeric semantics: higher = more items; negative values are not meaningful.
+- **Description:** Number of items placed.
+- **Numeric semantics:** higher = more items; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -159,7 +160,8 @@ ExtraItems
 ### `ExtraItems/Item/condition`
 
 - **Type:** `Integer`
-- **Description:** Condition of the placed item, in percent. Higher values mean better condition; `100` is pristine. Numeric semantics: higher = better condition; negative values are not meaningful.
+- **Description:** Condition of the placed item, in percent.
+- **Numeric semantics:** higher = better condition; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -168,7 +170,7 @@ ExtraItems
 ### `ExtraItems/Item/gridno`
 
 - **Type:** `Integer`
-- **Description:** Map grid number where the item is placed. It is a grid identifier, not a magnitude.
+- **Description:** Map grid number where the item is placed. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -177,7 +179,7 @@ ExtraItems
 ### `ExtraItems/Item/visible`
 
 - **Type:** `Boolean`
-- **Description:** If set, the item is visible on the map from the start. It is a switch, not a quantity.
+- **Description:** If set, the item is visible on the map from the start. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

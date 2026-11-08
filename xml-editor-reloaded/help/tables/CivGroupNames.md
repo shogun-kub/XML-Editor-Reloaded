@@ -67,7 +67,7 @@ CIV_GROUP_NAMES
 ### `CIV_GROUP_NAMES/NAME/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the civilian group. It is an array key, not a magnitude.
+- **Description:** Index of the civilian group. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.

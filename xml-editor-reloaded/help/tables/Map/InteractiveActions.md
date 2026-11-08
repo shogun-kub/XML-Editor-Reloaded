@@ -82,7 +82,7 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/usTileIndex`
 
 - **Type:** `Integer`
-- **Description:** Tile index inside `szTileSetName` that triggers this action. The element may repeat to cover several tiles; it is an ID, not a magnitude.
+- **Description:** Tile index inside `szTileSetName` that triggers this action. The element may repeat to cover several tiles; it is an ID.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -91,7 +91,7 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/sActionType`
 
 - **Type:** `Integer`
-- **Description:** Action type code used by the interaction system. It is an enum code, not a magnitude.
+- **Description:** Action type code used by the interaction system. It is an enum code.
 - **Values:** Action code; observed value `1` for computer/hacking actions.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -100,7 +100,8 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/difficulty`
 
 - **Type:** `Integer`
-- **Description:** Difficulty of the interaction, in percent. Higher values make the action harder; `0` is trivial. Numeric semantics: higher = harder; negative values are not meaningful.
+- **Description:** Difficulty of the interaction, in percent.
+- **Numeric semantics:** higher = harder; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -118,7 +119,7 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/sectorlevel`
 
 - **Type:** `Integer`
-- **Description:** Optional underground level restriction for the sector. It is a level, not a magnitude.
+- **Description:** Optional underground level restriction for the sector. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -136,7 +137,7 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/sLevel`
 
 - **Type:** `Integer`
-- **Description:** Optional map level restriction for the structure. It is a level, not a magnitude.
+- **Description:** Optional map level restriction for the structure. It is a level.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -145,7 +146,7 @@ INTERACTIVEACTIONS
 ### `INTERACTIVEACTIONS/ACTION/luaactionid`
 
 - **Type:** `Integer`
-- **Description:** Lua action identifier invoked by this interaction. It is an ID, not a magnitude.
+- **Description:** Lua action identifier invoked by this interaction. It is an ID.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

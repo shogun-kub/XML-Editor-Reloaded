@@ -59,7 +59,7 @@ GARRISON_INFO
 ### `GARRISON_INFO/GARRISON/Sector`
 
 - **Type:** `String`
-- **Description:** Sector that hosts the garrison, in `A1`..`P16` form. It identifies the map location; it is not a magnitude.
+- **Description:** Sector that hosts the garrison, in `A1`..`P16` form. It identifies the map location.
 - **Values:** Sector code such as `P3`.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
@@ -68,7 +68,7 @@ GARRISON_INFO
 ### `GARRISON_INFO/GARRISON/Composition`
 
 - **Type:** `String`
-- **Description:** Army composition index assigned to this garrison. It references `ArmyComposition.Index`; it is an ID, not a quantity.
+- **Description:** Army composition index assigned to this garrison. It references `ArmyComposition.Index`; it is an ID.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.

@@ -103,7 +103,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/SectorGrid`
 
 - **Type:** `String`
-- **Description:** Sector code in `A1`..`P16` form. It identifies the sector that can contain bloodcats; it is a map coordinate, not a magnitude.
+- **Description:** Sector code in `A1`..`P16` form. It identifies the sector that can contain bloodcats; it is a map coordinate.
 - **Values:** `A1`..`P16`.
 - **Default:** Required; identifies the record or lane.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -112,7 +112,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/ubPlacementType`
 
 - **Type:** `Integer`
-- **Description:** Placement rule code for the sector. `0` is the normal placement; other codes are scenario-specific variants. It is an enum code, not a magnitude.
+- **Description:** Placement rule code for the sector. `0` is the normal placement; other codes are scenario-specific variants. It is an enum code.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -121,7 +121,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/NOVICE/fRespawn`
 
 - **Type:** `Boolean`
-- **Description:** If set, bloodcats in this sector can respawn on the Novice difficulty. It is a switch, not a count.
+- **Description:** If set, bloodcats in this sector can respawn on the Novice difficulty. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -130,7 +130,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/NOVICE/ubAmbushChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that bloodcats ambush the player in this sector on Novice difficulty, in percent. Higher values make ambushes more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that bloodcats ambush the player in this sector on Novice difficulty, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -139,7 +140,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/NOVICE/ubFactionAffiliation`
 
 - **Type:** `Integer`
-- **Description:** Faction affiliation ID used for the bloodcat group on Novice difficulty. It is a faction reference, not a magnitude.
+- **Description:** Faction affiliation ID used for the bloodcat group on Novice difficulty. It is a faction reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -148,7 +149,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/NOVICE/ubMinBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Minimum number of bloodcats spawned in this sector on Novice difficulty. Higher values mean a larger group; it should not exceed `ubMaxBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Minimum number of bloodcats spawned in this sector on Novice difficulty. It must not exceed `ubMaxBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -157,7 +159,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/NOVICE/ubMaxBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of bloodcats spawned in this sector on Novice difficulty. Higher values mean a larger group; it should not be below `ubMinBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Maximum number of bloodcats spawned in this sector on Novice difficulty. It must not be below `ubMinBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -166,7 +169,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERIENCED/fRespawn`
 
 - **Type:** `Boolean`
-- **Description:** If set, bloodcats in this sector can respawn on the Experienced difficulty. It is a switch, not a count.
+- **Description:** If set, bloodcats in this sector can respawn on the Experienced difficulty. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -175,7 +178,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERIENCED/ubAmbushChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that bloodcats ambush the player in this sector on Experienced difficulty, in percent. Higher values make ambushes more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that bloodcats ambush the player in this sector on Experienced difficulty, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -184,7 +188,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERIENCED/ubFactionAffiliation`
 
 - **Type:** `Integer`
-- **Description:** Faction affiliation ID used for the bloodcat group on Experienced difficulty. It is a faction reference, not a magnitude.
+- **Description:** Faction affiliation ID used for the bloodcat group on Experienced difficulty. It is a faction reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -193,7 +197,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERIENCED/ubMinBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Minimum number of bloodcats spawned in this sector on Experienced difficulty. Higher values mean a larger group; it should not exceed `ubMaxBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Minimum number of bloodcats spawned in this sector on Experienced difficulty. It must not exceed `ubMaxBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -202,7 +207,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERIENCED/ubMaxBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of bloodcats spawned in this sector on Experienced difficulty. Higher values mean a larger group; it should not be below `ubMinBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Maximum number of bloodcats spawned in this sector on Experienced difficulty. It must not be below `ubMinBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -211,7 +217,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERT/fRespawn`
 
 - **Type:** `Boolean`
-- **Description:** If set, bloodcats in this sector can respawn on the Expert difficulty. It is a switch, not a count.
+- **Description:** If set, bloodcats in this sector can respawn on the Expert difficulty. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -220,7 +226,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERT/ubAmbushChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that bloodcats ambush the player in this sector on Expert difficulty, in percent. Higher values make ambushes more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that bloodcats ambush the player in this sector on Expert difficulty, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -229,7 +236,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERT/ubFactionAffiliation`
 
 - **Type:** `Integer`
-- **Description:** Faction affiliation ID used for the bloodcat group on Expert difficulty. It is a faction reference, not a magnitude.
+- **Description:** Faction affiliation ID used for the bloodcat group on Expert difficulty. It is a faction reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -238,7 +245,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERT/ubMinBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Minimum number of bloodcats spawned in this sector on Expert difficulty. Higher values mean a larger group; it should not exceed `ubMaxBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Minimum number of bloodcats spawned in this sector on Expert difficulty. It must not exceed `ubMaxBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -247,7 +255,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/EXPERT/ubMaxBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of bloodcats spawned in this sector on Expert difficulty. Higher values mean a larger group; it should not be below `ubMinBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Maximum number of bloodcats spawned in this sector on Expert difficulty. It must not be below `ubMinBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -256,7 +265,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/INSANE/fRespawn`
 
 - **Type:** `Boolean`
-- **Description:** If set, bloodcats in this sector can respawn on the Insane difficulty. It is a switch, not a count.
+- **Description:** If set, bloodcats in this sector can respawn on the Insane difficulty. It is a switch.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -265,7 +274,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/INSANE/ubAmbushChance`
 
 - **Type:** `Integer`
-- **Description:** Chance that bloodcats ambush the player in this sector on Insane difficulty, in percent. Higher values make ambushes more likely; `0` disables them. Numeric semantics: higher = more likely; negative values are not meaningful.
+- **Description:** Chance that bloodcats ambush the player in this sector on Insane difficulty, in percent.
+- **Numeric semantics:** higher = more likely; negative values are not meaningful.
 - **Values:** Percentage `0..100`.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -274,7 +284,7 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/INSANE/ubFactionAffiliation`
 
 - **Type:** `Integer`
-- **Description:** Faction affiliation ID used for the bloodcat group on Insane difficulty. It is a faction reference, not a magnitude.
+- **Description:** Faction affiliation ID used for the bloodcat group on Insane difficulty. It is a faction reference.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -283,7 +293,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/INSANE/ubMinBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Minimum number of bloodcats spawned in this sector on Insane difficulty. Higher values mean a larger group; it should not exceed `ubMaxBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Minimum number of bloodcats spawned in this sector on Insane difficulty. It must not exceed `ubMaxBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.
@@ -292,7 +303,8 @@ BLOODCAT_PLACEMENTS
 ### `BLOODCAT_PLACEMENTS/SECTOR/INSANE/ubMaxBloodcats`
 
 - **Type:** `Integer`
-- **Description:** Maximum number of bloodcats spawned in this sector on Insane difficulty. Higher values mean a larger group; it should not be below `ubMinBloodcats`. Numeric semantics: higher = more bloodcats; negative values are not meaningful.
+- **Description:** Maximum number of bloodcats spawned in this sector on Insane difficulty. It must not be below `ubMinBloodcats`.
+- **Numeric semantics:** higher = more bloodcats; negative values are not meaningful.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** map table data; field names, XML comments and observed values.

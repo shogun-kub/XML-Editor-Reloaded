@@ -59,7 +59,7 @@ SQUAD_NAMES
 ### `SQUAD_NAMES/SQUADNAME/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the squad-name entry. It is an array key, not a magnitude.
+- **Description:** Index of the squad-name entry. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
 - **Source:** table data; field names, XML comments and observed values.
