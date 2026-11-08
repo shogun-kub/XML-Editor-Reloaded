@@ -503,10 +503,10 @@ The schema comment is the primary description of this table; the damage-stage fi
 
 ## Relations
 
-- `Magazines.ubAmmoType` points to `AmmoTypes.uiIndex`.
-- An ammunition item in `Items` uses a magazine row, which in turn selects the ammo type; the ammo type is not the item row itself.
-- `Explosives.ubFragType` can point to an `AmmoTypes.uiIndex` to reuse fragment behaviour.
-- `spreadPattern` names a pattern in the future `SpreadPatterns` document (B3).
+- `Magazines.ubAmmoType` points to `AmmoTypes.uiIndex` in [Magazines](Magazines.md).
+- An ammunition item in [Items](Items.md) uses a magazine row, which in turn selects the ammo type; the ammo type is not the item row itself.
+- `Explosives.ubFragType` can point to an `AmmoTypes.uiIndex` to reuse fragment behaviour in [Explosives](Explosives.md).
+- `spreadPattern` names a pattern in [SpreadPatterns](../SpreadPatterns.md).
 
 ## Related formulas
 

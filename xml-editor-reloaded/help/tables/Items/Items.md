@@ -708,7 +708,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/usItemClass`
 
 - **Type:** `Flags` (bit mask, `UINT32`)
-- **Description:** Bit mask of item-class flags (`IC_*`). It selects the class-specific subtable reached through `ubClassIndex` and controls which item behaviours apply. See `ItemClass`.
+- **Description:** Bit mask of item-class flags (`IC_*`). It selects the class-specific subtable reached through `ubClassIndex` and controls which item behaviours apply. See [Lookup.ItemClass](../Lookup.md#itemclass).
 - **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bit mask; `0` = none. Bits are defined by [ItemClass](../Lookup.md#itemclass).
 - **Default:** None; every item declares a class.
@@ -953,8 +953,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/FoodType`
 
 - **Type:** `Integer`
-- **Description:** Food or drink class used by the food system. The target food table is not embedded in v5.
-- **Values:** `0` = none; values index the food definitions. No separate v5 lookup file exists.
+- **Description:** Food or drink class used by the food system; rows are defined in [Food](Food.md).
+- **Values:** `0` = none; values index the [Food](Food.md) rows. The v5 item set does not embed a separate food lookup.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -971,8 +971,8 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/clothestype`
 
 - **Type:** `Integer`
-- **Description:** Clothing type index used by the clothes system; see the future `Clothes` document.
-- **Values:** `0` = none; index into the clothes definitions (future `Clothes` document).
+- **Description:** Clothing type index used by the clothes system; rows are defined in [Clothes](Clothes.md).
+- **Values:** `0` = none; index into the [Clothes](Clothes.md) rows.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** item table data; item property metadata.
 - **Confidence:** `inferred`
@@ -980,7 +980,7 @@ Fields marked `source` are verified against the table and lookup data.
 ### `ITEMLIST/ITEM/spreadPattern`
 
 - **Type:** `String`
-- **Description:** Named shotgun spread pattern: `Full Choke`, `Imp Mod Choke`, `Rifled Choke`, `Duckbill`, `Sawed off`, or `Caws`. Empty means the default.
+- **Description:** Named shotgun spread pattern from [SpreadPatterns](../SpreadPatterns.md): `Full Choke`, `Imp Mod Choke`, `Rifled Choke`, `Duckbill`, `Sawed off`, or `Caws`. Empty means the default.
 - **Values:** `Full Choke`, `Imp Mod Choke`, `Rifled Choke`, `Duckbill`, `Sawed off`, `Caws`; empty = default.
 - **Default:** Empty; default spread.
 - **Source:** item table data; item property metadata.
@@ -3153,16 +3153,14 @@ Empty means neutral; positive and negative percentages are allowed.
 - `Items.ubClassIndex` selects a row in the table chosen by `usItemClass`;
   see [Armours](Armours.md), [Magazines](Magazines.md) and
   [Launchables](Launchables.md).
-- `Items.ubCursor` -> `Cursor`; `Items.Inseparable` -> `Separability`.
-- `Items.AttachmentClass` -> `AttachmentClass`; `Items.nasAttachmentClass` ->
-  `NasAttachmentClass`; `Items.nasLayoutClass` -> `NasLayoutClass`.
+- `Items.ubCursor` -> [Lookup.Cursor](../Lookup.md#cursor); `Items.Inseparable` -> [Lookup.Separability](../Lookup.md#separability).
+- `Items.AttachmentClass` -> [Lookup.AttachmentClass](../Lookup.md#attachmentclass); `Items.nasAttachmentClass` ->
+  [Lookup.NasAttachmentClass](../Lookup.md#nasattachmentclass); `Items.nasLayoutClass` -> [Lookup.NasLayoutClass](../Lookup.md#naslayoutclass).
 - `Items.AttachmentPoint` and `Items.AvailableAttachmentPoint` ->
-  `AttachmentPoint`; `Items.AttachmentSystem` -> `AttachmentSystem`.
-- `Items.DrugType` -> `DrugType`; `Items.FoodType` -> the food definitions
-  (future `Food` document).
-- `Items.clothestype` -> the clothes definitions (future `Clothes` document).
-- `Items.spreadPattern` -> the spread-pattern definitions (future
-  `SpreadPatterns` document).
+  [Lookup.AttachmentPoint](../Lookup.md#attachmentpoint); `Items.AttachmentSystem` -> [Lookup.AttachmentSystem](../Lookup.md#attachmentsystem).
+- `Items.DrugType` -> [Lookup.DrugType](../Lookup.md#drugtype); `Items.FoodType` -> the [Food](Food.md) definitions.
+- `Items.clothestype` -> the [Clothes](Clothes.md) definitions.
+- `Items.spreadPattern` -> the [SpreadPatterns](../SpreadPatterns.md) definitions.
 - `Items.DefaultAttachment`, `Items.DiscardedLauncherItem`,
   `Items.BloodiedItem`, `Items.buddyitem` and `Items.randomitem` are item or
   random-item IDs.
@@ -3211,8 +3209,8 @@ remaining uncertainties are listed below.
 - `DrugType`: the editor metadata types it as a flag mask, while the field is
   also described as a sequence in the lookup. Both readings are documented;
   the lookup remains the authority for named values.
-- `FoodType`: the target food table is not present in the supplied TableData
-  set, so the description stays at the level of a food-class index.
+- `FoodType`: the [Food](Food.md) table defines the rows; the item file stores
+  only the class index.
 - `bSoundType`: the full sound-family enum is not reconstructed.
 - `RobotTargetingSkillGrant`, `RobotUtilitySkillGrant` and
   `RobotChassisSkillGrant`: the unit (skill points or skill level) is not

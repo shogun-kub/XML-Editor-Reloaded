@@ -76,7 +76,7 @@ GARRISON_INFO
 
 ## Relations
 
-- `Composition` references `ArmyComposition.Index`.
+- `Composition` references [ArmyComposition](ArmyComposition.md) `Index`; the group is filled from [SoldierProfiles](../Profiles/SoldierProfiles.md).
 
 ## Localization
 

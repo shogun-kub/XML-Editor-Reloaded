@@ -113,7 +113,7 @@ DELIVERYMETHODTABLE
 
 ## Relations
 
-- `uiDestinationIndex` references `ShippingDestinations.uiIndex`; the destination name is defined there.
+- `uiDestinationIndex` references [ShippingDestinations](ShippingDestinations.md) `uiIndex`; the destination name is defined there.
 
 ## Localization
 

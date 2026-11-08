@@ -187,7 +187,7 @@ ExtraItems
 
 ## Relations
 
-- `Item/uiIndex` references an item in `Items.xml`; the sector and difficulty are encoded in the file name, not in a field.
+- `Item/uiIndex` references an item in [Items](../Items/Items.md); the sector and difficulty are encoded in the file name, not in a field.
 
 ## Localization
 

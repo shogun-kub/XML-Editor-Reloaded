@@ -625,8 +625,8 @@ WEAPONLIST
 
 ## Relations
 
-- `Items.ubClassIndex` of a weapon item points to `Weapons.uiIndex`.
-- `ubCalibre` points to [AmmoStrings](AmmoStrings.md); the calibre label is display data, while ammunition behaviour comes from `AmmoTypes` and the magazine row.
+- [Items](Items.md) `ubClassIndex` of a weapon item points to `Weapons.uiIndex`.
+- `ubCalibre` points to [AmmoStrings](AmmoStrings.md); the calibre label is display data, while ammunition behaviour comes from [AmmoTypes](AmmoTypes.md) and the [Magazines](Magazines.md) row.
 - `Magazines.ubAmmoType` selects the ammo behaviour loaded by a magazine; `Weapons.ubCalibre` only selects the calibre family.
 - NCTH fields are read only when the new chance-to-hit system is active; OCTH uses `bAccuracy` and ignores the NCTH group.
 

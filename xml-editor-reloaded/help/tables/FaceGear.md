@@ -86,7 +86,7 @@ FACE_GEAR
 
 ## Relations
 
-- `Type` selects the face-gear overlay; `szFile` is an STI asset.
+- `Type` selects the face-gear overlay; `szFile` is an STI asset. The portrait renderer and its defaults are described in [IMPPortraits](IMPPortraits.md).
 
 ## Localization
 

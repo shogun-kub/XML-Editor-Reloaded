@@ -296,7 +296,7 @@ SECTOR_NAMES
 
 ## Relations
 
-- `SectorNames.SectorGrid` is the canonical sector key used by `SectorLoadscreens`, `MovementCosts`, `BloodcatPlacements` and `CreaturePlacements`.
+- `SectorNames.SectorGrid` is the canonical sector key used by [SectorLoadscreens](SectorLoadscreens.md), [MovementCosts](MovementCosts.md), [BloodcatPlacements](BloodcatPlacements.md) and [CreaturePlacements](CreaturePlacements.md).
 
 ## Localization
 

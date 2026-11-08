@@ -137,7 +137,7 @@ COMPOSITION_INFO
 
 ## Relations
 
-- Garrisons and patrols reference a composition by its `Index`.
+- [GarrisonGroups](GarrisonGroups.md) and [PatrolGroups](PatrolGroups.md) reference a composition by its `Index`; the resulting soldiers use [SoldierProfiles](../Profiles/SoldierProfiles.md).
 
 ## Localization
 

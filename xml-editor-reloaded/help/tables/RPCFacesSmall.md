@@ -134,7 +134,7 @@ SMALLFACE
 
 ## Relations
 
-- `FaceIndex` points to the portrait/face tables.
+- `FaceIndex` points to the portrait/face tables used by [MercProfiles](MercProfiles.md).
 
 ## Localization
 

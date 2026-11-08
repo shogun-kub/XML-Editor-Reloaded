@@ -838,7 +838,7 @@ MERCGEARLIST
 ## Relations
 
 - `mIndex` points to [MercProfiles](MercProfiles.md).
-- `m*` item columns point to `Items`; `l*` item columns point to `Items` and are used by NIV LBE slots.
+- `m*` item columns point to [Items](Items/Items.md); `l*` item columns point to [Items](Items/Items.md) and are used by NIV LBE slots.
 
 ## Localization
 

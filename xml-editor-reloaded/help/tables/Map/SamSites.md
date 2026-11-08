@@ -145,7 +145,7 @@ SAM_INFO
 
 ## Relations
 
-- `samSector/x` and `samSector/y` identify a sector; the coverage matrix uses the same map columns.
+- `samSector/x` and `samSector/y` identify a sector named in [SectorNames](SectorNames.md); the coverage matrix uses the same map columns.
 
 ## Localization
 

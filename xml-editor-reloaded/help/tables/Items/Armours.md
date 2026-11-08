@@ -129,8 +129,7 @@ duplicate `uiIndex` overwrites the earlier row. Records with an
 - `Items.ubClassIndex` -> `Armours.uiIndex` for items whose `usItemClass` is
   `IC_ARMOUR`.
 - `Armours.ubArmourClass` -> `ArmourClass` (`../Lookup.md#armourclass`).
-- The item's `usItemClass` and `ubClassIndex` live in `Items`; see the future
-  `Items/Items.md`.
+- The item's `usItemClass` and `ubClassIndex` live in [Items](Items.md).
 
 ## Related formulas
 

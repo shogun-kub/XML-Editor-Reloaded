@@ -706,7 +706,7 @@ FACILITYTYPES
 
 ## Relations
 
-- Placed facilities reference `FacilityTypes.ubIndex`; each `ASSIGNMENT` selects an assignment type used by the facility UI and the strategic assignment system.
+- Placed facilities in [Facilities](Facilities.md) reference `FacilityTypes.ubIndex`; each `ASSIGNMENT` selects an assignment type used by the facility UI and the strategic assignment system. Facility placement uses [Cities](Cities.md) data.
 
 ## Localization
 

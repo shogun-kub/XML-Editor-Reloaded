@@ -134,7 +134,7 @@ SPREADPATTERNLIST
 
 ## Relations
 
-- `NAME` is referenced by ammo/item tables that select a spread pattern.
+- `NAME` is referenced by [AmmoTypes](Items/AmmoTypes.md), [Weapons](Items/Weapons.md) and [Items](Items/Items.md) when they select a spread pattern.
 
 ## Localization
 

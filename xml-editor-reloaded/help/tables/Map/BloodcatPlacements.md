@@ -312,7 +312,7 @@ BLOODCAT_PLACEMENTS
 
 ## Relations
 
-- `SectorGrid` identifies a sector whose names and terrain are defined in `SectorNames`; difficulty sections mirror the campaign difficulty levels.
+- `SectorGrid` identifies a sector whose names and terrain are defined in [SectorNames](SectorNames.md); difficulty sections mirror the campaign difficulty levels.
 
 ## Localization
 

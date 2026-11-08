@@ -68,7 +68,7 @@ SOUNDLIST
 
 ## Relations
 
-- Sound IDs are referenced by weapon, vehicle and UI fields elsewhere in TableData.
+- Sound IDs are referenced by [Weapons](../Items/Weapons.md), [Vehicles](../Vehicles.md) and UI fields elsewhere in TableData.
 
 ## Localization
 

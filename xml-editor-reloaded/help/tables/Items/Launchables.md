@@ -86,9 +86,9 @@ meaningful until a caller proves otherwise.
 
 ## Relations
 
-- `Launchables.launchableIndex` -> `Items.uiIndex` (launcher).
-- `Launchables.itemIndex` -> `Items.uiIndex` (ammo/projectile).
-- The launcher item itself is an `Items` record with a launcher class; the ammo item is
+- `Launchables.launchableIndex` -> [Items](Items.md) `uiIndex` (launcher).
+- `Launchables.itemIndex` -> [Items](Items.md) `uiIndex` (ammo/projectile).
+- The launcher item itself is an [Items](Items.md) record with a launcher class; the ammo item is
   usually an `IC_AMMO` or explosive item.
 
 ## Localization

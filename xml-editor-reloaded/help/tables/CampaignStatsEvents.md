@@ -88,7 +88,7 @@ CAMPAIGNSTATSEVENTS
 ### `CAMPAIGNSTATSEVENTS/EVENT/usCityTaken`
 
 - **Type:** `Integer`
-- **Description:** City affected by this event, or `0` when the event is not tied to a city. It is a city reference.
+- **Description:** City affected by this event, or `0` when the event is not tied to a city. It is a city reference into [Cities](Map/Cities.md).
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
 - **Source:** table data; field names, XML comments and observed values.
@@ -186,7 +186,7 @@ CAMPAIGNSTATSEVENTS
 
 ## Relations
 
-- `usCityTaken` references a city index in `Cities.xml`; `0` means the event is not city-specific.
+- `usCityTaken` references a city index in [Cities](Map/Cities.md); `0` means the event is not city-specific.
 
 ## Localization
 

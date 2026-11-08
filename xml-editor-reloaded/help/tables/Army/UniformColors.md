@@ -191,7 +191,7 @@ UNIFORMS
 
 ## Relations
 
-- The colour names are shared with the soldier-profile graphics; they are display constants, not item references.
+- The colour names are shared with [SoldierProfiles](../Profiles/SoldierProfiles.md) graphics; they are display constants, not item references.
 
 ## Localization
 

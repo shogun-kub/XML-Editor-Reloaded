@@ -100,7 +100,7 @@ MISCDROPLIST
 
 ## Relations
 
-- `usItemClass` references the corresponding item class in the item data.
+- `usItemClass` references [Lookup.ItemClass](../Lookup.md#itemclass).
 
 ## Localization
 

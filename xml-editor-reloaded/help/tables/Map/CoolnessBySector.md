@@ -65,7 +65,7 @@ COOLNESS_BY_SECTOR
 
 ## Relations
 
-- Each matrix position uses the normal map row and column; the value controls sector equipment coolness.
+- Each matrix position uses the normal map row and column; the value controls the [Items](../Items/Items.md) coolness available in that sector.
 
 ## Localization
 

@@ -247,8 +247,8 @@ DRUGSLIST
 
 ## Relations
 
-- `uiIndex` is referenced by `DrugType` in [Items](Items.md).
-- `DISEASE_EFFECT/disease` refers to a row in `Disease.xml`.
+- `uiIndex` is referenced by [Lookup.DrugType](../Lookup.md#drugtype) in [Items](Items.md).
+- `DISEASE_EFFECT/disease` refers to a row in [Disease](../Disease.md).
 - Multiple effect blocks may be repeated; the XML comment notes that only one disability/personality effect is active at a time.
 
 ## Localization

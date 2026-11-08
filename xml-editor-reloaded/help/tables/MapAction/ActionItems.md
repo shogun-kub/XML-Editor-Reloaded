@@ -109,7 +109,7 @@ ACTION_ITEM_LIST
 
 ## Relations
 
-- `BombItem` references an item ID in `Items.xml`.
+- `BombItem` references an item ID in [Items](../Items/Items.md).
 
 ## Localization
 

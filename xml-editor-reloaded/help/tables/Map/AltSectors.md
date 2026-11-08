@@ -64,7 +64,7 @@ ALT_SECTORS_LIST
 
 ## Relations
 
-- Each matrix position uses the normal map row and column; the value selects an alternate-sector group.
+- Each matrix position uses the normal map row and column; the sector coordinates are shared with [SectorNames](SectorNames.md), and the value selects an alternate-sector group.
 
 ## Localization
 

@@ -301,7 +301,7 @@ CREATURE_INFO
 
 ## Relations
 
-- `HABITATSECTOR/Composition` references `COMPOSITION/CompIndex`; all sector fields use the normal map sector coordinates.
+- `HABITATSECTOR/Composition` references `COMPOSITION/CompIndex`; all sector fields use the normal map sector coordinates and sector names from [SectorNames](SectorNames.md).
 
 ## Localization
 

@@ -120,7 +120,7 @@ DESTINATIONLIST
 
 ## Relations
 
-- `DeliveryMethods` references this table by `uiIndex` to set a fee and delay per destination.
+- [DeliveryMethods](DeliveryMethods.md) references this table by `uiIndex` to set a fee and delay per destination.
 
 ## Localization
 

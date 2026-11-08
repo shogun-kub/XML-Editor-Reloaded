@@ -86,7 +86,7 @@ IMPVOICELIST
 
 ## Relations
 
-- `voiceset` is used as `MercProfiles.usVoiceIndex` and by the IMP voice selection.
+- `voiceset` is used as [MercProfiles](MercProfiles.md) `usVoiceIndex` and by the IMP voice selection.
 
 ## Localization
 

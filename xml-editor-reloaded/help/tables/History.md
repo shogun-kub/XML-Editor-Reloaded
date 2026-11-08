@@ -76,7 +76,7 @@ STRINGS
 
 ## Relations
 
-- This table is part of the strategic army and inventory data; references are described in the field notes.
+- `%s` arguments are filled with names from [MercProfiles](MercProfiles.md), [Cities](Map/Cities.md) and [Minerals](Map/Minerals.md), depending on the event.
 
 ## Localization
 

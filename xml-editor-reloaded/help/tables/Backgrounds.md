@@ -1045,7 +1045,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/croucheddefense`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Modifier to crouched defense.
+- **Description:** Modifier to crouched defence.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
@@ -1067,7 +1067,7 @@ BACKGROUNDS
 ### `BACKGROUNDS/BACKGROUND/snake_defense`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Snake-defense modifier.
+- **Description:** Snake-defence modifier.
 - **Only used with:** ENABLE_BACKGROUNDS.
 - **Numeric semantics:** Signed background modifier: higher values mean a stronger positive bonus, and negative values mean a penalty.
 - **Values:** Integer modifier; no narrower range is declared by the field metadata.
@@ -1281,7 +1281,7 @@ BACKGROUNDS
 ## Relations
 
 - `usBackground` in [MercProfiles](MercProfiles.md) points to `Backgrounds.uiIndex`.
-- `drugitem` points to `Items`; `drugtype` points to `Drugs`.
+- `drugitem` points to [Items](Items/Items.md); `drugtype` points to [Drugs](Items/Drugs.md).
 - `dislikebackground` points to another `Backgrounds.uiIndex`.
 
 ## Localization

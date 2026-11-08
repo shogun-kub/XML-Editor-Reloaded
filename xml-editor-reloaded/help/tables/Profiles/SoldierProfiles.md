@@ -162,7 +162,7 @@ PROFILES
 
 ## Relations
 
-- `uiIndex` is local to each template file. The files correspond to enemy admin/elite/regular and militia green/regular/veteran ranks.
+- `uiIndex` is local to each template file. The files correspond to enemy admin/elite/regular and militia green/regular/veteran ranks. The visual and trait fields mirror the matching [MercProfiles](../MercProfiles.md) fields.
 
 ## Localization
 

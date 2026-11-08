@@ -104,10 +104,10 @@ would overwrite the previous flags (last record wins).
 
 ## Relations
 
-- `Facilities.FacilityType` -> `FacilityTypes.ubIndex` (future `Map/FacilityTypes.md`).
+- `Facilities.FacilityType` -> [FacilityTypes](FacilityTypes.md) `ubIndex`.
 - The sector code determines which town/region the facility belongs to; town data is in
   [Cities](Cities.md).
-- Facility names, tooltips and assignment text live in `FacilityTypes` and its
+- Facility names, tooltips and assignment text live in [FacilityTypes](FacilityTypes.md) and its
   `Russian.*` overlay, not in this table.
 
 ## Localization

@@ -100,7 +100,7 @@ EXPLOSIVEDROPLIST
 
 ## Relations
 
-- `ubType` references the corresponding explosive type in the item data.
+- `ubType` references an explosive type in [Explosives](../Items/Explosives.md).
 
 ## Localization
 

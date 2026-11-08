@@ -108,7 +108,7 @@ OLD_MERC
 
 ## Relations
 
-- `uiIndex` is the archive identity; `FaceID` points to the face assets.
+- `uiIndex` is the archive identity; `FaceID` points to the face assets used by [MercProfiles](MercProfiles.md).
 
 ## Localization
 

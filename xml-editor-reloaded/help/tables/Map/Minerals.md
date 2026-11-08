@@ -87,7 +87,7 @@ MINERALS
 
 ## Relations
 
-- Mine sectors and facilities use the `uiIndex` of a mineral type to select the produced mineral.
+- Mine sectors and facilities use the `uiIndex` of a mineral type to select the produced mineral; the owning town is defined in [Cities](Cities.md).
 
 ## Localization
 

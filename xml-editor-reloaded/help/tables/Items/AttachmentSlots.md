@@ -169,7 +169,7 @@ ATTACHMENTSLOTLIST
 
 - `nasAttachmentClass` uses [Lookup.NasAttachmentClass](../Lookup.md#nasattachmentclass).
 - `nasLayoutClass` uses [Lookup.NasLayoutClass](../Lookup.md#naslayoutclass).
-- Slots are referenced by the NAS layout, not by the `Attachments` mapping table.
+- Slots are referenced by the NAS layout, not by the [Attachments](Attachments.md) mapping table.
 
 ## Localization
 

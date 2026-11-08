@@ -153,7 +153,7 @@ LOADSCREENS
 
 ## Relations
 
-- `szLocation` identifies the sector whose loading screen is used; the sector itself is defined in `SectorNames`.
+- `szLocation` identifies the sector whose loading screen is used; the sector itself is defined in [SectorNames](SectorNames.md).
 
 ## Localization
 

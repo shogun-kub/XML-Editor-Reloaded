@@ -133,7 +133,7 @@ StrategicMovementCosts
 
 ## Relations
 
-- The `Sector` record is keyed by the `x` and `y` attributes, which identify the same sector coordinates used by `SectorNames`.
+- The `Sector` record is keyed by the `x` and `y` attributes, which identify the same sector coordinates used by [SectorNames](SectorNames.md).
 
 ## Localization
 

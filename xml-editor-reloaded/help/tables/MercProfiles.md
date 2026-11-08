@@ -1278,8 +1278,9 @@ MERCPROFILES
 ## Relations
 
 - `uiIndex` is referenced by `Inventory.MercStartingGear.mIndex`, `MercOpinions.uiIndex`, `MercQuote.uiIndex`, `MercAvailability.ProfilId` and `AIMAvailability.ProfilId`.
-- `usBackground` points to the background table (B5).
-- `usVoiceIndex` points to [IMPVoices](IMPVoices.md).
+- `usBackground` points to [Backgrounds](Backgrounds.md); `ubCivilianGroup` points to [CivGroupNames](CivGroupNames.md).
+- `ubFaceIndex` points to [RPCFacesSmall](RPCFacesSmall.md); `usVoiceIndex` points to [IMPVoices](IMPVoices.md).
+- `bTown` and town-related fields use the town indexes in [Cities](Map/Cities.md).
 
 ## Localization
 

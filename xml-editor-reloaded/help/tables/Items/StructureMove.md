@@ -91,7 +91,7 @@ fields and document order.
 ## Relations
 
 - The tileset columns refer to STI assets, not to item rows.
-- Moving a structure does not consume an item.
+- Moving a structure does not consume an item; the construction and removal paths are documented in [StructureConstruct](StructureConstruct.md) and [StructureDeconstruct](StructureDeconstruct.md).
 
 ## Localization
 

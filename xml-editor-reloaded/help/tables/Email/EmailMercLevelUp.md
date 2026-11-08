@@ -88,7 +88,7 @@ EMAIL_MERC_LEVEL_UP
 ## Relations
 
 - The template is selected by its `uiIndex` when the corresponding game event fires.
-- The sender display name comes from `MercProfiles.zNickname` for the same profile index; it is not stored in this table.
+- The sender display name comes from [MercProfiles](../MercProfiles.md) `zNickname` for the same profile index; it is not stored in this table.
 
 ## Localization
 

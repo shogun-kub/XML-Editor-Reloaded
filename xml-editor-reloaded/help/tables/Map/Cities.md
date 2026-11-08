@@ -278,7 +278,7 @@ overwrite earlier rows.
 
 - `CITY_INFO/CITY_TABLE/CITY_TABLE_ROW` cells -> `CITY_INFO/CITYLIST/CITY/uiIndex`.
 - [Facilities](Facilities.md) places facilities in sectors; facility names come from
-  `FacilityTypes` (future docs).
+  [FacilityTypes](FacilityTypes.md).
 - `townName`, `countryName` and `countryNoun` are the only translatable fields; see
   `../../Localization.md`.
 

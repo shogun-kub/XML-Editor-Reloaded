@@ -14,7 +14,7 @@ record: MAGAZINE
 key: uiIndex
 sources:
   - Game code (magazine loader and ammo lookups)
-  - Ammo type and caliber data
+  - Ammo type and calibre data
 status: reviewed
 updated: 2026-11-07
 ---
@@ -84,11 +84,11 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Caliber group of the ammo. The game uses it together with `ubMagSize` and
-  `ubAmmoType` to find a matching magazine for a weapon and to name the caliber in the UI.
-  It indexes the `AmmoStrings` list, which is filled in file order by the caliber loader
+  `ubAmmoType` to find a matching magazine for a weapon and to name the calibre in the UI.
+  It indexes the `AmmoStrings` list, which is filled in file order by the calibre loader
   (the `uiIndex` element is not read by that loader).
-- **Values:** `UINT8` index; the `AmmoStrings` file supplies the name for each used caliber.
-- **Default:** `0` (no caliber).
+- **Values:** `UINT8` index; the `AmmoStrings` file supplies the name for each used calibre.
+- **Default:** `0` (no calibre).
 - **Source:** game code (magazine loader); related: [Ammo and weapon damage dealt](../../FORMULAS.md#ammo-and-weapon-damage-dealt).
 - **Confidence:** `source`
 
@@ -125,12 +125,11 @@ back-reference to the owning item ID, so do not read the runtime field as the XM
 
 ## Relations
 
-- `Items.ubClassIndex` -> `Magazines.uiIndex` for `IC_AMMO` items.
-- `Magazines.ubCalibre` -> `AmmoStrings` (caliber name), filled in file order.
-- `Magazines.ubAmmoType` -> `AmmoTypes.uiIndex`.
-- `Magazines.ubMagType` -> `MagazineType`
-  (`../Lookup.md#magazinetype`).
-- `Weapons` uses the same caliber/capacity/ammo type triple to find a magazine.
+- [Items](Items.md) `ubClassIndex` -> `Magazines.uiIndex` for `IC_AMMO` items.
+- `Magazines.ubCalibre` -> [AmmoStrings](AmmoStrings.md) (calibre name), filled in file order.
+- `Magazines.ubAmmoType` -> [AmmoTypes](AmmoTypes.md) `uiIndex`.
+- `Magazines.ubMagType` -> [Lookup.MagazineType](../Lookup.md#magazinetype).
+- [Weapons](Weapons.md) uses the same calibre/capacity/ammo type triple to find a magazine.
 
 ## Related formulas
 
@@ -156,14 +155,14 @@ differ; compare the files when a specific magazine matters.
 
 ## Sources
 
-- Game code: the magazine loader and the ammo/caliber lookup code.
+- Game code: the magazine loader and the ammo/calibre lookup code.
 - Table data: `Items/Magazines.xml`, `Items/AmmoStrings.xml`, `Items/AmmoTypes.xml`.
 - Damage and armour interaction: [Related formulas](../../FORMULAS.md).
 
 ## Open questions
 
 - `ubCalibre` is an index into a list filled in file order, not an explicit ID. Reordering
-  `AmmoStrings.xml` would silently change every caliber name. This is a data-integrity risk
+  `AmmoStrings.xml` would silently change every calibre name. This is a data-integrity risk
   worth reporting, but the loader is authoritative.
-- The exact ammo match rule (caliber, capacity, ammo type) is in the item lookup code; this
+- The exact ammo match rule (calibre, capacity, ammo type) is in the item lookup code; this
   page documents the fields, not the search algorithm.

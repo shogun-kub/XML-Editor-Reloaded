@@ -100,7 +100,7 @@ WEAPONDROPLIST
 
 ## Relations
 
-- `ubWeaponType` references the corresponding weapon type in the item data.
+- `ubWeaponType` references [Lookup.WeaponType](../Lookup.md#weapontype).
 
 ## Localization
 

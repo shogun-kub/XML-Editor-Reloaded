@@ -275,7 +275,7 @@ LOADBEARINGEQUIPMENTLIST
 
 ## Relations
 
-- `lbeIndex` is referenced by `Items.ubClassIndex` for LBE items.
+- `lbeIndex` is referenced by [Items](Items.md) `ubClassIndex` for LBE items.
 - `lbeClass` uses [Lookup.LBEClass](../Lookup.md#lbeclass).
 - `lbePocketIndex1..12` refer to [Pockets](Pockets.md).
 

@@ -120,7 +120,7 @@ CIV_GROUP_NAMES
 
 ## Relations
 
-- This table is part of the strategic army and inventory data; references are described in the field notes.
+- `uiIndex` is referenced by the civilian-group field in [MercProfiles](MercProfiles.md).
 
 ## Localization
 

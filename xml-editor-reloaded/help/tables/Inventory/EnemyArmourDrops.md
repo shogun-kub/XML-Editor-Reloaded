@@ -100,7 +100,7 @@ ARMOURDROPLIST
 
 ## Relations
 
-- `ubArmourClass` references the corresponding armour class in the item data.
+- `ubArmourClass` references [Lookup.ArmourClass](../Lookup.md#armourclass).
 
 ## Localization
 

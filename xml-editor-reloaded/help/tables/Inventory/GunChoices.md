@@ -686,7 +686,7 @@ ENEMYGUNCHOICESLIST
 
 ## Relations
 
-- `bItemNoN` values reference `Items.xml` item indexes.
+- `bItemNoN` values reference [Items](../Items/Items.md) item indexes.
 - The backup tables are aliases of the main gun-choice files; editing them does not change the live choice files.
 
 ## Localization

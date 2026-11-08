@@ -133,7 +133,7 @@ HELI_INFO
 
 ## Relations
 
-- `refuelSector/x` and `refuelSector/y` identify a sector whose names and weather are defined in `SectorNames`.
+- `refuelSector/x` and `refuelSector/y` identify a sector whose names and weather are defined in [SectorNames](SectorNames.md).
 
 ## Localization
 

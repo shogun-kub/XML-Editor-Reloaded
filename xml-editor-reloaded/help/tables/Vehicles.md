@@ -311,7 +311,7 @@ VEHICLES
 
 ## Relations
 
-- Sound IDs reference `Sounds.xml`; armour and icon fields reference item/graphic data; `Pilot` references a mercenary profile.
+- Sound IDs reference [Sounds](Sounds/Sounds.md); armour and icon fields reference [Items](Items/Items.md) and graphic data; `Pilot` references [MercProfiles](MercProfiles.md).
 
 ## Localization
 

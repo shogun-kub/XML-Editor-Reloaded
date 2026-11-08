@@ -123,7 +123,7 @@ PATROL_INFO
 
 ## Relations
 
-- This table is part of the strategic army and inventory data; references are described in the field notes.
+- Patrol compositions use [ArmyComposition](ArmyComposition.md); the soldiers are drawn from [SoldierProfiles](../Profiles/SoldierProfiles.md).
 
 ## Localization
 

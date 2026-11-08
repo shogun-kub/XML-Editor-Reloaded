@@ -100,7 +100,7 @@ AMMODROPLIST
 
 ## Relations
 
-- `uiType` references the corresponding ammo type in the item data.
+- `uiType` references an ammo type in [AmmoTypes](../Items/AmmoTypes.md).
 
 ## Localization
 

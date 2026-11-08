@@ -662,7 +662,7 @@ ENEMYITEMCHOICESLIST
 
 ## Relations
 
-- `bItemNoN` values reference `Items.xml` item indexes.
+- `bItemNoN` values reference [Items](../Items/Items.md) item indexes.
 
 ## Localization
 

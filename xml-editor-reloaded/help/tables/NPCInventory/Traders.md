@@ -731,7 +731,7 @@ INVENTORYLIST
 ## Relations
 
 - Dealer inventories are separate files; the `Merchants` row identifies the dealer by `ubShopKeeperID` and `szName`.
-- `sItemIndex` references `Items.xml`.
+- `sItemIndex` references [Items](../Items/Items.md).
 
 ## Localization
 

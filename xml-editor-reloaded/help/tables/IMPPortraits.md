@@ -189,7 +189,7 @@ IMPPORTRAITSLIST
 
 ## Relations
 
-- `PortraitId` points to the portrait assets; the `Default*` fields select palettes.
+- `PortraitId` points to the portrait assets; the `Default*` fields select palettes. The selected portrait is used by [MercProfiles](MercProfiles.md).
 
 ## Localization
 
