@@ -69,68 +69,69 @@ SPREADPATTERNLIST
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/NAME`
 
-- **Type:** `String`
-- **Description:** Name of the spread pattern, used by other XML files. The name is case-insensitive; spaces are trimmed on load.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Name of the spread pattern, used by other XML files. The name is matched case-insensitively; leading and trailing spaces are trimmed on load.
+- **Values:** Free text; the loader stores at most `SPREADPATTERN_NAME_SIZE - 1` characters.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/DESC`
 
 - **Type:** `String`
-- **Description:** Informational description of the pattern. It is not used by the game.
-- **Values:** Free text or a symbolic code.
+- **Description:** Informational description of the pattern. It is not read by the loader and has no runtime effect.
+- **Values:** Free text; ignored at load time.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/xspread`
 
-- **Type:** `Decimal`
-- **Description:** Maximum horizontal random spread, in radians.
-- **Numeric semantics:** higher = wider spread; negative = absolute value.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Decimal` (`DOUBLE`)
+- **Description:** Maximum horizontal random spread, in radians. The loader applies `fabs()`, so a negative value is stored as its absolute value.
+- **Numeric semantics:** higher = wider spread; `0` disables horizontal randomization.
+- **Values:** Non-negative radians after loading.
+- **Default:** Absent; the pattern starts at `0.0`.
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/yspread`
 
-- **Type:** `Decimal`
-- **Description:** Maximum vertical random spread, in radians.
-- **Numeric semantics:** higher = wider spread; negative = absolute value.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Type:** `Decimal` (`DOUBLE`)
+- **Description:** Maximum vertical random spread, in radians. The loader applies `fabs()`, so a negative value is stored as its absolute value.
+- **Numeric semantics:** higher = wider spread; `0` disables vertical randomization.
+- **Values:** Non-negative radians after loading.
+- **Default:** Absent; the pattern starts at `0.0`.
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/method`
 
 - **Type:** `String`
-- **Description:** Distribution shape for random pellets: `Rectangle`, `Diamond` or `Ellipse`. It is an enum.
-- **Values:** Free text or a symbolic code.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Description:** Distribution shape for random pellets. The loader matches this value **case-sensitively** against `RECTANGLE`, `DIAMOND` and `ELLIPSE`; an unmatched value leaves the default `ELLIPSE`.
+- **Numeric semantics:** Enum-like text; case and spelling must match the uppercase loader names exactly.
+- **Values:** `RECTANGLE`, `DIAMOND` or `ELLIPSE`. The XML comment's `Rectangle`/`Diamond`/`Ellipse` spellings do not match and fall back to the default.
+- **Default:** Absent; the loader keeps `ELLIPSE` (`giSpreadPatternMethod_Default`).
+- **Source:** game code (`XML_SpreadPatterns.cpp`, `LOS.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/p/x`
 
-- **Type:** `Decimal`
+- **Type:** `Decimal` (`DOUBLE`)
 - **Description:** Horizontal angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Signed decimal angle.
+- **Default:** Absent; the pellet entry starts at `0.0`.
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ### `SPREADPATTERNLIST/SPREADPATTERN/p/y`
 
-- **Type:** `Decimal`
+- **Type:** `Decimal` (`DOUBLE`)
 - **Description:** Vertical angle of one explicit pellet, in radians. Positive values deviate one way, negative the other; it is signed.
-- **Values:** Decimal multiplier.
-- **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Values:** Signed decimal angle.
+- **Default:** Absent; the pellet entry starts at `0.0`.
+- **Source:** game code (`XML_SpreadPatterns.cpp`); table XML comment.
+- **Confidence:** `source`
 
 ## Relations
 

@@ -59,12 +59,12 @@ SOUNDLIST
 
 ### `SOUNDLIST/SOUND`
 
-- **Type:** `String`
-- **Description:** Path to a sound file, relative to the game data directory. The position in the list is the sound ID; the element may repeat, and the order is significant. It is a file reference.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Path to a sound file, relative to the game data directory. The zero-based position in the list is the sound ID; the element may repeat, and the order is significant. It is a file reference.
+- **Values:** A path such as `SOUNDS\RICOCHET 01.wav`; values are truncated to 255 characters.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_Sounds.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 

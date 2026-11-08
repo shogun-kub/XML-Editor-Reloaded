@@ -59,20 +59,21 @@ SQUAD_NAMES
 ### `SQUAD_NAMES/SQUADNAME/uiIndex`
 
 - **Type:** `Integer`
-- **Description:** Index of the squad-name entry. It is an array key.
-- **Values:** Integer; see the description for its scale.
-- **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Description:** Index element parsed by the loader, but its value is ignored: squad names are stored in file order, so the position of the `<SQUADNAME>` record determines the squad slot.
+- **Values:** Integer; changing it does not reorder the stored names.
+- **Default:** Absent; the next record in file order is used.
+- **Source:** game code (`XML_SquadNames.cpp`); table data.
+- **Confidence:** `source`
 
 ### `SQUAD_NAMES/SQUADNAME/Squad`
 
-- **Type:** `String`
-- **Description:** Display name of the squad, such as `Alpha`.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR16`)
+- **Only used with:** the `USE_XML_SQUADNAMES` INI option; without it the game keeps its built-in squad names.
+- **Description:** Display name of the squad, such as `Alpha`. Names are stored in file order and truncated to 29 characters by the loader.
+- **Values:** Free text, effectively limited to 29 characters.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (`XML_SquadNames.cpp`); table data.
+- **Confidence:** `source`
 
 ## Relations
 
