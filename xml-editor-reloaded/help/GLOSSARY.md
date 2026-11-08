@@ -28,6 +28,9 @@ entry. The English column is the source of truth; the Russian column is a contro
 | attachment | вложение | — |
 | LBE (load-bearing equipment) | разгрузка | not "носимое снаряжение" |
 | NAS (new attachment system) | новая система вложений (NAS) | keep the abbreviation in code contexts |
+| OAS (old attachment system) | старая система вложений (OAS) | opposed to NAS; `AttachmentSystem` 1 selects OAS only |
+| pocket | карман | inventory/LBE pocket; not "отделение" |
+| fortification points | очки укрепления | `dCreationCost` progress for structures; not money |
 | armour | броня | not "доспех" |
 | armour class | класс брони | — |
 | protection | защита | the raw armour value |
