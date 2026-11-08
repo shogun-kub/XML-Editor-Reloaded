@@ -65,12 +65,12 @@ ATTACHMENTINFOLIST
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiIndex`
 
-- **Type:** `Integer` (`UINT32`)
+- **Type:** `Integer` (`UINT16`)
 - **Description:** Index of the attachment-information row and identity of the XML record.
 - **Values:** Non-negative integer; unique within the file.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/usItem`
 
@@ -78,8 +78,8 @@ ATTACHMENTINFOLIST
 - **Description:** Item ID of the attachment described by this row.
 - **Values:** Item ID in [Items](Items.md); the item must be an attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/uiItemClass`
 
@@ -88,8 +88,8 @@ ATTACHMENTINFOLIST
 - **Numeric semantics:** Bitmask or enumerated code; individual bits/choices carry the meaning, so a larger number is not simply “more”. Negative values are not meaningful.
 - **Values:** Bitmask of `Lookup.ItemClass` IDs. The attachment can be mounted on items whose class intersects this mask.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment info table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTINFOLIST/ATTACHMENTINFO/bAttachmentSkillCheck`
 

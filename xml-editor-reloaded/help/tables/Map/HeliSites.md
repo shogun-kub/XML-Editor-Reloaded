@@ -70,66 +70,66 @@ HELI_INFO
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`UINT32`)
 - **Description:** Index of the helicopter refuelling site. It is an array key.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record or lane.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelSector/x`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Map column of the refuelling sector. Lower values are farther west; it is a coordinate.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelSector/y`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT16`)
 - **Description:** Map row of the refuelling sector. Lower values are farther north; it is a coordinate.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelHidden`
 
-- **Type:** `Boolean`
+- **Type:** `Boolean` (`BOOLEAN`)
 - **Description:** If set, the refuelling site is hidden from the player until discovered.
 - **Values:** `0` or `1`.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelHeliTileIndex`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Tile index of the helicopter landing/refuelling graphic. It is a tile identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelHeliGridNo`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Map grid number where the helicopter lands for refuelling. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ### `HELI_INFO/REFUELLIST/REFUEL/refuelSkyriderGridNo`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Map grid number where Skyrider stands at the refuelling site. It is a grid identifier.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Absent; the game default applies.
-- **Source:** map table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (helicopter refuel-site loader); map table data.
+- **Confidence:** `source`
 
 ## Relations
 

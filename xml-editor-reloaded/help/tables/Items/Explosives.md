@@ -128,7 +128,7 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/ubStunDamage`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Base stun (breath) damage applied by the explosion. The same random roll and radius falloff as `ubDamage` apply, and `bIndoorModifier` is applied indoors.
+- **Description:** Base stun (breath) damage applied by the explosion. The same random roll (applied at half strength) and radius falloff as `ubDamage` apply, and `bIndoorModifier` is applied indoors.
 - **Numeric semantics:** Higher values mean more stun/breath damage; the loader stores this field as `UINT8`.
 - **Values:** `0..250`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -138,7 +138,7 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/ubRadius`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Effect radius in tiles. Damage falls off linearly with distance up to this radius and is divided by the radius beyond it. `0` leaves the damage unreduced.
+- **Description:** Effect radius in tiles. Damage falls off linearly with distance up to this radius; at or beyond it the damage becomes `sWoundAmt / ubRadius / 2`. `0` leaves the damage unreduced.
 - **Numeric semantics:** Higher values mean a wider blast; the loader clamps the parsed value to `0..255`.
 - **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -197,7 +197,7 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/ubMagSize`
 
 - **Type:** `Integer` (`UINT8`)
-- **Description:** Number of charges an explosive item contributes when loaded into a multi-shot grenade launcher. Values above `1` let the launcher fire the item repeatedly, and each shot reduces the item's status by `100 / ubMagSize`. It is not the blast radius.
+- **Description:** Number of charges an explosive item contributes when loaded into a multi-shot grenade launcher. Values above `1` let the launcher fire the item repeatedly, and each shot reduces the item's status by `ceil(100 / ubMagSize)`. It is not the blast radius.
 - **Numeric semantics:** Higher values mean more shots per loaded item.
 - **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -216,7 +216,7 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/usNumFragments`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Number of fragment projectiles produced by the explosion. Fragments spawn only for `EXPLOSV_NORMAL` explosions, and they are suppressed in water and in multiplayer.
+- **Description:** Number of fragment projectiles produced by the explosion. Fragments spawn whenever this value is positive, except in water and in multiplayer; the AI damage estimate adds fragment damage only for `EXPLOSV_NORMAL` explosions.
 - **Numeric semantics:** Higher values mean more fragments; each fragment uses `ubFragType`, `ubFragDamage` and `ubFragRange`.
 - **Values:** `0..10000`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -255,7 +255,8 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/ubHorizontalDegree`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Full horizontal arc width of the fragment cone, in degrees. The code takes the value modulo `360`, so `360` behaves like `0` and `359` gives an almost full circle.
+- **Description:** Full horizontal arc width of the fragment cone, in degrees, for directional explosives. Non-directional explosives ignore it and spread fragments randomly. The code takes the value modulo `360`, so `360` behaves like `0` and `359` gives an almost full circle.
+- **Only used with:** Directional explosives.
 - **Numeric semantics:** Higher values mean a wider horizontal spread; the loader stores this field as `UINT16`.
 - **Values:** `0..360`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
@@ -265,7 +266,8 @@ No table-level global option is documented for this table. The records are indep
 ### `EXPLOSIVELIST/EXPLOSIVE/ubVerticalDegree`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** Full vertical arc width of the fragment cone, in degrees. The code takes the value modulo `180`, so `180` behaves like `0`.
+- **Description:** Full vertical arc width of the fragment cone, in degrees, for directional explosives. Non-directional explosives ignore it and spread fragments randomly. The code takes the value modulo `180`, so `180` behaves like `0`.
+- **Only used with:** Directional explosives.
 - **Numeric semantics:** Higher values mean a wider vertical spread; the loader stores this field as `UINT16`.
 - **Values:** `0..360` in the metadata; the code uses the value modulo `180`.
 - **Default:** `0` when omitted; an empty element follows the game default.

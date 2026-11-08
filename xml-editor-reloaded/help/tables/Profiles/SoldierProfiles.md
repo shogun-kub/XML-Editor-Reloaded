@@ -103,8 +103,8 @@ PROFILES
 - **Description:** Template/profile name used for identification and editor display.
 - **Values:** Free text or a symbolic code.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (soldier-profile loader); table data.
+- **Confidence:** `source`
 
 ### `PROFILES/PROFILE/uiBodyType`
 

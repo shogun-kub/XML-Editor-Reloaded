@@ -62,8 +62,8 @@ INCOMPATIBLEATTACHMENTLIST
 - **Description:** Item ID of the attachment. The row declares that this attachment cannot be mounted together with the incompatible attachment.
 - **Values:** Item ID of the attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** incompatible attachment table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`
 
@@ -71,8 +71,8 @@ INCOMPATIBLEATTACHMENTLIST
 - **Description:** Item ID of the attachment that may not be mounted together with `itemIndex`.
 - **Values:** Item ID of the attachment that may not be mounted together with `itemIndex`.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** incompatible attachment table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

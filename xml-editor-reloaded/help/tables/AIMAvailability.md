@@ -61,39 +61,38 @@ AIM_AVAILABLES
 
 ### `AIM_AVAILABLES/AIM/uiIndex`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** AIM availability row identity.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Confidence:** `source`
 
 ### `AIM_AVAILABLES/AIM/description`
 
-- **Type:** `String` (`String`)
-- **Description:** Description text used by the AIM availability list.
-- **Values:** Free text.
-- **Default:** empty string when omitted.
-- **Source:** aim availability table data; item/profile metadata.
-- **Confidence:** `inferred`
-
+- **Type:** `String`
+- **Description:** Description text stored in the table, but the loader does not read this element; it is ignored.
+- **Values:** Free text; ignored at load time.
+- **Default:** Absent; the game default applies.
+- **Source:** game code (AIM availability loader); table data.
+- **Confidence:** `source`
 ### `AIM_AVAILABLES/AIM/ProfilId`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Profile ID of the AIM mercenary.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Confidence:** `source`
 
 ### `AIM_AVAILABLES/AIM/AimBioID`
 
-- **Type:** `Integer` (`INT32`)
+- **Type:** `Integer` (`UINT8`)
 - **Description:** Biography ID for the AIM site.
 - **Values:** Integer; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** aim availability table data; item/profile metadata.
-- **Confidence:** `inferred`
+- **Confidence:** `source`
 
 ## Relations
 

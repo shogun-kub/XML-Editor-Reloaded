@@ -68,16 +68,16 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/Index`
 
-- **Type:** `Integer`
+- **Type:** `Integer` (`INT32`)
 - **Description:** Index of the army composition. It is an array key used by garrisons and patrols.
 - **Values:** Integer; see the description for its scale.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (army composition loader); table data.
+- **Confidence:** `source`
 
 ### `COMPOSITION_INFO/COMPOSITION/Priority`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Priority of this composition relative to the others.
 - **Numeric semantics:** higher = more important; negative values are not meaningful.
 - **Values:** `-128..127`; the loader stores this field as `INT8`.
@@ -87,7 +87,7 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/ElitePercentage`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Share of elite soldiers in this composition, in percent.
 - **Numeric semantics:** higher = larger share; the loader clamps values below `0` to `0` and above `100` to `100`.
 - **Values:** Percentage `0..100` after clamping.
@@ -97,7 +97,7 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/TroopPercentage`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Share of regular troop soldiers in this composition, in percent.
 - **Numeric semantics:** higher = larger share; the loader clamps values below `0` to `0` and above `100` to `100`.
 - **Values:** Percentage `0..100` after clamping.
@@ -107,7 +107,7 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/AdminPercentage`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Share or weight of administration soldiers in this composition, in percent.
 - **Numeric semantics:** higher = larger admin share; the loader clamps values below `0` to `0` and above `100` to `100`.
 - **Values:** Percentage `0..100` after clamping.
@@ -117,7 +117,7 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/StartPopulation`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Number of soldiers in the composition at campaign start.
 - **Numeric semantics:** higher = more soldiers; the loader clamps negative values to `1`.
 - **Values:** `1..127` after clamping; the loader stores this field as `INT8`.
@@ -127,7 +127,7 @@ COMPOSITION_INFO
 
 ### `COMPOSITION_INFO/COMPOSITION/DesiredPopulation`
 
-- **Type:** `Integer` (`INT8`)
+- **Type:** `Integer` (`INT32`) (`INT8`)
 - **Description:** Target number of soldiers the composition tries to maintain.
 - **Numeric semantics:** higher = larger target; the loader clamps negative values to `1`.
 - **Values:** `1..127` after clamping; the loader stores this field as `INT8`.

@@ -297,7 +297,7 @@ WEAPONLIST
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** Effective range in world units, where `10` units equal one tile. `GunRange` and `InRange` compare it with the distance after applying range bonuses.
-- **Numeric semantics:** Higher values mean a longer range; `0` makes `GetModifiedGunRange` return `0`, so the weapon cannot reach a target.
+- **Numeric semantics:** Higher values mean a longer range; `0` makes the base range `0`, although `GunRange` can still add flat range bonuses.
 - **Values:** `0..5000`; the loader stores this field as `UINT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (weapon loader; `GunRange`/`GetModifiedGunRange`); weapon table data.
@@ -430,7 +430,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/SwapClips`
 
 - **Type:** `Boolean` (`BOOLEAN`)
-- **Description:** If set, reloading with a full magazine of the same size uses a magazine swap (`RELOAD_SWAP`) instead of topping the weapon off round by round; a wrong-size magazine then uses the `AP_WRONG_MAG` cost. If clear, the weapon is reloaded one round at a time.
+- **Description:** If set, a same-size, same-ammo reload in turn-based combat uses a magazine swap (`RELOAD_SWAP`) instead of topping the weapon off round by round; a wrong-size magazine then uses the `AP_WRONG_MAG` cost. If clear, a same-size, same-ammo reload tops the weapon off; a different ammo type still swaps the magazine.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (weapon loader; reload-type selection); weapon table data.
@@ -440,7 +440,7 @@ WEAPONLIST
 
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Maximum distance at which head and torso hits can trigger the instant-kill and messy-death special effects (head explosion, chest explosion). Beyond this distance those specials do not trigger.
-- **Numeric semantics:** Higher values allow the specials at a longer range; `0` restricts them to the same tile.
+- **Numeric semantics:** Higher values allow the specials at a longer range; `0` restricts them to the same tile. For guns, the value is scaled by the per-weapon-type distance modifier before the range test.
 - **Values:** `0..255`; the loader stores this field as `UINT8`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (weapon loader; `CalcChanceToHitGun` hit-location specials); weapon table data.
@@ -532,7 +532,7 @@ WEAPONLIST
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Number of aim levels available to the weapon in NCTH. A value outside `1..8` makes the game fall back to its class-and-range algorithm; the runtime result is always clamped to `1..8`.
 - **Only used with:** NCTH.
-- **Numeric semantics:** Higher values allow more aiming levels (finer aim); `0` or any value above `8` means automatic. Non-gun weapons such as throwing knives always use `2`.
+- **Numeric semantics:** Higher values allow more aiming levels (finer aim); `0` or any value above `8` means automatic. Non-gun weapons use a fixed base of `2`, and the Throwing trait can reduce the throwing-knife value further (minimum `1`).
 - **Values:** `0..8`; `0` means automatic.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (weapon loader; `AllowedAimingLevelsNCTH`); weapon table data.
@@ -620,7 +620,7 @@ WEAPONLIST
 ### `WEAPONLIST/WEAPON/szNWSSSound`
 
 - **Type:** `String` (`CHAR8`)
-- **Description:** Base name used by the New Weapon Sound System. The game builds `<calibre>_<szNWSSSound>_<loop|single>.ogg`; when the name is empty or the file does not exist it falls back to the weapon-type name and then to the generic file.
+- **Description:** Base name used by the New Weapon Sound System. The game builds a file name from the calibre, this name and the shot variant (`loop`, `single`, or a room/echo variant); when the name is empty or the file does not exist it falls back to the weapon-type name and then to the generic file.
 - **Values:** Free text, truncated to `MAX_WEAPON_NAME_LENGTH` (`20`) characters.
 - **Default:** empty string when omitted.
 - **Source:** game code (weapon loader; NWSS filename construction); weapon table data.

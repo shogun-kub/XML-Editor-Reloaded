@@ -86,11 +86,11 @@ No table-level global option is documented for this table. Its fields are read i
 ### `EXPDATALIST/EXPDATA/name`
 
 - **Type:** `String` (`String`)
-- **Description:** Internal label for the blast animation, used by editors and debugging; it is not a localized UI string.
-- **Values:** Free text.
+- **Description:** Internal label stored in the table, but the loader does not read this element; it is ignored.
+- **Values:** Free text; ignored at load time.
 - **Default:** empty string when omitted.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion-data loader); table data.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/TransKeyFrame`
 
@@ -130,12 +130,12 @@ No table-level global option is documented for this table. Its fields are read i
 
 ### `EXPDATALIST/EXPDATA/BlastFilename`
 
-- **Type:** `String` (`String`)
+- **Type:** `String` (`CHAR8`)
 - **Description:** STI animation path for the blast, relative to the game’s table/image data.
-- **Values:** Free text.
+- **Values:** STI path, truncated to `MAX_BLAST_FILENAME_LEN`.
 - **Default:** empty string when omitted.
-- **Source:** explosion data table; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (explosion-data loader); table data.
+- **Confidence:** `source`
 
 ### `EXPDATALIST/EXPDATA/BlastSpeed`
 

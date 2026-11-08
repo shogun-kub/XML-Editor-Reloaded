@@ -67,8 +67,8 @@ ATTACHMENTLIST
 - **Description:** Item ID of the attachment. The item must be an attachment item; this column identifies which attachment is being mapped.
 - **Values:** Item ID in [Items](Items.md); the item must be an attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTLIST/ATTACHMENT/itemIndex`
 
@@ -76,18 +76,18 @@ ATTACHMENTLIST
 - **Description:** Item ID of the host item (weapon, armour or other attachable item) that accepts the attachment.
 - **Values:** Item ID in [Items](Items.md); the host item must accept the attachment.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTLIST/ATTACHMENT/APCost`
 
 - **Type:** `Integer` (`UINT16`)
 - **Description:** AP cost charged when the attachment mapping is used. It is the cost of attaching or detaching this mapping, not the cost of firing the host item.
-- **Numeric semantics:** Action-point cost; higher values mean a more expensive action, and negative values are not meaningful.
+- **Numeric semantics:** Action-point cost; the loader rescales it with `DynamicAdjustAPConstants`.
 - **Values:** AP cost; no narrower range is declared by the field metadata.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** attachment table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `ATTACHMENTLIST/ATTACHMENT/NASOnly`
 

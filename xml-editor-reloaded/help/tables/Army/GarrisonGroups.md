@@ -62,8 +62,8 @@ GARRISON_INFO
 - **Description:** Sector that hosts the garrison, in `A1`..`P16` form. It identifies the map location.
 - **Values:** Sector code such as `P3`.
 - **Default:** Required; identifies the record.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (garrison loader); table data.
+- **Confidence:** `source`
 
 ### `GARRISON_INFO/GARRISON/Composition`
 

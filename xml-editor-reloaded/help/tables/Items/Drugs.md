@@ -111,7 +111,7 @@ DRUGSLIST
 ### `DRUGSLIST/DRUG/opinionevent`
 
 - **Type:** `Boolean` (`BOOLEAN`)
-- **Description:** If set and dynamic opinions are enabled, consuming the drug triggers the addiction opinion event, which other mercenaries judge negatively. The event fires only when at least one drug effect was applied.
+- **Description:** If set and dynamic opinions are enabled, consuming the drug triggers the addiction opinion event, which other mercenaries judge negatively. The event fires only when at least one `DRUG_EFFECT` block was applied.
 - **Values:** `0` or `1`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (drug loader; drug application and dynamic-opinion code); drug table data.
@@ -140,7 +140,7 @@ DRUGSLIST
 
 - **Type:** `Integer` (`INT16`)
 - **Description:** Strength of the effect. Positive values raise the affected stat or resource, negative values lower it.
-- **Numeric semantics:** Signed strength; the game multiplies it by the used item percentage before storing it. Shipped data uses negative values for effects such as alcohol's Wisdom penalty.
+- **Numeric semantics:** Signed strength; for a newly applied effect the game multiplies it by the used item percentage before storing it. Shipped data uses negative values for effects such as alcohol's Wisdom penalty.
 - **Values:** `-32768..32767`; the loader stores this field as `INT16`.
 - **Default:** `0` when omitted; an empty element follows the game default.
 - **Source:** game code (drug loader; effect application); drug table data.
@@ -161,15 +161,15 @@ DRUGSLIST
 - **Type:** `Integer` (`UINT8`)
 - **Description:** Disease row affected by this drug. The value indexes the runtime disease table.
 - **Only used with:** Disease system.
-- **Values:** Disease row index in [Disease](../Disease.md); `0` is the empty disease.
-- **Default:** `0` when omitted; an empty element follows the game default.
+- **Values:** Disease row index in [Disease](../Disease.md); `0` is Arulcan plague, not an empty row.
+- **Default:** `0` (Arulcan plague) when omitted; an empty element follows the game default.
 - **Source:** game code (drug loader; disease-point application); drug table data.
 - **Confidence:** `source`
 
 ### `DRUGSLIST/DRUG/DISEASE_EFFECT/size`
 
 - **Type:** `Integer` (`INT32`)
-- **Description:** Disease points added. Positive values increase the disease, negative values cure it; the result is clamped by the disease's outbreak and full-infection thresholds.
+- **Description:** Disease points added. The game multiplies the value by the used item percentage, then adds it; positive values increase the disease, negative values cure it, and the result is clamped by the disease's outbreak and full-infection thresholds.
 - **Only used with:** Disease system.
 - **Numeric semantics:** Signed points; higher positive values advance the disease faster, and negative values reduce it.
 - **Values:** `-2147483648..2147483647`; the loader stores this field as `INT32`.
@@ -248,7 +248,7 @@ DRUGSLIST
 
 ## Relations
 
-- `uiIndex` is referenced by the item's drug-type value in [Items](Items.md).
+- `uiIndex` is referenced by the item's `DrugType` value in [Items](Items.md); the game uses that value directly as an index into `NewDrug`.
 - `DISEASE_EFFECT/disease` refers to a row in [Disease](../Disease.md).
 - Multiple effect blocks may be repeated. Repeated `DRUG_EFFECT` blocks of the same type merge their duration and strength; for disabilities and personalities, only the last successfully applied effect is active, while a repeated identical effect adds duration.
 
@@ -272,3 +272,5 @@ v4 and v5 use the same field paths, and the reference files contain the same val
 ## Open questions
 
 Repeated `DRUG_EFFECT` blocks of the same type are merged in code rather than replaced: the durations are averaged and the resulting size is recomputed from the combined effect total. The XML comment does not describe that merge, and the table cannot express the merge weights directly.
+
+The editor metadata maps `Items.DrugType` to `Lookup.DrugType`, whose IDs are bit flags, but the game uses the item value as a direct index into `NewDrug`; shipped item values are sequential indices. The table records the code behaviour and does not resolve that metadata mismatch.

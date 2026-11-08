@@ -87,39 +87,39 @@ PATROL_INFO
 
 ### `PATROL_INFO/PATROL/Waypoints/Sector1`
 
-- **Type:** `String`
-- **Description:** First patrol waypoint sector. It is a map coordinate; an empty value or `0` means the waypoint is unused.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Patrol waypoint sector in `A1..P16` form. The literal value `0` explicitly marks the waypoint as unused; an empty or malformed value is a parse error, not an unused waypoint.
+- **Values:** `0` or a sector such as `A1`, `B5`, `P16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table data.
+- **Confidence:** `source`
 
 ### `PATROL_INFO/PATROL/Waypoints/Sector2`
 
-- **Type:** `String`
-- **Description:** Second patrol waypoint sector. It is a map coordinate; an empty value or `0` means the waypoint is unused.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Patrol waypoint sector in `A1..P16` form. The literal value `0` explicitly marks the waypoint as unused; an empty or malformed value is a parse error, not an unused waypoint.
+- **Values:** `0` or a sector such as `A1`, `B5`, `P16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table data.
+- **Confidence:** `source`
 
 ### `PATROL_INFO/PATROL/Waypoints/Sector3`
 
-- **Type:** `String`
-- **Description:** Third patrol waypoint sector. It is a map coordinate; an empty value or `0` means the waypoint is unused.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Patrol waypoint sector in `A1..P16` form. The literal value `0` explicitly marks the waypoint as unused; an empty or malformed value is a parse error, not an unused waypoint.
+- **Values:** `0` or a sector such as `A1`, `B5`, `P16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table data.
+- **Confidence:** `source`
 
 ### `PATROL_INFO/PATROL/Waypoints/Sector4`
 
-- **Type:** `String`
-- **Description:** Fourth patrol waypoint sector. It is a map coordinate; an empty value or `0` means the waypoint is unused.
-- **Values:** Free text or a symbolic code.
+- **Type:** `String` (`CHAR8`)
+- **Description:** Patrol waypoint sector in `A1..P16` form. The literal value `0` explicitly marks the waypoint as unused; an empty or malformed value is a parse error, not an unused waypoint.
+- **Values:** `0` or a sector such as `A1`, `B5`, `P16`.
 - **Default:** Absent; the game default applies.
-- **Source:** table data; field names, XML comments and observed values.
-- **Confidence:** `inferred`
+- **Source:** game code (patrol loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 

@@ -88,7 +88,7 @@ POCKETPOPUPS
 ### `POCKETPOPUPS/POCKET/pName`
 
 - **Type:** `String` (`String`)
-- **Description:** Pocket name present in the data. The pocket-popup loader does not read it, so it has no effect on the popup; the pocket display name used by the inventory comes from `Pockets`.
+- **Description:** Pocket name present in the data. The pocket-popup loader does not read it, so it has no effect on the popup; where a pocket name is shown elsewhere (for example in Bobby Ray's LBE descriptions), it comes from `Pockets`.
 - **Values:** Free text.
 - **Default:** empty string when omitted.
 - **Source:** game code (pocket-popup loader); pocket popup table data.
@@ -150,12 +150,12 @@ POCKETPOPUPS
 
 ## Relations
 
-- `pIndex` is the pocket type used as the `LBEPocketPopup` key and corresponds to a `Pockets` row `pIndex`.
+- `pIndex` is the pocket type used as the `LBEPocketPopup` key and corresponds to a [Pockets](Pockets.md) row `pIndex`.
 - Generator IDs are keys in the inventory popup system, not item IDs.
 
 ## Localization
 
-Submenu `name` elements are display labels and are translated. Generator IDs are code keys and are not translated. `pName` is not read by the loader.
+`pName` appears in localization overlays but the loader does not read it, so it does not affect the displayed pocket; the pocket name comes from the localized `Pockets` table. Submenu `name` labels are displayed verbatim from the table, and generator IDs are code keys that are not translated.
 
 ## Versions
 

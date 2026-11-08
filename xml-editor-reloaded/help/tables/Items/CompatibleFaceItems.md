@@ -62,8 +62,8 @@ COMPATIBLEFACEITEMLIST
 - **Description:** Item ID of the first face item. The row declares that the two face items can be worn together.
 - **Values:** Item ID of the first face item.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** compatible face-item table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ### `COMPATIBLEFACEITEMLIST/COMPATIBLEFACEITEM/itemIndex`
 
@@ -71,8 +71,8 @@ COMPATIBLEFACEITEMLIST
 - **Description:** Item ID of the second face item.
 - **Values:** Item ID of the second face item.
 - **Default:** `0` when omitted; an empty element follows the game default.
-- **Source:** compatible face-item table data; field metadata.
-- **Confidence:** `inferred`
+- **Source:** game code (attachment/face-gear loader); table data.
+- **Confidence:** `source`
 
 ## Relations
 
