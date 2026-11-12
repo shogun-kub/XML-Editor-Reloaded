@@ -428,15 +428,24 @@ internal static class WorkspaceUi
     {
         var window = context.Window;
         var save = window.WaitById(saveAutomationId);
-        var undo = window.WaitById(undoAutomationId);
         for (var step = 0; step < maximumSteps && save.IsEnabled(); step++)
         {
+            var undo = window.WaitById(undoAutomationId);
             if (!undo.IsEnabled())
             {
                 break;
             }
 
-            undo.InvokeButton();
+            try
+            {
+                undo.InvokeButton();
+            }
+            catch (UiTimeoutException)
+            {
+                // A state change between IsEnabled and Invoke means the workspace has already reset.
+                break;
+            }
+
             Thread.Sleep(120);
         }
 

@@ -523,6 +523,35 @@ internal static class NativeInput
     }
 
     /// <summary>
+    /// Opens the context menu of an element by posting right-button window messages with client
+    /// coordinates. This path does not depend on the foreground window owning the physical mouse
+    /// cursor, which makes context-menu scenarios repeatable on a busy desktop.
+    /// </summary>
+    /// <param name="element">Element whose context menu is opened.</param>
+    public static void RightClickWindowMessage(System.Windows.Automation.AutomationElement element)
+    {
+        var windowHandle = TopLevelWindow(element);
+        if (windowHandle == IntPtr.Zero)
+        {
+            RightClick(element);
+            return;
+        }
+
+        var point = Center(element);
+        if (!ScreenToClient(windowHandle, ref point))
+        {
+            RightClick(element);
+            return;
+        }
+
+        var packed = (IntPtr)((point.Y << 16) | (point.X & 0xFFFF));
+        PostMessage(windowHandle, 0x0204, (IntPtr)0x0002, packed);
+        Thread.Sleep(60);
+        PostMessage(windowHandle, 0x0205, IntPtr.Zero, packed);
+        Thread.Sleep(300);
+    }
+
+    /// <summary>
     /// Right-clicks the center of the element, which opens its context menu.
     /// </summary>
     /// <param name="element">Target element.</param>
@@ -816,6 +845,9 @@ internal static class NativeInput
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    private static extern bool ScreenToClient(IntPtr window, ref Point point);
 
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
     private static extern IntPtr GetWindowLongPtr(IntPtr window, int index);

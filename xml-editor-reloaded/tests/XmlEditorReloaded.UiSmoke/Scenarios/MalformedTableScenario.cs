@@ -18,6 +18,9 @@ internal sealed class MalformedTableScenario : SmokeScenario
     public override bool WritesTo(DatasetKind kind) => true;
 
     /// <inheritdoc />
+    public override bool CorruptsV5AttachmentPoint => true;
+
+    /// <inheritdoc />
     public override void Run(ScenarioContext context)
     {
         var window = context.Window;

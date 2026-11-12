@@ -213,6 +213,11 @@ internal sealed class SmokeRunner
                 datasets[kind] = _fixtures.Resolve(kind, scenarioDirectory, scenario.WritesTo(kind));
             }
 
+            if (scenario.CorruptsV5AttachmentPoint)
+            {
+                FixtureBuilder.CorruptAttachmentPoint(datasets[DatasetKind.V5]);
+            }
+
             var baseline = datasets
                 .Where(static pair => pair.Value.IsCopy)
                 .ToDictionary(
