@@ -89,6 +89,31 @@ unique-field, and page counts. The application project fails the build with an e
 when `Help/help.json` is missing; the generator project stays buildable so the file can be
 regenerated from the Markdown sources.
 
+## Russian edition
+
+`help/ru/` mirrors `help/`: the same table document paths, front matter identifiers, field paths,
+structural headings, and anchors; only prose and titles are Russian. `ITableHelpProvider` selects
+`help.ru.json` when the UI culture is Russian and falls back to English if that resource is not
+present. The build includes the Russian resource when it exists.
+
+Validate the Russian structure and regenerate its generated pages:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Lang ru
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Lang ru -Write
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-translation-status.ps1 -Write
+```
+
+Generate the embedded Russian data after editing `help/ru/tables` or a Russian top-level page:
+
+```sh
+dotnet run --project tools/XmlEditorReloaded.HelpTool -- \
+  --source help/ru/tables --language ru
+```
+
+`-Lang ru -Release` additionally rejects drafts and requires full parity with English.
+`TRANSLATION.md` records per-document status.
+
 ## Document format
 
 Each table document starts with YAML front matter:

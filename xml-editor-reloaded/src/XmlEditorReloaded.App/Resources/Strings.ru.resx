@@ -1096,7 +1096,7 @@
     <value>Несовместимые вложения</value>
   </data>
   <data name="ItemSection.Items_Launchables" xml:space="preserve">
-    <value>Запускаемые предметы</value>
+    <value>Боеприпасы</value>
   </data>
   <data name="ItemSection.Items_CompatibleFaceItems" xml:space="preserve">
     <value>Совместимые лицевые предметы</value>

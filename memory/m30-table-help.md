@@ -170,3 +170,13 @@ field-записей; `help-check -Release` остаётся зелёным. UI 
 собираемым для восстановления файла. Обновлены USER-GUIDE (EN/RU),
 S105, `help/README.md`, `PROJECT-STRUCTURE.md`. Тесты: **744** (App 279). S105 (v4)
 проверяет F1, поле, тултип, поиск, ссылку, открытие таблицы, глоссарий и индекс.
+
+**M32 (2026-11-12, завершён на dev).** `help/ru/` повторяет 94 EN-документа и 2985
+путей полей; `help-check -Lang ru -Release` и `TRANSLATION.md` подтверждают полный
+структурный паритет и reviewed-статус. Переведены 8 верхних страниц; INDEX/COVERAGE
+генерируются по-русски. `help.ru.json` (2 МБ) встроен и выбирается
+`ITableHelpProvider` по `CultureInfo.CurrentUICulture`; при отсутствии — английский
+fallback. `WithCulture=false` обязателен для `help.ru.json`, иначе MSBuild кладёт его
+в satellite-сборку `ru/` и провайдер его не видит. `Strings.ru.resx`: `Launchables` →
+«Боеприпасы». `help-translation-status.ps1` генерирует `TRANSLATION.md`.
+Тесты: **745** (Data 102). S105 (v4, ru) — PASS с русским тултипом/окном/глоссарием.

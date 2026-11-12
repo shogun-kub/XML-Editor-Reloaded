@@ -202,7 +202,8 @@ and the generated table index. **Help > About** remains available without a shor
 - There is no automatic backup and no three-way merge.
 - Some tables without seed metadata are shown through a document-driven fallback; new fields are
   preserved even when they have no description yet.
-- The interface and help are localized in Russian and English; the language is switched in settings.
+- The interface and help are localized in Russian and English; the language is switched in
+  settings and takes effect after restart. The help content follows the UI language.
 
 ## Reporting problems
 

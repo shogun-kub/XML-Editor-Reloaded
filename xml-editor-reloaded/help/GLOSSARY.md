@@ -67,8 +67,7 @@ entry. The English column is the source of truth; the Russian column is a contro
 ## Notes
 
 - `Launchables` is the user-approved exception: the Russian UI uses **«Боеприпасы»**.
-  `Strings.ru.resx` currently contains both «Запускаемые предметы» and «Боеприпасы»; M32
-  must align every occurrence with this row.
+  M32 aligned every occurrence in `Strings.ru.resx` with this row.
 - Table names are never translated: `Armours`, `Cities`, `ItemClass`.
 - Field names are never translated: `ubArmourClass`, `townRebelSentiment`.
 - When a term has no approved Russian row yet, keep the English term in the Russian text and

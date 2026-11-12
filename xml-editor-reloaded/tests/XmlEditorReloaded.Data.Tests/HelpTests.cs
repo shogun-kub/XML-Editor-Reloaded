@@ -112,6 +112,25 @@ public class HelpTests
     }
 
     /// <summary>
+    /// The Russian resource is selected explicitly and exposes translated tables and pages.
+    /// </summary>
+    [Fact]
+    public void RussianResource_LoadsTranslatedData()
+    {
+        var provider = new JsonTableHelpProvider("ru");
+
+        Assert.Equal(94, provider.DocumentCount);
+        Assert.Equal(239, provider.TableCount);
+        Assert.Equal(8, provider.PageCount);
+
+        var weapons = Assert.IsType<TableHelp>(provider.GetTableHelp(TableName.Parse("Items.Weapons")));
+        Assert.Contains("оружия", weapons.Title, StringComparison.OrdinalIgnoreCase);
+        var glossary = Assert.IsType<HelpDocument>(provider.GetDocument("GLOSSARY.md"));
+        Assert.Equal("Глоссарий", glossary.Title);
+        Assert.Contains("поле", glossary.Text, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// Search is case-insensitive and returns field-level and document-level matches.
     /// </summary>
     [Fact]

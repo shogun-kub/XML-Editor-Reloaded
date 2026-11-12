@@ -31,6 +31,8 @@
   <Target Name="EnsureHelpData" BeforeTargets="BeforeBuild">
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\XmlEditorReloaded.Data\Help\help.json')"
            Text="Help data 'src/XmlEditorReloaded.Data/Help/help.json' is missing. Run 'dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/tables' and rebuild." />
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\XmlEditorReloaded.Data\Help\help.ru.json')"
+           Text="Russian help data 'src/XmlEditorReloaded.Data/Help/help.ru.json' is missing. Run 'dotnet run --project tools/XmlEditorReloaded.HelpTool -- --source help/ru/tables --language ru' and rebuild." />
   </Target>
 
 </Project>

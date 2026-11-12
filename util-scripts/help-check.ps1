@@ -8,6 +8,8 @@ param(
     [string]$HelpRoot,
     [string]$TableDataRoot,
     [string]$FallbackTableDataRoot,
+    [ValidateSet('en', 'ru')]
+    [string]$Lang = 'en',
     [switch]$Write,
     [switch]$Release
 )
@@ -17,7 +19,12 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 if (-not $HelpRoot) {
-    $HelpRoot = Join-Path $repoRoot 'xml-editor-reloaded/help'
+    $HelpRoot = if ($Lang -eq 'ru') {
+        Join-Path $repoRoot 'xml-editor-reloaded/help/ru'
+    }
+    else {
+        Join-Path $repoRoot 'xml-editor-reloaded/help'
+    }
 }
 if (-not $TableDataRoot) {
     $TableDataRoot = Join-Path $repoRoot 'References/JA 2 1.13 v5/Data-1.13/TableData'
@@ -43,7 +50,10 @@ $warnings = [System.Collections.Generic.List[string]]::new()
 $docInfos = [System.Collections.Generic.List[object]]::new()
 
 $docFiles = @(Get-ChildItem -LiteralPath $HelpRoot -Recurse -File -Filter *.md |
-    Where-Object { $_.FullName -match '\\tables\\' })
+    Where-Object {
+        $_.FullName -match '\\tables\\' -and
+        ($Lang -ne 'en' -or $_.FullName -notlike ((Join-Path $HelpRoot 'ru') + '\*'))
+    })
 $docFiles = @($docFiles | Sort-Object FullName)
 
 foreach ($file in $docFiles) {
@@ -71,8 +81,8 @@ foreach ($file in $docFiles) {
         $errors.Add("${relative}: 'status' must be draft, reviewed or verified")
     }
     if ($Release) {
-        if ([string]$data['lang'] -ne 'en') {
-            $errors.Add("${relative}: release documents must be English")
+        if ([string]$data['lang'] -ne $Lang) {
+            $errors.Add("${relative}: release documents must use lang '$Lang'")
         }
         if ([string]$data['status'] -eq 'draft') {
             $errors.Add("${relative}: release documents must not be draft")
@@ -256,6 +266,135 @@ foreach ($file in $docFiles) {
     })
 }
 
+# Russian documents must mirror the English structure and field paths.
+if ($Lang -eq 'ru') {
+    $enTablesRoot = Join-Path $repoRoot 'xml-editor-reloaded/help/tables'
+    $ruTablesRoot = Join-Path $HelpRoot 'tables'
+    if (-not (Test-Path -LiteralPath $enTablesRoot)) {
+        $errors.Add("English help root not found: $enTablesRoot")
+    }
+    elseif (-not (Test-Path -LiteralPath $ruTablesRoot)) {
+        $errors.Add("Russian tables directory not found: $ruTablesRoot")
+    }
+    else {
+        $enFiles = @(Get-ChildItem -LiteralPath $enTablesRoot -Recurse -File -Filter *.md |
+            Sort-Object FullName)
+        $enRelative = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+        foreach ($enFile in $enFiles) {
+            $relative = [System.IO.Path]::GetRelativePath($enTablesRoot, $enFile.FullName).Replace('\', '/')
+            [void]$enRelative.Add($relative)
+            $ruFile = Join-Path $ruTablesRoot $relative
+            if (-not (Test-Path -LiteralPath $ruFile)) {
+                $errors.Add("${relative}: Russian document is missing")
+                continue
+            }
+
+            $enFrontMatter = Read-HelpFrontMatter -Path $enFile.FullName
+            $ruFrontMatter = Read-HelpFrontMatter -Path $ruFile
+            if ($null -eq $enFrontMatter -or $null -eq $ruFrontMatter) {
+                $errors.Add("${relative}: front matter cannot be compared")
+                continue
+            }
+
+            foreach ($key in @('schema', 'family', 'tables', 'table_ids', 'files', 'root', 'record', 'key', 'path_mode')) {
+                $enValue = if ($enFrontMatter.Data.ContainsKey($key)) {
+                    (@($enFrontMatter.Data[$key]) -join '|')
+                }
+                else {
+                    '<missing>'
+                }
+                $ruValue = if ($ruFrontMatter.Data.ContainsKey($key)) {
+                    (@($ruFrontMatter.Data[$key]) -join '|')
+                }
+                else {
+                    '<missing>'
+                }
+                if ($enValue -ne $ruValue) {
+                    $errors.Add("${relative}: front matter '$key' differs from English")
+                }
+            }
+
+            if ([string]$ruFrontMatter.Data['lang'] -ne 'ru') {
+                $errors.Add("${relative}: Russian document must declare lang: ru")
+            }
+
+            $enFields = @(Get-HelpDocFields -Lines $enFrontMatter.Lines -Start $enFrontMatter.BodyStart)
+            $ruFields = @(Get-HelpDocFields -Lines $ruFrontMatter.Lines -Start $ruFrontMatter.BodyStart)
+            if ($enFields.Count -ne $ruFields.Count) {
+                $errors.Add("${relative}: Russian field count $($ruFields.Count) differs from English $($enFields.Count)")
+            }
+            else {
+                for ($i = 0; $i -lt $enFields.Count; $i++) {
+                    if ($enFields[$i].Path -ne $ruFields[$i].Path) {
+                        $errors.Add("${relative}: field $($i + 1) is '$($ruFields[$i].Path)', expected '$($enFields[$i].Path)'")
+                        break
+                    }
+
+                    foreach ($key in @('Type', 'Source', 'Confidence')) {
+                        $enValue = if ($enFields[$i].Values.ContainsKey($key)) { [string]$enFields[$i].Values[$key] } else { '' }
+                        $ruValue = if ($ruFields[$i].Values.ContainsKey($key)) { [string]$ruFields[$i].Values[$key] } else { '' }
+                        if ($enValue -ne $ruValue) {
+                            $errors.Add("${relative}: field '$($enFields[$i].Path)' has a different '$key'")
+                        }
+                    }
+                }
+            }
+
+            $enHeadings = @(Get-HelpHeadings -Lines $enFrontMatter.Lines -Start $enFrontMatter.BodyStart |
+                Where-Object { $_.Level -ge 2 })
+            $ruHeadings = @(Get-HelpHeadings -Lines $ruFrontMatter.Lines -Start $ruFrontMatter.BodyStart |
+                Where-Object { $_.Level -ge 2 })
+            if ($enHeadings.Count -ne $ruHeadings.Count) {
+                $errors.Add("${relative}: Russian heading count differs from English")
+            }
+            else {
+                for ($i = 0; $i -lt $enHeadings.Count; $i++) {
+                    if ($enHeadings[$i].Text -ne $ruHeadings[$i].Text -or
+                        $enHeadings[$i].Anchor -ne $ruHeadings[$i].Anchor) {
+                        $errors.Add("${relative}: heading '$($ruHeadings[$i].Text)' differs from '$($enHeadings[$i].Text)'")
+                        break
+                    }
+                }
+            }
+
+            $enLinks = @(Get-HelpMarkdownLinks -Content (Get-Content -LiteralPath $enFile.FullName -Raw) |
+                Sort-Object)
+            $ruLinks = @(Get-HelpMarkdownLinks -Content (Get-Content -LiteralPath $ruFile -Raw) |
+                Sort-Object)
+            if (($enLinks -join "`n") -ne ($ruLinks -join "`n")) {
+                $errors.Add("${relative}: links differ from English")
+            }
+        }
+
+        $ruFiles = @(Get-ChildItem -LiteralPath $ruTablesRoot -Recurse -File -Filter *.md |
+            Sort-Object FullName)
+        foreach ($ruFile in $ruFiles) {
+            $relative = [System.IO.Path]::GetRelativePath($ruTablesRoot, $ruFile.FullName).Replace('\', '/')
+            if (-not $enRelative.Contains($relative)) {
+                $errors.Add("${relative}: Russian document has no English source")
+            }
+        }
+
+        $pageFiles = @(
+            'GLOSSARY.md',
+            'FORMULAS.md',
+            'SOURCES.md',
+            'OPTIONS.md',
+            'Localization.md',
+            'EMAIL-TEXT.md'
+        )
+        $enHelpRoot = Join-Path $repoRoot 'xml-editor-reloaded/help'
+        foreach ($pageFile in $pageFiles) {
+            if ((Test-Path -LiteralPath (Join-Path $enHelpRoot $pageFile)) -and
+                -not (Test-Path -LiteralPath (Join-Path $HelpRoot $pageFile))) {
+                $errors.Add("${pageFile}: Russian page is missing")
+            }
+        }
+
+        Write-Host "Russian parity checked: $($enFiles.Count) documents"
+    }
+}
+
 # Detect the same table documented twice.
 $tableOwners = @{}
 foreach ($doc in $docInfos) {
@@ -405,40 +544,71 @@ if ($Release -and $pendingTables.Count -gt 0) {
 }
 
 if ($Write) {
+    $isRussian = $Lang -eq 'ru'
+    $indexTitle = if ($isRussian) { '# Индекс справки по таблицам' } else { '# Table help index' }
+    $generatedBy = if ($isRussian) {
+        'Сгенерировано `util-scripts/help-check.ps1 -Write`. Не редактировать вручную.'
+    }
+    else {
+        'Generated by `util-scripts/help-check.ps1 -Write`. Do not edit manually.'
+    }
+    $documentedLine = if ($isRussian) {
+        "Документировано: $($coveredTables.Count) из $($inventory.Count) таблиц; $coveredPaths из $totalPaths путей полей."
+    }
+    else {
+        "Documented: $($coveredTables.Count) of $($inventory.Count) tables; $coveredPaths of $totalPaths field paths."
+    }
+    $indexHeader = if ($isRussian) { '| Таблица | Файл | Документ | Статус |' } else { '| Table | File | Document | Status |' }
+    $documentedStatus = if ($isRussian) { 'документирована' } else { 'documented' }
+    $pendingStatus = if ($isRussian) { 'ожидает' } else { 'pending' }
+
     $indexLines = [System.Collections.Generic.List[string]]::new()
-    $indexLines.Add('# Table help index')
+    $indexLines.Add($indexTitle)
     $indexLines.Add('')
-    $indexLines.Add("Generated by ``util-scripts/help-check.ps1 -Write``. Do not edit manually.")
+    $indexLines.Add($generatedBy)
     $indexLines.Add('')
-    $indexLines.Add("Documented: $($coveredTables.Count) of $($inventory.Count) tables; $coveredPaths of $totalPaths field paths.")
+    $indexLines.Add($documentedLine)
     $indexLines.Add('')
-    $indexLines.Add('| Table | File | Document | Status |')
+    $indexLines.Add($indexHeader)
     $indexLines.Add('|---|---|---|---|')
     foreach ($table in $inventory) {
         $doc = if ($tableOwners.ContainsKey($table.Table)) { $tableOwners[$table.Table] } else { $null }
         $docLink = if ($doc) { "[$doc]($doc)" } else { '—' }
-        $status = if ($doc) { 'documented' } else { 'pending' }
+        $status = if ($doc) { $documentedStatus } else { $pendingStatus }
         $cleanName = Get-HelpCleanTableName -Table $table.Table
         $indexLines.Add("| ``$cleanName`` | ``$($table.File)`` | $docLink | $status |")
     }
     Write-HelpLines -Path (Join-Path $HelpRoot 'INDEX.md') -Lines $indexLines
 
+    $coverageTitle = if ($isRussian) { '# Покрытие справки' } else { '# Help coverage' }
+    $summaryTitle = if ($isRussian) { '## Сводка' } else { '## Summary' }
+    $metricHeader = if ($isRussian) { '| Показатель | Значение |' } else { '| Metric | Value |' }
+    $tablesInventory = if ($isRussian) { 'Таблиц в инвентаре' } else { 'Tables in inventory' }
+    $tablesDocumented = if ($isRussian) { 'Таблиц документировано' } else { 'Tables documented' }
+    $pathsInventory = if ($isRussian) { 'Путей полей в инвентаре' } else { 'Field paths in inventory' }
+    $pathsDocumented = if ($isRussian) { 'Путей полей документировано' } else { 'Field paths documented' }
+    $documentsLabel = if ($isRussian) { 'Документов' } else { 'Documents' }
+    $pendingFolderTitle = if ($isRussian) { '## Ожидающие таблицы по папкам' } else { '## Pending tables by folder' }
+    $folderHeader = if ($isRussian) { '| Папка | Ожидает |' } else { '| Folder | Pending |' }
+    $documentedTablesTitle = if ($isRussian) { '## Документированные таблицы' } else { '## Documented tables' }
+    $tableHeader = if ($isRussian) { '| Таблица | Файл | Документ | Пути | Источник |' } else { '| Table | File | Document | Paths | Source |' }
+
     $coverageLines = [System.Collections.Generic.List[string]]::new()
-    $coverageLines.Add('# Help coverage')
+    $coverageLines.Add($coverageTitle)
     $coverageLines.Add('')
-    $coverageLines.Add("Generated by ``util-scripts/help-check.ps1 -Write``. Do not edit manually.")
+    $coverageLines.Add($generatedBy)
     $coverageLines.Add('')
-    $coverageLines.Add('## Summary')
+    $coverageLines.Add($summaryTitle)
     $coverageLines.Add('')
-    $coverageLines.Add('| Metric | Value |')
+    $coverageLines.Add($metricHeader)
     $coverageLines.Add('|---|---:|')
-    $coverageLines.Add("| Tables in inventory | $($inventory.Count) |")
-    $coverageLines.Add("| Tables documented | $($coveredTables.Count) |")
-    $coverageLines.Add("| Field paths in inventory | $totalPaths |")
-    $coverageLines.Add("| Field paths documented | $coveredPaths |")
-    $coverageLines.Add("| Documents | $($docInfos.Count) |")
+    $coverageLines.Add("| $tablesInventory | $($inventory.Count) |")
+    $coverageLines.Add("| $tablesDocumented | $($coveredTables.Count) |")
+    $coverageLines.Add("| $pathsInventory | $totalPaths |")
+    $coverageLines.Add("| $pathsDocumented | $coveredPaths |")
+    $coverageLines.Add("| $documentsLabel | $($docInfos.Count) |")
     $coverageLines.Add('')
-    $coverageLines.Add('## Pending tables by folder')
+    $coverageLines.Add($pendingFolderTitle)
     $coverageLines.Add('')
     $pendingByFolder = @{}
     foreach ($table in $pendingTables) {
@@ -448,15 +618,15 @@ if ($Write) {
         }
         $pendingByFolder[$folder]++
     }
-    $coverageLines.Add('| Folder | Pending |')
+    $coverageLines.Add($folderHeader)
     $coverageLines.Add('|---|---:|')
     foreach ($folder in ($pendingByFolder.Keys | Sort-Object)) {
         $coverageLines.Add("| ``$folder`` | $($pendingByFolder[$folder]) |")
     }
     $coverageLines.Add('')
-    $coverageLines.Add('## Documented tables')
+    $coverageLines.Add($documentedTablesTitle)
     $coverageLines.Add('')
-    $coverageLines.Add('| Table | File | Document | Paths | Source |')
+    $coverageLines.Add($tableHeader)
     $coverageLines.Add('|---|---|---|---:|---|')
     foreach ($doc in $docInfos) {
         foreach ($info in $doc.TableInfo) {

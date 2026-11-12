@@ -11,25 +11,35 @@ namespace XmlEditorReloaded.Data.Help;
 public sealed class JsonTableHelpProvider : ITableHelpProvider
 {
     private const string ResourceName = "XmlEditorReloaded.Data.Help.help.json";
+    private const string RussianResourceName = "XmlEditorReloaded.Data.Help.help.ru.json";
     private readonly IReadOnlyDictionary<string, TableHelp> _documents;
     private readonly IReadOnlyDictionary<string, string> _tableDocuments;
     private readonly IReadOnlyDictionary<string, HelpDocument> _pages;
 
     /// <summary>
-    /// Initializes a provider from the embedded help data.
+    /// Initializes a provider from the embedded English help data.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when the embedded data is missing or invalid.</exception>
     public JsonTableHelpProvider()
-        : this(OpenEmbeddedResource())
+        : this("en")
     {
     }
 
     /// <summary>
-    /// Initializes a provider from a JSON stream.
+    /// Initializes a provider from the embedded help data for a language.
     /// </summary>
-    /// <param name="jsonStream">Stream that contains a <c>help.json</c> document.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonStream"/> is null.</exception>
-    /// <exception cref="InvalidDataException">Thrown when the stream does not contain valid help data.</exception>
+    /// <param name="languageCode">UI language code; <c>ru</c> selects the Russian resource.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="languageCode"/> is empty.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the embedded data is missing or invalid.</exception>
+    public JsonTableHelpProvider(string languageCode)
+        : this(OpenEmbeddedResource(languageCode))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a provider from the embedded help data.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the embedded data is missing or invalid.</exception>
     public JsonTableHelpProvider(Stream jsonStream)
     {
         ArgumentNullException.ThrowIfNull(jsonStream);
@@ -242,13 +252,24 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
             .ToArray();
     }
 
-    private static Stream OpenEmbeddedResource()
+    private static Stream OpenEmbeddedResource(string languageCode)
     {
-        var stream = typeof(JsonTableHelpProvider).Assembly.GetManifestResourceStream(ResourceName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(languageCode);
+        var assembly = typeof(JsonTableHelpProvider).Assembly;
+        var isRussian = languageCode.StartsWith("ru", StringComparison.OrdinalIgnoreCase);
+        var resourceName = isRussian ? RussianResourceName : ResourceName;
+        var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream is null && isRussian)
+        {
+            // Russian help is optional during translation; fall back to English rather than failing startup.
+            resourceName = ResourceName;
+            stream = assembly.GetManifestResourceStream(resourceName);
+        }
+
         if (stream is null)
         {
             throw new InvalidOperationException(
-                $"The embedded help resource '{ResourceName}' was not found. "
+                $"The embedded help resource '{resourceName}' was not found. "
                 + "Run the help generator and rebuild the application.");
         }
 

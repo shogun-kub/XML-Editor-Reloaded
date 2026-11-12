@@ -71,7 +71,7 @@ internal static class Program
               --source    Directory with the Markdown table documents. Defaults to the nearest
                           help/tables directory found above the current directory.
               --output    Generated JSON file. Defaults to
-                          <help>/../src/XmlEditorReloaded.Data/Help/help.json.
+                          <repo>/src/XmlEditorReloaded.Data/Help/help.json (or help.ru.json for ru).
               --language  Language code written to the data (default: en).
               --check     Compare the generated data with the output file and fail on mismatch.
             """;
@@ -109,7 +109,7 @@ internal static class Program
             }
 
             source = Path.GetFullPath(source ?? FindDefaultSource());
-            output = Path.GetFullPath(output ?? DefaultOutput(source));
+            output = Path.GetFullPath(output ?? DefaultOutput(source, language));
             return new Options(source, output, language, check, showHelp);
         }
 
@@ -141,14 +141,29 @@ internal static class Program
                 "Could not find a help/tables directory. Pass --source explicitly.");
         }
 
-        private static string DefaultOutput(string source) =>
-            Path.GetFullPath(Path.Combine(
-                source,
-                "..",
-                "..",
-                "src",
-                "XmlEditorReloaded.Data",
-                "Help",
-                "help.json"));
+        private static string DefaultOutput(string source, string language)
+        {
+            var directory = new DirectoryInfo(source);
+            while (directory is not null)
+            {
+                var helpDirectory = Path.Combine(
+                    directory.FullName,
+                    "src",
+                    "XmlEditorReloaded.Data",
+                    "Help");
+                if (Directory.Exists(helpDirectory))
+                {
+                    var fileName = string.Equals(language, "ru", StringComparison.OrdinalIgnoreCase)
+                        ? "help.ru.json"
+                        : "help.json";
+                    return Path.Combine(helpDirectory, fileName);
+                }
+
+                directory = directory.Parent;
+            }
+
+            throw new ArgumentException(
+                "Could not find src/XmlEditorReloaded.Data/Help. Pass --output explicitly.");
+        }
     }
 }

@@ -52,7 +52,7 @@ xml-editor-reloaded/
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts
 ├── packaging/start-portable.cmd      # Shared portable launcher using XER_APP_DATA
-├── help/                             # TableData field help: docs, formulas, index, coverage, glossary
+├── help/                             # TableData field help: English canon, Russian mirror, generated tables
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/
@@ -60,7 +60,7 @@ xml-editor-reloaded/
 │   ├── XmlEditorReloaded.Imaging/
 │   └── XmlEditorReloaded.App/
 ├── tools/
-│   └── XmlEditorReloaded.HelpTool/   # Generates and checks the embedded help.json
+│   └── XmlEditorReloaded.HelpTool/   # Generates and checks embedded English and Russian help JSON
 └── tests/
     ├── XmlEditorReloaded.Core.Tests/
     ├── XmlEditorReloaded.Xml.Tests/
@@ -95,8 +95,8 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 
 SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
 persistence of application settings and per-table grid layouts, the file-backed operation log, and
-the embedded table/field help provider. `Help/help.json` is generated from `help/tables` and the
-top-level help pages by `XmlEditorReloaded.HelpTool` and embedded into this assembly.
+the embedded table/field help provider. `Help/help.json` and `Help/help.ru.json` are generated from
+the English and Russian Markdown trees by `XmlEditorReloaded.HelpTool` and embedded into this assembly.
 `Settings/AppPaths` resolves the application-data directory (`%AppData%\XmlEditorReloaded`) for the
 settings, layouts, metadata database and log, and honours the `XER_APP_DATA` environment variable,
 which the UI smoke uses to isolate each scenario.
@@ -113,7 +113,8 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 ### XmlEditorReloaded.App (`net10.0-windows`)
 
 WPF shell and MVVM layer: data-set and table browser, grid and workspace editors, detail panel, dialogs,
-image viewer, settings, and RESX localization (English and Russian).
+image viewer, settings, context help, and RESX localization (English and Russian). The table-help
+provider selects `help.ru.json` when the UI culture is Russian and falls back to English.
 
 Folders: `Assets`, `Behaviors`, `Imaging`, `Resources`, `Services`, `Shortcuts`, `Themes`,
 `ViewModels`, `Views`. All UI strings come from RESX. `Assets/app.ico` is both the executable icon
@@ -121,8 +122,9 @@ and the window icon resource.
 
 ### XmlEditorReloaded.HelpTool (`net10.0`, console)
 
-Generates the deterministic `src/XmlEditorReloaded.Data/Help/help.json` from `help/tables`, or
-verifies it with `--check`. It is a build-time tool, not shipped with the application.
+Generates the deterministic `src/XmlEditorReloaded.Data/Help/help.json` and `help.ru.json` from
+`help/tables` and `help/ru/tables`, or verifies them with `--check`. It is a build-time tool, not
+shipped with the application.
 
 ### Test projects
 

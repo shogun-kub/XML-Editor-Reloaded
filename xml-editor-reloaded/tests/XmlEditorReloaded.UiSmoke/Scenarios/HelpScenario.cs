@@ -40,7 +40,7 @@ internal sealed class HelpScenario : SmokeScenario
         var tooltip = headerText?.Current.HelpText ?? string.Empty;
         context.Recorder.Check(
             "Тултип колонки берётся из справки",
-            tooltip.Contains("Index of the weapon row", StringComparison.Ordinal),
+            tooltip.Contains("Индекс строки оружия", StringComparison.Ordinal),
             tooltip);
 
         var cell = grid.Cell(0, column);
@@ -122,8 +122,8 @@ internal sealed class HelpScenario : SmokeScenario
             TimeSpan.FromSeconds(10));
         context.Recorder.Check(
             "Меню открывает глоссарий",
-            glossary.WaitById("HelpDocumentTitleText").ReadName() == "Glossary"
-                && glossary.WaitById("HelpDocumentText").ReadValue().Contains("field", StringComparison.Ordinal),
+            glossary.WaitById("HelpDocumentTitleText").ReadName() == "Глоссарий"
+                && glossary.WaitById("HelpDocumentText").ReadValue().Contains("поле", StringComparison.Ordinal),
             glossary.WaitById("HelpDocumentTitleText").ReadName());
         glossary.WaitById("HelpDocumentCloseButton").InvokeButton();
         Ui.WaitUntil(
@@ -137,7 +137,7 @@ internal sealed class HelpScenario : SmokeScenario
             TimeSpan.FromSeconds(10));
         context.Recorder.Check(
             "Меню открывает индекс",
-            index.WaitById("HelpDocumentTitleText").ReadName() == "Table help index"
+            index.WaitById("HelpDocumentTitleText").ReadName() == "Индекс справки по таблицам"
                 && index.WaitById("HelpDocumentText").ReadValue().Contains("AmmoStrings", StringComparison.Ordinal),
             index.WaitById("HelpDocumentTitleText").ReadName());
         index.WaitById("HelpDocumentCloseButton").InvokeButton();
