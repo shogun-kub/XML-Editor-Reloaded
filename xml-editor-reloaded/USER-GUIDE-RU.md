@@ -27,8 +27,8 @@ Windows может показать SmartScreen, потому что сборк�
 Проверьте SHA-256 архива по файлу `.sha256`:
 
 ```powershell
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64.zip -Algorithm SHA256
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64-framework-dependent.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64-framework-dependent.zip -Algorithm SHA256
 ```
 
 ### Переносимый режим
