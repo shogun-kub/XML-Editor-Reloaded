@@ -203,8 +203,8 @@ as pending, and rewrites per-document `## Contents`, `INDEX.md` and `COVERAGE.md
 - `release/<version>` is cut from `dev` when a release is planned. Its `Directory.Build.props`
   version must match the branch name. Changes are cherry-picked from `dev` or made in place.
 - A manual `workflow_dispatch` run of `.github/workflows/release.yml` on `release/<version>`
-  builds both packages; setting `publish_prerelease` publishes them as a GitHub pre-release
-  (`pre-v<version>-<run>`).
+  builds both packages; setting `publish_prerelease` publishes the next numbered pre-release
+  (`v<version>-p1`, `v<version>-p2`, ...).
 - The final release merges the release branch into both `dev` and `main`, deletes the branch, and
   creates an annotated `v<version>` tag on `main`. Pushing that tag runs the final release build
   and publishes both archives and checksums.

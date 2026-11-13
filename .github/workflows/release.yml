@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish_prerelease:
-        description: Publish the built packages as a GitHub pre-release
+        description: Publish the built packages as the next numbered pre-release (1.1.0-p1, 1.1.0-p2, ...)
         required: false
         type: boolean
         default: false
@@ -40,20 +40,41 @@ jobs:
         shell: pwsh
         run: |
           if ($env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF_TYPE -eq 'tag') {
-              if ($env:GITHUB_REF_NAME -notmatch '^v(\d+\.\d+\.\d+)$') {
-                  throw "Final release tags must look like v1.2.3; got '$env:GITHUB_REF_NAME'."
+              if ($env:GITHUB_REF_NAME -notmatch '^v(\d+\.\d+\.\d+)(?:-(p([1-9]\d*)))?$') {
+                  throw "Release tags must look like v1.2.3 or v1.2.3-p1; got '$env:GITHUB_REF_NAME'."
               }
-              $version = $Matches[1]
+              $baseVersion = $Matches[1]
+              $prereleaseNumber = $Matches[3]
+              $version = if ($prereleaseNumber) { "${baseVersion}-p${prereleaseNumber}" } else { $baseVersion }
               $tag = $env:GITHUB_REF_NAME
-              $prerelease = 'false'
+              $prerelease = if ($prereleaseNumber) { 'true' } else { 'false' }
           }
           else {
               if ($env:GITHUB_REF_NAME -notmatch '^release/(\d+\.\d+\.\d+)$') {
                   throw "Manual release runs must start from a release/x.y.z branch; got '$env:GITHUB_REF_NAME'."
               }
-              $version = $Matches[1]
-              $tag = "pre-v$version-$($env:GITHUB_RUN_NUMBER)"
-              $prerelease = '${{ inputs.publish_prerelease }}'
+              $baseVersion = $Matches[1]
+              if ('${{ inputs.publish_prerelease }}' -eq 'true') {
+                  git fetch --tags --force
+                  $max = 0
+                  foreach ($existingTag in (git tag --list "v$baseVersion-p*")) {
+                      if ($existingTag -match "^v$([regex]::Escape($baseVersion))-p([1-9]\d*)$") {
+                          $number = [int]$Matches[1]
+                          if ($number -gt $max) {
+                              $max = $number
+                          }
+                      }
+                  }
+                  $next = $max + 1
+                  $version = "${baseVersion}-p${next}"
+                  $tag = "v$version"
+                  $prerelease = 'true'
+              }
+              else {
+                  $version = $baseVersion
+                  $tag = ''
+                  $prerelease = 'false'
+              }
           }
 
           "version=$version" >> $env:GITHUB_OUTPUT
