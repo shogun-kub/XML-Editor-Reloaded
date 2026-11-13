@@ -1,4 +1,5 @@
 using System.Windows;
+using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.App.ViewModels;
 
 namespace XmlEditorReloaded.App.Views;
@@ -18,7 +19,22 @@ public partial class HelpDocumentWindow : Window
         ArgumentNullException.ThrowIfNull(viewModel);
         InitializeComponent();
         DataContext = viewModel;
+        DataContextChanged += OnDataContextChanged;
+        ApplyDocument(viewModel);
+    }
+
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is HelpDocumentViewModel viewModel)
+        {
+            ApplyDocument(viewModel);
+        }
+    }
+
+    private void ApplyDocument(HelpDocumentViewModel viewModel)
+    {
         Title = viewModel.Title;
+        DocumentViewer.Document = MarkdownFlowDocumentRenderer.Render(viewModel.Text, viewModel.Title);
     }
 
     private void OnCloseClick(object sender, RoutedEventArgs e) => Close();

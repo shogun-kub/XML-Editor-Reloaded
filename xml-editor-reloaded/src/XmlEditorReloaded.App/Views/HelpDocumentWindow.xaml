@@ -27,16 +27,14 @@
                    AutomationProperties.AutomationId="HelpDocumentTitleText"
                    Text="{Binding Title}" />
 
-        <TextBox Grid.Row="1"
-                 AutomationProperties.AutomationId="HelpDocumentText"
-                 IsReadOnly="True"
-                 IsReadOnlyCaretVisible="True"
-                 AcceptsReturn="True"
-                 TextWrapping="NoWrap"
-                 FontFamily="Consolas"
-                 HorizontalScrollBarVisibility="Auto"
-                 VerticalScrollBarVisibility="Auto"
-                 Text="{Binding Text, Mode=OneWay}" />
+        <FlowDocumentScrollViewer x:Name="DocumentViewer"
+                                  Grid.Row="1"
+                                  AutomationProperties.AutomationId="HelpDocumentText"
+                                  AutomationProperties.Name="{Binding Text}"
+                                  Background="{DynamicResource Theme.Panel.Background}"
+                                  IsToolBarVisible="False"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto" />
 
         <Button Grid.Row="2"
                 Margin="0,8,0,0"
