@@ -91,11 +91,24 @@ internal sealed class HelpScenario : SmokeScenario
             true,
             help.WaitById("HelpFieldPathText").ReadName());
 
+        help.WaitById("FORMULAS").InvokeButton();
+        var formulas = Ui.WaitFor(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow"),
+            "страница FORMULAS из связанной справки",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Связанная страница открывается в окне документа",
+            formulas.WaitById("HelpDocumentTitleText").ReadName().Contains("формул", StringComparison.OrdinalIgnoreCase),
+            formulas.WaitById("HelpDocumentTitleText").ReadName());
+        formulas.WaitById("HelpDocumentCloseButton").InvokeButton();
+        Ui.WaitUntil(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow") is null,
+            "окно FORMULAS закрыто");
+
         help.WaitById("AmmoStrings").InvokeButton();
         Ui.WaitUntil(
             () => help.WaitById("HelpDocumentPathText").ReadName().Contains("AmmoStrings.md", StringComparison.Ordinal),
-            "связанная справка AmmoStrings");
-        context.Recorder.Check(
+            "связанная справка AmmoStrings");        context.Recorder.Check(
             "Связанная справка открывает другую таблицу",
             help.WaitById("HelpTitleText").ReadName().Contains("AmmoStrings", StringComparison.Ordinal),
             help.WaitById("HelpTitleText").ReadName());

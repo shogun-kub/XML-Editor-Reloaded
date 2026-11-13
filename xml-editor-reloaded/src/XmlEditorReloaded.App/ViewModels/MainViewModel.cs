@@ -801,9 +801,15 @@ public partial class MainViewModel : ObservableObject
         var table = SelectedEditor?.TableName
             ?? SelectedTable?.Descriptor.TableName;
         var field = SelectedEditor is TableEditorViewModel editor ? editor.CurrentCellField : null;
+        ShowHelpForTable(table, field);
+    }
+
+    private void ShowHelpForTable(TableName? table, string? field)
+    {
         var help = new HelpViewModel(_tableHelp, table, field);
         help.TableOpenRequested += OnHelpTableOpenRequested;
         help.CoverageRequested += () => OpenHelpDocument("COVERAGE.md");
+        help.DocumentOpenRequested += OpenHelpDocument;
         _dialogService.ShowHelp(help);
     }
 
@@ -821,6 +827,13 @@ public partial class MainViewModel : ObservableObject
 
     private void OpenHelpDocument(string documentPath)
     {
+        var tableHelp = _tableHelp.GetTableHelpByDocument(documentPath);
+        if (tableHelp is not null)
+        {
+            ShowHelpForTable(tableHelp.Table, null);
+            return;
+        }
+
         var document = _tableHelp.GetDocument(documentPath);
         if (document is null)
         {
@@ -828,7 +841,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        _dialogService.ShowHelpDocument(new HelpDocumentViewModel(document));
+        _dialogService.ShowHelpDocument(new HelpDocumentViewModel(document, OpenHelpDocument));
     }
 
     private async void OnHelpTableOpenRequested(TableName table)

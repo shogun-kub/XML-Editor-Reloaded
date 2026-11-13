@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:XmlEditorReloaded.App.Views"
         mc:Ignorable="d"
         Title="{Binding Title}"
         Icon="pack://application:,,,/XmlEditorReloaded.App;component/Assets/app.ico"
@@ -27,14 +28,13 @@
                    AutomationProperties.AutomationId="HelpDocumentTitleText"
                    Text="{Binding Title}" />
 
-        <FlowDocumentScrollViewer x:Name="DocumentViewer"
-                                  Grid.Row="1"
-                                  AutomationProperties.AutomationId="HelpDocumentText"
-                                  AutomationProperties.Name="{Binding Text}"
-                                  Background="{DynamicResource Theme.Panel.Background}"
-                                  IsToolBarVisible="False"
-                                  HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Auto" />
+        <views:MarkdownViewer x:Name="DocumentViewer"
+                              Grid.Row="1"
+                              AutomationProperties.AutomationId="HelpDocumentText"
+                              AutomationProperties.Name="{Binding Text}"
+                              Markdown="{Binding Text}"
+                              Title="{Binding Title}"
+                              LinkRequested="OnDocumentLinkRequested" />
 
         <Button Grid.Row="2"
                 Margin="0,8,0,0"

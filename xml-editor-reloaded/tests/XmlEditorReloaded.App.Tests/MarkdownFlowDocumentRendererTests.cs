@@ -1,6 +1,9 @@
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Documents;
 using XmlEditorReloaded.App.Services;
+using XmlEditorReloaded.App.ViewModels;
+using XmlEditorReloaded.App.Views;
 using XmlEditorReloaded.Core.Help;
 using XmlEditorReloaded.Data.Help;
 
@@ -126,6 +129,85 @@ public class MarkdownFlowDocumentRendererTests
             Assert.Equal(expectedRows, table.RowGroups[0].Rows.Count);
             Assert.True(table.Columns.Count >= 2);
         }
+    }
+
+    /// <summary>
+    /// A page view model forwards a link click to the shell callback.
+    /// </summary>
+    [Fact]
+    public void HelpDocumentViewModel_OpenDocument_InvokesCallback()
+    {
+        string? opened = null;
+        var viewModel = new HelpDocumentViewModel(
+            new HelpDocument("INDEX.md", "Index", "# Index\n"),
+            target => opened = target);
+
+        viewModel.OpenDocument("tables/Items/Weapons.md");
+
+        Assert.Equal("tables/Items/Weapons.md", opened);
+    }
+
+    /// <summary>
+    /// Relative links are resolved against the document that contains them.
+    /// </summary>
+    [Theory]
+    [InlineData("tables/AIMAvailability.md", "MercProfiles.md", "tables/MercProfiles.md")]
+    [InlineData("tables/Items/Weapons.md", "../../FORMULAS.md", "FORMULAS.md")]
+    [InlineData("tables/Items/Weapons.md", "../MercProfiles.md", "tables/MercProfiles.md")]
+    [InlineData("INDEX.md", "tables/Items/AmmoStrings.md", "tables/Items/AmmoStrings.md")]
+    [InlineData("FORMULAS.md", "#reading-the-formulas", "#reading-the-formulas")]
+    public void HelpPathResolver_ResolvesRelativeTarget(
+        string documentPath,
+        string target,
+        string expected)
+    {
+        Assert.Equal(expected, HelpPathResolver.Resolve(documentPath, target));
+    }
+
+    /// <summary>
+    /// Headings receive stable anchors used by in-page Markdown links.
+    /// </summary>
+    [Fact]
+    public void Render_Heading_HasAnchorName()
+    {
+        var document = MarkdownFlowDocumentRenderer.Render(
+            "## Reading the formulas\n\nText.\n",
+            "Formulas");
+
+        var heading = Assert.IsType<Paragraph>(document.Blocks.First());
+        Assert.Equal("reading-the-formulas", AutomationProperties.GetAutomationId(heading));
+    }
+
+    /// <summary>
+    /// A rendered link raises the viewer event with its target path.
+    /// </summary>
+    [Fact]
+    public void MarkdownViewer_LinkClick_ReportsTarget()    {
+        string? requested = null;
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var viewer = new MarkdownViewer
+                {
+                    Markdown = "[Ammo](tables/Items/AmmoStrings.md)",
+                };
+                viewer.LinkRequested += (_, target) => requested = target;
+                var link = MarkdownFlowDocumentRenderer.EnumerateLinks(viewer.Document!).Single();
+                link.RaiseEvent(new RoutedEventArgs(Hyperlink.ClickEvent, link));
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(failure);
+        Assert.Equal("tables/Items/AmmoStrings.md", requested);
     }
 
     private static string CellText(Table table, int row, int column) =>

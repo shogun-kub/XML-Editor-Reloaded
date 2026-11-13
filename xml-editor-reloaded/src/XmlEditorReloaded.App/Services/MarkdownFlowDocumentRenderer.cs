@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Documents;
 using System.Windows.Media;
 
@@ -132,8 +133,29 @@ public static partial class MarkdownFlowDocumentRenderer
             Margin = new Thickness(0, level == 1 ? 0 : 14, 0, 7),
             KeepWithNext = true,
         };
+        AutomationProperties.SetAutomationId(paragraph, AnchorSlug(text));
         AddInlines(paragraph.Inlines, text);
         document.Blocks.Add(paragraph);
+    }
+
+    private static string AnchorSlug(string text)
+    {
+        var builder = new StringBuilder();
+        foreach (var character in StripInlineMarkers(text))
+        {
+            if (char.IsLetterOrDigit(character))
+            {
+                builder.Append(char.ToLowerInvariant(character));
+            }
+            else if ((char.IsWhiteSpace(character) || character is '-' or '_')
+                && builder.Length > 0
+                && builder[^1] != '-')
+            {
+                builder.Append('-');
+            }
+        }
+
+        return builder.ToString().Trim('-');
     }
 
     private static int AddParagraph(FlowDocument document, IReadOnlyList<string> lines, int start)
@@ -370,6 +392,93 @@ public static partial class MarkdownFlowDocumentRenderer
             _ => new GridLength(columnIndex switch { 0 => 1.1, 1 => 1.2, 2 => 1.8, _ => 0.8 }, GridUnitType.Star),
         };
 
+    /// <summary>
+    /// Enumerates every link in a rendered document so a viewer can attach navigation handlers.
+    /// </summary>
+    /// <param name="document">Rendered document.</param>
+    /// <returns>Links in document order.</returns>
+    public static IEnumerable<Hyperlink> EnumerateLinks(FlowDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        return document.Blocks.SelectMany(EnumerateLinks);
+    }
+
+    private static IEnumerable<Hyperlink> EnumerateLinks(Block block)
+    {
+        switch (block)
+        {
+            case Paragraph paragraph:
+                foreach (var link in EnumerateLinks(paragraph.Inlines))
+                {
+                    yield return link;
+                }
+
+                break;
+            case Section section:
+                foreach (var child in section.Blocks)
+                {
+                    foreach (var link in EnumerateLinks(child))
+                    {
+                        yield return link;
+                    }
+                }
+
+                break;
+            case System.Windows.Documents.List list:
+                foreach (var item in list.ListItems)
+                {
+                    foreach (var child in item.Blocks)
+                    {
+                        foreach (var link in EnumerateLinks(child))
+                        {
+                            yield return link;
+                        }
+                    }
+                }
+
+                break;
+            case Table table:
+                foreach (var rowGroup in table.RowGroups)
+                {
+                    foreach (var row in rowGroup.Rows)
+                    {
+                        foreach (var cell in row.Cells)
+                        {
+                            foreach (var child in cell.Blocks)
+                            {
+                                foreach (var link in EnumerateLinks(child))
+                                {
+                                    yield return link;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    private static IEnumerable<Hyperlink> EnumerateLinks(InlineCollection inlines)
+    {
+        foreach (var inline in inlines)
+        {
+            switch (inline)
+            {
+                case Hyperlink link:
+                    yield return link;
+                    break;
+                case Span span:
+                    foreach (var child in EnumerateLinks(span.Inlines))
+                    {
+                        yield return child;
+                    }
+
+                    break;
+            }
+        }
+    }
+
     private static void AddInlines(InlineCollection target, string text)
     {
         var plain = new StringBuilder();
@@ -450,12 +559,16 @@ public static partial class MarkdownFlowDocumentRenderer
                     if (targetEnd > labelEnd + 2)
                     {
                         FlushPlain();
+                        var linkTarget = text[(labelEnd + 2)..targetEnd];
                         var link = new Hyperlink
                         {
                             Foreground = ThemeBrush("Theme.Accent", Brushes.SteelBlue),
                             TextDecorations = TextDecorations.Underline,
-                            ToolTip = text[(labelEnd + 2)..targetEnd],
+                            ToolTip = linkTarget,
+                            Tag = linkTarget,
                         };
+                        AutomationProperties.SetName(link, text[(index + 1)..labelEnd]);
+                        AutomationProperties.SetAutomationId(link, linkTarget);
                         AddInlines(link.Inlines, text[(index + 1)..labelEnd]);
                         target.Add(link);
                         index = targetEnd + 1;

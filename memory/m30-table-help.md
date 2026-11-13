@@ -179,6 +179,9 @@ S105, `help/README.md`, `PROJECT-STRUCTURE.md`. Тесты: **744** (App 279). S
 fallback. `WithCulture=false` обязателен для `help.ru.json`, иначе MSBuild кладёт его
 в satellite-сборку `ru/` и провайдер его не видит. `Strings.ru.resx`: `Launchables` →
 «Боеприпасы». `help-translation-status.ps1` генерирует `TRANSLATION.md`.
-Тесты: **749** (App 283, Core 62, Data 102, Imaging 24, Xml 278). S105 (v4, ru) — PASS с русским
+Тесты: **760** (App 294, Core 62, Data 102, Imaging 24, Xml 278). S105 (v4, ru) — PASS с русским
 тултипом/окном/глоссарием. Окно страницы справки рендерит Markdown (таблицы, списки, код,
-ссылки) через `MarkdownFlowDocumentRenderer`; тесты покрывают глоссарий и индекс.
+ссылки) через `MarkdownFlowDocumentRenderer`; ссылки индекса открывают справку таблицы,
+ссылки на страницы — окно документа, разделы контекстной справки рендерятся через
+`MarkdownViewer`; относительные ссылки разрешаются от текущего документа, якоря
+прокручивают страницу. Тесты покрывают глоссарий, индекс и переходы.
