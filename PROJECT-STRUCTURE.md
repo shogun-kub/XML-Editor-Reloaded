@@ -49,7 +49,8 @@ xml-editor-reloaded/
 ├── README.md                         # Download, build, release and data-safety overview
 ├── USER-GUIDE.md                     # English end-user guide
 ├── USER-GUIDE-RU.md                  # Russian end-user guide
-├── CHANGELOG.md                      # Release history
+├── CHANGELOG.md                      # Release history (Russian)
+├── CHANGELOG.en.md                   # Release history (English)
 ├── LICENSE                           # GLWTPL
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts

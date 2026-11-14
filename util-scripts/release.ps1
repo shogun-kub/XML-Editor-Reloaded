@@ -137,6 +137,7 @@ $documents = @(
     @{ Source = (Join-Path $root 'USER-GUIDE.md'); Target = 'USER-GUIDE.md' },
     @{ Source = (Join-Path $root 'USER-GUIDE-RU.md'); Target = 'USER-GUIDE-RU.md' },
     @{ Source = (Join-Path $root 'CHANGELOG.md'); Target = 'CHANGELOG.md' },
+    @{ Source = (Join-Path $root 'CHANGELOG.en.md'); Target = 'CHANGELOG.en.md' },
     @{ Source = (Join-Path $root 'LICENSE'); Target = 'LICENSE' },
     @{ Source = (Join-Path $root 'THIRD-PARTY-NOTICES.md'); Target = 'THIRD-PARTY-NOTICES.md' },
     @{ Source = (Join-Path $root 'packaging\start-portable.cmd'); Target = 'start-portable.cmd' }

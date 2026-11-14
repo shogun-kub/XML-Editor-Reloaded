@@ -3,6 +3,8 @@
 Все заметные изменения проекта. Формат — [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версии — [Semantic Versioning](https://semver.org/lang/ru/).
 
+[English](CHANGELOG.en.md) | **Русский**
+
 ## [1.1.0] — 2026-11-12
 
 Контекстная справка по полям `TableData` и полная русская версия справки.

@@ -82,7 +82,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 
 Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained и
 framework-dependent `win-x64`, складывает `README`, `USER-GUIDE`, `USER-GUIDE-RU`, `CHANGELOG`,
-лицензию и
+`CHANGELOG.en.md`, лицензию и
 third-party notices в каждый ZIP и пишет отдельный SHA-256. Результат: `out/release/`.
 
 ## Структура
@@ -97,7 +97,8 @@ third-party notices в каждый ZIP и пишет отдельный SHA-256
 | `tests/` | xUnit-тесты и UI-smoke runner |
 
 Архитектура и правила — в `PROJECT-STRUCTURE.md` и `AGENTS.md`, план — в `PLAN.md` исходного
-репозитория. История версий — в [CHANGELOG.md](CHANGELOG.md).
+репозитория. История версий — в [CHANGELOG.md](CHANGELOG.md) (русский) или
+[CHANGELOG.en.md](CHANGELOG.en.md) (English).
 
 ## Лицензия
 

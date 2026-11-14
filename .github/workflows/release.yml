@@ -107,7 +107,7 @@ jobs:
           $version = "${{ steps.release.outputs.version }}"
           $prerelease = "${{ steps.release.outputs.prerelease }}" -eq 'true'
           $baseVersion = $version -replace '-p[1-9]\d*$', ''
-          $changelogPath = Join-Path $env:GITHUB_WORKSPACE 'xml-editor-reloaded/CHANGELOG.md'
+          $changelogPath = Join-Path $env:GITHUB_WORKSPACE 'xml-editor-reloaded/CHANGELOG.en.md'
           if (-not (Test-Path -LiteralPath $changelogPath)) {
               throw "Changelog not found at '$changelogPath'."
           }
@@ -121,7 +121,7 @@ jobs:
               }
           }
           if ($start -lt 0) {
-              throw "CHANGELOG.md has no section for $baseVersion."
+              throw "CHANGELOG.en.md has no section for $baseVersion."
           }
 
           $end = $lines.Count
@@ -138,7 +138,7 @@ jobs:
           }
           $notes = ($bodyLines -join "`n").Trim()
           if ([string]::IsNullOrWhiteSpace($notes)) {
-              throw "CHANGELOG.md section for $baseVersion is empty."
+              throw "CHANGELOG.en.md section for $baseVersion is empty."
           }
 
           $notesPath = Join-Path $env:RUNNER_TEMP "release-notes-$version.md"
