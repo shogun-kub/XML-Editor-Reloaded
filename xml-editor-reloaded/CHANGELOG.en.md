@@ -22,6 +22,8 @@ Patch release after 1.1.0 with small fixes and an English changelog.
 
 ### Changed
 
+- In the Russian help and UI, `attachment` is now translated as «навеска» (singular only);
+  the `Attachments` table is labelled «Навеска», not «Навески».
 - Remaining production SonarQube findings were triaged: `CA1806` and `CS9236` were fixed;
   `IDE0028`, `CA1822`, `CA1068`, and `CA1859` were consciously accepted with documented reasons.
 
