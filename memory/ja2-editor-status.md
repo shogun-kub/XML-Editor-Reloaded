@@ -1,11 +1,15 @@
 ---
 name: ja2-editor-status
-description: Current state of XML Editor Reloaded (M0–M28 and M31–M32 done, 1.1.0 release prepared, 745 tests, 98 UI-smoke scenarios), approved M18–M28 roadmap and documentation policy.
+description: Current state of XML Editor Reloaded (M0–M28 and M31–M32 done, 1.1.0 published, 1.1.1 prepared, 760 tests, 98 UI-smoke scenarios), approved M18–M28 roadmap and documentation policy.
 metadata:
   node_type: memory
   type: project
   originSessionId: sess_9123e0d2-50a3-44a1-ac9f-49aedbc18523
 ---
+
+**2026-11-14:** 1.1.0 опубликован; на `release/1.1.1` версия `1.1.1`, английский changelog,
+исправлены `CA1806` и `CS9236`; 760 тестов. Оставшиеся Sonar findings (`IDE0028`, `CA1822`,
+`CA1068`) приняты или отложены и описаны в `SONAR.md`.
 
 **2026-11-12:** M31 (контекстная справка) и M32 (русская справка) завершены; в `dev` 745 тестов,
 `release/1.1.0` содержит версию `1.1.0`, CHANGELOG и два пакета. Публикация — после отдельного

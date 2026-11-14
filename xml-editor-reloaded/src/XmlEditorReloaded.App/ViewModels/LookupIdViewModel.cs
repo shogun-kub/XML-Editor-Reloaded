@@ -113,7 +113,11 @@ public sealed partial class LookupIdViewModel : ObservableObject
             return false;
         }
 
-        LookupIdAllocator.TryParseId(Id, out var id);
+        if (!LookupIdAllocator.TryParseId(Id, out var id))
+        {
+            return false;
+        }
+
         Value = id.ToString(CultureInfo.InvariantCulture);
         return true;
     }

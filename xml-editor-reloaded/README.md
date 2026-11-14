@@ -71,7 +71,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1
 Приложение запускается из `out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
 Все `bin/obj` складываются в `out/`.
 
-Полный набор тестов — 726 тестов в пяти xUnit-проектах. Корпусные, сравнительные, copy- и
+Полный набор тестов — 760 тестов в пяти xUnit-проектах. Корпусные, сравнительные, copy- и
 perf-гейты описаны в `PLAN.md`; они требуют `XER_CORPUS_DIR` и временных копий данных.
 
 ## Сборка релиза
