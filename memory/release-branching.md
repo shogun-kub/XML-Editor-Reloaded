@@ -26,7 +26,8 @@ GitHub Release с двумя ZIP и двумя `.sha256`.
 
 **Теги.** Тег только на протестированный merge-коммит; переставлять можно только до публикации
 релиза. `push --force` для `main`/`dev` запрещён. Команды — в `RELEASING.md`; правила —
-в `AGENTS.md`, раздел «Ветки и релизы».
+в `AGENTS.md`, раздел «Ветки и релизы». Тело GitHub Release берётся из секции
+`xml-editor-reloaded/CHANGELOG.md` для базовой версии, а не из auto-generated commit notes.
 
 **1.1.0 (2026-11-12).** Готовится на `release/1.1.0` из `dev` после M31/M32: версия `1.1.0`,
 CHANGELOG, 745 тестов, `help-check` EN/RU, пакеты 64,7 МБ и 2,6 МБ с SHA-256. Merge в `main`/`dev`,

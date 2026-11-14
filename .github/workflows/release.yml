@@ -106,6 +106,44 @@ jobs:
           $tag = "${{ steps.release.outputs.tag }}"
           $version = "${{ steps.release.outputs.version }}"
           $prerelease = "${{ steps.release.outputs.prerelease }}" -eq 'true'
+          $baseVersion = $version -replace '-p[1-9]\d*$', ''
+          $changelogPath = Join-Path $env:GITHUB_WORKSPACE 'xml-editor-reloaded/CHANGELOG.md'
+          if (-not (Test-Path -LiteralPath $changelogPath)) {
+              throw "Changelog not found at '$changelogPath'."
+          }
+
+          $lines = @(Get-Content -LiteralPath $changelogPath -Encoding utf8)
+          $start = -1
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match "^##\s+\[$([regex]::Escape($baseVersion))\](?:\s|$)") {
+                  $start = $i
+                  break
+              }
+          }
+          if ($start -lt 0) {
+              throw "CHANGELOG.md has no section for $baseVersion."
+          }
+
+          $end = $lines.Count
+          for ($i = $start + 1; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match '^##\s+\[') {
+                  $end = $i
+                  break
+              }
+          }
+
+          $bodyLines = @()
+          if ($end -gt $start + 1) {
+              $bodyLines = $lines[($start + 1)..($end - 1)]
+          }
+          $notes = ($bodyLines -join "`n").Trim()
+          if ([string]::IsNullOrWhiteSpace($notes)) {
+              throw "CHANGELOG.md section for $baseVersion is empty."
+          }
+
+          $notesPath = Join-Path $env:RUNNER_TEMP "release-notes-$version.md"
+          Set-Content -LiteralPath $notesPath -Value $notes -Encoding utf8
+
           $zips = @(Get-ChildItem -LiteralPath out/release -Filter '*.zip')
           $hashes = @(Get-ChildItem -LiteralPath out/release -Filter '*.sha256')
           if ($zips.Count -ne 2 -or $hashes.Count -ne 2) {
@@ -115,7 +153,7 @@ jobs:
           $assets = @($zips.FullName) + @($hashes.FullName)
           $arguments = @('release', 'create', $tag) + $assets + @(
               '--title', "XML Editor Reloaded $version",
-              '--generate-notes')
+              '--notes-file', $notesPath)
           if ($prerelease) {
               $arguments += '--prerelease'
               $arguments += '--target'

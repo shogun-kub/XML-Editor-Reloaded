@@ -106,6 +106,10 @@ git push origin v1.1.0
 
 Пуш тега запускает финальную сборку и публикацию GitHub Release.
 
+Тело GitHub Release берётся из секции `## [<version>]` в
+`xml-editor-reloaded/CHANGELOG.md`; для pre-release `-pN` используется секция базовой версии.
+Если подходящей секции нет, release-workflow завершается ошибкой и не публикует релиз.
+
 ## 6. Правила тегов
 
 - Стабильный тег: `v1.1.0`; pre-release: `v1.1.0-p1`, `v1.1.0-p2`, …
