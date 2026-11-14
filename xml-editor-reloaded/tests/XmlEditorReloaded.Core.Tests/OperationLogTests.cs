@@ -113,7 +113,9 @@ public class OperationLogTests
 
         try
         {
-            OperationLog.Error("Test", "A failure that must stay reported.", "test.error");
+            var exception = Record.Exception(() =>
+                OperationLog.Error("Test", "A failure that must stay reported.", "test.error"));
+            Assert.Null(exception);
         }
         finally
         {

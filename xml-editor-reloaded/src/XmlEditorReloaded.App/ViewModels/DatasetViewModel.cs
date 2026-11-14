@@ -344,7 +344,7 @@ public partial class DatasetViewModel : ObservableObject
     public async Task InitializeAsync()
     {
         var tables = await _session.Catalog
-            .GetTablesAsync(_session.TableDataDirectory)
+            .GetTablesAsync(_session.TableDataDirectory, CancellationToken.None)
             .ConfigureAwait(true);
         if (!tables.IsSuccess)
         {
@@ -538,7 +538,11 @@ public partial class DatasetViewModel : ObservableObject
             var text = string.Equals(Path.GetExtension(path), ".csv", StringComparison.OrdinalIgnoreCase)
                 ? DatasetValidationReportFormatter.FormatCsv(_report)
                 : DatasetValidationReportFormatter.FormatMarkdown(_report);
-            await File.WriteAllTextAsync(path, text, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+            await File.WriteAllTextAsync(
+                    path,
+                    text,
+                    new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+                    CancellationToken.None)
                 .ConfigureAwait(true);
             StatusText = Strings.Format("DatasetExportedFormat", path);
         }

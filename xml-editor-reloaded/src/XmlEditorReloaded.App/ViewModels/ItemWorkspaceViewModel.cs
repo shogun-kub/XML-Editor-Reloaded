@@ -744,7 +744,7 @@ public sealed partial class ItemWorkspaceViewModel :
         IsBusy = true;
         try
         {
-            var report = await _set.SaveDetailedAsync().ConfigureAwait(true);
+            var report = await _set.SaveDetailedAsync(cancellationToken: CancellationToken.None).ConfigureAwait(true);
             if (report.IsSuccess)
             {
                 ApplySavedState();
@@ -815,7 +815,9 @@ public sealed partial class ItemWorkspaceViewModel :
                     return false;
                 }
 
-                var forced = await _set.SaveDetailedAsync(forceOverwrite: true).ConfigureAwait(true);
+                var forced = await _set
+                    .SaveDetailedAsync(forceOverwrite: true, cancellationToken: CancellationToken.None)
+                    .ConfigureAwait(true);
                 if (forced.IsSuccess)
                 {
                     ApplySavedState();
@@ -890,7 +892,10 @@ public sealed partial class ItemWorkspaceViewModel :
             foreach (var workspace in AllWorkspaces())
             {
                 var report = await workspace
-                    .ValidateAsync(_session.Lookups, workspace.Language?.Code)
+                    .ValidateAsync(
+                        _session.Lookups,
+                        workspace.Language?.Code,
+                        CancellationToken.None)
                     .ConfigureAwait(true);
                 foreach (var issue in report.Issues)
                 {
@@ -1751,7 +1756,7 @@ public sealed partial class ItemWorkspaceViewModel :
             try
             {
                 var ensured = await _session
-                    .EnsureOverlayAsync(_descriptor, option.Language)
+                    .EnsureOverlayAsync(_descriptor, option.Language, CancellationToken.None)
                     .ConfigureAwait(true);
                 if (!ensured.IsSuccess)
                 {
