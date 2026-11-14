@@ -80,6 +80,33 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/sonar-analyze.ps1 `
 Community Edition не поддерживает анализ веток: анализируется текущий checkout как сборка
 проекта, без `sonar.branch.name`.
 
+### Покрытие и TRX
+
+`sonar-analyze.ps1` запускает тесты с `-CollectCoverage`: coverlet пишет Cobertura-отчёты
+в `.tmp/sonar/coverage`, а VSTest — TRX-файлы. Сканер получает пути через
+`sonar.cs.cobertura.reportsPaths` и `sonar.cs.vstest.reportsPaths`.
+
+Проверенный результат после подключения: **coverage 73,5%**, line coverage **76,3%**,
+branch coverage **65,9%**, **760 тестов**, 0 failures/errors. Отчёты можно собрать отдельно:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1 `
+  -CollectCoverage -ResultsDirectory .tmp/sonar/coverage
+```
+
+В DSH сбор покрытия требует `danger-full-access`: VSTest data collector открывает handle
+родительского процесса, а `workspace-write` это запрещает. В обычном локальном shell
+ограничение не действует.
+
+### Тестовые проекты
+
+Все прежние issues в тестах были `external_roslyn:*` уровня `INFO`. Путь-ориентированный
+`sonar.issue.ignore.multicriteria` их не отфильтровал, поэтому в
+[.editorconfig](xml-editor-reloaded/.editorconfig) для `tests/**/*.cs` выставлено
+`dotnet_analyzer_diagnostic.severity = none`. Это отключает шум анализаторов в тестовом коде,
+но не отключает собственные правила SonarQube. В результате отчёт сократился с 448 до
+176 issues, и все они находятся в production-коде.
+
 ## 3. Выгрузка результатов
 
 После завершения анализа:

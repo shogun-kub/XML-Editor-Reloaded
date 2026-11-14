@@ -80,6 +80,7 @@ if ([string]::IsNullOrWhiteSpace($HostUrl) -or [string]::IsNullOrWhiteSpace($Pro
 $token = Read-SonarToken -TokenFile $TokenFile
 $version = Get-SonarProjectVersion -PropsPath $propsPath
 $scanRoot = Join-Path $repo '.tmp/sonar'
+$coverageRoot = Join-Path $scanRoot 'coverage'
 New-Item -ItemType Directory -Path $scanRoot -Force | Out-Null
 
 # The LAN server must not go through the machine-wide HTTP proxy that is used for
@@ -100,8 +101,18 @@ $commonProperties = @(
     '/d:sonar.sources=xml-editor-reloaded/src,xml-editor-reloaded/tools',
     '/d:sonar.tests=xml-editor-reloaded/tests',
     '/d:sonar.exclusions=**/obj/**,**/bin/**,**/out/**,**/*.g.cs,**/*.Designer.cs,References/**',
+    '/d:sonar.coverage.exclusions=**/tests/**,**/obj/**,**/bin/**',
     '/d:sonar.scanner.scanAll=false'
 )
+
+if (-not $SkipTests) {
+    $coveragePattern = ($coverageRoot -replace '\\', '/') + '/**/coverage.cobertura.xml'
+    $trxPattern = ($coverageRoot -replace '\\', '/') + '/**/*.trx'
+    $commonProperties += @(
+        "/d:sonar.cs.cobertura.reportsPaths=$coveragePattern",
+        "/d:sonar.cs.vstest.reportsPaths=$trxPattern"
+    )
+}
 
 $begun = $false
 $failure = $null
@@ -130,9 +141,11 @@ try {
     }
 
     if (-not $SkipTests) {
-        Write-Host 'Running tests' -ForegroundColor Cyan
+        Write-Host 'Running tests with coverage' -ForegroundColor Cyan
+        Remove-Item -LiteralPath $coverageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path $coverageRoot -Force | Out-Null
         & pwsh -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'test.ps1') `
-            -Configuration $Configuration -NoBuild
+            -Configuration $Configuration -NoBuild -CollectCoverage -ResultsDirectory $coverageRoot
         if ($LASTEXITCODE -ne 0) {
             throw "Tests failed with exit code $LASTEXITCODE."
         }
