@@ -101,7 +101,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
         Columns = columns;
         _changed = changed;
         _remove = remove;
-        _selectedColumn = columns.FirstOrDefault();
+        _selectedColumn = columns.Count > 0 ? columns[0] : null;
         RebuildOperators();
         RebuildAllowedValues();
     }
@@ -289,7 +289,7 @@ public sealed partial class FilterCriterionViewModel : ObservableObject
         }
     }
 
-    private static IReadOnlyList<RowFilterOperator> GetSupportedOperators(ColumnDataType? dataType) =>
+    private static RowFilterOperator[] GetSupportedOperators(ColumnDataType? dataType) =>
         dataType is ColumnDataType.Integer or ColumnDataType.Decimal or ColumnDataType.Lookup or ColumnDataType.Flags
             ? new[]
             {

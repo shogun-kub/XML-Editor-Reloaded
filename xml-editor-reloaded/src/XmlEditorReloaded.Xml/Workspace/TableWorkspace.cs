@@ -152,7 +152,9 @@ public sealed partial class TableWorkspace
         var loadResult = load.Data!;
         if (loadResult.Status == TableDocumentStatus.Malformed)
         {
-            var message = loadResult.Diagnostics.FirstOrDefault()?.Message ?? "The table file is malformed.";
+            var message = loadResult.Diagnostics.Count > 0
+                ? loadResult.Diagnostics[0].Message
+                : "The table file is malformed.";
             return OperationResult<TableWorkspace>.Failure(ErrorCodes.XmlParseError, message);
         }
 

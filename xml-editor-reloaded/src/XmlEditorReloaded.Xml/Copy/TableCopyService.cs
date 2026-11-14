@@ -351,8 +351,8 @@ public sealed class TableCopyService : ITableCopyService
             if (targetRecord is null && !string.IsNullOrWhiteSpace(sourceKey))
             {
                 var comparisonMatches = FindComparisonMatches(targetTable, sourceRecord, sourceTable.ComparisonField);
-                comparisonMatchCount = comparisonMatches.Count;
-                if (comparisonMatches.Count == 1)
+                comparisonMatchCount = comparisonMatches.Length;
+                if (comparisonMatches.Length == 1)
                 {
                     targetRecord = comparisonMatches[0];
                 }
@@ -729,7 +729,7 @@ public sealed class TableCopyService : ITableCopyService
     /// <param name="sourceRecord">Source record whose comparison value is matched.</param>
     /// <param name="comparisonField">Comparison field name, or <see langword="null"/> when undeclared.</param>
     /// <returns>The matching target records in document order; an empty list when nothing matches.</returns>
-    private static IReadOnlyList<TableRecord> FindComparisonMatches(
+    private static TableRecord[] FindComparisonMatches(
         TableLoad targetTable,
         TableRecord sourceRecord,
         string? comparisonField)
@@ -753,7 +753,7 @@ public sealed class TableCopyService : ITableCopyService
             .ToArray();
     }
 
-    private static IReadOnlyList<string> GetFieldsToCopy(
+    private static string[] GetFieldsToCopy(
         TableRecord source,
         TableRecord? target,
         TableCopyAction action,
@@ -939,7 +939,7 @@ public sealed class TableCopyService : ITableCopyService
         }
     }
 
-    private static XElement CloneField(XElement element, IReadOnlyDictionary<string, string> remaps)
+    private static XElement CloneField(XElement element, Dictionary<string, string> remaps)
     {
         var clone = new XElement(element);
         if (!clone.HasElements && remaps.TryGetValue(clone.Name.LocalName, out var value))
@@ -966,8 +966,8 @@ public sealed class TableCopyService : ITableCopyService
 
     private static void MarkDirty(
         TableDocument document,
-        ICollection<TableDocument> dirty,
-        ISet<TableDocument> seen)
+        List<TableDocument> dirty,
+        HashSet<TableDocument> seen)
     {
         document.MarkDirty();
         if (seen.Add(document))
@@ -1038,7 +1038,7 @@ public sealed class TableCopyService : ITableCopyService
     }
 
     private static async Task<IReadOnlyList<string>> RestoreFilesAsync(
-        IReadOnlyList<(string Path, byte[] Bytes)> files)
+        List<(string Path, byte[] Bytes)> files)
     {
         var failures = new List<string>();
         for (var index = files.Count - 1; index >= 0; index--)
@@ -1075,13 +1075,13 @@ public sealed class TableCopyService : ITableCopyService
 
     private static string? InferKeyField(TableDocument document)
     {
-        var first = document.Records.FirstOrDefault();
+        var first = document.Records.Count > 0 ? document.Records[0] : null;
         return first?.Element.Elements().FirstOrDefault()?.Name.LocalName;
     }
 
     private static string? InferDisplayField(TableDocument document, TableMetadata? metadata)
     {
-        var first = document.Records.FirstOrDefault();
+        var first = document.Records.Count > 0 ? document.Records[0] : null;
         if (first is null)
         {
             return null;
@@ -1363,7 +1363,7 @@ public sealed class TableCopyService : ITableCopyService
 
             if (load.Data!.Status == TableDocumentStatus.Malformed)
             {
-                var diagnostic = load.Data.Diagnostics.FirstOrDefault();
+                var diagnostic = load.Data.Diagnostics.Count > 0 ? load.Data.Diagnostics[0] : null;
                 return OperationResult<TableLoad>.Failure(
                     ErrorCodes.XmlParseError,
                     diagnostic is null
@@ -1381,7 +1381,7 @@ public sealed class TableCopyService : ITableCopyService
 
             if (!document.TryEnableEditing() && document.Status != TableDocumentStatus.Loaded)
             {
-                var diagnostic = document.Diagnostics.FirstOrDefault();
+                var diagnostic = document.Diagnostics.Count > 0 ? document.Diagnostics[0] : null;
                 return OperationResult<TableLoad>.Failure(
                     ErrorCodes.XmlNotSaveable,
                     diagnostic is null

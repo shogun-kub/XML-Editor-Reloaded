@@ -635,7 +635,7 @@ public sealed partial class NestedTableWorkspaceViewModel : ObservableObject, IE
         StatusText = Strings.Format("NestedEditorBlockAdded", fieldName);
     }
 
-    private IReadOnlyList<KeyValuePair<string, string>> BuildBlockTemplate(string fieldName)
+    private List<KeyValuePair<string, string>> BuildBlockTemplate(string fieldName)
     {
         var values = new List<KeyValuePair<string, string>>();
         if (Workspace is null)

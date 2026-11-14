@@ -204,7 +204,7 @@ public sealed class LookupUsageService
             suppressed));
     }
 
-    private static IReadOnlyList<string> FindLookupFields(TableMetadata metadata, TableName lookupTable)
+    private static List<string> FindLookupFields(TableMetadata metadata, TableName lookupTable)
     {
         var fields = new List<string>();
         var seen = new HashSet<string>(StringComparer.Ordinal);

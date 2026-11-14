@@ -1879,7 +1879,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         var column = Workspace.Schema.FindColumn(fieldName)
-            ?? (fieldName.IndexOf('/') >= 0
+            ?? (fieldName.Contains('/')
                 ? Workspace.Schema.FindColumn(FieldPath.Parse(fieldName).FieldName)
                 : null);
         if (column is not null && !IsValidValue(column, value))
@@ -2688,7 +2688,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         field.Value = value.ToString(CultureInfo.InvariantCulture);
     }
 
-    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    private static Dictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
     {
         if (lookup is not { IsAvailable: true })
         {

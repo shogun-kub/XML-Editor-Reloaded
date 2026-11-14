@@ -81,7 +81,7 @@ public sealed class WorkspaceRow
             return null;
         }
 
-        return fieldPath.IndexOf('/') >= 0
+        return fieldPath.Contains('/')
             ? Record.GetRawValue(FieldPath.Parse(fieldPath))
             : Record.GetRawValue(fieldPath);
     }

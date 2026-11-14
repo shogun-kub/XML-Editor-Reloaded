@@ -515,7 +515,7 @@ public partial class MainViewModel : ObservableObject
         _settingsLoaded = true;
         ThemeManager.Apply(_settings.ThemeMode);
         DataDirectory = _settings.ActiveDataDirectory
-            ?? _settings.DataDirectories.FirstOrDefault()
+            ?? (_settings.DataDirectories.Count > 0 ? _settings.DataDirectories[0] : null)
             ?? string.Empty;
         RebuildDataDirectories();
 

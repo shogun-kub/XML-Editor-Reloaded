@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -10,7 +11,7 @@ namespace XmlEditorReloaded.App.Themes;
 /// Applies the selected visual theme by swapping the palette resource dictionary. Control styles and
 /// icons use <c>DynamicResource</c>, so no window needs to be recreated.
 /// </summary>
-public static class ThemeManager
+public static partial class ThemeManager
 {
     private const string LightSource = "Themes/Theme.Light.xaml";
     private const string DarkSource = "Themes/Theme.Dark.xaml";
@@ -104,8 +105,8 @@ public static class ThemeManager
         }
     }
 
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
+    [LibraryImport("dwmapi.dll")]
+    private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 
     /// <summary>
     /// Reads the Windows application theme preference.
@@ -126,7 +127,7 @@ public static class ThemeManager
         }
     }
 
-    private static int FindThemeDictionary(IList<ResourceDictionary> dictionaries)
+    private static int FindThemeDictionary(Collection<ResourceDictionary> dictionaries)
     {
         for (var index = 0; index < dictionaries.Count; index++)
         {

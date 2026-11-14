@@ -2299,7 +2299,7 @@ public sealed partial class ItemWorkspaceViewModel :
     /// stock the selected item. The selection is kept when that dealer is still available.
     /// </summary>
     /// <param name="stocked">Dealer tables that already have a row for the selected item.</param>
-    private void RebuildShopkeeperDealerOptions(IReadOnlySet<TableName> stocked)
+    private void RebuildShopkeeperDealerOptions(HashSet<TableName> stocked)
     {
         var selected = SelectedShopkeeperDealer?.TableName;
         ShopkeeperDealerOptions.Clear();
@@ -2600,8 +2600,8 @@ public sealed partial class ItemWorkspaceViewModel :
             var fields = row is null
                 ? Array.Empty<DetailFieldViewModel>()
                 : BuildSubTableFields(member, row);
-            var listSections = row is null
-                ? Array.Empty<ItemListSectionViewModel>()
+            List<ItemListSectionViewModel> listSections = row is null
+                ? []
                 : BuildSubTableListSections(member, row);
             _allFields.AddRange(fields);
             SubTableSections.Add(new ItemSubTableSectionViewModel(
@@ -2615,7 +2615,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
     }
 
-    private IReadOnlyList<DetailFieldViewModel> BuildSubTableFields(
+    private DetailFieldViewModel[] BuildSubTableFields(
         TableSetMember member,
         TableRowViewModel row)
     {
@@ -2656,7 +2656,7 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Builds the repeated-field sections of one sub-table row. A list field is skipped by
     /// <see cref="BuildSubTableFields"/> because it is edited as a list, not as a scalar cell.
     /// </summary>
-    private IReadOnlyList<ItemListSectionViewModel> BuildSubTableListSections(
+    private List<ItemListSectionViewModel> BuildSubTableListSections(
         TableSetMember member,
         TableRowViewModel row)
     {
@@ -2949,7 +2949,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
     }
 
-    private IReadOnlyList<LookupOption> BuildClassOptions()
+    private LookupOption[] BuildClassOptions()
     {
         var options = _classNames
             .Where(static pair => IsPowerOfTwo(pair.Key))
@@ -3341,7 +3341,7 @@ public sealed partial class ItemWorkspaceViewModel :
         return _imageCts.Token;
     }
 
-    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    private static Dictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
     {
         if (lookup is not { IsAvailable: true })
         {

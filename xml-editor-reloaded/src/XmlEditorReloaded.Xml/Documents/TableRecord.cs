@@ -103,7 +103,7 @@ public sealed class TableRecord
         return ContainerChildNames(FindPath(path));
     }
 
-    private static IReadOnlyList<string> ContainerChildNames(XElement? container) =>
+    private static string[] ContainerChildNames(XElement? container) =>
         container is null || !container.HasElements
             ? Array.Empty<string>()
             : container.Elements()

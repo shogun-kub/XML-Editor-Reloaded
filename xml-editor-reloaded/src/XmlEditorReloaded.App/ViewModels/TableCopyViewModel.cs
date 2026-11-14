@@ -581,7 +581,9 @@ public sealed partial class TableCopyViewModel : ObservableObject
             CopyRelatedRecords);
     }
 
-    private IReadOnlyList<string>? ParseRecordKeys()
+    private static readonly char[] RecordKeySeparators = [',', ';', '\r', '\n'];
+
+    private string[]? ParseRecordKeys()
     {
         var text = RecordKeysText.Trim();
         if (text.Length == 0)
@@ -590,7 +592,7 @@ public sealed partial class TableCopyViewModel : ObservableObject
         }
 
         return text
-            .Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Split(RecordKeySeparators, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Distinct(StringComparer.Ordinal)
             .ToArray();
     }

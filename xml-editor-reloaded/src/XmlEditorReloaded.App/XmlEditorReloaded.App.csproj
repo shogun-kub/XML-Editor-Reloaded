@@ -10,6 +10,8 @@
     <Copyright>Copyright (c) Everyone, except Author. Licensed under the GLWTPL.</Copyright>
     <Description>Viewer and editor for Jagged Alliance 2 1.13 XML table data and STI item images.</Description>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- LibraryImport emits unsafe marshalling stubs for the DwmSetWindowAttribute P/Invoke. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

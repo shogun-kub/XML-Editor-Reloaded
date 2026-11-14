@@ -52,7 +52,7 @@ public partial class DatasetViewModel : ObservableObject
     private readonly IDialogService _dialogService;
     private readonly DatasetWindowTab _initialTab;
     private IReadOnlyList<TableDescriptor> _tables = Array.Empty<TableDescriptor>();
-    private IReadOnlyList<DatasetIssueItem> _allIssues = Array.Empty<DatasetIssueItem>();
+    private DatasetIssueItem[] _allIssues = Array.Empty<DatasetIssueItem>();
     private DatasetValidationReport? _report;
     private CancellationTokenSource? _validationCts;
     private CancellationTokenSource? _searchCts;
@@ -466,7 +466,7 @@ public partial class DatasetViewModel : ObservableObject
         ValidationNoteText = HasValidationNote
             ? Strings.Format(
                 "DatasetTruncatedFormat",
-                _allIssues.Count,
+                _allIssues.Length,
                 report.IssueCount)
             : string.Empty;
         ApplyIssueFilter();

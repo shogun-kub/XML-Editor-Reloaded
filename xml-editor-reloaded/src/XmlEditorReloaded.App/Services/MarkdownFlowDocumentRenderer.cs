@@ -98,15 +98,15 @@ public static partial class MarkdownFlowDocumentRenderer
         return document;
     }
 
-    private static int SkipLeadingTitle(IReadOnlyList<string> lines, string? title)
+    private static int SkipLeadingTitle(string[] lines, string? title)
     {
         var index = 0;
-        while (index < lines.Count && string.IsNullOrWhiteSpace(lines[index]))
+        while (index < lines.Length && string.IsNullOrWhiteSpace(lines[index]))
         {
             index++;
         }
 
-        if (index >= lines.Count
+        if (index >= lines.Length
             || !TryHeading(lines[index], out var level, out var heading)
             || level != 1
             || string.IsNullOrWhiteSpace(title))
@@ -158,11 +158,11 @@ public static partial class MarkdownFlowDocumentRenderer
         return builder.ToString().Trim('-');
     }
 
-    private static int AddParagraph(FlowDocument document, IReadOnlyList<string> lines, int start)
+    private static int AddParagraph(FlowDocument document, string[] lines, int start)
     {
         var text = new StringBuilder();
         var index = start;
-        while (index < lines.Count
+        while (index < lines.Length
             && !string.IsNullOrWhiteSpace(lines[index])
             && !StartsBlock(lines, index))
         {
@@ -185,7 +185,7 @@ public static partial class MarkdownFlowDocumentRenderer
         return Math.Max(index, start + 1);
     }
 
-    private static bool StartsBlock(IReadOnlyList<string> lines, int index) =>
+    private static bool StartsBlock(string[] lines, int index) =>
         IsFence(lines[index])
         || TryHeading(lines[index], out _, out _)
         || HorizontalRulePattern.IsMatch(lines[index])
@@ -193,7 +193,7 @@ public static partial class MarkdownFlowDocumentRenderer
         || lines[index].TrimStart().StartsWith('>')
         || (lines[index].Contains('|') && TryTable(lines, index, out _));
 
-    private static int AddList(FlowDocument document, IReadOnlyList<string> lines, int start, TextMarkerStyle markerStyle)
+    private static int AddList(FlowDocument document, string[] lines, int start, TextMarkerStyle markerStyle)
     {
         var list = new System.Windows.Documents.List
         {
@@ -203,11 +203,11 @@ public static partial class MarkdownFlowDocumentRenderer
         };
         var index = start;
         var bullet = markerStyle == TextMarkerStyle.Disc;
-        while (index < lines.Count && TryListItem(lines[index], out var isBullet) && isBullet == bullet)
+        while (index < lines.Length && TryListItem(lines[index], out var isBullet) && isBullet == bullet)
         {
             var text = new StringBuilder(RemoveListMarker(lines[index]));
             index++;
-            while (index < lines.Count
+            while (index < lines.Length
                 && !string.IsNullOrWhiteSpace(lines[index])
                 && IsIndentedContinuation(lines[index])
                 && !TryListItem(lines[index], out _))
@@ -225,11 +225,11 @@ public static partial class MarkdownFlowDocumentRenderer
         return index;
     }
 
-    private static int AddBlockQuote(FlowDocument document, IReadOnlyList<string> lines, int start)
+    private static int AddBlockQuote(FlowDocument document, string[] lines, int start)
     {
         var text = new StringBuilder();
         var index = start;
-        while (index < lines.Count && lines[index].TrimStart().StartsWith('>'))
+        while (index < lines.Length && lines[index].TrimStart().StartsWith('>'))
         {
             var line = lines[index].TrimStart();
             if (text.Length > 0)
@@ -252,7 +252,7 @@ public static partial class MarkdownFlowDocumentRenderer
         return index;
     }
 
-    private static int AddCodeBlock(FlowDocument document, IReadOnlyList<string> lines, int start)
+    private static int AddCodeBlock(FlowDocument document, string[] lines, int start)
     {
         var index = start + 1;
         var paragraph = new Paragraph
@@ -266,7 +266,7 @@ public static partial class MarkdownFlowDocumentRenderer
             Margin = new Thickness(0, 0, 0, 10),
         };
         var first = true;
-        while (index < lines.Count && !IsFence(lines[index]))
+        while (index < lines.Length && !IsFence(lines[index]))
         {
             if (!first)
             {
@@ -278,7 +278,7 @@ public static partial class MarkdownFlowDocumentRenderer
             index++;
         }
 
-        if (index < lines.Count)
+        if (index < lines.Length)
         {
             index++;
         }
@@ -295,10 +295,10 @@ public static partial class MarkdownFlowDocumentRenderer
             Margin = new Thickness(0, 4, 0, 12),
         });
 
-    private static bool TryTable(IReadOnlyList<string> lines, int start, out ParsedTable table)
+    private static bool TryTable(string[] lines, int start, out ParsedTable table)
     {
         table = default;
-        if (start + 1 >= lines.Count
+        if (start + 1 >= lines.Length
             || !lines[start].Contains('|')
             || !IsTableSeparator(lines[start + 1]))
         {
@@ -314,7 +314,7 @@ public static partial class MarkdownFlowDocumentRenderer
 
         var rows = new List<IReadOnlyList<string>>();
         var index = start + 2;
-        while (index < lines.Count
+        while (index < lines.Length
             && !string.IsNullOrWhiteSpace(lines[index])
             && lines[index].Contains('|'))
         {
@@ -641,7 +641,7 @@ public static partial class MarkdownFlowDocumentRenderer
         line.Contains('|')
         && SplitTableRow(line).All(static cell => TableSeparatorPattern.IsMatch(cell));
 
-    private static IReadOnlyList<string> SplitTableRow(string line)
+    private static List<string> SplitTableRow(string line)
     {
         var trimmed = line.Trim();
         if (trimmed.StartsWith('|'))
