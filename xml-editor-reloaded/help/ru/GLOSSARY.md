@@ -26,10 +26,11 @@
 | item | предмет | — |
 | action item | предмет действия | интерактивный объект на карте; коды `ACTION_ITEM_*` в `Action Items.h` |
 | item class | класс предмета | — |
-| attachment | вложение | — |
+| attachment | навеска | только единственное число; таблица `Attachments` — тоже «Навеска», не «Навески» |
+| Attachments | Навеска | имя таблицы; не «Навески» |
 | LBE (load-bearing equipment) | разгрузка | не «носимое снаряжение» |
-| NAS (new attachment system) | новая система вложений (NAS) | в контексте кода сохраняйте аббревиатуру |
-| OAS (old attachment system) | старая система вложений (OAS) | противопоставлена NAS; `AttachmentSystem` 1 выбирает только OAS |
+| NAS (new attachment system) | новая система навески (NAS) | в контексте кода сохраняйте аббревиатуру |
+| OAS (old attachment system) | старая система навески (OAS) | противопоставлена NAS; `AttachmentSystem` 1 выбирает только OAS |
 | pocket | карман | карман инвентаря/разгрузки; не «отделение» |
 | fortification points | очки укрепления | прогресс `dCreationCost` для строений; не деньги |
 | armour | броня | не «доспех» |

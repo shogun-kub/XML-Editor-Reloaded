@@ -49,7 +49,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
         var caption27 = $"{attachments} {context.Strings.Format("ItemChildRowCountFormat", 27)}";
         Ui.WaitUntil(
             () => WorkspaceUi.ChildSectionCaptions(window, context.Strings.Get("ItemTabChildTables")).Contains(caption27),
-            "у дубликата скопированы 27 строк вложений",
+            "у дубликата скопированы 27 строк навески",
             TimeSpan.FromSeconds(20));
         context.Recorder.Check("Зависимые строки скопированы вместе с предметом", true);
 
@@ -113,7 +113,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             window.WaitById("ItemDetailHeader").ReadName());
         Ui.WaitUntil(
             () => WorkspaceUi.ChildSectionCaptions(window, context.Strings.Get("ItemTabChildTables")).Contains(caption27),
-            "вложения остались привязаны к переименованному предмету",
+            "навеска осталась привязана к переименованному предмету",
             TimeSpan.FromSeconds(20));
         context.Recorder.Check("Связанные строки переехали на новый ID", true);
 
@@ -253,7 +253,7 @@ internal sealed class ItemLifecycleScenario : SmokeScenario
             .Select(row => row.Element("attachmentIndex")?.Value ?? string.Empty)
             .ToHashSet(StringComparer.Ordinal);
         context.Recorder.Check(
-            "Вложения дубликата образуют ровно тот же набор",
+            "Навеска дубликата образует ровно тот же набор",
             copiedAttachments.SetEquals(attachmentIndexes),
             $"скопировано: {copiedAttachments.Count}, ожидалось: {attachmentIndexes.Count}");
         context.Recorder.Check(

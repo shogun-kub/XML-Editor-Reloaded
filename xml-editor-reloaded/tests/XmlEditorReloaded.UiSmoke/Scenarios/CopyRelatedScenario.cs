@@ -68,7 +68,7 @@ internal sealed class CopyRelatedScenario : SmokeScenario
             .Where(element => element.Element("itemIndex")?.Value.Trim() == sourceKey)
             .ToList();
         context.Recorder.Check(
-            "В v5 скопированы пять вложений предмета",
+            "В v5 скопировано пять строк навески предмета",
             copiedAttachments.Count == 5,
             $"строк: {copiedAttachments.Count}");
 
@@ -106,7 +106,7 @@ internal sealed class CopyRelatedScenario : SmokeScenario
             existingSummary);
         var existingRelated = DataOperationsUi.PreviewCell(existingDialog, 0, 5).Trim();
         context.Recorder.Check(
-            "Вложения существующей записи пропускаются, а не дублируются",
+            "Навеска существующей записи пропускается, а не дублируется",
             existingRelated.Contains("Items.Attachments: +0 ~0 / ", StringComparison.Ordinal),
             existingRelated);
         var existingAction = DataOperationsUi.PreviewCell(existingDialog, 0, 3).Trim();
@@ -117,7 +117,7 @@ internal sealed class CopyRelatedScenario : SmokeScenario
         DataOperationsUi.CloseCopyDialog(context, existingDialog);
         context.Recorder.Note(
             "Связанные строки копируются только вместе с новой записью: для существующей записи "
-            + "предпросмотр пропускает вложения и подтаблицы, поэтому они не дублируются, а политика "
+            + "предпросмотр пропускает навеску и подтаблицы, поэтому строки не дублируются, а политика "
             + "«дополнить» относится только к строкам подтаблиц.");
     }
 }
