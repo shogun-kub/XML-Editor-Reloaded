@@ -119,7 +119,7 @@ public class MarkdownFlowDocumentRendererTests
 
         foreach (var (path, expectedRows) in new[]
         {
-            ("GLOSSARY.md", 58),
+            ("GLOSSARY.md", 59),
             ("INDEX.md", 240),
         })
         {

@@ -35,13 +35,13 @@ internal sealed class ItemAttachmentsScenario : SmokeScenario
         var sections = WorkspaceUi.ChildSectionCaptions(window, childTables);
         var expectedCaption = $"{attachments} {context.Strings.Format("ItemChildRowCountFormat", 27)}";
         context.Recorder.Check(
-            "Раздел «Вложения» показывает «Строк: 27»",
+            "Раздел «Навеска» показывает «Строк: 27»",
             sections.Contains(expectedCaption),
             string.Join(" | ", sections));
 
         var grid = window.WaitById("RowsGrid");
         Ui.WaitUntil(() => grid.RowCount() == 27, "child-грид показывает 27 строк", TimeSpan.FromSeconds(20));
-        context.Recorder.Check("В гриде 27 строк вложений", grid.RowCount() == 27, $"строк: {grid.RowCount()}");
+        context.Recorder.Check("В гриде 27 строк навески", grid.RowCount() == 27, $"строк: {grid.RowCount()}");
 
         var headers = WorkspaceUi.VisualHeaders(grid);
         var attachmentColumn = headers.ToList().IndexOf("attachmentIndex");
@@ -68,11 +68,11 @@ internal sealed class ItemAttachmentsScenario : SmokeScenario
             wrongItems.Count == 0,
             string.Join(", ", wrongItems));
         context.Recorder.Check(
-            "attachmentIndex разрешается в имена вложений",
+            "attachmentIndex разрешается в имена навески",
             actualNames.SequenceEqual(expected),
             $"ожидалось: {string.Join(", ", expected.Take(5))}…; получено: {string.Join(", ", actualNames.Take(5))}…");
         context.Recorder.Check(
-            "Ни одно значение вложения не осталось сырым ID",
+            "Ни одно значение навески не осталось сырым ID",
             actualNames.All(name => name.Length > 0 && !name.All(char.IsDigit)),
             string.Join(", ", actualNames.Where(name => name.Length == 0 || name.All(char.IsDigit))));
 
@@ -90,7 +90,7 @@ internal sealed class ItemAttachmentsScenario : SmokeScenario
                 && text.Contains("duplicate_key", StringComparison.Ordinal))
             .ToList();
         context.Recorder.Check(
-            "Ложных validation.duplicate_key по вложениям нет",
+            "Ложных validation.duplicate_key по навеске нет",
             falseDuplicates.Count == 0,
             falseDuplicates.Count == 0 ? null : string.Join(" | ", falseDuplicates));
         context.Recorder.Note($"Замечаний проверки всего: {issues.Count}.");

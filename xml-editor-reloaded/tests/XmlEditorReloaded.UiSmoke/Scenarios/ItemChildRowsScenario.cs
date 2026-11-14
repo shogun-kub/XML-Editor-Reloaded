@@ -24,7 +24,7 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
         WorkspaceUi.OpenItemWorkspace(context);
         WorkspaceUi.SelectItem(context, "12", "Commando");
         context.Recorder.Check(
-            "На вкладке «Поля» показана подсказка о фильтре вложений",
+            "На вкладке «Поля» показана подсказка о фильтре навески",
             window.FindByName(context.Strings.Get("ItemCompatibleOnly")) is not null,
             context.Strings.Get("ItemCompatibleOnly"));
 
@@ -34,7 +34,7 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
         var caption27 = $"{attachments} {context.Strings.Format("ItemChildRowCountFormat", 27)}";
         Ui.WaitUntil(
             () => WorkspaceUi.ChildSectionCaptions(window, childTables).Contains(caption27),
-            "раздел «Вложения» показывает 27 строк");
+            "раздел «Навеска» показывает 27 строк");
         var grid = window.WaitById("RowsGrid");
         context.Recorder.Check("До добавления в гриде 27 строк", grid.RowCount() == 27, $"строк: {grid.RowCount()}");
 
@@ -50,13 +50,13 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
             "счётчик раздела вырос до 28 строк",
             TimeSpan.FromSeconds(20));
         Ui.WaitUntil(() => grid.RowCount() == 28, "в гриде 28 строк", TimeSpan.FromSeconds(20));
-        context.Recorder.Check("Добавлена одна строка вложения", true, caption28);
+        context.Recorder.Check("Добавлена одна строка навески", true, caption28);
 
         var headers = WorkspaceUi.VisualHeaders(grid).ToList();
         var attachmentColumn = headers.IndexOf("attachmentIndex");
         var itemColumn = headers.IndexOf("itemIndex");
         context.Recorder.Check(
-            "Колонки ключа вложения и предмета видны",
+            "Колонки ключа навески и предмета видны",
             attachmentColumn >= 0 && itemColumn >= 0,
             string.Join(" | ", headers));
         var lastRow = 27;
@@ -89,7 +89,7 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
             $"подсказка списка «{AttachmentOption}»",
             TimeSpan.FromSeconds(10));
         context.Recorder.Check(
-            "Picker предлагает вложение с его ID",
+            "Picker предлагает навеску с её ID",
             option is not null,
             AttachmentOption);
 
@@ -98,7 +98,7 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
         NativeInput.PressIn(picker, NativeInput.VirtualKey.Tab);
         Thread.Sleep(300);
         var chosen = WorkspaceUi.ReadCell(grid, lastRow, attachmentColumn);
-        context.Recorder.Check("Выбор записывает вложение", chosen == AttachmentName, chosen);
+        context.Recorder.Check("Выбор записывает навеску", chosen == AttachmentName, chosen);
 
         var delete = window.WaitById("ItemTabs")
             .FindAll(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button))
@@ -131,7 +131,7 @@ internal sealed class ItemChildRowsScenario : SmokeScenario
         Ui.WaitUntil(
             () => grid.RowCount() == 28
                 && WorkspaceUi.ReadCell(grid, lastRow, attachmentColumn) == AttachmentName,
-            "Undo возвращает строку с выбранным вложением",
+            "Undo возвращает строку с выбранной навеской",
             TimeSpan.FromSeconds(20));
         context.Recorder.Check("Undo возвращает удалённую строку", true);
 

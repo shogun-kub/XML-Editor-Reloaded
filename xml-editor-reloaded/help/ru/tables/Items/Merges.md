@@ -17,7 +17,7 @@ sources:
   - MergeType lookup table
   - Item metadata
 status: reviewed
-updated: 2026-11-12
+updated: 2026-11-14
 ---
 
 # Merges — рецепты объединения предметов
@@ -129,7 +129,7 @@ MERGELIST
 
 - Все колонки предметов указывают на [Items](Items.md).
 - `mergeType` использует [Lookup.MergeType](../Lookup.md#mergetype).
-- Комбинации вложений обрабатываются в [AttachmentComboMerges](AttachmentComboMerges.md).
+- Комбинации навески обрабатываются в [AttachmentComboMerges](AttachmentComboMerges.md).
 
 ## Localization
 

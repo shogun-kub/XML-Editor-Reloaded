@@ -147,7 +147,7 @@ internal static class WorkspaceUi
             .ToList();
 
     /// <summary>
-    /// Selects a child-table section by the beginning of its caption, for example <c>Вложения</c>.
+    /// Selects a child-table section by the beginning of its caption, for example <c>Навеска</c>.
     /// </summary>
     /// <param name="window">Main window.</param>
     /// <param name="childTablesCaption">Caption of the "Child tables" tab of the item workspace.</param>

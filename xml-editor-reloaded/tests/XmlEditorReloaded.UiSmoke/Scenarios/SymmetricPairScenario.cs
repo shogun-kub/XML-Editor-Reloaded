@@ -34,7 +34,7 @@ internal sealed class SymmetricPairScenario : SmokeScenario
         var grid = window.WaitById("RowsGrid");
         Ui.WaitUntil(
             () => grid.RowCount() == 17,
-            "у item 948 семнадцать несовместимых вложений",
+            "у item 948 семнадцать несовместимых пар навески",
             TimeSpan.FromSeconds(30));
 
         var headers = WorkspaceUi.VisualHeaders(grid).ToList();
