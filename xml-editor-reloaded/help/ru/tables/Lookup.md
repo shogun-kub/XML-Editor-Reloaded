@@ -83,7 +83,7 @@ sources:
   - Lookup XML data
   - Editor metadata for flag/sequence kind
 status: reviewed
-updated: 2026-11-12
+updated: 2026-11-14
 ---
 
 # Справочники
@@ -147,7 +147,7 @@ updated: 2026-11-12
 | `AmmoChoices` | `Lookup/AmmoChoices.xml` | последовательный | разреженные ID для вариантов боеприпасов врагов/ополчения |
 | `AmmoFlag` | `Lookup/AmmoFlag.xml` | маска | биты свойств боеприпасов |
 | `ArmourClass` | `Lookup/ArmourClass.xml` | последовательный | соответствует `ARMOURCLASS_*` |
-| `AttachmentClass` | `Lookup/AttachmentClass.xml` | маска | классы вложений OAS |
+| `AttachmentClass` | `Lookup/AttachmentClass.xml` | маска | классы навески OAS |
 | `AttachmentPoint` | `Lookup/AttachmentPoint.xml` | маска | исправленный файл v5 |
 | `AttachmentSystem` | `Lookup/AttachmentSystem.xml` | последовательный | любая / OAS / NAS |
 | `Cursor` | `Lookup/Cursor.xml` | последовательный | ID курсоров |
@@ -159,7 +159,7 @@ updated: 2026-11-12
 | `LBEClass` | `Lookup/LBEClass.xml` | последовательный | класс разгрузки |
 | `MagazineType` | `Lookup/MagazineType.xml` | последовательный | магазин / пуля / коробка / ящик |
 | `MergeType` | `Lookup/MergeType.xml` | последовательный | вид преобразования слиянием |
-| `NasAttachmentClass` | `Lookup/NasAttachmentClass.xml` | маска | классы вложений NAS |
+| `NasAttachmentClass` | `Lookup/NasAttachmentClass.xml` | маска | классы навески NAS |
 | `NasLayoutClass` | `Lookup/NasLayoutClass.xml` | маска | классы компоновки NAS |
 | `PocketSize` | `Lookup/PocketSize.xml` | последовательный | размер кармана |
 | `Separability` | `Lookup/Separability.xml` | последовательный | съёмный / неотделимый / заменяемый |
@@ -189,11 +189,11 @@ XML-файлах; редактор и будущее окно справки ч�
 
 ### AttachmentClass
 
-Справочник-маска. Биты классов вложений OAS.
+Справочник-маска. Биты классов навески OAS.
 
 ### AttachmentPoint
 
-Справочник-маска. Используется полями слотов вложений и NAS.
+Справочник-маска. Используется полями слотов навески и NAS.
 
 ### AttachmentSystem
 
@@ -238,7 +238,7 @@ XML-файлах; редактор и будущее окно справки ч�
 
 ### NasAttachmentClass
 
-Справочник-маска. Биты классов вложений NAS.
+Справочник-маска. Биты классов навески NAS.
 
 ### NasLayoutClass
 
@@ -325,7 +325,7 @@ JA2Data
 
 - В v4 и v5 те же файлы справочников и та же схема `id`/`name`.
 - `Lookup/AttachmentPoint.xml` в v5 был исправлен 2026-11-07; теперь он разбирается и содержит
-  значения точек вложения:
+  значения точек навески:
 
 | id | name |
 |---:|---|

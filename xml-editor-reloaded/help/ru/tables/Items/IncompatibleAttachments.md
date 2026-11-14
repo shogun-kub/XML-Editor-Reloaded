@@ -2,7 +2,7 @@
 schema: 1
 lang: ru
 family: items-attachments
-title: "IncompatibleAttachments — исключения вложений"
+title: "IncompatibleAttachments — исключения навески"
 tables:
   - IncompatibleAttachments
 table_ids:
@@ -16,10 +16,10 @@ sources:
   - Incompatible attachment table data
   - Item metadata
 status: reviewed
-updated: 2026-11-12
+updated: 2026-11-14
 ---
 
-# IncompatibleAttachments — исключения вложений
+# IncompatibleAttachments — исключения навески
 
 ## Contents
 
@@ -37,7 +37,7 @@ updated: 2026-11-12
 
 ## Purpose
 
-`IncompatibleAttachments.xml` объявляет пары вложений, которые нельзя устанавливать вместе. Пара — правило исключения, а не замена маскам классов `AttachmentInfo`.
+`IncompatibleAttachments.xml` объявляет пары навески, которые нельзя устанавливать вместе. Пара — правило исключения, а не замена маскам классов `AttachmentInfo`.
 
 ## Tables
 
@@ -59,8 +59,8 @@ INCOMPATIBLEATTACHMENTLIST
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/itemIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** ID предмета вложения. Строка объявляет, что это вложение нельзя устанавливать вместе с несовместимым вложением.
-- **Values:** ID предмета вложения.
+- **Description:** ID предмета навески. Строка объявляет, что эту навеску нельзя устанавливать вместе с несовместимой навеской.
+- **Values:** ID предмета навески.
 - **Default:** `0`, если элемент отсутствует; пустой элемент означает игровое значение по умолчанию.
 - **Source:** game code (attachment/face-gear loader); table data.
 - **Confidence:** `source`
@@ -68,8 +68,8 @@ INCOMPATIBLEATTACHMENTLIST
 ### `INCOMPATIBLEATTACHMENTLIST/INCOMPATIBLEATTACHMENT/incompatibleattachmentIndex`
 
 - **Type:** `Integer` (`UINT16`)
-- **Description:** ID предмета вложения, который нельзя устанавливать вместе с `itemIndex`.
-- **Values:** ID предмета вложения, который нельзя устанавливать вместе с `itemIndex`.
+- **Description:** ID предмета навески, который нельзя устанавливать вместе с `itemIndex`.
+- **Values:** ID предмета навески, который нельзя устанавливать вместе с `itemIndex`.
 - **Default:** `0`, если элемент отсутствует; пустой элемент означает игровое значение по умолчанию.
 - **Source:** game code (attachment/face-gear loader); table data.
 - **Confidence:** `source`
@@ -89,7 +89,7 @@ INCOMPATIBLEATTACHMENTLIST
 
 ## Sources
 
-- Данные таблицы несовместимых вложений.
+- Данные таблицы несовместимой навески.
 - Метаданные предметов.
 - Типы и ограничения полей: метаданные предметов.
 - Описания используют имена XML-элементов, значения справочников и устаревшие подписи полей; записи с пометкой `inferred` не заявляют проверенную кодом формулу.

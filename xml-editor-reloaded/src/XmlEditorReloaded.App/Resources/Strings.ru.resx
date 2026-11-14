@@ -397,7 +397,7 @@
     <value>Инвентарь и графика</value>
   </data>
   <data name="DetailGroup.attachments" xml:space="preserve">
-    <value>Приспособления</value>
+    <value>Навеска</value>
   </data>
   <data name="DetailGroup.combat" xml:space="preserve">
     <value>Бой</value>
@@ -1021,7 +1021,7 @@
     <value>Тип графики</value>
   </data>
   <data name="ItemCompatibleOnly" xml:space="preserve">
-    <value>Показываются только предметы, помеченные как вложения.</value>
+    <value>Показываются только предметы, помеченные как навеска.</value>
   </data>
   <data name="ItemCountFormat" xml:space="preserve">
     <value>{0} из {1} предметов</value>
@@ -1057,7 +1057,7 @@
     <value>Удалить</value>
   </data>
   <data name="ItemListSection.DefaultAttachment" xml:space="preserve">
-    <value>Вложения по умолчанию</value>
+    <value>Навеска по умолчанию</value>
   </data>
   <data name="ItemListSection.BarrelConfiguration" xml:space="preserve">
     <value>Конфигурации стволов</value>
@@ -1087,13 +1087,13 @@
     <value>Разгрузка</value>
   </data>
   <data name="ItemSection.Items_Attachments" xml:space="preserve">
-    <value>Вложения</value>
+    <value>Навеска</value>
   </data>
   <data name="ItemSection.Items_AttachmentInfo" xml:space="preserve">
-    <value>Сведения о вложениях</value>
+    <value>Сведения о навеске</value>
   </data>
   <data name="ItemSection.Items_IncompatibleAttachments" xml:space="preserve">
-    <value>Несовместимые вложения</value>
+    <value>Несовместимая навеска</value>
   </data>
   <data name="ItemSection.Items_Launchables" xml:space="preserve">
     <value>Боеприпасы</value>
@@ -1105,10 +1105,10 @@
     <value>Преобразования</value>
   </data>
   <data name="ItemSection.Items_AttachmentComboMerges" xml:space="preserve">
-    <value>Слияния комбинаций вложений</value>
+    <value>Слияния комбинаций навески</value>
   </data>
   <data name="ItemSectionReverse.Items_Attachments" xml:space="preserve">
-    <value>Предметы с этим вложением</value>
+    <value>Предметы с этой навеской</value>
   </data>
   <data name="ItemSectionReverse.Items_Launchables" xml:space="preserve">
     <value>Боеприпасы</value>
@@ -1252,7 +1252,7 @@
     <value>Все флаги</value>
   </data>
   <data name="ItemFilterFlagAttachments" xml:space="preserve">
-    <value>Вложения</value>
+    <value>Навеска</value>
   </data>
   <data name="ItemFilterFlagDrugs" xml:space="preserve">
     <value>Наркотики</value>
