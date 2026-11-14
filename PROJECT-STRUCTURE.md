@@ -12,6 +12,7 @@ JA2_1.13 Tools/
 ├── README.md                        # GitHub repository overview (English, default)
 ├── README.ru.md                     # GitHub repository overview (Russian)
 ├── CODE-OVERVIEW.md                 # Code architecture, class/method map and improvement backlog
+├── CLASS-MAP.md                     # Type-by-type map of all projects and their connections
 ├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
@@ -151,6 +152,20 @@ XmlEditorReloaded.Data ──>  Core
 XmlEditorReloaded.Imaging ──> Core
 XmlEditorReloaded.Core ──>  (none)
 ```
+
+## Class map
+
+[`CLASS-MAP.md`](CLASS-MAP.md) describes every top-level production type, its responsibility,
+and its main collaborators, grouped by project and folder. The inventory section is generated from
+the XML documentation comments; keep the architecture text in sync manually and regenerate the
+tables after structural changes:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/class-map.ps1
+```
+
+The test projects are summarized in the same document and their full type inventory is kept in a
+collapsed section, so the production map stays readable.
 
 - Backend projects must not reference WPF or `System.Windows.*`.
 - Cross-library contracts live in `Core`; implementations stay in their own projects.

@@ -69,6 +69,26 @@ internal sealed class HelpScenario : SmokeScenario
             help.WaitById("HelpFieldDescriptionText").ReadName().Length > 0,
             help.WaitById("HelpFieldDescriptionText").ReadName());
 
+        var contentScroll = help.WaitById("HelpContentScroll");
+        if (!contentScroll.TryGetCurrentPattern(ScrollPattern.Pattern, out var rawScroll)
+            || rawScroll is not ScrollPattern contentScrollPattern)
+        {
+            throw new UiTimeoutException("Панель справки не поддерживает прокрутку.");
+        }
+
+        var beforeWheel = contentScrollPattern.Current.VerticalScrollPercent;
+        NativeInput.EnsureForeground(help);
+        NativeInput.WheelAt(contentScroll, -120);
+        Ui.WaitUntil(
+            () => contentScrollPattern.Current.VerticalScrollPercent > beforeWheel,
+            "прокрутка справки колесом мыши");
+        context.Recorder.Check(
+            "Колесо мыши прокручивает справку",
+            contentScrollPattern.Current.VerticalScrollPercent > beforeWheel,
+            contentScrollPattern.Current.VerticalScrollPercent.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture));
+        contentScrollPattern.SetScrollPercent(ScrollPattern.NoScroll, 0);
+        Thread.Sleep(150);
+
         help.WaitById("HelpSearchBox").SetText("bRecoilX");
         help.WaitById("HelpSearchButton").InvokeButton();
         Ui.WaitUntil(

@@ -16,6 +16,7 @@ internal static class NativeInput
     private const uint MouseEventLeftUp = 0x0004;
     private const uint MouseEventRightDown = 0x0008;
     private const uint MouseEventRightUp = 0x0010;
+    private const uint MouseEventWheel = 0x0800;
 
     /// <summary>
     /// Virtual-key codes used by the runner.
@@ -372,6 +373,27 @@ internal static class NativeInput
                 return;
             }
         }
+    }
+
+    /// <summary>
+    /// Moves the pointer to the center of an element and sends one mouse-wheel notch.
+    /// </summary>
+    /// <param name="element">Element under the pointer.</param>
+    /// <param name="delta">Wheel delta; positive scrolls up, negative scrolls down.</param>
+    public static void WheelAt(System.Windows.Automation.AutomationElement element, int delta)
+    {
+        var bounds = element.Current.BoundingRectangle;
+        if (bounds.IsEmpty)
+        {
+            return;
+        }
+
+        SetCursorPos(
+            (int)(bounds.Left + (bounds.Width / 2)),
+            (int)(bounds.Top + (bounds.Height / 2)));
+        Thread.Sleep(80);
+        Send([WheelInput(delta)]);
+        Thread.Sleep(150);
     }
 
     private static void ClickCaption(IntPtr windowHandle)
@@ -734,6 +756,19 @@ internal static class NativeInput
         Data = new InputUnion
         {
             Mouse = new MouseInputData { Flags = flags },
+        },
+    };
+
+    private static Input WheelInput(int delta) => new()
+    {
+        Type = InputMouse,
+        Data = new InputUnion
+        {
+            Mouse = new MouseInputData
+            {
+                Flags = MouseEventWheel,
+                MouseData = (uint)delta,
+            },
         },
     };
 

@@ -153,7 +153,9 @@
                            Text="{Binding StatusText}" />
             </Grid>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1"
+                          AutomationProperties.AutomationId="HelpContentScroll"
+                          VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <Grid>
                         <Grid.ColumnDefinitions>

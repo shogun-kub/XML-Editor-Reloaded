@@ -2,6 +2,8 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 using XmlEditorReloaded.App.Services;
 
 namespace XmlEditorReloaded.App.Views;
@@ -112,6 +114,67 @@ public partial class MarkdownViewer : UserControl
 
             LinkRequested?.Invoke(this, target);
         }
+    }
+
+    private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (ShowScrollBars || e.Handled)
+        {
+            return;
+        }
+
+        if (FindParentScrollViewer(this) is not { } scrollViewer)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        var notches = Math.Max(1, (int)Math.Round(Math.Abs(e.Delta) / 120.0));
+        var lines = SystemParameters.WheelScrollLines;
+        if (lines < 0)
+        {
+            for (var index = 0; index < notches; index++)
+            {
+                if (e.Delta > 0)
+                {
+                    scrollViewer.PageUp();
+                }
+                else
+                {
+                    scrollViewer.PageDown();
+                }
+            }
+
+            return;
+        }
+
+        for (var index = 0; index < lines * notches; index++)
+        {
+            if (e.Delta > 0)
+            {
+                scrollViewer.LineUp();
+            }
+            else
+            {
+                scrollViewer.LineDown();
+            }
+        }
+    }
+
+    private static ScrollViewer? FindParentScrollViewer(DependencyObject start)
+    {
+        var current = VisualTreeHelper.GetParent(start);
+        while (current is not null)
+        {
+            if (current is ScrollViewer scrollViewer)
+            {
+                return scrollViewer;
+            }
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 
     private void NavigateToAnchor(string anchor)
