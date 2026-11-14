@@ -59,3 +59,7 @@ $RECYCLE.BIN/
 .artifacts/
 .acl-recovery/
 .tmp/
+
+# ===== Local SonarQube credentials =====
+# A local token for SonarScanner; never commit it.
+sonartoken.txt

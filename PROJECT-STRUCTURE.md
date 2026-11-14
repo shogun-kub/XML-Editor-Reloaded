@@ -13,6 +13,7 @@ JA2_1.13 Tools/
 ├── README.ru.md                     # GitHub repository overview (Russian)
 ├── CODE-OVERVIEW.md                 # Code architecture, class/method map and improvement backlog
 ├── CLASS-MAP.md                     # Type-by-type map of all projects and their connections
+├── SONAR.md                         # Local-only SonarQube analysis and issue export
 ├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
