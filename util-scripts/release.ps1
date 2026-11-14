@@ -8,11 +8,13 @@ once framework-dependent (it then requires the .NET 10 Desktop Runtime), copies 
 into each package, creates a ZIP with a single top-level folder per flavor, and writes a SHA-256
 checksum next to each archive.
 
-The version is read from xml-editor-reloaded/Directory.Build.props. Passing -Version is optional and
-is rejected when it does not match that value, so a release tag cannot silently package another build.
+The version is read from xml-editor-reloaded/Directory.Build.props. Passing -Version is optional;
+a pre-release may add a numbered suffix (`1.1.0-p1`), but its base (`1.1.0`) must match the props
+value. This keeps a release tag from silently packaging another build.
 
 .PARAMETER Version
-Expected release version, for example 1.0.0. Defaults to the version in Directory.Build.props.
+Expected release version, for example `1.1.0` or `1.1.0-p1`. Defaults to the version in
+Directory.Build.props.
 
 .PARAMETER Runtime
 Runtime identifier to publish. The editor currently ships for win-x64 only.
@@ -27,7 +29,7 @@ Skip the xUnit suite. Intended for a caller that has already run the tests in th
 ./util-scripts/release.ps1
 
 .EXAMPLE
-./util-scripts/release.ps1 -Version 1.0.0 -OutputDirectory out/release
+./util-scripts/release.ps1 -Version 1.1.0-p1 -OutputDirectory out/release
 
 .NOTES
 The script never writes to References/. Build output stays under out/. Exit code is zero only when
@@ -67,12 +69,14 @@ if ($propsVersion -notmatch '^\d+\.\d+\.\d+$') {
 if ([string]::IsNullOrWhiteSpace($Version)) {
     $Version = $propsVersion
 }
-elseif ($Version -ne $propsVersion) {
-    throw "Requested version '$Version' does not match Directory.Build.props version '$propsVersion'."
+
+if ($Version -notmatch '^\d+\.\d+\.\d+(?:-p[1-9]\d*)?$') {
+    throw "Version '$Version' must look like 1.1.0 or 1.1.0-p1."
 }
 
-if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-    throw "Version '$Version' must contain three numeric parts, for example 1.0.0."
+$baseVersion = $Version -replace '-p[1-9]\d*$', ''
+if ($baseVersion -ne $propsVersion) {
+    throw "Requested version '$Version' has base '$baseVersion', which does not match Directory.Build.props version '$propsVersion'."
 }
 
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
@@ -131,6 +135,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $documents = @(
     @{ Source = (Join-Path $root 'README.md'); Target = 'README.md' },
     @{ Source = (Join-Path $root 'USER-GUIDE.md'); Target = 'USER-GUIDE.md' },
+    @{ Source = (Join-Path $root 'USER-GUIDE-RU.md'); Target = 'USER-GUIDE-RU.md' },
     @{ Source = (Join-Path $root 'CHANGELOG.md'); Target = 'CHANGELOG.md' },
     @{ Source = (Join-Path $root 'LICENSE'); Target = 'LICENSE' },
     @{ Source = (Join-Path $root 'THIRD-PARTY-NOTICES.md'); Target = 'THIRD-PARTY-NOTICES.md' },
@@ -173,6 +178,7 @@ function New-ReleasePackage {
         '-p:PublishReadyToRun=false',
         '-p:DebugType=None',
         '-p:DebugSymbols=false',
+        "-p:Version=$Version",
         '-p:IncludeSourceRevisionInInformationalVersion=false',
         '-m:1'
     )
@@ -203,8 +209,8 @@ function New-ReleasePackage {
     }
 
     $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable)
-    if ($fileVersion.FileVersion -notlike "$Version.*") {
-        throw "Published file version '$($fileVersion.FileVersion)' does not match '$Version'."
+    if ($fileVersion.FileVersion -notlike "$baseVersion.*") {
+        throw "Published file version '$($fileVersion.FileVersion)' does not match base version '$baseVersion'."
     }
 
     Get-ChildItem -LiteralPath $PublishDirectory -Force |

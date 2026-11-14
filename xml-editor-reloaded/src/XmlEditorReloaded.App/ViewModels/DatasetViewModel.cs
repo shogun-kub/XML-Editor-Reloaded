@@ -52,7 +52,7 @@ public partial class DatasetViewModel : ObservableObject
     private readonly IDialogService _dialogService;
     private readonly DatasetWindowTab _initialTab;
     private IReadOnlyList<TableDescriptor> _tables = Array.Empty<TableDescriptor>();
-    private IReadOnlyList<DatasetIssueItem> _allIssues = Array.Empty<DatasetIssueItem>();
+    private DatasetIssueItem[] _allIssues = Array.Empty<DatasetIssueItem>();
     private DatasetValidationReport? _report;
     private CancellationTokenSource? _validationCts;
     private CancellationTokenSource? _searchCts;
@@ -344,7 +344,7 @@ public partial class DatasetViewModel : ObservableObject
     public async Task InitializeAsync()
     {
         var tables = await _session.Catalog
-            .GetTablesAsync(_session.TableDataDirectory)
+            .GetTablesAsync(_session.TableDataDirectory, CancellationToken.None)
             .ConfigureAwait(true);
         if (!tables.IsSuccess)
         {
@@ -466,7 +466,7 @@ public partial class DatasetViewModel : ObservableObject
         ValidationNoteText = HasValidationNote
             ? Strings.Format(
                 "DatasetTruncatedFormat",
-                _allIssues.Count,
+                _allIssues.Length,
                 report.IssueCount)
             : string.Empty;
         ApplyIssueFilter();
@@ -538,7 +538,11 @@ public partial class DatasetViewModel : ObservableObject
             var text = string.Equals(Path.GetExtension(path), ".csv", StringComparison.OrdinalIgnoreCase)
                 ? DatasetValidationReportFormatter.FormatCsv(_report)
                 : DatasetValidationReportFormatter.FormatMarkdown(_report);
-            await File.WriteAllTextAsync(path, text, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+            await File.WriteAllTextAsync(
+                    path,
+                    text,
+                    new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+                    CancellationToken.None)
                 .ConfigureAwait(true);
             StatusText = Strings.Format("DatasetExportedFormat", path);
         }

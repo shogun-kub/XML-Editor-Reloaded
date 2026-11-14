@@ -1,0 +1,115 @@
+---
+schema: 1
+lang: en
+family: items-food
+title: "FoodOpinion - profile food preferences"
+tables:
+  - FoodOpinion
+table_ids:
+  - Items.FoodOpinion
+files:
+  - Items/FoodOpinion.xml
+root: FOODOPINIONSLIST
+record: FOODOPINION
+key: uProfile + FoodNumber
+sources:
+  - Food opinion table data
+  - Item metadata
+status: reviewed
+updated: 2026-11-07
+---
+
+# FoodOpinion - profile food preferences
+
+## Contents
+
+- [Purpose](#purpose)
+- [Tables](#tables)
+- [Structure](#structure)
+- [Fields](#fields)
+  - [`FOODOPINIONSLIST/FOODOPINION/uProfile`](#foodopinionslistfoodopinionuprofile)
+  - [`FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`](#foodopinionslistfoodopinionprofile_opinionfoodnumber)
+  - [`FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/MoraleMod`](#foodopinionslistfoodopinionprofile_opinionmoralemod)
+- [Relations](#relations)
+- [Localization](#localization)
+- [Versions](#versions)
+- [Sources](#sources)
+- [Open questions](#open-questions)
+
+## Purpose
+
+`FoodOpinion.xml` stores per-profile food preferences: each row links a profile to a food row and gives the morale modifier for that combination.
+
+## Tables
+
+| Table | File | Notes |
+|---|---|---|
+| `FoodOpinion` | `Items/FoodOpinion.xml` | v4 and v5 have the same field paths; values differ. |
+
+## Structure
+
+```
+FOODOPINIONSLIST
+└── FOODOPINION
+    ├── uProfile
+    └── PROFILE_OPINION
+        ├── FoodNumber
+        └── MoraleMod
+```
+
+## Fields
+
+### `FOODOPINIONSLIST/FOODOPINION/uProfile`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Profile whose food preference is described by this row.
+- **Only used with:** Food system.
+- **Values:** Profile ID; the loader stores one entry per profile, so a later row for the same profile overwrites the earlier one.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** game code (food-opinion loader); food opinion table data.
+- **Confidence:** `source`
+
+### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/FoodNumber`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Food row that the profile likes or dislikes.
+- **Only used with:** Food system.
+- **Values:** Food row index in [Food](Food.md).
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** game code (food/food-opinion loader); table data.
+- **Confidence:** `source`
+
+### `FOODOPINIONSLIST/FOODOPINION/PROFILE_OPINION/MoraleMod`
+
+- **Type:** `Integer` (`INT8`)
+- **Description:** Morale modifier applied to this profile when it consumes the food.
+- **Only used with:** Food system.
+- **Numeric semantics:** Signed morale modifier: positive values improve morale, negative values reduce it, and `0` is neutral.
+- **Values:** Morale modifier for this profile and food.
+- **Default:** `0` when omitted; an empty element follows the game default.
+- **Source:** game code (food/food-opinion loader); table data.
+- **Confidence:** `source`
+
+## Relations
+
+- `uProfile` points to a profile; `FoodNumber` points to [Food](Food.md).
+- The food system must be active for these preferences to affect gameplay.
+
+## Localization
+
+This table has no display strings; profile and food names come from their own tables.
+
+## Versions
+
+v4 and v5 use the same field paths; values may differ.
+
+## Sources
+
+- Food opinion table data.
+- Item metadata.
+- Field types and limits: item metadata.
+- Descriptions use XML element names, lookup values and the table schema comments; entries marked `inferred` do not claim a code-verified formula.
+
+## Open questions
+
+No open question remains for row merging: the loader writes `FoodOpinions[profile]`, so later rows for the same profile replace earlier rows rather than accumulating opinions.

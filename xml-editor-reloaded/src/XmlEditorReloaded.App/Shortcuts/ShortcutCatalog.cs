@@ -78,9 +78,9 @@ public static class ShortcutCatalog
     public const string Validate = "Validate";
 
     /// <summary>
-    /// Gesture for opening the About window.
+    /// Gesture for opening context help for the active table and cell.
     /// </summary>
-    public const string About = "About";
+    public const string Help = "Help";
 
     /// <summary>
     /// Gesture for adding a row.
@@ -144,7 +144,7 @@ public static class ShortcutCatalog
             [CloseTab] = new(Key.W, ModifierKeys.Control),
             [Reload] = new(Key.F5, ModifierKeys.None),
             [Validate] = new(Key.F8, ModifierKeys.None),
-            [About] = new(Key.F1, ModifierKeys.None),
+            [Help] = new(Key.F1, ModifierKeys.None),
             [AddRow] = new(Key.Insert, ModifierKeys.None),
             [DuplicateRow] = new(Key.D, ModifierKeys.Control),
             [DeleteRow] = new(Key.Delete, ModifierKeys.None),

@@ -43,7 +43,7 @@ public sealed partial class LookupUsageViewModel : ObservableObject
         ValueHeader = Strings.Get("LookupUsageValueColumn");
         OpenText = Strings.Get("LookupUsageOpenText");
         CloseText = Strings.Get("LookupUsageCloseText");
-        SelectedUsage = Usages.FirstOrDefault();
+        SelectedUsage = Usages.Count > 0 ? Usages[0] : null;
     }
 
     /// <summary>

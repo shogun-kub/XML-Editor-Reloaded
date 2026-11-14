@@ -11,7 +11,10 @@ namespace XmlEditorReloaded.UiSmoke.Scenarios;
 /// </summary>
 internal static class ImageUi
 {
-    private static readonly Regex Digits = new(@"\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    private static readonly Regex Digits = new(
+        @"\d+",
+        RegexOptions.CultureInvariant | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(2));
 
     /// <summary>
     /// Opens the Images tab and waits until the frame chooser has a count.

@@ -78,6 +78,7 @@ internal sealed class ScenarioResult
 internal sealed class SmokeRunner
 {
     private static readonly TimeSpan ElementTimeout = TimeSpan.FromSeconds(20);
+    private static readonly string GitExecutable = ResolveGitExecutable();
 
     private readonly SmokeOptions _options;
     private readonly UiStrings _strings;
@@ -211,6 +212,11 @@ internal sealed class SmokeRunner
             foreach (var kind in scenario.Datasets)
             {
                 datasets[kind] = _fixtures.Resolve(kind, scenarioDirectory, scenario.WritesTo(kind));
+            }
+
+            if (scenario.CorruptsV5AttachmentPoint)
+            {
+                FixtureBuilder.CorruptAttachmentPoint(datasets[DatasetKind.V5]);
             }
 
             var baseline = datasets
@@ -554,7 +560,7 @@ internal sealed class SmokeRunner
     {
         try
         {
-            var startInfo = new ProcessStartInfo("git", arguments)
+            var startInfo = new ProcessStartInfo(GitExecutable, arguments)
             {
                 WorkingDirectory = _options.RepositoryRoot,
                 RedirectStandardOutput = true,
@@ -576,6 +582,37 @@ internal sealed class SmokeRunner
         {
             return null;
         }
+    }
+
+    private static string ResolveGitExecutable()
+    {
+        var path = Environment.GetEnvironmentVariable("PATH");
+        if (!string.IsNullOrWhiteSpace(path))
+        {
+            foreach (var directory in path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var candidate = Path.Combine(directory.Trim().Trim('"'), "git.exe");
+                if (File.Exists(candidate))
+                {
+                    return Path.GetFullPath(candidate);
+                }
+            }
+        }
+
+        foreach (var programFiles in new[]
+                 {
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                 })
+        {
+            var candidate = Path.Combine(programFiles, "Git", "cmd", "git.exe");
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        throw new InvalidOperationException("git.exe was not found in PATH or the standard Git installation directory.");
     }
 
     /// <summary>

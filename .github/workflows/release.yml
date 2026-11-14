@@ -5,6 +5,12 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      publish_prerelease:
+        description: Publish the built packages as the next numbered pre-release (1.1.0-p1, 1.1.0-p2, ...)
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -20,43 +26,124 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
+
+      - name: Resolve version and release tag
+        id: release
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF_TYPE -eq 'tag') {
+              if ($env:GITHUB_REF_NAME -notmatch '^v(\d+\.\d+\.\d+)(?:-(p([1-9]\d*)))?$') {
+                  throw "Release tags must look like v1.2.3 or v1.2.3-p1; got '$env:GITHUB_REF_NAME'."
+              }
+              $baseVersion = $Matches[1]
+              $prereleaseNumber = $Matches[3]
+              $version = if ($prereleaseNumber) { "${baseVersion}-p${prereleaseNumber}" } else { $baseVersion }
+              $tag = $env:GITHUB_REF_NAME
+              $prerelease = if ($prereleaseNumber) { 'true' } else { 'false' }
+          }
+          else {
+              if ($env:GITHUB_REF_NAME -notmatch '^release/(\d+\.\d+\.\d+)$') {
+                  throw "Manual release runs must start from a release/x.y.z branch; got '$env:GITHUB_REF_NAME'."
+              }
+              $baseVersion = $Matches[1]
+              if ('${{ inputs.publish_prerelease }}' -eq 'true') {
+                  git fetch --tags --force
+                  $max = 0
+                  foreach ($existingTag in (git tag --list "v$baseVersion-p*")) {
+                      if ($existingTag -match "^v$([regex]::Escape($baseVersion))-p([1-9]\d*)$") {
+                          $number = [int]$Matches[1]
+                          if ($number -gt $max) {
+                              $max = $number
+                          }
+                      }
+                  }
+                  $next = $max + 1
+                  $version = "${baseVersion}-p${next}"
+                  $tag = "v$version"
+                  $prerelease = 'true'
+              }
+              else {
+                  $version = $baseVersion
+                  $tag = ''
+                  $prerelease = 'false'
+              }
+          }
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "prerelease=$prerelease" >> $env:GITHUB_OUTPUT
+          "branch=$env:GITHUB_REF_NAME" >> $env:GITHUB_OUTPUT
 
       - name: Build release packages
         shell: pwsh
         run: |
-          if ($env:GITHUB_REF_TYPE -eq 'tag') {
-              $version = $env:GITHUB_REF_NAME.TrimStart('v')
-              pwsh -NoProfile -ExecutionPolicy Bypass -File ./util-scripts/release.ps1 -Version $version
-          }
-          else {
-              pwsh -NoProfile -ExecutionPolicy Bypass -File ./util-scripts/release.ps1
-          }
+          pwsh -NoProfile -ExecutionPolicy Bypass -File ./util-scripts/release.ps1 -Version "${{ steps.release.outputs.version }}"
           if ($LASTEXITCODE -ne 0) {
               throw "Release packaging failed with exit code $LASTEXITCODE."
           }
 
       - name: Upload package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          name: xml-editor-reloaded-win-x64
+          name: xml-editor-reloaded-${{ steps.release.outputs.version }}
           path: out/release/*
           if-no-files-found: error
 
       - name: Publish GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' || inputs.publish_prerelease
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = $env:GITHUB_REF_NAME
+          $tag = "${{ steps.release.outputs.tag }}"
+          $version = "${{ steps.release.outputs.version }}"
+          $prerelease = "${{ steps.release.outputs.prerelease }}" -eq 'true'
+          $baseVersion = $version -replace '-p[1-9]\d*$', ''
+          $changelogPath = Join-Path $env:GITHUB_WORKSPACE 'xml-editor-reloaded/CHANGELOG.md'
+          if (-not (Test-Path -LiteralPath $changelogPath)) {
+              throw "Changelog not found at '$changelogPath'."
+          }
+
+          $lines = @(Get-Content -LiteralPath $changelogPath -Encoding utf8)
+          $start = -1
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match "^##\s+\[$([regex]::Escape($baseVersion))\](?:\s|$)") {
+                  $start = $i
+                  break
+              }
+          }
+          if ($start -lt 0) {
+              throw "CHANGELOG.md has no section for $baseVersion."
+          }
+
+          $end = $lines.Count
+          for ($i = $start + 1; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match '^##\s+\[') {
+                  $end = $i
+                  break
+              }
+          }
+
+          $bodyLines = @()
+          if ($end -gt $start + 1) {
+              $bodyLines = $lines[($start + 1)..($end - 1)]
+          }
+          $notes = ($bodyLines -join "`n").Trim()
+          if ([string]::IsNullOrWhiteSpace($notes)) {
+              throw "CHANGELOG.md section for $baseVersion is empty."
+          }
+
+          $notesPath = Join-Path $env:RUNNER_TEMP "release-notes-$version.md"
+          Set-Content -LiteralPath $notesPath -Value $notes -Encoding utf8
+
           $zips = @(Get-ChildItem -LiteralPath out/release -Filter '*.zip')
           $hashes = @(Get-ChildItem -LiteralPath out/release -Filter '*.sha256')
           if ($zips.Count -ne 2 -or $hashes.Count -ne 2) {
@@ -64,4 +151,13 @@ jobs:
           }
 
           $assets = @($zips.FullName) + @($hashes.FullName)
-          gh release create $tag @assets --title "XML Editor Reloaded $tag" --generate-notes
+          $arguments = @('release', 'create', $tag) + $assets + @(
+              '--title', "XML Editor Reloaded $version",
+              '--notes-file', $notesPath)
+          if ($prerelease) {
+              $arguments += '--prerelease'
+              $arguments += '--target'
+              $arguments += "${{ steps.release.outputs.branch }}"
+          }
+
+          gh @arguments

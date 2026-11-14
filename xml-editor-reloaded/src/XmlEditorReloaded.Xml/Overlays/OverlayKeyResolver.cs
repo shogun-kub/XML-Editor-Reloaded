@@ -133,7 +133,8 @@ public sealed class OverlayKeyResolver
         }
 
         var segment = spec.Segments[segmentIndex];
-        var element = ResolveElements(root, segment.Path, recordElement: null).FirstOrDefault();
+        var elements = ResolveElements(root, segment.Path, recordElement: null);
+        var element = elements.Count > 0 ? elements[0] : null;
         return element is null ? null : CreateResolved(element, segment);
     }
 

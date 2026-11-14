@@ -2143,4 +2143,105 @@ Reload discards unsaved changes and reads the file again. Overwrite replaces the
   <data name="LookupInUseChangeFormat" xml:space="preserve">
     <value>Cannot change ID {0}: the value is used ({1}). First: {2}.</value>
   </data>
-</root>
+  <data name="MenuHelpContext" xml:space="preserve">
+    <value>_Context help</value>
+  </data>
+  <data name="MenuHelpGlossary" xml:space="preserve">
+    <value>_Glossary</value>
+  </data>
+  <data name="MenuHelpIndex" xml:space="preserve">
+    <value>_Index</value>
+  </data>
+  <data name="HelpWindowTitle" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HelpSearchLabel" xml:space="preserve">
+    <value>Search all help</value>
+  </data>
+  <data name="HelpSearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="HelpClearSearch" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="HelpFieldFilterLabel" xml:space="preserve">
+    <value>Filter fields</value>
+  </data>
+  <data name="HelpFieldsLabel" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="HelpSummaryLabel" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="HelpTableLabel" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="HelpDocumentLabel" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="HelpTypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="HelpDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="HelpNumericLabel" xml:space="preserve">
+    <value>Numeric semantics</value>
+  </data>
+  <data name="HelpOnlyUsedWithLabel" xml:space="preserve">
+    <value>Only used with</value>
+  </data>
+  <data name="HelpValuesLabel" xml:space="preserve">
+    <value>Values</value>
+  </data>
+  <data name="HelpDefaultLabel" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="HelpSourceLabel" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="HelpConfidenceLabel" xml:space="preserve">
+    <value>Confidence</value>
+  </data>
+  <data name="HelpLinksLabel" xml:space="preserve">
+    <value>Related help</value>
+  </data>
+  <data name="HelpSectionsLabel" xml:space="preserve">
+    <value>More information</value>
+  </data>
+  <data name="HelpClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="HelpOpenResult" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="HelpOpenTable" xml:space="preserve">
+    <value>Open table</value>
+  </data>
+  <data name="HelpCoverageLink" xml:space="preserve">
+    <value>COVERAGE.md</value>
+  </data>
+  <data name="HelpFieldMissingFormat" xml:space="preserve">
+    <value>No description has been added for field '{0}'. See help/COVERAGE.md.</value>
+  </data>
+  <data name="HelpDocumentNotFoundFormat" xml:space="preserve">
+    <value>Help page '{0}' was not found.</value>
+  </data>
+  <data name="HelpNoResults" xml:space="preserve">
+    <value>No help matches the search.</value>
+  </data>
+  <data name="HelpNoTable" xml:space="preserve">
+    <value>Open a table and press F1 to see its field help.</value>
+  </data>
+  <data name="HelpTableNotFoundFormat" xml:space="preserve">
+    <value>Help for table '{0}' was not found.</value>
+  </data>
+  <data name="HelpTableAliasesFormat" xml:space="preserve">
+    <value>{0} (+{1} aliases)</value>
+  </data>
+  <data name="HelpSearchCountFormat" xml:space="preserve">
+    <value>Results: {0}.</value>
+  </data>
+  <data name="HelpLinkUnavailableFormat" xml:space="preserve">
+    <value>Help document '{0}' is not a table document.</value>
+  </data></root>

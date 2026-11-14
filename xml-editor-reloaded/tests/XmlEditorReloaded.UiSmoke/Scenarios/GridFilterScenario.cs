@@ -50,6 +50,10 @@ internal sealed class GridFilterScenario : SmokeScenario
             "2",
             suggestedItem: "Submachinegun (2)");
         WaitForRowCount(context, 48, total);
+        grid.SetFocus();
+        Ui.WaitUntil(
+            () => window.FindAllById("FilterOperandBox")[0].ReadValue() == "Submachinegun",
+            "поле класса показывает lookup-имя");
         context.Recorder.Check("Фильтр по ubWeaponClass=2 оставляет 48 строк", true, CounterText(window));
         context.Recorder.Check(
             "Поле значения показывает lookup-имя класса оружия",
@@ -65,6 +69,10 @@ internal sealed class GridFilterScenario : SmokeScenario
             "2",
             suggestedItem: "9x19mm (2)");
         WaitForRowCount(context, 25, total);
+        grid.SetFocus();
+        Ui.WaitUntil(
+            () => window.FindAllById("FilterOperandBox")[1].ReadValue() == "9x19mm",
+            "поле калибра показывает имя связанной таблицы");
         context.Recorder.Check("Два условия объединяются через «И»: 25 строк", true, CounterText(window));
         context.Recorder.Check(
             "Поле значения показывает имя калибра из связанной таблицы",
@@ -97,8 +105,7 @@ internal sealed class GridFilterScenario : SmokeScenario
             .Select((caption, index) => (caption, index))
             .First(pair => pair.caption == "ubWeaponClass")
             .index;
-        OpenCellContextMenu(context, classColumn);
-        ScenarioUi.WaitForMenuItem(context.App, context.Strings.Get("EditorFilterByValue")).InvokeButton();
+        OpenCellContextMenu(context, classColumn, context.Strings.Get("EditorFilterByValue"));
         WaitForRowCount(context, 1, total);
         context.Recorder.Check("«Фильтровать по значению» оставляет одну строку", true, CounterText(window));
 
@@ -106,8 +113,7 @@ internal sealed class GridFilterScenario : SmokeScenario
         WaitForRowCount(context, total, total);
         context.Recorder.Check("Сброс фильтра после фильтра по значению", true, CounterText(window));
 
-        OpenCellContextMenu(context, classColumn);
-        ScenarioUi.WaitForMenuItem(context.App, context.Strings.Get("EditorFilterExcludeValue")).InvokeButton();
+        OpenCellContextMenu(context, classColumn, context.Strings.Get("EditorFilterExcludeValue"));
         WaitForRowCount(context, total - 1, total);
         context.Recorder.Check("«Исключить значение» скрывает одну строку", true, CounterText(window));
 
@@ -144,12 +150,30 @@ internal sealed class GridFilterScenario : SmokeScenario
         Thread.Sleep(300);
     }
 
-    private static void OpenCellContextMenu(ScenarioContext context, int column)
+    private static void OpenCellContextMenu(ScenarioContext context, int column, string itemCaption)
     {
-        var grid = context.Window.WaitById("RowsGrid");
-        grid.ScrollToTop();
-        NativeInput.RightClick(grid.Cell(0, column));
-        Thread.Sleep(300);
+        for (var attempt = 0; attempt < 3; attempt++)
+        {
+            var grid = context.Window.WaitById("RowsGrid");
+            grid.ScrollToTop();
+            var cell = grid.Cell(0, column);
+            cell.SetFocus();
+            NativeInput.EnsureForeground(grid);
+            NativeInput.RightClickWindowMessage(cell);
+            try
+            {
+                ScenarioUi.WaitForMenuItem(context.App, itemCaption, TimeSpan.FromSeconds(4)).InvokeButton();
+                return;
+            }
+            catch (UiTimeoutException) when (attempt < 2)
+            {
+                NativeInput.PressWindowMessage(grid, NativeInput.VirtualKey.Escape);
+                NativeInput.RightClick(cell);
+                Thread.Sleep(300);
+            }
+        }
+
+        throw new UiTimeoutException($"пункт меню «{itemCaption}»");
     }
 
     private static void WaitForRowCount(ScenarioContext context, int visible, int total)

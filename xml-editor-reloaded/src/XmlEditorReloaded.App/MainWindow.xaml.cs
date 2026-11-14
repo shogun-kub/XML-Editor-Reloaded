@@ -299,6 +299,17 @@ public partial class MainWindow : Window
     /// <inheritdoc />
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
+        if (e.Key == Key.F1 && DataContext is MainViewModel viewModel)
+        {
+            if (viewModel.OpenHelpCommand.CanExecute(null))
+            {
+                viewModel.OpenHelpCommand.Execute(null);
+            }
+
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.T
             && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
         {

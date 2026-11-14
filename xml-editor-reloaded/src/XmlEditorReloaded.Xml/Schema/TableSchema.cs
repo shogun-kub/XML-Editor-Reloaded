@@ -24,7 +24,7 @@ public sealed class TableSchema
         Columns = columns;
         _columnsByName = columns.ToDictionary(static column => column.XmlFieldName, StringComparer.Ordinal);
         KeyColumns = columns.Where(static column => column.IsKey).ToArray();
-        KeyColumn = KeyColumns.FirstOrDefault();
+        KeyColumn = KeyColumns.Count > 0 ? KeyColumns[0] : null;
     }
 
     /// <summary>

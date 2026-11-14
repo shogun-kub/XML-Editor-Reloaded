@@ -18,6 +18,12 @@ internal sealed class TableDetailsScenario : SmokeScenario
     public override DatasetKind ActiveDataset => DatasetKind.V4;
 
     /// <inheritdoc />
+    public override bool WritesTo(DatasetKind kind) => kind == DatasetKind.V5;
+
+    /// <inheritdoc />
+    public override bool CorruptsV5AttachmentPoint => true;
+
+    /// <inheritdoc />
     public override void Run(ScenarioContext context)
     {
         var window = context.Window;

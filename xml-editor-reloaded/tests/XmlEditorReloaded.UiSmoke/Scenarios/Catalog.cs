@@ -113,6 +113,7 @@ internal static class ScenarioCatalog
         new SpecializedXmlViewScenario(),
         new MercXmlViewScenario(),
         new NestedXmlViewScenario(),
+        new HelpScenario(),
     ];
 
     /// <summary>

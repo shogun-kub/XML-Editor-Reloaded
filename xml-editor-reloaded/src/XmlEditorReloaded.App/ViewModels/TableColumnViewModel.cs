@@ -15,17 +15,20 @@ public sealed class TableColumnViewModel : ObservableObject
     private bool _isVisible;
     private double _displayWidth;
     private int _displayOrder;
+    private string? _helpDescription;
 
     internal TableColumnViewModel(
         TableSchemaColumn column,
         Action<TableColumnViewModel, bool>? visibilityChanged = null,
         LookupColumnData? lookup = null,
-        RelationColumnData? relation = null)
+        RelationColumnData? relation = null,
+        string? helpDescription = null)
     {
         ArgumentNullException.ThrowIfNull(column);
         Column = column;
         _visibilityChanged = visibilityChanged;
         _displayOrder = column.Order;
+        _helpDescription = helpDescription;
         Lookup = lookup;
         Relation = relation;
     }
@@ -259,7 +262,26 @@ public sealed class TableColumnViewModel : ObservableObject
     /// <summary>
     /// Gets the tooltip text for the column header.
     /// </summary>
-    public string Tooltip => Column.TooltipKey ?? Column.XmlFieldName;
+    public string Tooltip =>
+        string.IsNullOrWhiteSpace(_helpDescription)
+            ? Column.TooltipKey ?? Column.XmlFieldName
+            : _helpDescription;
+
+    /// <summary>
+    /// Applies the table-help description to the column header tooltip.
+    /// </summary>
+    /// <param name="description">Help description, or <see langword="null"/> to restore the fallback.</param>
+    internal void SetHelpDescription(string? description)
+    {
+        if (string.Equals(_helpDescription, description, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _helpDescription = description;
+        OnPropertyChanged(nameof(Tooltip));
+        OnPropertyChanged(nameof(HeaderTooltip));
+    }
 
     /// <summary>
     /// Gets the column description shown in the chooser, for example <c>Integer, key</c>.

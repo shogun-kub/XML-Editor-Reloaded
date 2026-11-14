@@ -89,10 +89,10 @@ public sealed class TableDataComparer : ITableComparisonService
             var relativePath = leftDescriptor?.RelativePath ?? rightDescriptor!.RelativePath;
             // Field comparison is meaningful only when both sides parsed. A malformed or
             // unreadable side would otherwise make every field of the other side look removed.
-            var fields = leftDescriptor is not null
+            List<FieldComparison> fields = leftDescriptor is not null
                 && rightDescriptor is not null
                 && (left?.Analysis is null || right?.Analysis is null)
-                    ? Array.Empty<FieldComparison>()
+                    ? []
                     : CompareFields(left?.Analysis, right?.Analysis);
             var value = left?.Document is not null && right?.Document is not null
                 ? TableValueComparer.Compare(left.Document, right.Document, cancellationToken)
@@ -211,7 +211,7 @@ public sealed class TableDataComparer : ITableComparisonService
             document);
     }
 
-    private static IReadOnlyList<FieldComparison> CompareFields(AnalyzedTable? left, AnalyzedTable? right)
+    private static List<FieldComparison> CompareFields(AnalyzedTable? left, AnalyzedTable? right)
     {
         var rightByName = right?.Fields.ToDictionary(static field => field.Name, StringComparer.Ordinal);
         var leftByName = left?.Fields.ToDictionary(static field => field.Name, StringComparer.Ordinal);
@@ -281,11 +281,11 @@ public sealed class TableDataComparer : ITableComparisonService
             : FieldComparisonStatus.Same;
     }
 
-    private static IReadOnlyList<LookupReferenceComparison> BuildLookupReferences(
-        IReadOnlyList<TableComparisonEntry> entries,
-        IReadOnlySet<TableName> leftTables,
-        IReadOnlySet<TableName> rightTables,
-        IReadOnlyDictionary<TableName, TableMetadata> metadata)
+    private static LookupReferenceComparison[] BuildLookupReferences(
+        List<TableComparisonEntry> entries,
+        HashSet<TableName> leftTables,
+        HashSet<TableName> rightTables,
+        Dictionary<TableName, TableMetadata> metadata)
     {
         var entriesByName = entries.ToDictionary(static entry => entry.TableName);
         var references = new List<LookupReferenceComparison>();
@@ -332,7 +332,7 @@ public sealed class TableDataComparer : ITableComparisonService
     }
 
     private static LookupAvailability GetAvailability(
-        IReadOnlyDictionary<TableName, TableComparisonEntry> entries,
+        Dictionary<TableName, TableComparisonEntry> entries,
         TableName lookupName,
         bool useLeft)
     {

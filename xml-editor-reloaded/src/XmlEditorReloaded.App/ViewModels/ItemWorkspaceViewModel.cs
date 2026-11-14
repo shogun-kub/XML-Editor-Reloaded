@@ -46,6 +46,7 @@ public sealed partial class ItemWorkspaceViewModel :
     private readonly IDataSetSession _session;
     private readonly IDialogService _dialogService;
     private readonly IItemImageService _itemImages;
+    private readonly ITableHelpProvider? _tableHelp;
     private readonly TableDescriptor _descriptor;
     private readonly Dictionary<TableName, FieldSourceSet> _fieldSources = new();
     private readonly Dictionary<TableRowViewModel, TableName> _rowOwners = new();
@@ -165,13 +166,15 @@ public sealed partial class ItemWorkspaceViewModel :
     /// <param name="languageCode">Optional language overlay code.</param>
     /// <param name="dialogService">Dialog service used for confirmations and the bit editor.</param>
     /// <param name="itemImages">Item image service used by the previews.</param>
+    /// <param name="tableHelp">Optional table help used by embedded grid tooltips.</param>
     /// <exception cref="ArgumentNullException">Thrown when a required service or descriptor is null.</exception>
     public ItemWorkspaceViewModel(
         IDataSetSession session,
         TableDescriptor descriptor,
         string? languageCode,
         IDialogService dialogService,
-        IItemImageService itemImages)
+        IItemImageService itemImages,
+        ITableHelpProvider? tableHelp = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -183,6 +186,7 @@ public sealed partial class ItemWorkspaceViewModel :
         _languageCode = languageCode;
         _dialogService = dialogService;
         _itemImages = itemImages;
+        _tableHelp = tableHelp;
 
         Title = descriptor.TableName.Value.Split('.').Last();
         _statusText = Strings.Get("EditorLoading");
@@ -740,7 +744,7 @@ public sealed partial class ItemWorkspaceViewModel :
         IsBusy = true;
         try
         {
-            var report = await _set.SaveDetailedAsync().ConfigureAwait(true);
+            var report = await _set.SaveDetailedAsync(cancellationToken: CancellationToken.None).ConfigureAwait(true);
             if (report.IsSuccess)
             {
                 ApplySavedState();
@@ -811,7 +815,9 @@ public sealed partial class ItemWorkspaceViewModel :
                     return false;
                 }
 
-                var forced = await _set.SaveDetailedAsync(forceOverwrite: true).ConfigureAwait(true);
+                var forced = await _set
+                    .SaveDetailedAsync(forceOverwrite: true, cancellationToken: CancellationToken.None)
+                    .ConfigureAwait(true);
                 if (forced.IsSuccess)
                 {
                     ApplySavedState();
@@ -886,7 +892,10 @@ public sealed partial class ItemWorkspaceViewModel :
             foreach (var workspace in AllWorkspaces())
             {
                 var report = await workspace
-                    .ValidateAsync(_session.Lookups, workspace.Language?.Code)
+                    .ValidateAsync(
+                        _session.Lookups,
+                        workspace.Language?.Code,
+                        CancellationToken.None)
                     .ConfigureAwait(true);
                 foreach (var issue in report.Issues)
                 {
@@ -1747,7 +1756,7 @@ public sealed partial class ItemWorkspaceViewModel :
             try
             {
                 var ensured = await _session
-                    .EnsureOverlayAsync(_descriptor, option.Language)
+                    .EnsureOverlayAsync(_descriptor, option.Language, CancellationToken.None)
                     .ConfigureAwait(true);
                 if (!ensured.IsSuccess)
                 {
@@ -1896,7 +1905,8 @@ public sealed partial class ItemWorkspaceViewModel :
                 member.Workspace.Descriptor,
                 member.Workspace.Language?.Code,
                 _dialogService,
-                _itemImages)
+                _itemImages,
+                tableHelp: _tableHelp)
             {
                 IsEmbedded = true,
                 ShowDetails = false,
@@ -2289,7 +2299,7 @@ public sealed partial class ItemWorkspaceViewModel :
     /// stock the selected item. The selection is kept when that dealer is still available.
     /// </summary>
     /// <param name="stocked">Dealer tables that already have a row for the selected item.</param>
-    private void RebuildShopkeeperDealerOptions(IReadOnlySet<TableName> stocked)
+    private void RebuildShopkeeperDealerOptions(HashSet<TableName> stocked)
     {
         var selected = SelectedShopkeeperDealer?.TableName;
         ShopkeeperDealerOptions.Clear();
@@ -2590,8 +2600,8 @@ public sealed partial class ItemWorkspaceViewModel :
             var fields = row is null
                 ? Array.Empty<DetailFieldViewModel>()
                 : BuildSubTableFields(member, row);
-            var listSections = row is null
-                ? Array.Empty<ItemListSectionViewModel>()
+            List<ItemListSectionViewModel> listSections = row is null
+                ? []
                 : BuildSubTableListSections(member, row);
             _allFields.AddRange(fields);
             SubTableSections.Add(new ItemSubTableSectionViewModel(
@@ -2605,7 +2615,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
     }
 
-    private IReadOnlyList<DetailFieldViewModel> BuildSubTableFields(
+    private DetailFieldViewModel[] BuildSubTableFields(
         TableSetMember member,
         TableRowViewModel row)
     {
@@ -2646,7 +2656,7 @@ public sealed partial class ItemWorkspaceViewModel :
     /// Builds the repeated-field sections of one sub-table row. A list field is skipped by
     /// <see cref="BuildSubTableFields"/> because it is edited as a list, not as a scalar cell.
     /// </summary>
-    private IReadOnlyList<ItemListSectionViewModel> BuildSubTableListSections(
+    private List<ItemListSectionViewModel> BuildSubTableListSections(
         TableSetMember member,
         TableRowViewModel row)
     {
@@ -2939,7 +2949,7 @@ public sealed partial class ItemWorkspaceViewModel :
         }
     }
 
-    private IReadOnlyList<LookupOption> BuildClassOptions()
+    private LookupOption[] BuildClassOptions()
     {
         var options = _classNames
             .Where(static pair => IsPowerOfTwo(pair.Key))
@@ -3331,7 +3341,7 @@ public sealed partial class ItemWorkspaceViewModel :
         return _imageCts.Token;
     }
 
-    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    private static Dictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
     {
         if (lookup is not { IsAvailable: true })
         {

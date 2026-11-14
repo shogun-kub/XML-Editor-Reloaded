@@ -226,7 +226,7 @@ public sealed class TableSchemaBuilder
         return new TableSchema(
             document.Descriptor.TableName,
             document.RecordElementName,
-            recordElements.Count,
+            recordElements.Length,
             metadata is null || metadata.Columns.Count == 0,
             columns);
     }
@@ -238,7 +238,7 @@ public sealed class TableSchemaBuilder
     /// grid shows the real fields of those nested records. An empty nested table still yields no
     /// elements, which keeps the curated hints from declaring columns for it.
     /// </summary>
-    private static IReadOnlyList<XElement> ResolveRecordElements(TableDocument document)
+    private static XElement[] ResolveRecordElements(TableDocument document)
     {
         if (document.Metadata is { } metadata
             && metadata.RecordKey?.Primary.Path is { Length: > 0 })

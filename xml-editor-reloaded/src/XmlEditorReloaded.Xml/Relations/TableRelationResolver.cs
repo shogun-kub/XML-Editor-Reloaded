@@ -113,7 +113,7 @@ public sealed class TableRelationResolver : ITableRelationResolver
         var document = load.Data!.GetDocument<TableDocument>();
         if (document is null || load.Data.Status == TableDocumentStatus.Malformed)
         {
-            var diagnostic = load.Data.Diagnostics.FirstOrDefault();
+            var diagnostic = load.Data.Diagnostics.Count > 0 ? load.Data.Diagnostics[0] : null;
             return OperationResult<RelationTarget>.Failure(
                 ErrorCodes.XmlParseError,
                 diagnostic is null
@@ -256,7 +256,7 @@ public sealed class TableRelationResolver : ITableRelationResolver
     private static RelationTarget BuildTarget(
         TableRelation relation,
         TableDocument document,
-        IReadOnlyDictionary<string, string> translatedDisplays)
+        Dictionary<string, string> translatedDisplays)
     {
         var entries = new List<RelationTargetEntry>();
         var options = new List<RelationTargetEntry>();

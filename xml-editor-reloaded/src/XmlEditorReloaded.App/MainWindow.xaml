@@ -25,7 +25,7 @@
         <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenSettingsCommand}" />
         <KeyBinding Key="P" Modifiers="Control+Shift" Command="{Binding ValidateDatasetCommand}" />
         <KeyBinding Key="F" Modifiers="Control+Shift" Command="{Binding SearchDatasetCommand}" />
-        <KeyBinding Key="F1" Command="{Binding OpenAboutCommand}" />
+        <KeyBinding Key="F1" Command="{Binding OpenHelpCommand}" />
     </Window.InputBindings>
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -98,9 +98,19 @@
             </MenuItem>
             <MenuItem Header="{Binding HelpMenuText}"
                       AutomationProperties.AutomationId="HelpMenu">
+                <MenuItem Header="{Binding HelpContextText}"
+                          AutomationProperties.AutomationId="HelpContextMenuItem"
+                          InputGestureText="{shortcuts:GestureText Action=Help}"
+                          Command="{Binding OpenHelpCommand}" />
+                <MenuItem Header="{Binding HelpGlossaryText}"
+                          AutomationProperties.AutomationId="GlossaryMenuItem"
+                          Command="{Binding OpenGlossaryCommand}" />
+                <MenuItem Header="{Binding HelpIndexText}"
+                          AutomationProperties.AutomationId="IndexMenuItem"
+                          Command="{Binding OpenIndexCommand}" />
+                <Separator />
                 <MenuItem Header="{Binding AboutMenuText}"
                           AutomationProperties.AutomationId="AboutMenuItem"
-                          InputGestureText="{shortcuts:GestureText Action=About}"
                           Command="{Binding OpenAboutCommand}" />
             </MenuItem>
         </Menu>

@@ -1,0 +1,113 @@
+---
+schema: 1
+lang: en
+family: items-launchables
+title: "Launchables - launcher-to-ammo pairs"
+tables:
+  - Launchables
+table_ids:
+  - Items.Launchables
+files:
+  - Items/Launchables.xml
+root: LAUNCHABLELIST
+record: LAUNCHABLE
+key: launchableIndex + itemIndex
+sources:
+  - Game code (launcher loader)
+  - Item table data
+status: reviewed
+updated: 2026-11-07
+---
+
+# Launchables - launcher-to-ammo pairs
+
+## Contents
+
+- [Purpose](#purpose)
+- [Tables](#tables)
+- [Structure](#structure)
+- [Fields](#fields)
+  - [`LAUNCHABLELIST/LAUNCHABLE/launchableIndex`](#launchablelistlaunchablelaunchableindex)
+  - [`LAUNCHABLELIST/LAUNCHABLE/itemIndex`](#launchablelistlaunchableitemindex)
+- [Relations](#relations)
+- [Localization](#localization)
+- [Versions](#versions)
+- [Sources](#sources)
+- [Open questions](#open-questions)
+
+## Purpose
+
+`Launchables.xml` lists which items a launcher can fire. Each record is a pair: the launcher
+item and the launchable ammo/projectile item. The game stores the pairs in
+`Launchable[MAXITEMS+1][2]` and uses them when a grenade launcher, rocket launcher or similar
+weapon selects ammunition.
+
+## Tables
+
+| Table | File | Notes |
+|---|---|---|
+| `Launchables` | `Items/Launchables.xml` | v4 and v5 have the same two fields |
+
+## Structure
+
+```
+LAUNCHABLELIST
+└── LAUNCHABLE
+    ├── launchableIndex
+    └── itemIndex
+```
+
+The loader does not use a key; it appends records in file order to the runtime pair table and
+records the number of pairs. The editor uses the pair (`launchableIndex`, `itemIndex`) as a
+compound key. Reordering records changes the runtime order, so treat the file order as
+meaningful until a caller proves otherwise.
+
+## Fields
+
+### `LAUNCHABLELIST/LAUNCHABLE/launchableIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item index of the launcher in `Items.uiIndex`. It identifies the
+  weapon that can fire the item on the other side of the pair.
+- **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
+- **Default:** `0`; the pair is still stored, so a zero value is a data error, not "none".
+- **Source:** game code (launcher loader); item table data.
+- **Confidence:** `source`
+
+### `LAUNCHABLELIST/LAUNCHABLE/itemIndex`
+
+- **Type:** `Integer` (`UINT16`)
+- **Description:** Item index of the launchable ammo/projectile in `Items.uiIndex`.
+  It is the item the launcher fires.
+- **Values:** valid `Items.uiIndex` values; stored as `UINT16`.
+- **Default:** `0`; a zero value is a data error.
+- **Source:** game code (launcher loader); item table data.
+- **Confidence:** `source`
+
+## Relations
+
+- `Launchables.launchableIndex` -> [Items](Items.md) `uiIndex` (launcher).
+- `Launchables.itemIndex` -> [Items](Items.md) `uiIndex` (ammo/projectile).
+- The launcher item itself is an [Items](Items.md) record with a launcher class; the ammo item is
+  usually an `IC_AMMO` or explosive item.
+
+## Localization
+
+No strings; both fields are numeric item indexes.
+
+## Versions
+
+v4 and v5 use the same `LAUNCHABLELIST/LAUNCHABLE` structure and the same two fields. Values
+may differ; compare the files when a specific pair matters.
+
+## Sources
+
+- Game code: the launcher/ammo pair loader.
+- Table data: `Items/Launchables.xml`.
+
+## Open questions
+
+- The loader appends in file order and does not deduplicate. The file has no duplicate
+  pairs, but the runtime consequence of a duplicate is not documented.
+- Which launcher classes use the table at runtime is decided in the item and weapon code;
+  this page documents the data contract, not every call site.

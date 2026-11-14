@@ -16,6 +16,7 @@ internal static class NativeInput
     private const uint MouseEventLeftUp = 0x0004;
     private const uint MouseEventRightDown = 0x0008;
     private const uint MouseEventRightUp = 0x0010;
+    private const uint MouseEventWheel = 0x0800;
 
     /// <summary>
     /// Virtual-key codes used by the runner.
@@ -42,6 +43,9 @@ internal static class NativeInput
 
         /// <summary>Home key.</summary>
         Home = 0x24,
+
+        /// <summary>F1 key.</summary>
+        F1 = 0x70,
 
         /// <summary>F2 key.</summary>
         F2 = 0x71,
@@ -371,6 +375,27 @@ internal static class NativeInput
         }
     }
 
+    /// <summary>
+    /// Moves the pointer to the center of an element and sends one mouse-wheel notch.
+    /// </summary>
+    /// <param name="element">Element under the pointer.</param>
+    /// <param name="delta">Wheel delta; positive scrolls up, negative scrolls down.</param>
+    public static void WheelAt(System.Windows.Automation.AutomationElement element, int delta)
+    {
+        var bounds = element.Current.BoundingRectangle;
+        if (bounds.IsEmpty)
+        {
+            return;
+        }
+
+        SetCursorPos(
+            (int)(bounds.Left + (bounds.Width / 2)),
+            (int)(bounds.Top + (bounds.Height / 2)));
+        Thread.Sleep(80);
+        Send([WheelInput(delta)]);
+        Thread.Sleep(150);
+    }
+
     private static void ClickCaption(IntPtr windowHandle)
     {
         if (!GetWindowRect(windowHandle, out var bounds))
@@ -412,6 +437,30 @@ internal static class NativeInput
     {
         EnsureForeground(owner);
         TypeText(text);
+    }
+
+    /// <summary>
+    /// Sends a single virtual key directly to the top-level window through <c>WM_KEYDOWN</c> and
+    /// <c>WM_KEYUP</c>. Use this when a global hotkey or a foreground race prevents <c>SendInput</c>
+    /// from reaching the application under test; the application still receives a normal WPF key event.
+    /// </summary>
+    /// <param name="owner">Element inside the window that must receive the key.</param>
+    /// <param name="key">Virtual key to press.</param>
+    public static void PressWindowMessage(
+        System.Windows.Automation.AutomationElement owner,
+        VirtualKey key)
+    {
+        var windowHandle = TopLevelWindow(owner);
+        if (windowHandle == IntPtr.Zero)
+        {
+            PressIn(owner, key);
+            return;
+        }
+
+        Activate(windowHandle);
+        PostMessage(windowHandle, 0x0100, (IntPtr)(int)key, IntPtr.Zero);
+        Thread.Sleep(30);
+        PostMessage(windowHandle, 0x0101, (IntPtr)(int)key, IntPtr.Zero);
     }
 
     /// <summary>
@@ -493,6 +542,35 @@ internal static class NativeInput
         Thread.Sleep(40);
         Send([MouseEventInput(MouseEventLeftDown), MouseEventInput(MouseEventLeftUp)]);
         Thread.Sleep(80);
+    }
+
+    /// <summary>
+    /// Opens the context menu of an element by posting right-button window messages with client
+    /// coordinates. This path does not depend on the foreground window owning the physical mouse
+    /// cursor, which makes context-menu scenarios repeatable on a busy desktop.
+    /// </summary>
+    /// <param name="element">Element whose context menu is opened.</param>
+    public static void RightClickWindowMessage(System.Windows.Automation.AutomationElement element)
+    {
+        var windowHandle = TopLevelWindow(element);
+        if (windowHandle == IntPtr.Zero)
+        {
+            RightClick(element);
+            return;
+        }
+
+        var point = Center(element);
+        if (!ScreenToClient(windowHandle, ref point))
+        {
+            RightClick(element);
+            return;
+        }
+
+        var packed = (IntPtr)((point.Y << 16) | (point.X & 0xFFFF));
+        PostMessage(windowHandle, 0x0204, (IntPtr)0x0002, packed);
+        Thread.Sleep(60);
+        PostMessage(windowHandle, 0x0205, IntPtr.Zero, packed);
+        Thread.Sleep(300);
     }
 
     /// <summary>
@@ -681,6 +759,19 @@ internal static class NativeInput
         },
     };
 
+    private static Input WheelInput(int delta) => new()
+    {
+        Type = InputMouse,
+        Data = new InputUnion
+        {
+            Mouse = new MouseInputData
+            {
+                Flags = MouseEventWheel,
+                MouseData = (uint)delta,
+            },
+        },
+    };
+
     private static void Send(IReadOnlyList<Input> inputs)
     {
         if (inputs.Count == 0)
@@ -764,6 +855,10 @@ internal static class NativeInput
     [DllImport("user32.dll", SetLastError = true)]
     private static extern uint SendInput(uint count, [In] Input[] inputs, int size);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
+
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetCursorPos(int x, int y);
@@ -785,6 +880,9 @@ internal static class NativeInput
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    private static extern bool ScreenToClient(IntPtr window, ref Point point);
 
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
     private static extern IntPtr GetWindowLongPtr(IntPtr window, int index);

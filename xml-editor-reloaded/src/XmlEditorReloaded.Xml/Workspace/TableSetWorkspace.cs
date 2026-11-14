@@ -994,7 +994,7 @@ public sealed class TableSetWorkspace
                 && string.Equals(relation.SourceField, keyField, StringComparison.Ordinal));
     }
 
-    private static IReadOnlyList<TableRecord> FindDependingRecords(
+    private static TableRecord[] FindDependingRecords(
         TableWorkspace workspace,
         TableRelation relation,
         string value) =>
@@ -1005,7 +1005,7 @@ public sealed class TableSetWorkspace
                 StringComparison.Ordinal))
             .ToArray();
 
-    private static IReadOnlyList<string> FindDependingKeys(
+    private static string[] FindDependingKeys(
         TableWorkspace workspace,
         TableRelation relation,
         string value) =>

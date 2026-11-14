@@ -216,7 +216,7 @@ public sealed class TableDocument
         return starts;
     }
 
-    private static int OffsetOf(string text, IReadOnlyList<int> lineStarts, int line, int position)
+    private static int OffsetOf(string text, List<int> lineStarts, int line, int position)
     {
         if (line < 1 || line > lineStarts.Count || position < 1)
         {

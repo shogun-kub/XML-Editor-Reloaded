@@ -546,7 +546,11 @@ public partial class CompareViewModel : ObservableObject
             var text = string.Equals(Path.GetExtension(path), ".csv", StringComparison.OrdinalIgnoreCase)
                 ? TableComparisonReportFormatter.FormatCsv(_report)
                 : TableComparisonReportFormatter.FormatMarkdown(_report);
-            await File.WriteAllTextAsync(path, text, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+            await File.WriteAllTextAsync(
+                    path,
+                    text,
+                    new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+                    CancellationToken.None)
                 .ConfigureAwait(true);
             StatusText = Strings.Format("CompareExportedText", path);
         }

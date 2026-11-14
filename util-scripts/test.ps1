@@ -23,6 +23,14 @@ Build configuration passed to both build and test. Defaults to Debug.
 .PARAMETER Filter
 Optional xUnit/VSTest filter, for example "Category=Performance".
 
+.PARAMETER ResultsDirectory
+Optional directory for TRX test reports. When set, every test project writes its
+TRX file below this directory. Relative paths are resolved from the repository root.
+Each project's result subdirectory is recreated before the run.
+
+.PARAMETER CollectCoverage
+Collect Cobertura coverage with coverlet. Results default to `.tmp/coverage`.
+
 .PARAMETER NoBuild
 Skip the build and test the already compiled assemblies.
 
@@ -43,6 +51,8 @@ Exit code is zero only when the build and all test projects succeed.
 param(
     [string]$Configuration = 'Debug',
     [string]$Filter,
+    [string]$ResultsDirectory,
+    [switch]$CollectCoverage,
     [switch]$NoBuild,
     [switch]$KeepTemp
 )
@@ -53,6 +63,18 @@ $root = Join-Path $repo 'xml-editor-reloaded'
 $solution = Join-Path $root 'XmlEditorReloaded.slnx'
 $testsDirectory = Join-Path $root 'tests'
 $tmpBase = Join-Path $repo '.tmp'
+
+if ($CollectCoverage -and [string]::IsNullOrWhiteSpace($ResultsDirectory)) {
+    $ResultsDirectory = Join-Path $tmpBase 'coverage'
+}
+
+if (-not [string]::IsNullOrWhiteSpace($ResultsDirectory)) {
+    if (-not [System.IO.Path]::IsPathRooted($ResultsDirectory)) {
+        $ResultsDirectory = Join-Path $repo $ResultsDirectory
+    }
+
+    New-Item -ItemType Directory -Path $ResultsDirectory -Force | Out-Null
+}
 
 if (-not (Test-Path -LiteralPath $solution)) {
     Write-Host "test.ps1: solution not found at $solution" -ForegroundColor Red
@@ -123,6 +145,20 @@ foreach ($project in $projects) {
     if ($Filter) {
         $testArguments += @('--filter', $Filter)
     }
+
+    if (-not [string]::IsNullOrWhiteSpace($ResultsDirectory)) {
+        $projectResults = Join-Path $ResultsDirectory $project.BaseName
+        Remove-TestTemp -Path $projectResults
+        New-Item -ItemType Directory -Path $projectResults -Force | Out-Null
+        $testArguments += @(
+            '--results-directory', $projectResults,
+            '--logger', "trx;LogFileName=$($project.BaseName).trx"
+        )
+        if ($CollectCoverage) {
+            $testArguments += @('--collect', 'XPlat Code Coverage')
+        }
+    }
+
     dotnet @testArguments
     if ($LASTEXITCODE -ne 0) {
         $failed += $project.BaseName

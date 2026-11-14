@@ -26,8 +26,8 @@ Windows may show a SmartScreen warning because the build is not signed with a co
 certificate. Verify the archive's SHA-256 against the matching `.sha256` file:
 
 ```powershell
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64.zip -Algorithm SHA256
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64-framework-dependent.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64-framework-dependent.zip -Algorithm SHA256
 ```
 
 ### Portable mode
@@ -167,7 +167,7 @@ The **Compare** button opens a dialog for choosing two directories. The comparis
 | Ctrl+W | close the tab |
 | F5 | reload the table |
 | F8 | validate the current table |
-| F1 | About |
+| F1 | context help for the active table and field |
 | Insert | add a record |
 | Ctrl+D | duplicate a record |
 | Delete | delete a record |
@@ -177,6 +177,11 @@ The **Compare** button opens a dialog for choosing two directories. The comparis
 | Ctrl+Shift+X | clear filters |
 | Ctrl+G | go to a filter value |
 | Ctrl+N | new item (item workspace) |
+
+`F1` and **Help > Context help** open the field reference for the active table and cell. The
+window searches all table help and follows related-document links; **Open table** opens the
+related table in the main window. **Help > Glossary** and **Help > Index** open the term list
+and the generated table index. **Help > About** remains available without a shortcut.
 
 ## 11. Integrity and recovery
 
@@ -197,7 +202,8 @@ The **Compare** button opens a dialog for choosing two directories. The comparis
 - There is no automatic backup and no three-way merge.
 - Some tables without seed metadata are shown through a document-driven fallback; new fields are
   preserved even when they have no description yet.
-- The interface and help are localized in Russian and English; the language is switched in settings.
+- The interface and help are localized in Russian and English; the language is switched in
+  settings and takes effect after restart. The help content follows the UI language.
 
 ## Reporting problems
 

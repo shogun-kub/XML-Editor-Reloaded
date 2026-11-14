@@ -2,7 +2,15 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
+      - dev
+      - 'release/**'
   pull_request:
+    branches:
+      - main
+      - dev
+      - 'release/**'
   workflow_dispatch:
 
 permissions:
@@ -19,10 +27,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
@@ -37,3 +45,4 @@ jobs:
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1 -Configuration Release -NoBuild
 
       # UI smoke needs an interactive desktop and is intentionally not part of CI.
+      # This workflow never uploads artifacts; release.yml owns packages and releases.

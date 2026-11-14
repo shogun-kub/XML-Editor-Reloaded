@@ -1,0 +1,112 @@
+---
+schema: 1
+lang: en
+family: email-merc-available
+title: "EmailMercAvailable - mercenary availability mail"
+tables:
+  - EmailMercAvailable
+table_ids:
+  - Email.EmailMercAvailable
+files:
+  - Email/EmailMercAvailable.xml
+root: EMAIL_MERC_AVAILABLE
+record: EMAIL
+key: uiIndex
+sources:
+  - Table data
+  - Field names, XML comments and observed values
+status: reviewed
+updated: 2026-11-08
+---
+
+# EmailMercAvailable - mercenary availability mail
+
+## Contents
+
+- [Purpose](#purpose)
+- [Tables](#tables)
+- [Structure](#structure)
+- [Fields](#fields)
+  - [`EMAIL_MERC_AVAILABLE/EMAIL/uiIndex`](#email_merc_availableemailuiindex)
+  - [`EMAIL_MERC_AVAILABLE/EMAIL/Subject`](#email_merc_availableemailsubject)
+  - [`EMAIL_MERC_AVAILABLE/EMAIL/Message`](#email_merc_availableemailmessage)
+- [Relations](#relations)
+- [Localization](#localization)
+- [Versions](#versions)
+- [Sources](#sources)
+- [Open questions](#open-questions)
+
+## Purpose
+
+`EmailMercAvailable.xml` contains the generated e-mail sent when an AIM mercenary becomes available again. Each row has a subject and a message. Both are literal display text; this table does not substitute placeholders. See [Email text formatting](../../EMAIL-TEXT.md).
+
+## Tables
+
+| Table | File | Notes |
+|---|---|---|
+| `EmailMercAvailable` | `Email/EmailMercAvailable.xml` | — |
+
+## Structure
+
+```
+EMAIL_MERC_AVAILABLE
+└── EMAIL
+    ├── uiIndex
+    ├── Subject
+    └── Message
+```
+
+## Fields
+
+
+### `EMAIL_MERC_AVAILABLE/EMAIL/uiIndex`
+
+- **Type:** `Integer` (`UINT8`)
+- **Description:** Index of the e-mail template. It is an array key.
+- **Values:** Integer; see the description for its scale.
+- **Default:** Required; identifies the record.
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
+
+### `EMAIL_MERC_AVAILABLE/EMAIL/Subject`
+
+- **Type:** `String` (`CHAR16`)
+- **Description:** Subject line of the generated e-mail, used as literal text. See [Email text formatting](../../EMAIL-TEXT.md).
+- **Values:** Free text or a symbolic code.
+- **Default:** Absent; the game default applies.
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
+
+### `EMAIL_MERC_AVAILABLE/EMAIL/Message`
+
+- **Type:** `String` (`CHAR16`)
+- **Description:** Body of the generated e-mail. `±` marks a line break in the stored message. See [Email text formatting](../../EMAIL-TEXT.md).
+- **Values:** Free text or a symbolic code.
+- **Default:** Absent; the game default applies.
+- **Source:** game code (email/sender loader); table data.
+- **Confidence:** `source`
+
+## Relations
+
+- The template is selected by its `uiIndex` when the corresponding game event fires.
+- The sender display name comes from [MercProfiles](../MercProfiles.md) `zNickname` for the same profile index; it is not stored in this table.
+
+## Localization
+
+Display names and labels are localized through language overlays; numeric IDs and codes are not.
+
+## Versions
+
+v4 and v5 use the same field paths; values may differ.
+
+## Sources
+
+- Table data.
+- Field names, XML comments and observed values.
+- Descriptions are inferred from names and observed values; no runtime formula is claimed.
+
+## Open questions
+
+- None. The subject and message are used literally; see [Email text formatting](../../EMAIL-TEXT.md).

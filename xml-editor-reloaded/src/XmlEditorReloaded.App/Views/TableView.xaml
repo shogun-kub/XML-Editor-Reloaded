@@ -427,6 +427,15 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Margin="6">
+                            <Button Margin="0,0,0,6"
+                                    Padding="8,1"
+                                    HorizontalAlignment="Right"
+                                    AutomationProperties.AutomationId="DetailHelpButton"
+                                    AutomationProperties.Name="{Binding DetailHeader}"
+                                    ToolTip="{Binding DetailHeader}"
+                                    Content="?"
+                                    Command="{Binding DataContext.OpenHelpCommand,
+                                              RelativeSource={RelativeSource AncestorType=Window}}" />
                             <ItemsControl ItemsSource="{Binding DetailImages}"
                                           Visibility="{Binding HasGraphicFields, Converter={StaticResource BoolToVisibility}}">
                                 <ItemsControl.ItemTemplate>

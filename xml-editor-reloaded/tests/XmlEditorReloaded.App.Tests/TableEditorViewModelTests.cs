@@ -17,6 +17,7 @@ using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
+using XmlEditorReloaded.Data.Help;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Xml.Repository;
 using XmlEditorReloaded.Xml.Lookups;
@@ -29,6 +30,24 @@ namespace XmlEditorReloaded.App.Tests;
 /// </summary>
 public class TableEditorViewModelTests
 {
+    /// <summary>
+    /// Column header tooltips use the field description from the table help data.
+    /// </summary>
+    [Fact]
+    public async Task ColumnHeaderTooltip_UsesTableHelpDescription()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var (editor, _, _, _, _) = await CreateEditorAsync(
+            workspace,
+            tableHelp: new JsonTableHelpProvider());
+
+        var nameColumn = editor.Columns.Single(column => column.Name == "szItemName");
+
+        Assert.Contains("Short item name", nameColumn.Tooltip, StringComparison.Ordinal);
+        Assert.Contains("Short item name", nameColumn.HeaderTooltip, StringComparison.Ordinal);
+    }
+
     /// <summary>
     /// Initialization discovers the schema, builds default columns, and loads rows.
     /// </summary>
@@ -2449,7 +2468,8 @@ public class TableEditorViewModelTests
         bool includeDescriptions = false,
         bool emptyTable = false,
         FakeTableLayoutStore? layoutStore = null,
-        TimeSpan? statusAutoResetDelay = null)
+        TimeSpan? statusAutoResetDelay = null,
+        XmlEditorReloaded.Core.Abstractions.ITableHelpProvider? tableHelp = null)
     {
         var data13 = workspace.PathOf("Data-1.13");
         var tableData = Path.Combine(data13, "TableData");
@@ -2551,7 +2571,8 @@ public class TableEditorViewModelTests
             dialog,
             images,
             layoutStore,
-            statusAutoResetDelay);
+            statusAutoResetDelay,
+            tableHelp: tableHelp);
         await editor.InitializeAsync();
         return (editor, descriptor, data13, dialog, images);
     }

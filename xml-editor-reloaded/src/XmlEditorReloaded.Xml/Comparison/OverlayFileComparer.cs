@@ -339,7 +339,7 @@ internal static class OverlayFileComparer
         return identities;
     }
 
-    private static IReadOnlyList<FlatCell> Flatten(TableCells cells)
+    private static List<FlatCell> Flatten(TableCells cells)
     {
         var result = new List<FlatCell>(cells.CellCount);
         var recordCounts = new Dictionary<string, int>(StringComparer.Ordinal);

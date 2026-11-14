@@ -14,4 +14,7 @@
     <Project Path="tests/XmlEditorReloaded.UiSmoke/XmlEditorReloaded.UiSmoke.csproj" />
     <Project Path="tests/XmlEditorReloaded.Xml.Tests/XmlEditorReloaded.Xml.Tests.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/XmlEditorReloaded.HelpTool/XmlEditorReloaded.HelpTool.csproj" />
+  </Folder>
 </Solution>

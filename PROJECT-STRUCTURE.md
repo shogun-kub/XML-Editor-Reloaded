@@ -9,20 +9,27 @@ libraries, and the WPF application is the only frontend.
 ```
 JA2_1.13 Tools/
 ├── AGENTS.md                        # Rules for AI assistants
+├── README.md                        # GitHub repository overview (English, default)
+├── README.ru.md                     # GitHub repository overview (Russian)
+├── CODE-OVERVIEW.md                 # Code architecture, class/method map and improvement backlog
+├── CLASS-MAP.md                     # Type-by-type map of all projects and their connections
+├── SONAR.md                         # Local-only SonarQube analysis and issue export
+├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
 ├── PROJECT-STRUCTURE.md             # This document
 ├── M14.5-METADATA-REPORT.md         # Metadata verification report
 ├── M22C-COMPOSITE-KEYS-PLAN.md      # Compound record keys plan
 ├── M23A-PARITY-AUDIT-PLAN.md        # Parity audit plan, substeps and agent protocol
+├── M30-TABLE-HELP-PLAN.md           # TableData field-help plan (M30–M32)
 ├── MANUAL-SMOKE-FIX-PLAN.md         # Fix plan for the S01–S14 manual smoke findings
 ├── LEGACY-PARITY-REPORT.md          # Legacy parity matrix (M23a deliverable)
 ├── M23A-PARITY/                     # Parity audit sections, inventories and the manual smoke checklist
 ├── REFERENCE-PROJECTS-STRUCTURE.md  # Catalogue of References/
 ├── MEMORY.md                        # Index of the project memory (imported agent notes)
 ├── memory/                          # Topic notes linked from MEMORY.md
-├── .github/workflows/               # CI build/test and tag-driven release
-├── util-scripts/                    # Build+test, release packaging and `.tmp` cleanup
+├── .github/workflows/               # CI build/test; manual pre-release and tag final release
+├── util-scripts/                    # Build+test, release packaging, table-help checks and `.tmp` cleanup
 ├── References/                      # Read-only reference projects and game data (not in git)
 ├── out/                             # Build output, publish and release ZIPs (not in git)
 └── xml-editor-reloaded/             # Solution root — project code and release documents
@@ -40,18 +47,22 @@ xml-editor-reloaded/
 ├── Directory.Build.props            # Nullable, implicit usings, code-style enforcement, version
 ├── .editorconfig
 ├── README.md                         # Download, build, release and data-safety overview
-├── USER-GUIDE.md                     # Russian end-user guide
+├── USER-GUIDE.md                     # English end-user guide
+├── USER-GUIDE-RU.md                  # Russian end-user guide
 ├── CHANGELOG.md                      # Release history
 ├── LICENSE                           # GLWTPL
 ├── THIRD-PARTY-NOTICES.md            # Runtime/test dependencies and licenses
 ├── licenses/                         # Full MIT and Apache-2.0 texts
 ├── packaging/start-portable.cmd      # Shared portable launcher using XER_APP_DATA
+├── help/                             # TableData field help: English canon, Russian mirror, generated tables
 ├── src/
 │   ├── XmlEditorReloaded.Core/
 │   ├── XmlEditorReloaded.Xml/
 │   ├── XmlEditorReloaded.Data/
 │   ├── XmlEditorReloaded.Imaging/
 │   └── XmlEditorReloaded.App/
+├── tools/
+│   └── XmlEditorReloaded.HelpTool/   # Generates and checks embedded English and Russian help JSON
 └── tests/
     ├── XmlEditorReloaded.Core.Tests/
     ├── XmlEditorReloaded.Xml.Tests/
@@ -70,7 +81,7 @@ abstractions, lookup and validation primitives, imaging contracts, settings, fil
 contracts, the standard `OperationResult` (`error_code`, `error_text`, `data`), and the process-wide
 operation log facade.
 
-Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Imaging`, `Layout`, `Localization`,
+Folders: `Abstractions`, `Api`, `Diagnostics`, `Filtering`, `Help`, `Imaging`, `Layout`, `Localization`,
 `Metadata`, `Validation`. No file writing, SQLite, or WPF; the diagnostics helper only reads file
 metadata to explain access failures.
 
@@ -85,12 +96,14 @@ Folders: `Comparison`, `Copy`, `Documents`, `Filtering`, `IO`, `Loading`, `Looku
 ### XmlEditorReloaded.Data (`net10.0`)
 
 SQLite metadata and catalogs: versioned migrations and seed data, table/lookup/language access,
-persistence of application settings and per-table grid layouts, and the file-backed operation log.
+persistence of application settings and per-table grid layouts, the file-backed operation log, and
+the embedded table/field help provider. `Help/help.json` and `Help/help.ru.json` are generated from
+the English and Russian Markdown trees by `XmlEditorReloaded.HelpTool` and embedded into this assembly.
 `Settings/AppPaths` resolves the application-data directory (`%AppData%\XmlEditorReloaded`) for the
 settings, layouts, metadata database and log, and honours the `XER_APP_DATA` environment variable,
 which the UI smoke uses to isolate each scenario.
 
-Folders: `Catalog`, `Diagnostics`, `Localization`, `Metadata`, `Settings`.
+Folders: `Catalog`, `Diagnostics`, `Help`, `Localization`, `Metadata`, `Settings`.
 
 ### XmlEditorReloaded.Imaging (`net10.0`)
 
@@ -102,11 +115,18 @@ Folders: `Cache`, `Catalog`, `Etrle`, `Sti`.
 ### XmlEditorReloaded.App (`net10.0-windows`)
 
 WPF shell and MVVM layer: data-set and table browser, grid and workspace editors, detail panel, dialogs,
-image viewer, settings, and RESX localization (English and Russian).
+image viewer, settings, context help, and RESX localization (English and Russian). The table-help
+provider selects `help.ru.json` when the UI culture is Russian and falls back to English.
 
 Folders: `Assets`, `Behaviors`, `Imaging`, `Resources`, `Services`, `Shortcuts`, `Themes`,
 `ViewModels`, `Views`. All UI strings come from RESX. `Assets/app.ico` is both the executable icon
 and the window icon resource.
+
+### XmlEditorReloaded.HelpTool (`net10.0`, console)
+
+Generates the deterministic `src/XmlEditorReloaded.Data/Help/help.json` and `help.ru.json` from
+`help/tables` and `help/ru/tables`, or verifies them with `--check`. It is a build-time tool, not
+shipped with the application.
 
 ### Test projects
 
@@ -134,6 +154,20 @@ XmlEditorReloaded.Imaging ──> Core
 XmlEditorReloaded.Core ──>  (none)
 ```
 
+## Class map
+
+[`CLASS-MAP.md`](CLASS-MAP.md) describes every top-level production type, its responsibility,
+and its main collaborators, grouped by project and folder. The inventory section is generated from
+the XML documentation comments; keep the architecture text in sync manually and regenerate the
+tables after structural changes:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/class-map.ps1
+```
+
+The test projects are summarized in the same document and their full type inventory is kept in a
+collapsed section, so the production map stays readable.
+
 - Backend projects must not reference WPF or `System.Windows.*`.
 - Cross-library contracts live in `Core`; implementations stay in their own projects.
 - XML parsing, metadata SQL, and STI decoding belong to the backend, not the WPF layer.
@@ -159,7 +193,41 @@ the workspace starts at low integrity and cannot write `%APPDATA%` (`SQLite erro
 
 Corpus, comparison, copy and performance runs are documented in `PLAN.md`.
 
-## Release
+## Table help tooling
+
+`xml-editor-reloaded/help/` is the English source of truth for TableData field
+documentation; the Russian edition will live in `help/ru/` after M32. The generator and
+validator are repository scripts, not part of the solution:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-inventory.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Write
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/help-check.ps1 -Release
+```
+
+`help-inventory.ps1` reads v5 with a v4 fallback and writes `.tmp/help/inventory.json|csv`.
+`help-check.ps1` validates front matter, field blocks and links, reports undocumented tables
+as pending, and rewrites per-document `## Contents`, `INDEX.md` and `COVERAGE.md` with
+`-Write`; `-Release` fails on pending tables or draft documents. The game data under
+`References/` is never modified.
+
+## Branches and releases
+
+- `main` is the released branch. It only receives merge commits from `release/<version>`.
+- `dev` is the active development branch. `.github/workflows/ci.yml` runs build and tests for
+  `dev`, `main` and `release/**`; it never uploads release artifacts.
+- `release/<version>` is cut from `dev` when a release is planned. Its `Directory.Build.props`
+  version must match the branch name. Changes are cherry-picked from `dev` or made in place.
+- A manual `workflow_dispatch` run of `.github/workflows/release.yml` on `release/<version>`
+  builds both packages; setting `publish_prerelease` publishes the next numbered pre-release
+  (`v<version>-p1`, `v<version>-p2`, ...).
+- The final release merges the release branch into both `dev` and `main`, deletes the branch, and
+  creates an annotated `v<version>` tag on `main`. Pushing that tag runs the final release build
+  and publishes both archives and checksums.
+
+The detailed commands are in `RELEASING.md`.
+
+## Release script
 
 ```sh
 pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
@@ -169,8 +237,6 @@ The script validates the version in `Directory.Build.props`, runs the xUnit suit
 self-contained and framework-dependent `win-x64` builds, stages the same release documents and the
 portable launcher into each package, and writes both ZIPs plus separate SHA-256 files to
 `out/release/`. `-SkipTests` is only for an already verified build.
-`.github/workflows/release.yml` runs the same script for tags matching `v*` and publishes both
-archives and checksums to a GitHub release when the repository has a remote.
 
 ## Conventions
 

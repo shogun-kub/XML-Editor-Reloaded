@@ -19,4 +19,14 @@
     <EmbeddedResource Include="Metadata\Migrations\*.sql" />
   </ItemGroup>
 
+  <ItemGroup Condition="Exists('Help\help.json')">
+    <EmbeddedResource Include="Help\help.json" LogicalName="XmlEditorReloaded.Data.Help.help.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('Help\help.ru.json')">
+    <EmbeddedResource Include="Help\help.ru.json"
+                      LogicalName="XmlEditorReloaded.Data.Help.help.ru.json"
+                      WithCulture="false" />
+  </ItemGroup>
+
 </Project>

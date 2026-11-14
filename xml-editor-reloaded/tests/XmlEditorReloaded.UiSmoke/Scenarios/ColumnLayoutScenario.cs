@@ -302,10 +302,15 @@ internal sealed class ColumnLayoutScenario : SmokeScenario
         return index;
     }
 
+    private static readonly Regex NumberPattern = new(
+        @"\d+",
+        RegexOptions.CultureInvariant,
+        TimeSpan.FromSeconds(2));
+
     private static (int Visible, int Total) ReadColumnCounter(AutomationElement window)
     {
         var text = window.WaitById("VisibleColumnCount").ReadName();
-        var numbers = Regex.Matches(text, @"\d+")
+        var numbers = NumberPattern.Matches(text)
             .Select(match => int.Parse(match.Value, System.Globalization.CultureInfo.InvariantCulture))
             .ToList();
         return numbers.Count >= 2 ? (numbers[0], numbers[1]) : (0, 0);

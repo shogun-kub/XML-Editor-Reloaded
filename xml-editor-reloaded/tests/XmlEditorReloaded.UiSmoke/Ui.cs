@@ -747,13 +747,28 @@ internal static class Ui
         Thread.Sleep(150);
         cell.SetFocus();
         Thread.Sleep(120);
-        NativeInput.PressIn(grid, NativeInput.VirtualKey.F2);
-        Thread.Sleep(150);
-        NativeInput.PressIn(grid, NativeInput.VirtualKey.A, control: true);
-        NativeInput.TypeTextIn(grid, value);
+        NativeInput.EnsureForeground(grid);
+        NativeInput.PressWindowMessage(grid, NativeInput.VirtualKey.F2);
+        Thread.Sleep(180);
+        var editor = cell.FindFirst(
+            TreeScope.Descendants,
+            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+        if (editor is not null
+            && editor.TryGetCurrentPattern(ValuePattern.Pattern, out var valuePattern))
+        {
+            ((ValuePattern)valuePattern).SetValue(value);
+        }
+        else
+        {
+            NativeInput.PressIn(grid, NativeInput.VirtualKey.A, control: true);
+            NativeInput.TypeTextIn(grid, value);
+        }
+
         Thread.Sleep(60);
-        NativeInput.PressIn(grid, NativeInput.VirtualKey.Return);
-        Thread.Sleep(200);
+        // Moving focus from the inline editor back to the grid commits through the cell's normal
+        // edit-ending path while keeping the current row and column selected.
+        grid.SetFocus();
+        Thread.Sleep(300);
     }
 
     /// <summary>

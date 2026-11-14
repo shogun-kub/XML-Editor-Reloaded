@@ -129,6 +129,23 @@ internal sealed class FixtureBuilder
     }
 
     /// <summary>
+    /// Replaces the copy's <c>Lookup/AttachmentPoint.xml</c> with a deliberately truncated XML document,
+    /// so malformed-table scenarios do not depend on the mutable reference data set.
+    /// </summary>
+    /// <param name="fixture">Writable v5 fixture.</param>
+    public static void CorruptAttachmentPoint(DatasetFixture fixture)
+    {
+        if (!fixture.IsCopy)
+        {
+            throw new InvalidOperationException("The malformed fixture requires a writable data-set copy.");
+        }
+
+        File.WriteAllText(
+            fixture.TableFile("Lookup/AttachmentPoint.xml"),
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<JA2Data>\n\t<AttachmentPoint>\n\t\t<id>0</id>\n");
+    }
+
+    /// <summary>
     /// Computes SHA-256 hashes of every file under the given directory.
     /// </summary>
     /// <param name="directory">Root directory.</param>

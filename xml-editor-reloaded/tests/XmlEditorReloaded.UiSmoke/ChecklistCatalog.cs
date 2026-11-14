@@ -11,11 +11,18 @@ internal sealed class ChecklistCatalog
 {
     private static readonly Regex HeadingPattern = new(
         @"\*\*(?<id>S\d{2,3})\.\s+(?<title>.*?)\.\*\*",
-        RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.Compiled);
+        RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(2));
 
     private static readonly Regex TableRowPattern = new(
         @"^\|\s*(?<id>S\d{2,3})\s*\|\s*(?<title>[^|]+?)\s*\|",
-        RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Compiled);
+        RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(2));
+
+    private static readonly Regex WhitespacePattern = new(
+        @"\s+",
+        RegexOptions.CultureInvariant,
+        TimeSpan.FromSeconds(2));
 
     private readonly Dictionary<string, string> _titles;
 
@@ -38,7 +45,7 @@ internal sealed class ChecklistCatalog
         foreach (Match match in HeadingPattern.Matches(text))
         {
             var id = match.Groups["id"].Value;
-            var title = Regex.Replace(match.Groups["title"].Value, @"\s+", " ").Trim();
+            var title = WhitespacePattern.Replace(match.Groups["title"].Value, " ").Trim();
             titles.TryAdd(id, title);
         }
 
@@ -46,7 +53,7 @@ internal sealed class ChecklistCatalog
         foreach (Match match in TableRowPattern.Matches(text))
         {
             var id = match.Groups["id"].Value;
-            var title = Shorten(Regex.Replace(match.Groups["title"].Value, @"\s+", " ").Trim());
+            var title = Shorten(WhitespacePattern.Replace(match.Groups["title"].Value, " ").Trim());
             titles.TryAdd(id, title);
         }
 

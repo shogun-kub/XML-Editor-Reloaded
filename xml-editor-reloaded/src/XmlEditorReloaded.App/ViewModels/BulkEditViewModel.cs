@@ -84,7 +84,7 @@ public partial class BulkEditViewModel : ObservableObject
         NewHeader = Strings.Get("BulkEditNewHeader");
         StatusHeader = Strings.Get("BulkEditStatusHeader");
 
-        SelectedColumn = Columns.FirstOrDefault();
+        SelectedColumn = Columns.Count > 0 ? Columns[0] : null;
         SelectedOperation = Operations[0];
     }
 

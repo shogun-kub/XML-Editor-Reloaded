@@ -31,13 +31,16 @@ S01 + обязательный S50 — 2/2 для self-contained и framework-de
 framework-dependent пакета создал `data` и `metadata.sqlite` с путём рядом с приложением
 (`XER_APP_DATA`), запись в `References/` не было.
 
-**Документы.** `README.md`, `USER-GUIDE.md`, `CHANGELOG.md`, `LICENSE` (GLWTPL),
+**Документы.** `README.md`, `USER-GUIDE.md` (English), `USER-GUIDE-RU.md` (Russian),
+`CHANGELOG.md`, `LICENSE` (GLWTPL),
 `THIRD-PARTY-NOTICES.md`, `licenses/MIT.txt`, `licenses/Apache-2.0.txt`. `start-portable.cmd`
 задаёт `XER_APP_DATA=%~dp0data`, чтобы настройки/метабаза/лог оставались рядом с программой.
 
 **CI.** `.github/workflows/ci.yml` — restore, Release build `-warnaserror`, тесты через `test.ps1
--NoBuild`. `.github/workflows/release.yml` — по тегу `v*` собирает оба пакета, загружает artifact
-и создаёт GitHub release с двумя ZIP и двумя `.sha256`; версия тега должна совпасть с props.
+-NoBuild` для `main`, `dev` и `release/**`; артефакты не публикует. `.github/workflows/release.yml`:
+`workflow_dispatch` из `release/<version>` собирает оба пакета и по флагу публикует очередной
+pre-release `v<version>-pN`; пуш финального тега `v<version>` собирает и публикует GitHub Release.
+Версия ветки/тега должна совпасть с базой в props. Процесс — в `RELEASING.md`.
 
 **Проверка.** Build 0/0; release-прогон: 726 тестов (App 265, Core 62, Data 97, Imaging 24, Xml 278);
 UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104;

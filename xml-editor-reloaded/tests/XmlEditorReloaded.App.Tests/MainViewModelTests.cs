@@ -10,6 +10,7 @@ using XmlEditorReloaded.Core.Layout;
 using XmlEditorReloaded.Core.Localization;
 using XmlEditorReloaded.Core.Metadata;
 using XmlEditorReloaded.Data.Catalog;
+using XmlEditorReloaded.Data.Help;
 using XmlEditorReloaded.Data.Metadata;
 using XmlEditorReloaded.Data.Settings;
 using XmlEditorReloaded.Xml.Copy;
@@ -25,6 +26,8 @@ namespace XmlEditorReloaded.App.Tests;
 /// </summary>
 public class MainViewModelTests
 {
+    private static readonly JsonTableHelpProvider SharedTableHelp = new();
+
     /// <summary>
     /// Initialization loads a real catalog and selecting a table produces a record count.
     /// </summary>
@@ -80,7 +83,8 @@ public class MainViewModelTests
             new FakeSettingsDialogService(),
             new FakeTableLayoutStore(),
             new DatasetValidator(),
-            new DatasetSearchService());
+            new DatasetSearchService(),
+            SharedTableHelp);
 
         await viewModel.InitializeAsync();
 
@@ -143,7 +147,8 @@ public class MainViewModelTests
             new FakeSettingsDialogService(),
             new FakeTableLayoutStore(),
             new DatasetValidator(),
-            new DatasetSearchService())
+            new DatasetSearchService(),
+            SharedTableHelp)
         {
             DataDirectory = data13,
         };
@@ -394,16 +399,34 @@ public class MainViewModelTests
         var editor = Assert.IsType<ItemWorkspaceViewModel>(Assert.Single(viewModel.Editors));
         Assert.True(editor.IsTranslationMode);
 
-        editor.SelectedLanguageOption = editor.LanguageOptions[0];
-        await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+        var languageChanged = new TaskCompletionSource<string?>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        void OnLanguageChanged(object? sender, string? languageCode) =>
+            languageChanged.TrySetResult(languageCode);
+
+        editor.LanguageChanged += OnLanguageChanged;
+        try
+        {
+            editor.SelectedLanguageOption = editor.LanguageOptions[0];
+            Assert.Null(await languageChanged.Task.WaitAsync(TimeSpan.FromSeconds(10)));
+            await WaitUntilAsync(() => !editor.IsTranslationMode && !editor.IsBusy);
+        }
+        finally
+        {
+            editor.LanguageChanged -= OnLanguageChanged;
+        }
 
         AppSettings? persisted = null;
         for (var attempt = 0; attempt < 100; attempt++)
         {
-            persisted = (await settingsStore.LoadAsync()).Data;
-            if (persisted?.ActiveLanguageCode is null)
+            var load = await settingsStore.LoadAsync();
+            if (load.IsSuccess)
             {
-                break;
+                persisted = load.Data;
+                if (persisted?.ActiveLanguageCode is null)
+                {
+                    break;
+                }
             }
 
             await Task.Delay(25);
@@ -1003,6 +1026,87 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// The Help &gt; Context help command opens the help window through the dialog service.
+    /// </summary>
+    [Fact]
+    public async Task OpenHelp_ShowsHelpThroughDialogService()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenHelpCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpViewModel);
+        Assert.False(dialog.LastHelpViewModel.HasTable);
+    }
+
+    /// <summary>
+    /// The Help &gt; Glossary command opens the glossary page through the dialog service.
+    /// </summary>
+    [Fact]
+    public async Task OpenGlossary_ShowsGlossaryDocument()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenGlossaryCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+        Assert.Equal("GLOSSARY.md", dialog.LastHelpDocumentViewModel.Document.Path);
+        Assert.Contains("Glossary", dialog.LastHelpDocumentViewModel.Title, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The Help &gt; Index command opens the generated table index page.
+    /// </summary>
+    [Fact]
+    public async Task OpenIndex_ShowsIndexDocument()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenIndexCommand.Execute(null);
+
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+        Assert.Equal("INDEX.md", dialog.LastHelpDocumentViewModel.Document.Path);
+        Assert.Contains("index", dialog.LastHelpDocumentViewModel.Title, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// A link from the index to a table document opens context help for that table.
+    /// </summary>
+    [Fact]
+    public async Task IndexDocumentLink_TableTarget_OpensTableHelp()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenIndexCommand.Execute(null);
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+
+        dialog.LastHelpDocumentViewModel.OpenDocument("tables/Items/AmmoStrings.md");
+
+        Assert.NotNull(dialog.LastHelpViewModel);
+        Assert.Equal("Items.AmmoStrings", dialog.LastHelpViewModel.Table?.ToString());
+    }
+
+    /// <summary>
     /// Removing the active directory activates the remaining valid directory, removes the path from the
     /// selector, and persists the shortened list; the folder itself is kept on disk.
     /// </summary>
@@ -1248,7 +1352,8 @@ public class MainViewModelTests
             settingsDialog ?? new FakeSettingsDialogService(),
             layoutStore ?? new FakeTableLayoutStore(),
             new DatasetValidator(provider),
-            new DatasetSearchService(provider));
+            new DatasetSearchService(provider),
+            SharedTableHelp);
 
     private static string CreateCursorData(TestWorkspace workspace)
     {
@@ -1392,6 +1497,15 @@ public class MainViewModelTests
         public int AboutShown { get; private set; }
 
         public void ShowAbout() => AboutShown++;
+
+        public HelpViewModel? LastHelpViewModel { get; private set; }
+
+        public void ShowHelp(HelpViewModel viewModel) => LastHelpViewModel = viewModel;
+
+        public HelpDocumentViewModel? LastHelpDocumentViewModel { get; private set; }
+
+        public void ShowHelpDocument(HelpDocumentViewModel viewModel) =>
+            LastHelpDocumentViewModel = viewModel;
 
         public string? LastUnsavedChangesMessage { get; private set; }
 

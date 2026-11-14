@@ -32,7 +32,7 @@ public sealed partial class ItemCreationViewModel : ObservableObject
         _id = suggestedId;
         _name = suggestedName;
         Classes = classes;
-        _selectedClass = classes.FirstOrDefault();
+        _selectedClass = classes.Count > 0 ? classes[0] : null;
         OkText = Strings.Get("BitEditorOk");
         CancelText = Strings.Get("BitEditorCancel");
         IdLabel = Strings.Get("ItemNewIdLabel");
