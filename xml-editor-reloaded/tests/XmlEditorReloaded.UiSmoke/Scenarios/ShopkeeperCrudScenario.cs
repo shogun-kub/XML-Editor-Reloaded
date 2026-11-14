@@ -45,6 +45,11 @@ internal abstract class ShopkeeperCrudScenarioBase : SmokeScenario
             TimeSpan.FromSeconds(20));
     }
 
+    private static readonly Regex CountPattern = new(
+        @"(\d+)\D*$",
+        RegexOptions.CultureInvariant,
+        TimeSpan.FromSeconds(2));
+
     /// <summary>
     /// Reads the number of dealer rows currently shown.
     /// </summary>
@@ -54,7 +59,7 @@ internal abstract class ShopkeeperCrudScenarioBase : SmokeScenario
     protected static int ReadShopkeeperCount(ScenarioContext context)
     {
         var text = context.Window.WaitById("ShopkeeperCountText").ReadName();
-        var match = Regex.Match(text, @"(\d+)\D*$");
+        var match = CountPattern.Match(text);
         if (!match.Success)
         {
             throw new SmokeCheckException("Счётчик строк торговцев читается", text);

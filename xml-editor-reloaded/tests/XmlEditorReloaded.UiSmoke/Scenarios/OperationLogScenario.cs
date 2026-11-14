@@ -23,7 +23,8 @@ internal sealed class OperationLogScenario : SmokeScenario
 
     private static readonly Regex EntryPattern = new(
         @"^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+(?:Z|[+-]\d{2}:\d{2})\] \[(INFO|WARNING|ERROR|FATAL)\] \S+",
-        RegexOptions.CultureInvariant);
+        RegexOptions.CultureInvariant,
+        TimeSpan.FromSeconds(2));
 
     /// <inheritdoc />
     public override void Run(ScenarioContext context)

@@ -11,7 +11,8 @@ public sealed class FileFormatInfo
 {
     private static readonly Regex DeclarationEncodingPattern = new(
         @"<\?xml[^>]*\bencoding\s*=\s*[""'](?<encoding>[^""']+)[""']",
-        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
+        TimeSpan.FromSeconds(2));
 
     private FileFormatInfo(string encodingName, bool hasByteOrderMark, string newLine, bool hasXmlDeclaration)
     {
