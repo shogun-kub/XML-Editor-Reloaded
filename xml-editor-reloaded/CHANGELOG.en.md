@@ -5,6 +5,32 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 **English** | [Русский](CHANGELOG.md)
 
+## [1.1.1] — 2026-11-14
+
+Patch release after 1.1.0 with small fixes and an English changelog.
+
+### Added
+
+- English `CHANGELOG.en.md`; GitHub release notes now use it, and both changelog files are included
+  in the release packages.
+
+### Fixed
+
+- `LookupIdViewModel.TryAccept` now checks the `TryParseId` result before accepting the value.
+- Explicit lambda parameter types in table comparison and copy previews reduce compiler type
+  inference work (`CS9236`).
+
+### Changed
+
+- Remaining production SonarQube findings were triaged: `CA1806` and `CS9236` were fixed;
+  `IDE0028`, `CA1822`, `CA1068`, and `CA1859` were consciously accepted with documented reasons.
+
+### Verification
+
+- Build: 0 errors, 0 warnings.
+- 760 unit tests in five xUnit projects.
+- SonarQube: 174 → 172 issues; remaining accepted/deferred findings are documented in `SONAR.md`.
+
 ## [1.1.0] — 2026-11-12
 
 Contextual help for `TableData` fields and a complete Russian help edition.

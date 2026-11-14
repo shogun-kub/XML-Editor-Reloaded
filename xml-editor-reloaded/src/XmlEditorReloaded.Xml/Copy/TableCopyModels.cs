@@ -184,8 +184,22 @@ public sealed record TableCopyPreview(
     /// <summary>
     /// Gets the number of related rows that will be added or updated.
     /// </summary>
-    public int RelatedRecordCount => Records.Sum(static record =>
-        record.Related.Sum(static related => related.AddCount + related.UpdateCount));
+    public int RelatedRecordCount
+    {
+        get
+        {
+            var count = 0;
+            foreach (var record in Records)
+            {
+                foreach (var related in record.Related)
+                {
+                    count += related.AddCount + related.UpdateCount;
+                }
+            }
+
+            return count;
+        }
+    }
 
     /// <summary>
     /// Gets a value indicating whether the plan writes anything to the target.

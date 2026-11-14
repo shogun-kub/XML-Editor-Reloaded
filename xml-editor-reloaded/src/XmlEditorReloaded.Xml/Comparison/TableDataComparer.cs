@@ -355,6 +355,15 @@ public sealed class TableDataComparer : ITableComparisonService
     private static TableComparisonSummary BuildSummary(IReadOnlyList<TableComparisonEntry> entries)
     {
         var common = entries.Where(static entry => entry.Status == TableComparisonStatus.Both).ToList();
+        var overlayChangeCount = 0;
+        foreach (var entry in common)
+        {
+            foreach (var overlay in entry.Overlays)
+            {
+                overlayChangeCount += overlay.AddedCellCount + overlay.RemovedCellCount + overlay.ChangedCellCount;
+            }
+        }
+
         return new TableComparisonSummary(
             entries.Count(static entry => entry.Left is not null),
             entries.Count(static entry => entry.Right is not null),
@@ -374,8 +383,7 @@ public sealed class TableDataComparer : ITableComparisonService
             common.Sum(static entry => entry.Value.ChangedRecordCount),
             common.Sum(static entry => entry.Value.ChangedFieldCount),
             common.Sum(static entry => entry.Value.RootFieldChangeCount),
-            common.Sum(static entry => entry.Overlays.Sum(static overlay =>
-                overlay.AddedCellCount + overlay.RemovedCellCount + overlay.ChangedCellCount)),
+            overlayChangeCount,
             entries.Sum(static entry => (long)(entry.Left?.Snapshot?.RecordCount ?? 0)),
             entries.Sum(static entry => (long)(entry.Right?.Snapshot?.RecordCount ?? 0)));
     }
