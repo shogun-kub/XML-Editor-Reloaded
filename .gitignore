@@ -63,3 +63,6 @@ $RECYCLE.BIN/
 # ===== Local SonarQube credentials =====
 # A local token for SonarScanner; never commit it.
 sonartoken.txt
+
+# SonarScanner working directory
+.sonarqube/

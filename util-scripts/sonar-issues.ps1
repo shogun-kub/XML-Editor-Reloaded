@@ -44,7 +44,9 @@ param(
     [string]$OutputDirectory = '',
     [switch]$IncludeResolved,
     [ValidateRange(1, 500)]
-    [int]$PageSize = 500
+    [int]$PageSize = 500,
+    [ValidateRange(0, 300)]
+    [int]$WaitSeconds = 30
 )
 
 $ErrorActionPreference = 'Stop'
@@ -74,69 +76,82 @@ $token = Read-SonarToken -TokenFile $TokenFile
 $baseUrl = $HostUrl.TrimEnd('/')
 $headers = @{ Authorization = "Bearer $token" }
 $issues = [System.Collections.Generic.List[object]]::new()
-$page = 1
-$total = $null
 $projectPrefix = "$($ProjectKey):"
+$deadline = [DateTime]::UtcNow.AddSeconds($WaitSeconds)
 
 try {
     do {
-        $query = "api/issues/search?componentKeys=$([uri]::EscapeDataString($ProjectKey))&ps=$PageSize&p=$page"
-        if (-not $IncludeResolved) {
-            $query += '&resolved=false'
-        }
+        $issues.Clear()
+        $page = 1
+        $total = $null
 
-        $response = Invoke-RestMethod -Method Get -Uri "$baseUrl/$query" -Headers $headers -NoProxy
-        if ($null -eq $response) {
-            throw 'SonarQube returned an empty response.'
-        }
-
-        if ($null -eq $total) {
-            $total = if ($null -ne $response.total) { [int]$response.total }
-                elseif ($null -ne $response.paging) { [int]$response.paging.total }
-                else { 0 }
-        }
-
-        $batch = @($response.issues)
-        foreach ($issue in $batch) {
-            $component = [string]$issue.component
-            $file = if ($component.StartsWith($projectPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
-                $component.Substring($projectPrefix.Length)
-            }
-            elseif ($component -match '^[^:]+:(.+)$') {
-                $Matches[1]
-            }
-            else {
-                $component
+        do {
+            $query = "api/issues/search?componentKeys=$([uri]::EscapeDataString($ProjectKey))&ps=$PageSize&p=$page"
+            if (-not $IncludeResolved) {
+                $query += '&resolved=false'
             }
 
-            $line = if ($null -ne $issue.textRange) { $issue.textRange.startLine }
-                elseif ($null -ne $issue.line) { $issue.line }
-                else { $null }
-            $column = if ($null -ne $issue.textRange) { $issue.textRange.startOffset }
-                else { $null }
+            $response = Invoke-RestMethod -Method Get -Uri "$baseUrl/$query" -Headers $headers -NoProxy
+            if ($null -eq $response) {
+                throw 'SonarQube returned an empty response.'
+            }
 
-            $issues.Add([pscustomobject]@{
-                key = [string]$issue.key
-                rule = [string]$issue.rule
-                severity = [string]$issue.severity
-                type = [string]$issue.type
-                status = [string]$issue.status
-                file = $file
-                line = $line
-                column = $column
-                message = [string]$issue.message
-                effort = [string]$issue.effort
-                debt = [string]$issue.debt
-            })
+            if ($null -eq $total) {
+                $total = if ($null -ne $response.total) { [int]$response.total }
+                    elseif ($null -ne $response.paging) { [int]$response.paging.total }
+                    else { 0 }
+            }
+
+            $batch = @($response.issues)
+            foreach ($issue in $batch) {
+                $component = [string]$issue.component
+                $file = if ($component.StartsWith($projectPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    $component.Substring($projectPrefix.Length)
+                }
+                elseif ($component -match '^[^:]+:(.+)$') {
+                    $Matches[1]
+                }
+                else {
+                    $component
+                }
+
+                $line = if ($null -ne $issue.textRange) { $issue.textRange.startLine }
+                    elseif ($null -ne $issue.line) { $issue.line }
+                    else { $null }
+                $column = if ($null -ne $issue.textRange) { $issue.textRange.startOffset }
+                    else { $null }
+
+                $issues.Add([pscustomobject]@{
+                    key = [string]$issue.key
+                    rule = [string]$issue.rule
+                    severity = [string]$issue.severity
+                    type = [string]$issue.type
+                    status = [string]$issue.status
+                    file = $file
+                    line = $line
+                    column = $column
+                    message = [string]$issue.message
+                    effort = [string]$issue.effort
+                    debt = [string]$issue.debt
+                })
+            }
+
+            if ($batch.Count -eq 0) {
+                break
+            }
+
+            $page++
         }
+        while ($issues.Count -lt $total)
 
-        if ($batch.Count -eq 0) {
+        if ($issues.Count -gt 0 -or $total -gt 0 -or [DateTime]::UtcNow -ge $deadline) {
             break
         }
 
-        $page++
+        Write-Host 'SonarQube has not processed the report yet; waiting...' -ForegroundColor DarkYellow
+        Start-Sleep -Seconds 2
     }
-    while ($issues.Count -lt $total)
+    while ($true)
 }
 catch {
     throw "Could not fetch SonarQube issues from '$baseUrl': $($_.Exception.Message)"

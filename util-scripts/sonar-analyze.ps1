@@ -96,7 +96,6 @@ $env:no_proxy = $env:NO_PROXY
 $commonProperties = @(
     "/d:sonar.host.url=$($HostUrl.TrimEnd('/'))",
     "/d:sonar.token=$token",
-    "/d:sonar.projectVersion=$version",
     '/d:sonar.sourceEncoding=UTF-8',
     '/d:sonar.sources=xml-editor-reloaded/src,xml-editor-reloaded/tools',
     '/d:sonar.tests=xml-editor-reloaded/tests',
@@ -117,7 +116,7 @@ try {
     }
 
     Write-Host "Starting SonarScanner for $ProjectKey" -ForegroundColor Cyan
-    & dotnet sonarscanner begin "/k:$ProjectKey" @commonProperties
+    & dotnet sonarscanner begin "/k:$ProjectKey" "/v:$version" @commonProperties
     if ($LASTEXITCODE -ne 0) {
         throw "sonarscanner begin failed with exit code $LASTEXITCODE."
     }
