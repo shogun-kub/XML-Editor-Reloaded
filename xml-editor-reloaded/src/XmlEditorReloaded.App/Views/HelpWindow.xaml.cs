@@ -52,4 +52,6 @@ public partial class HelpWindow : Window
             e.Handled = true;
         }
     }
+
+    private void OnMarkdownLinkRequested(object sender, string target) => ViewModel?.OpenDocument(target);
 }

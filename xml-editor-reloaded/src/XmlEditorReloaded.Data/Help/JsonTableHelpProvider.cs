@@ -12,9 +12,9 @@ public sealed class JsonTableHelpProvider : ITableHelpProvider
 {
     private const string ResourceName = "XmlEditorReloaded.Data.Help.help.json";
     private const string RussianResourceName = "XmlEditorReloaded.Data.Help.help.ru.json";
-    private readonly IReadOnlyDictionary<string, TableHelp> _documents;
-    private readonly IReadOnlyDictionary<string, string> _tableDocuments;
-    private readonly IReadOnlyDictionary<string, HelpDocument> _pages;
+    private readonly Dictionary<string, TableHelp> _documents;
+    private readonly Dictionary<string, string> _tableDocuments;
+    private readonly Dictionary<string, HelpDocument> _pages;
 
     /// <summary>
     /// Initializes a provider from the embedded English help data.

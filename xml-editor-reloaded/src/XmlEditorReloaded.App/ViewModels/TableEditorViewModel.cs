@@ -766,7 +766,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         IsBusy = true;
         try
         {
-            var result = await Workspace.SaveAsync().ConfigureAwait(true);
+            var result = await Workspace.SaveAsync(CancellationToken.None).ConfigureAwait(true);
             if (result.IsSuccess)
             {
                 ApplySavedState();
@@ -1102,7 +1102,9 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return null;
         }
 
-        var tables = await _session.Catalog.GetTablesAsync(TableDataDirectory).ConfigureAwait(true);
+        var tables = await _session.Catalog
+            .GetTablesAsync(TableDataDirectory, CancellationToken.None)
+            .ConfigureAwait(true);
         if (!tables.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", $"{tables.ErrorCode}: {tables.ErrorText}");
@@ -1115,7 +1117,12 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         try
         {
             var result = await _lookupUsage
-                .FindUsagesAsync(tables.Data!, metadata.TableName, id, metadata.IsFlagLookup)
+                .FindUsagesAsync(
+                    tables.Data!,
+                    metadata.TableName,
+                    id,
+                    metadata.IsFlagLookup,
+                    cancellationToken: CancellationToken.None)
                 .ConfigureAwait(true);
             if (!result.IsSuccess)
             {
@@ -1288,7 +1295,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
                 .ValidateAsync(
                     _session.Lookups,
                     Workspace.Language?.Code,
-                    cancellationToken: default,
+                    cancellationToken: CancellationToken.None,
                     relationTargetValues: _relationTargetValues)
                 .ConfigureAwait(true);
             ValidationIssues.Clear();
@@ -1364,15 +1371,19 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
     [RelayCommand]
     public async Task ResetLayoutAsync()
     {
-        _layoutSaveCts?.Cancel();
-        _layoutSaveCts?.Dispose();
-        _layoutSaveCts = null;
+        if (_layoutSaveCts is { } layoutCts)
+        {
+            await layoutCts.CancelAsync().ConfigureAwait(true);
+            layoutCts.Dispose();
+            _layoutSaveCts = null;
+        }
+
         _layoutDirty = false;
 
         if (_layoutStore is not null && !IsEmbedded)
         {
             var removed = await _layoutStore
-                .RemoveAsync(TableDataDirectory, TableName.Value)
+                .RemoveAsync(TableDataDirectory, TableName.Value, CancellationToken.None)
                 .ConfigureAwait(true);
             if (!removed.IsSuccess)
             {
@@ -1505,9 +1516,13 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             return;
         }
 
-        _layoutSaveCts?.Cancel();
-        _layoutSaveCts?.Dispose();
-        _layoutSaveCts = null;
+        if (_layoutSaveCts is { } layoutCts)
+        {
+            await layoutCts.CancelAsync().ConfigureAwait(true);
+            layoutCts.Dispose();
+            _layoutSaveCts = null;
+        }
+
         try
         {
             await SaveLayoutAsync(CancellationToken.None).ConfigureAwait(true);
@@ -1734,7 +1749,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         ValidationIssues.Clear();
         OnPropertyChanged(nameof(SelectedRowCount));
         OnPropertyChanged(nameof(SelectedRowCountText));
-        await InitializeAsync().ConfigureAwait(true);
+        await InitializeAsync(CancellationToken.None).ConfigureAwait(true);
     }
 
     private void ApplyHistory(bool undo)
@@ -1864,7 +1879,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         }
 
         var column = Workspace.Schema.FindColumn(fieldName)
-            ?? (fieldName.IndexOf('/') >= 0
+            ?? (fieldName.Contains('/')
                 ? Workspace.Schema.FindColumn(FieldPath.Parse(fieldName).FieldName)
                 : null);
         if (column is not null && !IsValidValue(column, value))
@@ -2101,7 +2116,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
             try
             {
                 var ensured = await _session
-                    .EnsureOverlayAsync(Descriptor, option.Language)
+                    .EnsureOverlayAsync(Descriptor, option.Language, CancellationToken.None)
                     .ConfigureAwait(true);
                 if (!ensured.IsSuccess)
                 {
@@ -2673,7 +2688,7 @@ public partial class TableEditorViewModel : ObservableObject, ITableCellEditor, 
         field.Value = value.ToString(CultureInfo.InvariantCulture);
     }
 
-    private static IReadOnlyDictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
+    private static Dictionary<int, string> BuildBitLabels(LookupColumnData? lookup)
     {
         if (lookup is not { IsAvailable: true })
         {

@@ -504,7 +504,7 @@ public partial class MainViewModel : ObservableObject
     /// <returns>A task that completes when initialization finishes.</returns>
     public async Task InitializeAsync()
     {
-        var load = await _settingsStore.LoadAsync().ConfigureAwait(true);
+        var load = await _settingsStore.LoadAsync(CancellationToken.None).ConfigureAwait(true);
         if (!load.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", load.ErrorText ?? string.Empty);
@@ -515,7 +515,7 @@ public partial class MainViewModel : ObservableObject
         _settingsLoaded = true;
         ThemeManager.Apply(_settings.ThemeMode);
         DataDirectory = _settings.ActiveDataDirectory
-            ?? _settings.DataDirectories.FirstOrDefault()
+            ?? (_settings.DataDirectories.Count > 0 ? _settings.DataDirectories[0] : null)
             ?? string.Empty;
         RebuildDataDirectories();
 
@@ -593,7 +593,7 @@ public partial class MainViewModel : ObservableObject
             ActiveDataDirectory = isActive ? null : _settings.ActiveDataDirectory,
         };
 
-        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        var save = await _settingsStore.SaveAsync(_settings, CancellationToken.None).ConfigureAwait(true);
         var saveError = save.IsSuccess
             ? null
             : $"{save.ErrorCode}: {save.ErrorText}";
@@ -711,7 +711,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var viewModel = new EnemyAmmoViewModel(_dataSet);
-            await viewModel.InitializeAsync().ConfigureAwait(true);
+            await viewModel.InitializeAsync(CancellationToken.None).ConfigureAwait(true);
             _dialogService.ShowEnemyAmmo(viewModel);
         }
         catch (Exception exception)
@@ -754,7 +754,8 @@ public partial class MainViewModel : ObservableObject
                 directories,
                 sourceDirectory,
                 initialTable,
-                initialKeys))
+                initialKeys),
+                CancellationToken.None)
             .ConfigureAwait(true);
         if (outcome is null)
         {
@@ -801,9 +802,15 @@ public partial class MainViewModel : ObservableObject
         var table = SelectedEditor?.TableName
             ?? SelectedTable?.Descriptor.TableName;
         var field = SelectedEditor is TableEditorViewModel editor ? editor.CurrentCellField : null;
+        ShowHelpForTable(table, field);
+    }
+
+    private void ShowHelpForTable(TableName? table, string? field)
+    {
         var help = new HelpViewModel(_tableHelp, table, field);
         help.TableOpenRequested += OnHelpTableOpenRequested;
         help.CoverageRequested += () => OpenHelpDocument("COVERAGE.md");
+        help.DocumentOpenRequested += OpenHelpDocument;
         _dialogService.ShowHelp(help);
     }
 
@@ -821,6 +828,13 @@ public partial class MainViewModel : ObservableObject
 
     private void OpenHelpDocument(string documentPath)
     {
+        var tableHelp = _tableHelp.GetTableHelpByDocument(documentPath);
+        if (tableHelp is not null)
+        {
+            ShowHelpForTable(tableHelp.Table, null);
+            return;
+        }
+
         var document = _tableHelp.GetDocument(documentPath);
         if (document is null)
         {
@@ -828,7 +842,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        _dialogService.ShowHelpDocument(new HelpDocumentViewModel(document));
+        _dialogService.ShowHelpDocument(new HelpDocumentViewModel(document, OpenHelpDocument));
     }
 
     private async void OnHelpTableOpenRequested(TableName table)
@@ -969,7 +983,7 @@ public partial class MainViewModel : ObservableObject
                 await editor.ResetLayoutAsync().ConfigureAwait(true);
             }
 
-            var reset = await _layoutStore.ResetAllAsync().ConfigureAwait(true);
+            var reset = await _layoutStore.ResetAllAsync(CancellationToken.None).ConfigureAwait(true);
             if (!reset.IsSuccess)
             {
                 resetError = $"{reset.ErrorCode}: {reset.ErrorText}";
@@ -987,7 +1001,7 @@ public partial class MainViewModel : ObservableObject
             ThemeMode = result.ThemeMode,
         };
 
-        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        var save = await _settingsStore.SaveAsync(_settings, CancellationToken.None).ConfigureAwait(true);
         if (!save.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
@@ -1046,7 +1060,7 @@ public partial class MainViewModel : ObservableObject
         IsXmlLoading = true;
         try
         {
-            var snapshot = await Task.Run(editor.CreateXmlSnapshot).ConfigureAwait(true);
+            var snapshot = await Task.Run(editor.CreateXmlSnapshot, CancellationToken.None).ConfigureAwait(true);
             if (ReferenceEquals(SelectedEditor, editor))
             {
                 _xmlSnapshot = snapshot;
@@ -1163,7 +1177,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         var tables = await session.Catalog
-            .GetTablesAsync(session.TableDataDirectory)
+            .GetTablesAsync(session.TableDataDirectory, CancellationToken.None)
             .ConfigureAwait(true);
         if (!tables.IsSuccess)
         {
@@ -1189,7 +1203,7 @@ public partial class MainViewModel : ObservableObject
         AttachEditor(editor);
         Editors.Add(editor);
         SelectedEditor = editor;
-        await editor.InitializeAsync().ConfigureAwait(true);
+        await editor.InitializeAsync(CancellationToken.None).ConfigureAwait(true);
         if (IsXmlMode)
         {
             await RefreshXmlSnapshotAsync().ConfigureAwait(true);
@@ -1268,7 +1282,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         _settings = _settings with { WindowPlacement = placement };
-        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        var save = await _settingsStore.SaveAsync(_settings, CancellationToken.None).ConfigureAwait(true);
         if (!save.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
@@ -1641,7 +1655,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var opened = await _sessionFactory
-                .OpenAsync(request.TableDataDirectory)
+                .OpenAsync(request.TableDataDirectory, CancellationToken.None)
                 .ConfigureAwait(true);
             if (!opened.IsSuccess)
             {
@@ -1668,7 +1682,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+            var save = await _settingsStore.SaveAsync(_settings, CancellationToken.None).ConfigureAwait(true);
             if (!save.IsSuccess)
             {
                 StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);
@@ -1785,7 +1799,7 @@ public partial class MainViewModel : ObservableObject
         };
 
         SelectDataDirectorySilently(EnsureDataDirectoryItem(path));
-        var save = await _settingsStore.SaveAsync(_settings).ConfigureAwait(true);
+        var save = await _settingsStore.SaveAsync(_settings, CancellationToken.None).ConfigureAwait(true);
         if (!save.IsSuccess)
         {
             StatusText = Strings.Format("StatusError", save.ErrorText ?? string.Empty);

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish_prerelease:
-        description: Publish the built packages as a GitHub pre-release
+        description: Publish the built packages as the next numbered pre-release (1.1.0-p1, 1.1.0-p2, ...)
         required: false
         type: boolean
         default: false
@@ -40,20 +40,41 @@ jobs:
         shell: pwsh
         run: |
           if ($env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF_TYPE -eq 'tag') {
-              if ($env:GITHUB_REF_NAME -notmatch '^v(\d+\.\d+\.\d+)$') {
-                  throw "Final release tags must look like v1.2.3; got '$env:GITHUB_REF_NAME'."
+              if ($env:GITHUB_REF_NAME -notmatch '^v(\d+\.\d+\.\d+)(?:-(p([1-9]\d*)))?$') {
+                  throw "Release tags must look like v1.2.3 or v1.2.3-p1; got '$env:GITHUB_REF_NAME'."
               }
-              $version = $Matches[1]
+              $baseVersion = $Matches[1]
+              $prereleaseNumber = $Matches[3]
+              $version = if ($prereleaseNumber) { "${baseVersion}-p${prereleaseNumber}" } else { $baseVersion }
               $tag = $env:GITHUB_REF_NAME
-              $prerelease = 'false'
+              $prerelease = if ($prereleaseNumber) { 'true' } else { 'false' }
           }
           else {
               if ($env:GITHUB_REF_NAME -notmatch '^release/(\d+\.\d+\.\d+)$') {
                   throw "Manual release runs must start from a release/x.y.z branch; got '$env:GITHUB_REF_NAME'."
               }
-              $version = $Matches[1]
-              $tag = "pre-v$version-$($env:GITHUB_RUN_NUMBER)"
-              $prerelease = '${{ inputs.publish_prerelease }}'
+              $baseVersion = $Matches[1]
+              if ('${{ inputs.publish_prerelease }}' -eq 'true') {
+                  git fetch --tags --force
+                  $max = 0
+                  foreach ($existingTag in (git tag --list "v$baseVersion-p*")) {
+                      if ($existingTag -match "^v$([regex]::Escape($baseVersion))-p([1-9]\d*)$") {
+                          $number = [int]$Matches[1]
+                          if ($number -gt $max) {
+                              $max = $number
+                          }
+                      }
+                  }
+                  $next = $max + 1
+                  $version = "${baseVersion}-p${next}"
+                  $tag = "v$version"
+                  $prerelease = 'true'
+              }
+              else {
+                  $version = $baseVersion
+                  $tag = ''
+                  $prerelease = 'false'
+              }
           }
 
           "version=$version" >> $env:GITHUB_OUTPUT
@@ -85,6 +106,44 @@ jobs:
           $tag = "${{ steps.release.outputs.tag }}"
           $version = "${{ steps.release.outputs.version }}"
           $prerelease = "${{ steps.release.outputs.prerelease }}" -eq 'true'
+          $baseVersion = $version -replace '-p[1-9]\d*$', ''
+          $changelogPath = Join-Path $env:GITHUB_WORKSPACE 'xml-editor-reloaded/CHANGELOG.md'
+          if (-not (Test-Path -LiteralPath $changelogPath)) {
+              throw "Changelog not found at '$changelogPath'."
+          }
+
+          $lines = @(Get-Content -LiteralPath $changelogPath -Encoding utf8)
+          $start = -1
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match "^##\s+\[$([regex]::Escape($baseVersion))\](?:\s|$)") {
+                  $start = $i
+                  break
+              }
+          }
+          if ($start -lt 0) {
+              throw "CHANGELOG.md has no section for $baseVersion."
+          }
+
+          $end = $lines.Count
+          for ($i = $start + 1; $i -lt $lines.Count; $i++) {
+              if ($lines[$i] -match '^##\s+\[') {
+                  $end = $i
+                  break
+              }
+          }
+
+          $bodyLines = @()
+          if ($end -gt $start + 1) {
+              $bodyLines = $lines[($start + 1)..($end - 1)]
+          }
+          $notes = ($bodyLines -join "`n").Trim()
+          if ([string]::IsNullOrWhiteSpace($notes)) {
+              throw "CHANGELOG.md section for $baseVersion is empty."
+          }
+
+          $notesPath = Join-Path $env:RUNNER_TEMP "release-notes-$version.md"
+          Set-Content -LiteralPath $notesPath -Value $notes -Encoding utf8
+
           $zips = @(Get-ChildItem -LiteralPath out/release -Filter '*.zip')
           $hashes = @(Get-ChildItem -LiteralPath out/release -Filter '*.sha256')
           if ($zips.Count -ne 2 -or $hashes.Count -ne 2) {
@@ -94,7 +153,7 @@ jobs:
           $assets = @($zips.FullName) + @($hashes.FullName)
           $arguments = @('release', 'create', $tag) + $assets + @(
               '--title', "XML Editor Reloaded $version",
-              '--generate-notes')
+              '--notes-file', $notesPath)
           if ($prerelease) {
               $arguments += '--prerelease'
               $arguments += '--target'

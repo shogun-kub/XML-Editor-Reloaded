@@ -12,6 +12,8 @@ JA2_1.13 Tools/
 ├── README.md                        # GitHub repository overview (English, default)
 ├── README.ru.md                     # GitHub repository overview (Russian)
 ├── CODE-OVERVIEW.md                 # Code architecture, class/method map and improvement backlog
+├── CLASS-MAP.md                     # Type-by-type map of all projects and their connections
+├── SONAR.md                         # Local-only SonarQube analysis and issue export
 ├── RELEASING.md                     # Branching, pre-release and final-release workflow
 ├── UI-RULES.md                      # UI spacing rules and per-form checklist
 ├── PLAN.md                          # Roadmap and current status
@@ -152,6 +154,20 @@ XmlEditorReloaded.Imaging ──> Core
 XmlEditorReloaded.Core ──>  (none)
 ```
 
+## Class map
+
+[`CLASS-MAP.md`](CLASS-MAP.md) describes every top-level production type, its responsibility,
+and its main collaborators, grouped by project and folder. The inventory section is generated from
+the XML documentation comments; keep the architecture text in sync manually and regenerate the
+tables after structural changes:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/class-map.ps1
+```
+
+The test projects are summarized in the same document and their full type inventory is kept in a
+collapsed section, so the production map stays readable.
+
 - Backend projects must not reference WPF or `System.Windows.*`.
 - Cross-library contracts live in `Core`; implementations stay in their own projects.
 - XML parsing, metadata SQL, and STI decoding belong to the backend, not the WPF layer.
@@ -203,8 +219,8 @@ as pending, and rewrites per-document `## Contents`, `INDEX.md` and `COVERAGE.md
 - `release/<version>` is cut from `dev` when a release is planned. Its `Directory.Build.props`
   version must match the branch name. Changes are cherry-picked from `dev` or made in place.
 - A manual `workflow_dispatch` run of `.github/workflows/release.yml` on `release/<version>`
-  builds both packages; setting `publish_prerelease` publishes them as a GitHub pre-release
-  (`pre-v<version>-<run>`).
+  builds both packages; setting `publish_prerelease` publishes the next numbered pre-release
+  (`v<version>-p1`, `v<version>-p2`, ...).
 - The final release merges the release branch into both `dev` and `main`, deletes the branch, and
   creates an annotated `v<version>` tag on `main`. Pushing that tag runs the final release build
   and publishes both archives and checksums.

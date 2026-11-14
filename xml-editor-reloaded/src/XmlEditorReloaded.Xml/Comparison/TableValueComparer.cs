@@ -175,7 +175,7 @@ internal static class TableValueComparer
         return identities;
     }
 
-    private static IReadOnlyList<RecordFieldChange> CompareFieldValues(
+    private static List<RecordFieldChange> CompareFieldValues(
         IReadOnlyList<TableFieldValue> left,
         IReadOnlyList<TableFieldValue> right)
     {

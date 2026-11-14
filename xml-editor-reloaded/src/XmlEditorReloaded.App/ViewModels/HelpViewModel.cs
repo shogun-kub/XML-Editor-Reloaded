@@ -3,6 +3,7 @@ using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XmlEditorReloaded.App.Resources;
+using XmlEditorReloaded.App.Services;
 using XmlEditorReloaded.Core.Abstractions;
 using XmlEditorReloaded.Core.Help;
 using XmlEditorReloaded.Core.Metadata;
@@ -200,6 +201,18 @@ public sealed partial class HelpViewModel : ObservableObject
     /// </summary>
     public event Action? CoverageRequested;
 
+    /// <summary>
+    /// Occurs when the user asks to open a standalone help page linked from the current table.
+    /// </summary>
+    public event Action<string>? DocumentOpenRequested;
+
+    /// <summary>
+    /// Opens a standalone help page linked from the current table.
+    /// </summary>
+    /// <param name="target">Document path as written in the section Markdown.</param>
+    public void OpenDocument(string target) =>
+        DocumentOpenRequested?.Invoke(HelpPathResolver.Resolve(_table?.DocumentPath, target));
+
     /// <summary>Gets a value indicating whether the current table has related links.</summary>
     public bool HasLinks => Links.Count > 0;
 
@@ -357,13 +370,20 @@ public sealed partial class HelpViewModel : ObservableObject
         }
 
         var help = _provider.GetTableHelpByDocument(link.Target);
-        if (help is null)
+        if (help is not null)
         {
-            StatusText = Strings.Format("HelpLinkUnavailableFormat", link.Target);
+            ShowTable(help.Table);
             return;
         }
 
-        ShowTable(help.Table);
+        var document = _provider.GetDocument(link.Target);
+        if (document is not null)
+        {
+            DocumentOpenRequested?.Invoke(link.Target);
+            return;
+        }
+
+        StatusText = Strings.Format("HelpLinkUnavailableFormat", link.Target);
     }
 
     /// <summary>

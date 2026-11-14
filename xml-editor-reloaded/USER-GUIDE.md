@@ -26,8 +26,8 @@ Windows may show a SmartScreen warning because the build is not signed with a co
 certificate. Verify the archive's SHA-256 against the matching `.sha256` file:
 
 ```powershell
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64.zip -Algorithm SHA256
-Get-FileHash .\XmlEditorReloaded-1.0.0-win-x64-framework-dependent.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\XmlEditorReloaded-1.1.0-win-x64-framework-dependent.zip -Algorithm SHA256
 ```
 
 ### Portable mode

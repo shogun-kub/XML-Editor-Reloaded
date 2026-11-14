@@ -111,7 +111,7 @@ public sealed class TranslationAnalyzer
         TableMetadata metadata,
         OverlayKeyResolver resolver,
         IReadOnlyList<ResolvedRecord> baseRecords,
-        IReadOnlyDictionary<string, ResolvedRecord[]> overlayGroups,
+        Dictionary<string, ResolvedRecord[]> overlayGroups,
         List<TranslationIssue> issues)
     {
         var segments = metadata.RecordKey?.Segments;

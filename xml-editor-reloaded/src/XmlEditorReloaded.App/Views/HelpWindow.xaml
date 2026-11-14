@@ -153,7 +153,9 @@
                            Text="{Binding StatusText}" />
             </Grid>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1"
+                          AutomationProperties.AutomationId="HelpContentScroll"
+                          VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -300,7 +302,9 @@
                             <DataTemplate>
                                 <StackPanel Margin="0,4,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="{Binding Heading}" />
-                                    <TextBlock TextWrapping="Wrap" Text="{Binding Text}" />
+                                    <views:MarkdownViewer Markdown="{Binding Text}"
+                                                          ShowScrollBars="False"
+                                                          LinkRequested="OnMarkdownLinkRequested" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

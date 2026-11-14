@@ -38,9 +38,9 @@ framework-dependent пакета создал `data` и `metadata.sqlite` с п�
 
 **CI.** `.github/workflows/ci.yml` — restore, Release build `-warnaserror`, тесты через `test.ps1
 -NoBuild` для `main`, `dev` и `release/**`; артефакты не публикует. `.github/workflows/release.yml`:
-`workflow_dispatch` из `release/<version>` собирает оба пакета и по флагу публикует pre-release
-(`pre-v<version>-<run>`); пуш финального тега `v<version>` собирает и публикует GitHub Release.
-Версия ветки/тега должна совпасть с props. Процесс — в `RELEASING.md`.
+`workflow_dispatch` из `release/<version>` собирает оба пакета и по флагу публикует очередной
+pre-release `v<version>-pN`; пуш финального тега `v<version>` собирает и публикует GitHub Release.
+Версия ветки/тега должна совпасть с базой в props. Процесс — в `RELEASING.md`.
 
 **Проверка.** Build 0/0; release-прогон: 726 тестов (App 265, Core 62, Data 97, Imaging 24, Xml 278);
 UI-smoke против `out/publish/win-x64/XmlEditorReloaded.App.exe` — PASS для S66/S68/S81/S101–S104;

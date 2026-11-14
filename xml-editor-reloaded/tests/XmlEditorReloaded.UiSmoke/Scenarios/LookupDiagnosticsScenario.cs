@@ -17,7 +17,10 @@ internal sealed class LookupDiagnosticsScenario : SmokeScenario
     public override IReadOnlyList<DatasetKind> Datasets => [DatasetKind.V4, DatasetKind.V5];
 
     /// <inheritdoc />
-    public override bool WritesTo(DatasetKind kind) => kind == DatasetKind.V4;
+    public override bool WritesTo(DatasetKind kind) => true;
+
+    /// <inheritdoc />
+    public override bool CorruptsV5AttachmentPoint => true;
 
     /// <inheritdoc />
     public override void Run(ScenarioContext context)

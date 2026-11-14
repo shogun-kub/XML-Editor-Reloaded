@@ -98,6 +98,43 @@ public class HelpViewModelTests
     }
 
     /// <summary>
+    /// A Markdown link in a section is resolved relative to the table document.
+    /// </summary>
+    [Fact]
+    public void SectionDocumentLink_ResolvesRelativeToTableDocument()
+    {
+        var viewModel = new HelpViewModel(
+            new JsonTableHelpProvider(),
+            TableName.Parse("AIMAvailability"));
+        string? requested = null;
+        viewModel.DocumentOpenRequested += target => requested = target;
+
+        viewModel.OpenDocument("MercProfiles.md");
+
+        Assert.Equal("tables/MercProfiles.md", requested);
+    }
+
+    /// <summary>
+    /// A related link to a standalone page asks the shell to open that page instead of reporting a
+    /// missing table document.
+    /// </summary>
+    [Fact]
+    public void RelatedLink_OpensStandalonePage()    {
+        var viewModel = new HelpViewModel(
+            new JsonTableHelpProvider(),
+            TableName.Parse("Items.Weapons"));
+        var link = viewModel.Links.First(link => link.Target == "FORMULAS.md");
+        string? requested = null;
+        viewModel.DocumentOpenRequested += target => requested = target;
+
+        viewModel.OpenLinkCommand.Execute(link);
+
+        Assert.Equal("FORMULAS.md", requested);
+        Assert.Empty(viewModel.StatusText);
+        Assert.Equal("Items.Weapons", viewModel.Table!.Value.Value);
+    }
+
+    /// <summary>
     /// An undocumented field reports the missing description instead of silently selecting another field.
     /// </summary>
     [Fact]

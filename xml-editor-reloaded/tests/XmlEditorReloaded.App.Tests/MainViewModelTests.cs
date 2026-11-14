@@ -1085,6 +1085,28 @@ public class MainViewModelTests
     }
 
     /// <summary>
+    /// A link from the index to a table document opens context help for that table.
+    /// </summary>
+    [Fact]
+    public async Task IndexDocumentLink_TableTarget_OpensTableHelp()
+    {
+        CultureInfo.CurrentUICulture = new CultureInfo("en");
+        using var workspace = new TestWorkspace();
+        var data13 = CreateNotesData(workspace);
+        var (provider, catalog, repository, settingsStore) = await CreateServicesAsync(workspace, data13);
+        var dialog = new FakeDialogService();
+        var viewModel = CreateShell(provider, catalog, repository, settingsStore, dialog);
+
+        viewModel.OpenIndexCommand.Execute(null);
+        Assert.NotNull(dialog.LastHelpDocumentViewModel);
+
+        dialog.LastHelpDocumentViewModel.OpenDocument("tables/Items/AmmoStrings.md");
+
+        Assert.NotNull(dialog.LastHelpViewModel);
+        Assert.Equal("Items.AmmoStrings", dialog.LastHelpViewModel.Table?.ToString());
+    }
+
+    /// <summary>
     /// Removing the active directory activates the remaining valid directory, removes the path from the
     /// selector, and persists the shortened list; the folder itself is kept on disk.
     /// </summary>

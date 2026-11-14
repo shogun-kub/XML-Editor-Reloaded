@@ -19,3 +19,7 @@ dotnet_diagnostic.CS1591.severity = warning
 
 [*.{md,yml,yaml}]
 trim_trailing_whitespace = false
+
+# Test projects are not shipped; keep their analyzer suggestions out of the build and Sonar.
+[tests/**/*.cs]
+dotnet_analyzer_diagnostic.severity = none

@@ -18,8 +18,21 @@ public partial class HelpDocumentWindow : Window
         ArgumentNullException.ThrowIfNull(viewModel);
         InitializeComponent();
         DataContext = viewModel;
+        DataContextChanged += OnDataContextChanged;
         Title = viewModel.Title;
     }
+
+    private HelpDocumentViewModel? ViewModel => DataContext as HelpDocumentViewModel;
+
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is HelpDocumentViewModel viewModel)
+        {
+            Title = viewModel.Title;
+        }
+    }
+
+    private void OnDocumentLinkRequested(object sender, string target) => ViewModel?.OpenDocument(target);
 
     private void OnCloseClick(object sender, RoutedEventArgs e) => Close();
 }

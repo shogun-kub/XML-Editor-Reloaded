@@ -69,6 +69,26 @@ internal sealed class HelpScenario : SmokeScenario
             help.WaitById("HelpFieldDescriptionText").ReadName().Length > 0,
             help.WaitById("HelpFieldDescriptionText").ReadName());
 
+        var contentScroll = help.WaitById("HelpContentScroll");
+        if (!contentScroll.TryGetCurrentPattern(ScrollPattern.Pattern, out var rawScroll)
+            || rawScroll is not ScrollPattern contentScrollPattern)
+        {
+            throw new UiTimeoutException("Панель справки не поддерживает прокрутку.");
+        }
+
+        var beforeWheel = contentScrollPattern.Current.VerticalScrollPercent;
+        NativeInput.EnsureForeground(help);
+        NativeInput.WheelAt(contentScroll, -120);
+        Ui.WaitUntil(
+            () => contentScrollPattern.Current.VerticalScrollPercent > beforeWheel,
+            "прокрутка справки колесом мыши");
+        context.Recorder.Check(
+            "Колесо мыши прокручивает справку",
+            contentScrollPattern.Current.VerticalScrollPercent > beforeWheel,
+            contentScrollPattern.Current.VerticalScrollPercent.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture));
+        contentScrollPattern.SetScrollPercent(ScrollPattern.NoScroll, 0);
+        Thread.Sleep(150);
+
         help.WaitById("HelpSearchBox").SetText("bRecoilX");
         help.WaitById("HelpSearchButton").InvokeButton();
         Ui.WaitUntil(
@@ -91,11 +111,24 @@ internal sealed class HelpScenario : SmokeScenario
             true,
             help.WaitById("HelpFieldPathText").ReadName());
 
+        help.WaitById("FORMULAS").InvokeButton();
+        var formulas = Ui.WaitFor(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow"),
+            "страница FORMULAS из связанной справки",
+            TimeSpan.FromSeconds(10));
+        context.Recorder.Check(
+            "Связанная страница открывается в окне документа",
+            formulas.WaitById("HelpDocumentTitleText").ReadName().Contains("формул", StringComparison.OrdinalIgnoreCase),
+            formulas.WaitById("HelpDocumentTitleText").ReadName());
+        formulas.WaitById("HelpDocumentCloseButton").InvokeButton();
+        Ui.WaitUntil(
+            () => TryFindDocumentWindow(context.App, "HelpDocumentWindow") is null,
+            "окно FORMULAS закрыто");
+
         help.WaitById("AmmoStrings").InvokeButton();
         Ui.WaitUntil(
             () => help.WaitById("HelpDocumentPathText").ReadName().Contains("AmmoStrings.md", StringComparison.Ordinal),
-            "связанная справка AmmoStrings");
-        context.Recorder.Check(
+            "связанная справка AmmoStrings");        context.Recorder.Check(
             "Связанная справка открывает другую таблицу",
             help.WaitById("HelpTitleText").ReadName().Contains("AmmoStrings", StringComparison.Ordinal),
             help.WaitById("HelpTitleText").ReadName());

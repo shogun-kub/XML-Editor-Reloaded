@@ -37,6 +37,14 @@ internal abstract class SmokeScenario
     public virtual bool WritesTo(DatasetKind kind) => false;
 
     /// <summary>
+    /// Gets a value indicating whether the scenario needs the v5 <c>Lookup.AttachmentPoint</c> copy
+    /// corrupted before the application starts. The reference data set is read-only and may no longer
+    /// contain the historical malformed file, so scenarios that exercise parse diagnostics own the
+    /// fixture instead of depending on a mutable external file.
+    /// </summary>
+    public virtual bool CorruptsV5AttachmentPoint => false;
+
+    /// <summary>
     /// Gets a value indicating whether the scenario starts with a settings file. A cold start runs
     /// without any settings file, so the application uses its built-in defaults.
     /// </summary>
