@@ -71,7 +71,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/test.ps1
 Приложение запускается из `out/bin/XmlEditorReloaded.App/<Configuration>/XmlEditorReloaded.App.exe`.
 Все `bin/obj` складываются в `out/`.
 
-Полный набор тестов — 726 тестов в пяти xUnit-проектах. Корпусные, сравнительные, copy- и
+Полный набор тестов — 760 тестов в пяти xUnit-проектах. Корпусные, сравнительные, copy- и
 perf-гейты описаны в `PLAN.md`; они требуют `XER_CORPUS_DIR` и временных копий данных.
 
 ## Сборка релиза
@@ -82,7 +82,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File util-scripts/release.ps1
 
 Скрипт проверяет версию из `Directory.Build.props`, запускает тесты, публикует self-contained и
 framework-dependent `win-x64`, складывает `README`, `USER-GUIDE`, `USER-GUIDE-RU`, `CHANGELOG`,
-лицензию и
+`CHANGELOG.en.md`, лицензию и
 third-party notices в каждый ZIP и пишет отдельный SHA-256. Результат: `out/release/`.
 
 ## Структура
@@ -97,7 +97,8 @@ third-party notices в каждый ZIP и пишет отдельный SHA-256
 | `tests/` | xUnit-тесты и UI-smoke runner |
 
 Архитектура и правила — в `PROJECT-STRUCTURE.md` и `AGENTS.md`, план — в `PLAN.md` исходного
-репозитория. История версий — в [CHANGELOG.md](CHANGELOG.md).
+репозитория. История версий — в [CHANGELOG.md](CHANGELOG.md) (русский) или
+[CHANGELOG.en.md](CHANGELOG.en.md) (English).
 
 ## Лицензия
 

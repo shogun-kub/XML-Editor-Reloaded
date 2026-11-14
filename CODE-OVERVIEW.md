@@ -669,7 +669,7 @@ value. Остальные code-behind — тонкие обработчики к
 - `packaging/start-portable.cmd` — `XER_APP_DATA=%~dp0data`, запуск exe рядом.
 - `README.md`/`README.ru.md` — GitHub-обзор; `RELEASING.md` — branch/release процесс;
   `USER-GUIDE.md` — английская инструкция, `USER-GUIDE-RU.md` — русская; `CHANGELOG.md`,
-  `LICENSE`, `THIRD-PARTY-NOTICES.md`.
+  `CHANGELOG.en.md`, `LICENSE`, `THIRD-PARTY-NOTICES.md`.
 
 ## 10. Сквозные сценарии взаимодействия
 

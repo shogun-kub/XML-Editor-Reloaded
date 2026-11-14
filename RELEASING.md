@@ -39,10 +39,10 @@ git switch -c release/1.1.0
 <Version>1.1.0</Version>
 ```
 
-Обнови `xml-editor-reloaded/CHANGELOG.md`. Затем:
+Обнови `xml-editor-reloaded/CHANGELOG.md` и `xml-editor-reloaded/CHANGELOG.en.md`. Затем:
 
 ```bash
-git add xml-editor-reloaded/Directory.Build.props xml-editor-reloaded/CHANGELOG.md
+git add xml-editor-reloaded/Directory.Build.props xml-editor-reloaded/CHANGELOG.md xml-editor-reloaded/CHANGELOG.en.md
 git commit -m "Release 1.1.0"
 git push -u origin release/1.1.0
 ```
@@ -107,7 +107,7 @@ git push origin v1.1.0
 Пуш тега запускает финальную сборку и публикацию GitHub Release.
 
 Тело GitHub Release берётся из секции `## [<version>]` в
-`xml-editor-reloaded/CHANGELOG.md`; для pre-release `-pN` используется секция базовой версии.
+`xml-editor-reloaded/CHANGELOG.en.md`; для pre-release `-pN` используется секция базовой версии.
 Если подходящей секции нет, release-workflow завершается ошибкой и не публикует релиз.
 
 ## 6. Правила тегов
