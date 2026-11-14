@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Removes scratch data from the repository `.tmp` root.
+Removes scratch data from the repository `.tmp` root and empty WPF temp directories.
 
 .DESCRIPTION
 `.tmp` holds everything that is not worth keeping in git: probe projects, UI
@@ -8,16 +8,24 @@ smoke workspaces, restore logs, failure dumps. It is ignored by git but it grows
 fast (a single UI smoke run can be hundreds of megabytes), so it is cleaned at
 the end of a task.
 
-The script only ever touches `<repo>/.tmp`. It never deletes the root itself and
-refuses to run when `.tmp` is a junction or resolves outside the repository.
+WPF markup compilation also leaves empty `XmlEditorReloaded.App_*_wpftmp`
+directories under `out/bin`; those are removed as well. A non-empty directory is
+never touched, so an interrupted build is not destroyed.
+
+The script only deletes items inside `<repo>/.tmp` and empty WPF temp directories
+directly under `<repo>/out/bin`. It never deletes either root itself and refuses
+to clean through a junction or a path outside the repository.
 
 What is kept:
 
-  * every top-level item modified within `-KeepHours` (default 1 hour), which
-    protects files a still-running job may be writing;
+  * every top-level `.tmp` item modified within `-KeepHours` (default 1 hour),
+    which protects files a still-running job may be writing;
   * the newest `-KeepUiSmoke` run directories inside `.tmp/ui-smoke`
     (default 2), because a failed smoke run is the one you inspect afterwards;
-  * every top-level item matching a `-Keep` wildcard.
+  * every top-level `.tmp` item matching a `-Keep` wildcard.
+
+Empty WPF temp directories are removed regardless of `-KeepHours`; they contain
+nothing and do not belong to a running build.
 
 Everything else is removed. Locked files are reported and turn the exit code
 non-zero instead of aborting the cleanup.
@@ -112,12 +120,80 @@ function Remove-ItemSafe {
     Remove-Item -LiteralPath $Item.FullName -Force
 }
 
+function Remove-EmptyWpfTempDirectories {
+    param([string]$RepoRoot)
+
+    $binRoot = Join-Path $RepoRoot 'out\bin'
+    if (-not (Test-Path -LiteralPath $binRoot -PathType Container)) {
+        return [pscustomobject]@{ Planned = 0; Removed = 0; Failed = 0 }
+    }
+
+    $binItem = Get-Item -LiteralPath $binRoot -Force
+    if ($binItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+        Write-Warning "cleanup: $binRoot is a reparse point; skipping WPF temp directories"
+        return [pscustomobject]@{ Planned = 0; Removed = 0; Failed = 0 }
+    }
+
+    $planned = 0
+    $removed = 0
+    $failed = 0
+    $directories = Get-ChildItem -LiteralPath $binRoot -Directory -Force -Filter 'XmlEditorReloaded.App_*_wpftmp' -ErrorAction SilentlyContinue
+
+    foreach ($directory in $directories) {
+        if ($directory.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+            continue
+        }
+
+        $files = @(Get-ChildItem -LiteralPath $directory.FullName -Recurse -File -Force -ErrorAction SilentlyContinue)
+        if ($files.Count -gt 0) {
+            continue
+        }
+
+        $links = @(Get-ChildItem -LiteralPath $directory.FullName -Recurse -Force -ErrorAction SilentlyContinue |
+            Where-Object { $_.Attributes -band [System.IO.FileAttributes]::ReparsePoint })
+        if ($links.Count -gt 0) {
+            continue
+        }
+
+        if ($WhatIfPreference) {
+            $planned++
+            if (-not $Quiet) {
+                Write-Host ("  would remove  {0}  (empty WPF temp)" -f $directory.Name)
+            }
+            continue
+        }
+
+        try {
+            Remove-Item -LiteralPath $directory.FullName -Recurse -Force -ErrorAction Stop
+            $removed++
+            if (-not $Quiet) {
+                Write-Host ("  removed  {0}  (empty WPF temp)" -f $directory.Name)
+            }
+        }
+        catch {
+            $failed++
+            Write-Warning ("could not remove {0}: {1}" -f $directory.Name, $_.Exception.Message)
+        }
+    }
+
+    return [pscustomobject]@{ Planned = $planned; Removed = $removed; Failed = $failed }
+}
+
 $repo = Split-Path -Parent $PSScriptRoot
+$resolvedRepo = (Get-Item -LiteralPath $repo -Force).FullName.TrimEnd('\')
+$buildTempResult = Remove-EmptyWpfTempDirectories -RepoRoot $resolvedRepo
+
+if ($buildTempResult.Planned -gt 0 -or $buildTempResult.Removed -gt 0 -or $buildTempResult.Failed -gt 0) {
+    Write-Host ("cleanup: WPF temp dirs: removed {0}, planned {1}, failed {2}" -f `
+        $buildTempResult.Removed, $buildTempResult.Planned, $buildTempResult.Failed)
+}
+
+$buildExitCode = if ($buildTempResult.Failed -gt 0) { 1 } else { 0 }
 $root = Join-Path $repo '.tmp'
 
 if (-not (Test-Path -LiteralPath $root)) {
     Write-Host "cleanup: $root does not exist, nothing to do"
-    exit 0
+    exit $buildExitCode
 }
 
 $rootItem = Get-Item -LiteralPath $root -Force
@@ -127,7 +203,6 @@ if ($rootItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
 }
 
 $resolvedRoot = $rootItem.FullName.TrimEnd('\')
-$resolvedRepo = (Get-Item -LiteralPath $repo -Force).FullName.TrimEnd('\')
 if (-not $resolvedRoot.StartsWith($resolvedRepo + '\', [StringComparison]::OrdinalIgnoreCase)) {
     Write-Error "cleanup: $resolvedRoot is outside $resolvedRepo; refusing to clean"
     exit 2
@@ -206,7 +281,7 @@ Write-Host ("  found:  {0} item(s) to remove, {1} kept, {2} total" -f $planned.C
 
 if ($planned.Count -eq 0) {
     Write-Host 'cleanup: nothing to remove'
-    exit 0
+    exit $buildExitCode
 }
 
 if ($WhatIfPreference) {
@@ -215,7 +290,7 @@ if ($WhatIfPreference) {
     }
 
     Write-Host ("cleanup: dry run, {0} would be freed" -f (Format-Size ($plannedBytes)))
-    exit 0
+    exit $buildExitCode
 }
 
 $removedCount = 0
@@ -253,4 +328,4 @@ if ($failed.Count -gt 0) {
     exit 1
 }
 
-exit 0
+exit $buildExitCode
